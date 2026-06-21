@@ -2041,6 +2041,11 @@ BattleCommand_checkhit:
 	ld b, 7
 
 .not_external_acc
+	; Evasion Clause: in link battles, ignore the target's evasion boosts
+	; (Double Team / Minimize / Bright Powder) so accuracy can't be stalled.
+	ld a, [wLinkMode]
+	and a
+	jr nz, .reset_evasion
 	; Handle stat modifiers
 	; Unaware ignores enemy stat changes, identification also does if above 0
 	call GetTrueUserIgnorableAbility
@@ -4894,6 +4899,11 @@ BattleCommand_sleep:
 	jr c, .ability_ok
 	jr nz, .failed
 
+	; Sleep Clause: in link battles a player may not put a second of the
+	; opponent's Pokemon to sleep while one is already asleep.
+	call CheckLinkSleepClause
+	jr c, .failed_ineffective
+
 	ld a, [wAttackMissed]
 	and a
 	jr nz, .failed_ineffective
@@ -4939,6 +4949,40 @@ BattleCommand_sleep:
 	call AnimateFailedMove
 	call PrintDoesntAffect
 	farjp EndAbility
+
+CheckLinkSleepClause:
+; Sleep Clause for link battles. Returns carry set if the sleep should be
+; blocked because the target's party already holds a sleeping Pokemon.
+; Returns no-carry (allowed) outside link battles or if none are asleep.
+	ld a, [wLinkMode]
+	and a
+	ret z ; not a link battle -> clause inactive (carry clear)
+
+	; Pick the target (opponent) party based on whose turn it is.
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .target_player
+	ld a, [wOTPartyCount]
+	ld hl, wOTPartyMon1
+	jr .scan
+.target_player
+	ld a, [wPartyCount]
+	ld hl, wPartyMon1
+.scan
+	ld b, a
+	ld de, MON_STATUS
+	add hl, de
+	ld de, PARTYMON_STRUCT_LENGTH
+.loop
+	ld a, [hl]
+	and SLP_MASK
+	scf
+	ret nz ; a party member is already asleep -> block
+	add hl, de
+	dec b
+	jr nz, .loop
+	and a ; clear carry -> allowed
+	ret
 
 CanPoisonTarget:
 	ld a, b
