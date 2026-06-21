@@ -3893,6 +3893,19 @@ UnevolvedEviolite:
 	cp EVIOLITE
 	pop bc
 	ret nz
+
+	; Restrict Eviolite to genuinely weak, "true" not-fully-evolved mons.
+	; Strong cross-gen pre-evolutions (Scyther, Rhydon, Porygon2, etc.) are
+	; near-final-stage in power, so they're excluded to stop them stacking
+	; 1.5x defenses on top of ~500 BST. Curate EvioliteExcludedSpecies below.
+	push bc
+	ld a, MON_SPECIES
+	call OpponentPartyAttr
+	ld hl, EvioliteExcludedSpecies
+	ld de, 1
+	call IsInArray ; carry set if excluded
+	pop bc
+	ret c
 	; fallthrough
 SetDefenseBoost:
 ; Boosts defense in bc by x1.5. Assumes bc<43690
@@ -3904,6 +3917,13 @@ SetDefenseBoost:
 	ld b, h
 	ld c, l
 	ret
+
+EvioliteExcludedSpecies:
+; Strong cross-gen pre-evolutions that should NOT benefit from Eviolite.
+	db SCYTHER, RHYDON, PORYGON2, ELECTABUZZ, MAGMAR, MAGNETON
+	db URSARING, PILOSWINE, TANGELA, LICKITUNG, GOLBAT, DUNSPARCE
+	db GLIGAR, TOGETIC, SEADRA
+	db -1
 
 BattleCommand_damagestats:
 ; Return move power d, player level e, enemy defense c and player attack b.
