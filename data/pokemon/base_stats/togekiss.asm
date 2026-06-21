@@ -1,4 +1,4 @@
-	db  85,  50,  95,  80, 110, 115 ; 545 BST
+	db  85,  50,  95,  80, 110, 115 ; 535 BST
 	;   hp  atk  def  spe  sat  sdf
 
 	db FAIRY, FLYING ; type

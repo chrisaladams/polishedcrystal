@@ -1,4 +1,4 @@
-	db  70, 120, 100,  65,  55,  80 ; 500 BST
+	db  70, 120, 100,  65,  55,  80 ; 490 BST
 	;   hp  atk  def  spe  sat  sdf
 
 	db BUG, STEEL ; type
