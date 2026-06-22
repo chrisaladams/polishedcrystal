@@ -1,16 +1,23 @@
 """Moveset selection + team building for the 6v6 sim.
 
-Two builders, so we can diff them (the user's "Both, compare"):
+Three builders, so we can diff them:
   random    : random legal 6-mon teams. Unbiased; undersells synergy/support
               mons that only shine with a role around them.
   role      : classify each mon by stats into a role (sweeper/wall/pivot/lead),
               then fill a balanced template with type diversity. Surfaces the
               support/stall mons the 1v1 matrix and random teams understate.
+  synergy   : the role template, but each slot is drafted to fit the partial
+              team -- penalising stacked shared weaknesses, rewarding mons that
+              resist what the team is weak to and that widen its offensive
+              type coverage. This is what an actual team-builder optimises for,
+              so a mon's synergy win rate reflects how well it *slots into a
+              real team*, not just its standalone power.
 
-Movesets are chosen by the same role-aware heuristic in both builders, so the
-only variable between the two runs is *team composition*.
+Movesets are chosen by the same role-aware heuristic in all builders, so the
+only variable between runs is *team composition*.
 """
 import random
+from collections import Counter
 
 from engine import (BOOST, HEAL_EFFECTS, INFLICT, type_mult)
 
@@ -173,4 +180,129 @@ def role_team(ids, pool, moves, chart, rng):
         mid = cands[0]
         chosen.append(mid)
         used_types |= set(pool[mid]['types'])
+    return [make_mon(mid, pool, moves, chart) for mid in chosen]
+
+
+# ---- synergy-aware drafting -------------------------------------------------
+# Cache the type-chart-derived tables (all types + each attacking type's set of
+# super-effective targets) keyed on the chart object, so the per-battle drafting
+# loop doesn't rebuild them. The defensive profile per mon-typing is memoised too
+# (typings repeat heavily across the roster).
+_TYPE_TABLES = {}
+_DEF_PROFILE = {}
+
+
+def _type_tables(chart):
+    cached = _TYPE_TABLES.get(id(chart))
+    if cached:
+        return cached
+    types = set()
+    for k in chart:
+        a, d = k.split('>')
+        types.add(a); types.add(d)
+    types = sorted(types)
+    se_targets = {a: frozenset(t for t in types if chart.get(f'{a}>{t}', 1.0) > 1.0)
+                  for a in types}
+    cached = (types, se_targets)
+    _TYPE_TABLES[id(chart)] = cached
+    return cached
+
+
+def defensive_profile(mon_types, chart):
+    """(weaknesses, resistances): the attacking types this typing takes >1x and
+    <1x from (immunities count as resistances). Memoised by typing."""
+    key = (id(chart), tuple(mon_types))
+    cached = _DEF_PROFILE.get(key)
+    if cached:
+        return cached
+    types, _ = _type_tables(chart)
+    weak, resist = set(), set()
+    for a in types:
+        m = 1.0
+        for t in mon_types:
+            m *= chart.get(f'{a}>{t}', 1.0)
+        if m > 1.0:
+            weak.add(a)
+        elif m < 1.0:
+            resist.add(a)
+    cached = (weak, resist)
+    _DEF_PROFILE[key] = cached
+    return cached
+
+
+def offensive_coverage(mon_types, chart):
+    """The set of (single) types this mon's STAB threatens super-effectively."""
+    _, se_targets = _type_tables(chart)
+    cov = set()
+    for t in mon_types:
+        cov |= se_targets.get(t, frozenset())
+    return cov
+
+
+# How many acceptable candidates to weigh per slot. This is the knob that trades
+# roster sampling against synergy sharpness: a pure greedy (consider all, pick
+# best) collapses to ~7 always-optimal mons and starves the usage stats; SLOT_K=3
+# samples ~97% of the pool while still cutting stacked shared weaknesses to ~0.01
+# per team (vs role 0.79, random 1.82) and matching role's offensive coverage.
+SLOT_K = 3
+
+
+def _slot_bonus(mid, pool, chart, team_weak, team_offense, used_types):
+    """Tie-break among already-acceptable candidates: prefer mons that resist
+    what the team is weak to, widen its super-effective coverage, and don't
+    duplicate existing typing."""
+    types = pool[mid]['types']
+    _, resist = defensive_profile(types, chart)
+    weakness_cover = sum(1 for a in resist if team_weak[a] >= 1)
+    coverage_gain = len(offensive_coverage(types, chart) - team_offense)
+    overlap = len(set(types) & used_types)
+    return 2.0 * weakness_cover + 0.5 * coverage_gain - overlap
+
+
+def synergy_team(ids, pool, moves, chart, rng):
+    """Draft the ROLE_TEMPLATE so the team has real defensive synergy: no third
+    teammate sharing a weakness, plus a nudge toward resist-coverage and broad
+    offensive coverage. Constraint-first (not pure greedy) so the whole roster
+    still gets sampled -- which the per-mon usage stats depend on.
+
+    Per slot: shuffle the role's candidates, walk them in random order keeping
+    the first SLOT_K that wouldn't make a 3rd teammate weak to the same type,
+    then pick the best of those by _slot_bonus. If none qualify (rare), take the
+    one that adds the fewest new shared weaknesses."""
+    by_role = {'sweeper': [], 'tank': [], 'pivot': [], 'wall': []}
+    for mid in ids:
+        by_role[pool[mid]['_role']].append(mid)
+
+    chosen, used_types = [], set()
+    team_weak = Counter()
+    team_offense = set()
+    for want in ROLE_TEMPLATE:
+        cands = by_role[want] or (by_role['tank'] if want == 'sweeper' else [])
+        cands = [c for c in cands if c not in chosen]
+        if not cands:
+            cands = [c for c in ids if c not in chosen]
+        rng.shuffle(cands)
+
+        def new_stacks(mid):
+            weak, _ = defensive_profile(pool[mid]['types'], chart)
+            return sum(1 for a in weak if team_weak[a] >= 2)  # would be the 3rd
+
+        acceptable = []
+        for c in cands:
+            if new_stacks(c) == 0:
+                acceptable.append(c)
+                if len(acceptable) >= SLOT_K:
+                    break
+        if not acceptable:
+            acceptable = [min(cands, key=new_stacks)]
+
+        mid = max(acceptable, key=lambda c: _slot_bonus(
+            c, pool, chart, team_weak, team_offense, used_types))
+        chosen.append(mid)
+        types = pool[mid]['types']
+        weak, _ = defensive_profile(types, chart)
+        for a in weak:
+            team_weak[a] += 1
+        team_offense |= offensive_coverage(types, chart)
+        used_types |= set(types)
     return [make_mon(mid, pool, moves, chart) for mid in chosen]

@@ -29,7 +29,10 @@ import os, sys, json, argparse, csv, random
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from engine import run_battle                       # noqa: E402
-from teams import build_pool, random_team, role_team  # noqa: E402
+from teams import (build_pool, random_team, role_team,  # noqa: E402
+                   synergy_team)
+
+BUILDERS = {'random': random_team, 'role': role_team, 'synergy': synergy_team}
 
 
 def load(name):
@@ -62,10 +65,17 @@ def run_mode(builder, ids, pool, moves, chart, games, rng):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--games', type=int, default=3000, help='battles per mode')
-    ap.add_argument('--mode', choices=['random', 'role', 'both'], default='both')
+    ap.add_argument('--mode',
+                    choices=['random', 'role', 'synergy', 'both', 'all'],
+                    default='both',
+                    help="'both' = random+role; 'all' = random+role+synergy")
     ap.add_argument('--include-legendary', action='store_true')
     ap.add_argument('--include-unevolved', action='store_true')
     ap.add_argument('--top', type=int, default=25)
+    ap.add_argument('--min-games', type=int, default=15,
+                    help='hide mons with fewer games than this from the printed '
+                         'leaderboards (they stay in the CSV). Synergy drafting '
+                         'samples the roster unevenly, so its long tail is noise.')
     ap.add_argument('--seed', type=int, default=0)
     ap.add_argument('--csv', default='meta_sim/out/sim6v6.csv')
     args = ap.parse_args()
@@ -78,13 +88,20 @@ def main():
     ids = sorted(pool)
     rng = random.Random(args.seed)
 
-    modes = ['random', 'role'] if args.mode == 'both' else [args.mode]
+    modes = ({'both': ['random', 'role'],
+              'all': ['random', 'role', 'synergy']}).get(args.mode, [args.mode])
     results = {}
     for mode in modes:
-        builder = random_team if mode == 'random' else role_team
+        builder = BUILDERS[mode]
         print(f"running {args.games} battles  [{mode} teams]  pool={len(ids)} ...",
               flush=True)
         results[mode] = run_mode(builder, ids, pool, moves, chart, args.games, rng)
+
+    # delta = how much a mon gains from structured drafting over random teams.
+    # focus = the most structured mode present (synergy preferred, then role).
+    baseline = 'random' if 'random' in modes else None
+    focus = next((m for m in ('synergy', 'role') if m in modes), None)
+    has_delta = bool(baseline and focus and baseline != focus)
 
     rows = []
     for mid in ids:
@@ -95,12 +112,19 @@ def main():
             wr, gms = results[mode][mid]
             row[f'{mode}_win'] = round(wr, 4)
             row[f'{mode}_games'] = gms
-        if len(modes) == 2:
-            row['delta'] = round(row['role_win'] - row['random_win'], 4)
+        if has_delta:
+            row['delta'] = round(row[f'{focus}_win'] - row[f'{baseline}_win'], 4)
         rows.append(row)
 
-    sort_key = 'role_win' if 'role' in modes else f'{modes[0]}_win'
+    sort_key = f'{focus}_win' if focus else f'{modes[0]}_win'
     rows.sort(key=lambda r: r[sort_key], reverse=True)
+
+    # Under-sampled mons (mostly synergy's long tail) are noise -- keep them in
+    # the CSV but rank only the well-sampled ones in the printed report.
+    def well_sampled(r):
+        return all(r[f'{m}_games'] >= args.min_games for m in modes)
+    ranked_rows = [r for r in rows if well_sampled(r)]
+    hidden = len(rows) - len(ranked_rows)
 
     os.makedirs(os.path.dirname(args.csv), exist_ok=True)
     with open(args.csv, 'w', newline='') as f:
@@ -122,26 +146,31 @@ def main():
         hdr = f"  {'rank':>4} {'mon':<22}{'types':<16}{'role':<8}{'BST':>4} {'spe':>4}"
         for mode in modes:
             hdr += f" {mode[:4]+'%':>7}"
-        if len(modes) == 2:
+        if has_delta:
             hdr += f" {'delta':>7}"
         print(hdr)
         for i, r in items:
             line = f"  {i:>4} {r['id']:<22}{r['types']:<16}{r['role']:<8}{r['bst']:>4} {r['spe']:>4}"
             for mode in modes:
                 line += f" {r[col(mode)]*100:>6.1f}"
-            if len(modes) == 2:
+            if has_delta:
                 line += f" {r['delta']*100:>+6.1f}"
             print(line)
 
-    ranked = list(enumerate(rows, 1))
+    if hidden:
+        print(f"({hidden} mons hidden from leaderboards: < {args.min_games} "
+              f"games in some mode -- see CSV)")
+
+    ranked = list(enumerate(ranked_rows, 1))
     show(f"TOP {args.top}  (overtuned candidates):", ranked[:args.top])
     show(f"BOTTOM {args.top}  (undertuned candidates):", ranked[-args.top:])
 
-    if len(modes) == 2:
-        movers = sorted(rows, key=lambda r: r['delta'], reverse=True)
-        show(f"\nBIGGEST role-vs-random GAINERS (synergy-dependent, 1v1 understates):",
+    if has_delta:
+        movers = sorted(ranked_rows, key=lambda r: r['delta'], reverse=True)
+        show(f"\nBIGGEST {focus}-vs-{baseline} GAINERS "
+             f"({focus}-dependent, 1v1/random understates):",
              list(enumerate(movers[:15], 1)))
-        show(f"BIGGEST role-vs-random LOSERS (lone-wolf mons):",
+        show(f"BIGGEST {focus}-vs-{baseline} LOSERS (lone-wolf mons):",
              list(enumerate(movers[-10:], 1)))
 
 

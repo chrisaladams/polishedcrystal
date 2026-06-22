@@ -15,8 +15,23 @@ reproducible statistical signal that stays in sync with the source.
 | `calc.py`    | Gen damage formula + STAB + type effectiveness; best-move selection. |
 | `matrix.py`  | All-vs-all 1v1 best-move threat matrix → CSV + ranked leaderboard. |
 | `engine.py`  | Pragmatic 6v6 turn engine + heuristic move/switch AI (status, stat stages, hazards, recovery, priority). |
-| `teams.py`   | Role-aware moveset picker + two team builders (random, role-based). |
-| `sim6v6.py`  | 6v6 Monte Carlo runner → per-mon team win rate, both builders compared. |
+| `teams.py`   | Role-aware moveset picker + three team builders (random, role-based, synergy-aware). |
+| `sim6v6.py`  | 6v6 Monte Carlo runner → per-mon team win rate, builders compared. |
+| `oracle.py`  | **Ground-truth stat oracle**: calls the ROM's real `CalcPkmnStats` via mGBA and diffs it against `stats.py` (validates all 333 species, 0 mismatches). |
+| `oracle_damage.py` | **Ground-truth damage oracle**: drives the ROM's real `damagecalc`+`stab` via mGBA to arbitrate `calc.py`'s formula. |
+
+### Ground-truth oracles (`oracle.py`, `oracle_damage.py`)
+
+`stats.py` and `calc.py` are readable hand-ports of the ROM's math; the oracles
+are the arbiters. Rather than re-deriving formulas from the asm, they load the
+actual built ROM in mGBA, set up minimal RAM, call the *real* routines, and read
+the result back — so the hand-ports can be diffed against ground truth instead
+of trusted. `oracle.py` validates every one of the 333 species' L50 stats (0
+mismatches); `oracle_damage.py` confirms `calc.py`'s base damage formula is
+faithful (diverges on ~0.05% of matchups, never by >1 HP, all from the engine's
+8-bit Attack/Defense truncation). They require the built `polishedcrystal-3.2.3.gbc`
+and the `mgba` Python bindings; run `python3 meta_sim/oracle.py` /
+`python3 meta_sim/oracle_damage.py` from the repo root.
 
 Two complementary tools:
 
@@ -40,15 +55,20 @@ python3 meta_sim/matrix.py --include-unevolved --csv meta_sim/out/all.csv
 rate) and prints the top/bottom outliers.
 
 ```sh
-python3 meta_sim/sim6v6.py                    # both builders, 3000 battles each
+python3 meta_sim/sim6v6.py                    # random+role, 3000 battles each
+python3 meta_sim/sim6v6.py --mode all         # random+role+synergy
 python3 meta_sim/sim6v6.py --games 5000       # more battles = tighter signal
-python3 meta_sim/sim6v6.py --mode role --top 40
+python3 meta_sim/sim6v6.py --mode synergy --top 40
 python3 meta_sim/sim6v6.py --include-legendary --csv meta_sim/out/sim6v6.csv
 ```
 
-`sim6v6.py` writes `meta_sim/out/sim6v6.csv` (per-mon role + `random_win` /
-`role_win` / `delta`) and prints top/bottom outliers plus the biggest
-role-vs-random movers.
+`sim6v6.py` writes `meta_sim/out/sim6v6.csv` (per-mon role + each mode's
+`*_win` + `delta`) and prints top/bottom outliers plus the biggest movers.
+`delta` = (most structured mode present) − `random`, so `--mode all` reports
+**synergy − random**: how much a mon gains from being drafted into a cohesive
+team. Synergy drafting samples the roster unevenly, so under-sampled mons are
+hidden from the printed leaderboards (tunable with `--min-games`); they remain
+in the CSV.
 
 ## The model
 
@@ -80,13 +100,25 @@ field," then cross-check with the 6v6 run, which *can* switch.
 
 ## The 6v6 model (`sim6v6.py`)
 
-For each battle two teams are built (random or role-based) with role-aware
-movesets, and a **heuristic AI** plays both sides identically: pick the best
-damaging move, but set up / status / heal / lay hazards when it's the better
-play, and switch out of clearly losing matchups. Each mon on the winning team
-is credited a win; aggregated over thousands of battles this gives a team win
-rate per mon. Running both builders and taking `role − random` (`delta`) flags
-mons that depend on team synergy (the support/stall mons 1v1 understates).
+For each battle two teams are built and a **heuristic AI** plays both sides
+identically: pick the best damaging move, but set up / status / heal / lay
+hazards when it's the better play, and switch out of clearly losing matchups.
+Each mon on the winning team is credited a win; aggregated over thousands of
+battles this gives a team win rate per mon.
+
+Three team builders isolate *composition* as the only variable (movesets are
+chosen the same way in all three):
+
+- **random** — random legal 6-mon teams; the unbiased baseline.
+- **role** — classify each mon (sweeper/tank/pivot/wall) and fill a balanced,
+  type-diverse template, so support/stall roles are actually represented.
+- **synergy** — the role template, but each slot is drafted to fit the partial
+  team: it won't let a third teammate share a weakness, and nudges toward mons
+  that resist what the team is weak to and widen its offensive coverage. Across
+  a run this cuts stacked shared weaknesses to ~0.01 per team (role ~0.79,
+  random ~1.82) while still sampling ~97% of the roster. A mon's `synergy −
+  random` delta is how much it benefits from a cohesive team around it — the
+  thing the 1v1 matrix and random teams structurally can't see.
 
 Modelled (the high-impact ~80%): damage + stat stages, the major statuses
 (sleep/paralysis/burn/poison/toxic/freeze + confusion), on-hit secondary
