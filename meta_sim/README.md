@@ -14,7 +14,8 @@ reproducible statistical signal that stays in sync with the source.
 | `stats.py`   | L50 stat calc, reproducing `CalcPkmnStatC` (`engine/pokemon/mon_stats.asm`). |
 | `calc.py`    | Gen damage formula + STAB + type effectiveness; best-move selection. |
 | `matrix.py`  | All-vs-all 1v1 best-move threat matrix → CSV + ranked leaderboard. |
-| `engine.py`  | Pragmatic 6v6 turn engine + heuristic move/switch AI (status, stat stages, hazards, recovery, priority). |
+| `engine.py`  | Pragmatic 6v6 turn engine + heuristic move/switch AI (status, stat stages, hazards, recovery, priority, abilities, items). |
+| `abilities.py` / `items.py` | Multiplier-style ability + held-item models (one fixed ability+item per mon) used by `calc.py`/`engine.py`. |
 | `teams.py`   | Role-aware moveset picker + three team builders (random, role-based, synergy-aware). |
 | `sim6v6.py`  | 6v6 Monte Carlo runner → per-mon team win rate, builders compared. |
 | `oracle.py`  | **Ground-truth stat oracle**: calls the ROM's real `CalcPkmnStats` via mGBA and diffs it against `stats.py` (validates all 333 species, 0 mismatches). |
@@ -87,7 +88,9 @@ This is a **first-order signal for raw stat / typing / movepool / speed
 tuning**, not a battle simulator. It ignores:
 
 - switching, team composition, and the 6v6 AI
-- items, and abilities beyond plain type multipliers
+- held items (a 6v6-only concern); abilities are modelled as a best-case
+  multiplier subset (Huge Power, Adaptability, Technician, Sheer Force,
+  Drought/Drizzle, Sand Stream Sp.Def — see `abilities.py`), not the full set
 - status and residual damage over time (so Toxic/Spikes/sleep stallers and
   Wobbuffet/Ditto/Smeargle-style mechanic mons rank near the bottom — expected)
 - multi-turn / charge / recoil / recovery move dynamics
@@ -123,15 +126,20 @@ chosen the same way in all three):
 Modelled (the high-impact ~80%): damage + stat stages, the major statuses
 (sleep/paralysis/burn/poison/toxic/freeze + confusion), on-hit secondary
 effects, self-stat setup moves, recovery, Leech Seed, entry hazards
-(Spikes/Toxic Spikes), priority, switching. **Sleep Clause is mirrored** from
-the shipped game (toggle `SLEEP_CLAUSE` in `engine.py`).
+(Spikes/Toxic Spikes), priority, switching, plus a **multiplier-style subset of
+abilities and held items** — each mon gets one fixed ability + item for the
+battle (`abilities.py` / `items.py`: Huge Power, Intimidate, Technician, Sand
+Stream, etc.; Choice band/specs/scarf, Life Orb, Leftovers, Eviolite, …).
+**Sleep Clause is mirrored** from the shipped game (toggle `SLEEP_CLAUSE` in
+`engine.py`).
 
 Approximated / ignored (so don't over-read these): confusion as a flat
 self-hit chance; multi-hit as average hit count; two-turn moves resolve in one
-turn; **no weather, screens, trapping, Perish Song, held items, or abilities**.
-Consequently Ditto / Wobbuffet / Smeargle (Transform/Counter/mechanic mons) and
-weather/screen teams are understated by design — that's a known blind spot, not
-a balance verdict. The 6v6 numbers are *sampled*, so deltas within ~±5% (more
+turn; **no weather, screens, trapping, or Perish Song**, and only the
+multiplier-style ability/item subset above (type-changing abilities, Levitate
+immunity, etc. are out). Consequently Ditto / Wobbuffet / Smeargle
+(Transform/Counter/mechanic mons) and weather/screen teams are understated by
+design — that's a known blind spot, not a balance verdict. The 6v6 numbers are *sampled*, so deltas within ~±5% (more
 for rare roles with fewer games) are noise; raise `--games` to tighten.
 
 This is **Option A**: a clean, uniform heuristic AI chosen as a fair yardstick.
