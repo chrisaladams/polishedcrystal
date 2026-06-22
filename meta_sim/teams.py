@@ -20,6 +20,8 @@ import random
 from collections import Counter
 
 from engine import (BOOST, HEAL_EFFECTS, INFLICT, type_mult)
+import abilities
+import items
 
 # role-relevant utility effect buckets
 SETUP = set(BOOST) | {'EFFECT_BELLY_DRUM'}
@@ -148,9 +150,11 @@ def build_pool(mons, learnsets, args):
 
 
 def make_mon(mid, pool, moves, chart):
-    """Return (mid, mon, moveset) tuple ready for engine.Pmon."""
+    """Return (mid, mon, moveset, ability, item) tuple ready for engine.Pmon."""
     m = pool[mid]
-    return (mid, m, pick_moveset(mid, m, moves, chart, m['_role']))
+    ability = abilities.pick_ability(m.get('abilities'))
+    item = items.pick_item(mid, m, m['_role'])
+    return (mid, m, pick_moveset(mid, m, moves, chart, m['_role']), ability, item)
 
 
 def random_team(ids, pool, moves, chart, rng):
