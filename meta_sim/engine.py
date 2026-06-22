@@ -100,13 +100,14 @@ class Pmon:
         self.fainted = False
         self.locked_move = None            # Choice-item move lock (index into self.moves)
 
-    def stat(self, key):
+    def stat(self, key, weather=None):
         v = self.base[key] * stage_mult(self.stage.get(key, 0))
         if key == 'spe':
             if self.status == 'par':
                 v *= 0.25
             if self.item == 'CHOICE_SCARF':
                 v *= items.CHOICE_SCARF_SPEED_MULT
+            v *= abilities.weather_speed_mult(self.ability, weather)
         if key in ('defe', 'spd') and self.item == 'EVIOLITE':
             v *= items.EVIOLITE_DEF_MULT
         return v
@@ -135,9 +136,23 @@ class Side:
 
 
 # ---- damage ------------------------------------------------------------------
-def _damage_terms(att, dfn, move, chart):
+def eff_mult(move, dfn, chart):
+    """Type effectiveness including the defender's ability (Levitate-style
+    immunity -> 0, Thick Fat-style halving -> 0.5)."""
+    return (type_mult(move['type'], dfn.types, chart)
+            * abilities.defending_type_mult(dfn.ability, move['type']))
+
+
+def _sand_spdef(dfn, move, weather):
+    """Rock-types get x1.5 Sp.Def in a sandstorm."""
+    if weather == 'sand' and move['cat'] == 'SPECIAL' and 'ROCK' in dfn.types:
+        return 1.5
+    return 1.0
+
+
+def _damage_terms(att, dfn, move, chart, weather=None):
     """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
-    eff = type_mult(move['type'], dfn.types, chart)
+    eff = eff_mult(move, dfn, chart)
     is_stab = move['type'] in att.types
     atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
     if move['cat'] == 'PHYSICAL':
@@ -150,35 +165,36 @@ def _damage_terms(att, dfn, move, chart):
         a, d = att.stat('spa') * atk_mult, dfn.stat('spd')
         if att.item == 'CHOICE_SPECS':
             a *= items.CHOICE_STAT_MULT
-    d *= abilities.defending_sand_mult([dfn.ability] if dfn.ability else [], dfn.types, move)
+    d *= _sand_spdef(dfn, move, weather)
     stab = abilities.stab_mult(att.ability, is_stab)
+    dmg_mult *= abilities.weather_dmg_mult(weather, move['type'])
     if att.item == 'LIFE_ORB':
         dmg_mult *= items.LIFE_ORB_DMG_MULT
     return eff, a, d, stab, dmg_mult
 
 
-def move_damage(att, dfn, move, chart, rng):
+def move_damage(att, dfn, move, chart, rng, weather=None):
     """Expected/rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0, 1.0
-    eff = type_mult(move['type'], dfn.types, chart)
+    eff = eff_mult(move, dfn, chart)
     if eff == 0.0:
         return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather)
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
     roll = rng.uniform(0.85, 1.0)
     hits = MULTI.get(move['effect'], 1)
     return int(base * stab * eff * dmg_mult * roll) * hits, eff
 
 
-def expected_damage(att, dfn, move, chart):
+def expected_damage(att, dfn, move, chart, weather=None):
     """Deterministic average damage, for AI scoring (no RNG)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
-        return 0, type_mult(move['type'], dfn.types, chart) if move['power'] else 1.0
-    eff = type_mult(move['type'], dfn.types, chart)
+        return 0, eff_mult(move, dfn, chart) if move['power'] else 1.0
+    eff = eff_mult(move, dfn, chart)
     if eff == 0.0:
         return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather)
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
     hits = MULTI.get(move['effect'], 1)
     acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
@@ -186,7 +202,7 @@ def expected_damage(att, dfn, move, chart):
 
 
 # ---- heuristic AI ------------------------------------------------------------
-def choose_move(side, foe, moves, chart):
+def choose_move(side, foe, moves, chart, weather=None):
     """Return the index into att.moves the heuristic AI plays this turn."""
     att, dfn = side.mon, foe.mon
     if att.locked_move is not None:
@@ -195,7 +211,7 @@ def choose_move(side, foe, moves, chart):
     util = []                              # (priority_score, index)
     for i, mv in enumerate(att.moves):
         m = moves[mv]
-        dmg, eff = expected_damage(att, dfn, m, chart)
+        dmg, eff = expected_damage(att, dfn, m, chart, weather)
         if dmg > best_dmg:
             best_dmg, best_dmg_i = dmg, i
         e = m['effect']
@@ -231,18 +247,23 @@ def choose_move(side, foe, moves, chart):
 
 
 def matchup_score(mon, foe, moves, chart):
-    """How good is `mon` against active `foe`? offense - defense, for switching."""
+    """How good is `mon` against active `foe`? offense - defense, for switching.
+    Respects ability immunities both ways (e.g. a Levitate mon sees a Ground
+    attacker as harmless and switches in; an attacker sees a Water move into a
+    Water Absorb foe as worthless)."""
     off = 0.0
     for mv in mon.moves:
         m = moves[mv]
         if m['cat'] != 'STATUS' and m['power'] > 0:
             off = max(off, type_mult(m['type'], foe.types, chart) *
+                      abilities.defending_type_mult(foe.ability, m['type']) *
                       (STAB if m['type'] in mon.types else 1.0))
     deff = 0.0
     for mv in foe.moves:
         m = moves[mv]
         if m['cat'] != 'STATUS' and m['power'] > 0:
-            deff = max(deff, type_mult(m['type'], mon.types, chart))
+            deff = max(deff, type_mult(m['type'], mon.types, chart) *
+                       abilities.defending_type_mult(mon.ability, m['type']))
     return off - deff
 
 
@@ -266,7 +287,7 @@ def choose_switch(side, foe, moves, chart, forced):
 
 
 # ---- per-turn mechanics ------------------------------------------------------
-def apply_switch(side, idx, chart):
+def apply_switch(side, idx, chart, foe_side=None):
     side.mon.reset_volatile()
     side.active = idx
     m = side.mon
@@ -280,9 +301,17 @@ def apply_switch(side, idx, chart):
             m.status = 'tox' if side.tspikes >= 2 else 'psn'
     if m.hp <= 0:
         m.fainted = True
+        return
+    # Intimidate: drop the opposing active mon's Attack one stage on switch-in
+    if m.ability == 'INTIMIDATE' and foe_side is not None and not foe_side.mon.fainted:
+        f = foe_side.mon
+        f.stage['atk'] = max(-6, f.stage['atk'] - 1)
 
 
-def end_of_turn(mon, foe_side):
+SAND_IMMUNE = {'ROCK', 'GROUND', 'STEEL'}
+
+
+def end_of_turn(mon, foe_side, weather=None):
     """Residual damage/heal. Returns False if mon faints."""
     if mon.fainted:
         return False
@@ -294,6 +323,8 @@ def end_of_turn(mon, foe_side):
     if mon.seeded and not mon.fainted:
         drain = min(mon.maxhp / 8, max(mon.hp, 0))
         mon.hp -= drain
+    if weather == 'sand' and not (SAND_IMMUNE & set(mon.types)):
+        mon.hp -= mon.maxhp / 16
     if mon.hp <= 0:
         mon.fainted = True
         return False
@@ -302,7 +333,7 @@ def end_of_turn(mon, foe_side):
     return True
 
 
-def perform(att_side, dfn_side, moves, chart, rng):
+def perform(att_side, dfn_side, moves, chart, rng, weather=None):
     """Execute the active mon's chosen action for att_side against dfn_side."""
     att, dfn = att_side.mon, dfn_side.mon
 
@@ -328,7 +359,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
                 att.fainted = True
             return
 
-    idx = choose_move(att_side, dfn_side, moves, chart)
+    idx = choose_move(att_side, dfn_side, moves, chart, weather)
     mv = att.moves[idx]
     m = moves[mv]
     if att.item in CHOICE_ITEMS and m['cat'] != 'STATUS' and m['power'] > 0:
@@ -340,7 +371,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
 
     e = m['effect']
     if e == 'EFFECT_EXPLOSION':
-        dmg, _ = move_damage(att, dfn, m, chart, rng)
+        dmg, _ = move_damage(att, dfn, m, chart, rng, weather)
         dfn.hp -= dmg * 2
         att.hp = 0
         att.fainted = True
@@ -349,7 +380,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
         return
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
-        dmg, eff = move_damage(att, dfn, m, chart, rng)
+        dmg, eff = move_damage(att, dfn, m, chart, rng, weather)
         dfn.hp -= dmg
         if att.item == 'LIFE_ORB' and dmg > 0:
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
@@ -421,12 +452,25 @@ def perform(att_side, dfn_side, moves, chart, rng):
     # unmodelled status move: no-op
 
 
+def current_weather(a_side, b_side):
+    """Weather is up while an un-fainted active mon holds a setter ability
+    (modern 'ability weather': persists while its owner is on the field). If
+    both sides set weather, the A-side's takes precedence -- a rare tie that
+    barely affects aggregate stats."""
+    for s in (a_side, b_side):
+        if not s.mon.fainted:
+            w = abilities.WEATHER_SETTERS.get(s.mon.ability)
+            if w:
+                return w
+    return None
+
+
 def run_battle(team_a, team_b, moves, chart, seed=None):
     """Run one 6v6. Returns 0 if side A wins, 1 if B, -1 on turn-limit draw."""
     rng = random.Random(seed)
     A, B = Side([Pmon(*t) for t in team_a]), Side([Pmon(*t) for t in team_b])
-    apply_switch(A, 0, chart)
-    apply_switch(B, 0, chart)
+    apply_switch(A, 0, chart, B)
+    apply_switch(B, 0, chart, A)
 
     for _ in range(MAX_TURNS):
         # ---- switching decisions (forced first if a side's active fainted) ----
@@ -434,7 +478,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
             if s.mon.fainted:
                 nxt = choose_switch(s, foe, moves, chart, forced=True)
                 if nxt is not None:
-                    apply_switch(s, nxt, chart)
+                    apply_switch(s, nxt, chart, foe)
         if not A.alive_indices():
             return 1
         if not B.alive_indices():
@@ -443,23 +487,26 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
             if not s.mon.fainted:
                 nxt = choose_switch(s, foe, moves, chart, forced=False)
                 if nxt is not None:
-                    apply_switch(s, nxt, chart)
+                    apply_switch(s, nxt, chart, foe)
+
+        weather = current_weather(A, B)
 
         # ---- order by (priority of chosen move, speed) ----
-        ia = choose_move(A, B, moves, chart)
-        ib = choose_move(B, A, moves, chart)
+        ia = choose_move(A, B, moves, chart, weather)
+        ib = choose_move(B, A, moves, chart, weather)
         pa, pb = moves[A.mon.moves[ia]]['prio'], moves[B.mon.moves[ib]]['prio']
-        sa, sb = A.mon.stat('spe'), B.mon.stat('spe')
+        sa, sb = A.mon.stat('spe', weather), B.mon.stat('spe', weather)
         a_first = (pa, sa) > (pb, sb) or ((pa, sa) == (pb, sb) and rng.random() < 0.5)
         order = (A, B) if a_first else (B, A)
 
         for s, foe in (order, order[::-1]):
             if s.mon.fainted or foe.mon.fainted:
                 continue
-            perform(s, foe, moves, chart, rng)
-        # ---- residuals ----
+            perform(s, foe, moves, chart, rng, weather)
+        # ---- residuals (recompute weather: a faint may have removed the setter) ----
+        weather = current_weather(A, B)
         for s, foe in ((A, B), (B, A)):
-            end_of_turn(s.mon, foe)
+            end_of_turn(s.mon, foe, weather)
         if not A.alive_indices():
             return 1
         if not B.alive_indices():

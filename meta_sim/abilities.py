@@ -1,37 +1,113 @@
 """Shared ability constants/helpers for both the 1v1 matrix (calc.py) and the
 6v6 engine (engine.py), so the two tools agree on what's modeled.
 
-Multiplier-style abilities only -- no Levitate immunity, Intimidate,
-Sturdy, trapping, Regenerator, etc. Those need event hooks (switch-in,
-on-faint) the engines don't have yet.
+Models the high-impact, frequently-cited subset:
+  offense   : Huge/Pure Power, Adaptability, Technician, Sheer Force.
+  defense   : type-immunity abilities (Levitate/Flash Fire/Water+Volt Absorb/
+              Sap Sipper/Lightning Rod/Motor Drive/Dry Skin) and damage-halvers
+              (Thick Fat). Applied to the defender in both tools.
+  switch-in : Intimidate (-1 foe Atk). 6v6 engine only (1v1 has no switch).
+  weather   : Drought/Drizzle/Sand Stream/Snow Warning set weather while their
+              owner is active; weather scales Fire/Water damage, boosts Rock
+              Sp.Def in sand, doubles Swift Swim/Chlorophyll/Sand/Slush Rush
+              speed, and chips non-Rock/Ground/Steel in sand. 6v6 engine only;
+              the 1v1 matrix instead gives a weather-setter its own best-case
+              boost (weather assumed up).
+Still out: Sturdy, Regenerator, Magic Guard/Bounce, trapping, type-changing
+(-ate) abilities, Unaware, Speed Boost.
 """
 
 TECHNICIAN_THRESHOLD = 60
 ADAPTABILITY_STAB = 2.0
 ATK_DOUBLERS = {'HUGE_POWER', 'PURE_POWER'}
-WEATHER_OWN_BOOST = {
-    'DROUGHT': {'FIRE': 1.5, 'WATER': 0.5},
-    'DRIZZLE': {'WATER': 1.5, 'FIRE': 0.5},
+
+# --- defender-side type interactions -----------------------------------------
+# type-immunity abilities -> the move type they zero out
+TYPE_IMMUNITY = {
+    'LEVITATE': 'GROUND',
+    'FLASH_FIRE': 'FIRE',
+    'WATER_ABSORB': 'WATER', 'DRY_SKIN': 'WATER', 'STORM_DRAIN': 'WATER',
+    'VOLT_ABSORB': 'ELECTRIC', 'LIGHTNING_ROD': 'ELECTRIC', 'MOTOR_DRIVE': 'ELECTRIC',
+    'SAP_SIPPER': 'GRASS',
+}
+# damage-halving defensive abilities -> the move types they halve
+TYPE_RESIST = {
+    'THICK_FAT': {'FIRE', 'ICE'},
+    'HEATPROOF': {'FIRE'},
+    'WATER_BUBBLE': {'FIRE'},
 }
 
-# Preference order when a mon must commit to one ability for a whole 6v6
-# battle (the 1v1 matrix instead tries all of a mon's abilities and keeps
-# the best per move). Offensive multiplier abilities first; anything else
-# falls back to whichever ability is listed first on the species.
-OFFENSE_PRIORITY = ['ADAPTABILITY', 'HUGE_POWER', 'PURE_POWER', 'TECHNICIAN',
-                     'SHEER_FORCE', 'DROUGHT', 'DRIZZLE', 'SAND_STREAM']
+# --- weather -----------------------------------------------------------------
+WEATHER_SETTERS = {'DROUGHT': 'sun', 'DRIZZLE': 'rain',
+                   'SAND_STREAM': 'sand', 'SNOW_WARNING': 'hail'}
+# move-type damage scaling under weather
+WEATHER_DMG = {'sun': {'FIRE': 1.5, 'WATER': 0.5},
+               'rain': {'WATER': 1.5, 'FIRE': 0.5}}
+# speed-doubling abilities by weather
+WEATHER_SPEED = {'rain': 'SWIFT_SWIM', 'sun': 'CHLOROPHYLL',
+                 'sand': 'SAND_RUSH', 'hail': 'SLUSH_RUSH'}
+
+# Preference order when a mon must commit to one ability for a whole 6v6 battle
+# (the 1v1 matrix instead tries all of a mon's offensive abilities per move, and
+# always gives the defender its best defensive one). Ordered by how much the
+# ability swings a game: archetype-defining weather and matchup-flipping
+# immunities first, then offensive multipliers, then the rest.
+ABILITY_PRIORITY = [
+    'DROUGHT', 'DRIZZLE', 'SAND_STREAM', 'SNOW_WARNING',
+    'LEVITATE', 'WATER_ABSORB', 'VOLT_ABSORB', 'FLASH_FIRE', 'SAP_SIPPER',
+    'DRY_SKIN', 'LIGHTNING_ROD', 'MOTOR_DRIVE',
+    'HUGE_POWER', 'PURE_POWER', 'ADAPTABILITY',
+    'INTIMIDATE', 'THICK_FAT',
+    'TECHNICIAN', 'SHEER_FORCE',
+    'SWIFT_SWIM', 'CHLOROPHYLL', 'SAND_RUSH', 'SLUSH_RUSH',
+]
 
 
 def pick_ability(abilities):
-    """Pick one ability for a mon to use for an entire 6v6 battle: prefer a
-    modeled offensive ability if the species has one, else its first
-    (regular) ability."""
+    """Pick one ability for a mon to use for an entire 6v6 battle: the most
+    battle-swinging modeled ability the species has (see ABILITY_PRIORITY),
+    else its first (regular) ability."""
     if not abilities:
         return None
-    for pref in OFFENSE_PRIORITY:
+    for pref in ABILITY_PRIORITY:
         if pref in abilities:
             return pref
     return abilities[0]
+
+
+def defending_type_mult(ability, move_type):
+    """Effectiveness multiplier the DEFENDER's `ability` applies to an incoming
+    move: 0.0 for a type immunity, 0.5 for a damage-halver (Thick Fat), else
+    1.0. One committed ability (the 6v6 case)."""
+    if TYPE_IMMUNITY.get(ability) == move_type:
+        return 0.0
+    if move_type in TYPE_RESIST.get(ability, ()):
+        return 0.5
+    return 1.0
+
+
+def best_defending_type_mult(abilities, move_type):
+    """1v1 'best case': a defender that could run any of its abilities gets the
+    most favorable (lowest) multiplier across them."""
+    if not abilities:
+        return 1.0
+    return min(defending_type_mult(a, move_type) for a in abilities)
+
+
+def weather_speed_mult(ability, weather):
+    """x2 speed if `ability` is the weather's speed-booster, else x1."""
+    return 2.0 if weather and WEATHER_SPEED.get(weather) == ability else 1.0
+
+
+def weather_dmg_mult(weather, move_type):
+    """Fire/Water damage scaling under sun/rain (x1 otherwise)."""
+    return WEATHER_DMG.get(weather, {}).get(move_type, 1.0)
+
+
+def own_weather_dmg_mult(ability, move_type):
+    """1v1 best-case: a weather-setter's own Fire/Water move gets the weather
+    boost (weather assumed always up for the setter)."""
+    return weather_dmg_mult(WEATHER_SETTERS.get(ability), move_type)
 
 
 def offense_multipliers(ability, move, is_stab):
@@ -45,9 +121,6 @@ def offense_multipliers(ability, move, is_stab):
         dmg_mult *= 1.5
     if ability == 'SHEER_FORCE' and move.get('chance', 0) > 0:
         dmg_mult *= 1.3
-    boost = WEATHER_OWN_BOOST.get(ability, {}).get(move['type'])
-    if boost:
-        dmg_mult *= boost
     return atk_mult, dmg_mult
 
 

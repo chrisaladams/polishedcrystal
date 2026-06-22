@@ -89,8 +89,10 @@ tuning**, not a battle simulator. It ignores:
 
 - switching, team composition, and the 6v6 AI
 - held items (a 6v6-only concern); abilities are modelled as a best-case
-  multiplier subset (Huge Power, Adaptability, Technician, Sheer Force,
-  Drought/Drizzle, Sand Stream Sp.Def — see `abilities.py`), not the full set
+  subset (Huge Power, Adaptability, Technician, Sheer Force, own-weather
+  Fire/Water boost, Sand Sp.Def, **and the defender's type-immunity / Thick Fat
+  abilities** — see `abilities.py`), not the full set. Intimidate and field
+  weather are 6v6-only (they need switch-in / turn state)
 - status and residual damage over time (so Toxic/Spikes/sleep stallers and
   Wobbuffet/Ditto/Smeargle-style mechanic mons rank near the bottom — expected)
 - multi-turn / charge / recoil / recovery move dynamics
@@ -126,21 +128,33 @@ chosen the same way in all three):
 Modelled (the high-impact ~80%): damage + stat stages, the major statuses
 (sleep/paralysis/burn/poison/toxic/freeze + confusion), on-hit secondary
 effects, self-stat setup moves, recovery, Leech Seed, entry hazards
-(Spikes/Toxic Spikes), priority, switching, plus a **multiplier-style subset of
-abilities and held items** — each mon gets one fixed ability + item for the
-battle (`abilities.py` / `items.py`: Huge Power, Intimidate, Technician, Sand
-Stream, etc.; Choice band/specs/scarf, Life Orb, Leftovers, Eviolite, …).
+(Spikes/Toxic Spikes), priority, switching, and a sizeable **ability + held-item
+layer** — each mon commits to one ability + item for the battle (`abilities.py`
+/ `items.py`):
+
+- *offense* — Huge/Pure Power, Adaptability, Technician, Sheer Force.
+- *defense* — type-immunity abilities (Levitate, Flash Fire, Water/Volt Absorb,
+  Sap Sipper, Lightning Rod, Motor Drive, Dry Skin → the move does 0) and
+  damage-halvers (Thick Fat). Flips whole matchups; applied in both tools.
+- *switch-in* — Intimidate (−1 the foe's Attack as it comes in).
+- *weather* — Drought/Drizzle/Sand Stream/Snow Warning set weather while their
+  owner is active: Fire/Water damage scales in sun/rain, Rock gets +Sp.Def in
+  sand, Swift Swim/Chlorophyll/Sand/Slush Rush double Speed, and sand chips
+  non-Rock/Ground/Steel.
+- *items* — Choice band/specs/scarf, Life Orb, Leftovers, Eviolite (true-NFE).
+
 **Sleep Clause is mirrored** from the shipped game (toggle `SLEEP_CLAUSE` in
 `engine.py`).
 
 Approximated / ignored (so don't over-read these): confusion as a flat
 self-hit chance; multi-hit as average hit count; two-turn moves resolve in one
-turn; **no weather, screens, trapping, or Perish Song**, and only the
-multiplier-style ability/item subset above (type-changing abilities, Levitate
-immunity, etc. are out). Consequently Ditto / Wobbuffet / Smeargle
-(Transform/Counter/mechanic mons) and weather/screen teams are understated by
-design — that's a known blind spot, not a balance verdict. The 6v6 numbers are *sampled*, so deltas within ~±5% (more
-for rare roles with fewer games) are noise; raise `--games` to tighten.
+turn; **no screens, trapping, or Perish Song**, and abilities outside the set
+above (Sturdy, Regenerator, Magic Guard/Bounce, type-changing −ate abilities,
+Unaware, Speed Boost) and most items. Consequently Ditto / Wobbuffet / Smeargle
+(Transform/Counter/mechanic mons) are understated by design — a known blind
+spot, not a balance verdict. The 6v6 numbers are *sampled*, so deltas within
+~±5% (more for rare roles with fewer games) are noise; raise `--games` to
+tighten.
 
 This is **Option A**: a clean, uniform heuristic AI chosen as a fair yardstick.
 A faithful port of the ROM's trainer AI (`engine/battle/ai/*.asm`) would match

@@ -46,11 +46,16 @@ def damage(attacker, defender, move, chart, atk_ability=None):
     Returns 0 for status moves or zero-power / immune moves."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0
-    eff = type_mult(move['type'], defender['types'], chart)
+    # type chart + the defender's best defensive ability (Levitate-style
+    # immunity -> 0, Thick Fat-style halving -> 0.5)
+    eff = (type_mult(move['type'], defender['types'], chart) *
+           abilities.best_defending_type_mult(defender.get('abilities'), move['type']))
     if eff == 0.0:
         return 0
     is_stab = move['type'] in attacker['types']
     atk_mult, dmg_mult = abilities.offense_multipliers(atk_ability, move, is_stab)
+    # a weather-setting attacker gets its own best-case Fire/Water boost
+    dmg_mult *= abilities.own_weather_dmg_mult(atk_ability, move['type'])
     if move['cat'] == 'PHYSICAL':
         a, d = attacker['stats']['atk'] * atk_mult, defender['stats']['defe']
     else:

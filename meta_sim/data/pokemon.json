@@ -2007,14 +2007,14 @@
 "porygon_z": {
 "id": "porygon_z",
 "stats": {
-"hp": 85,
+"hp": 80,
 "atk": 80,
 "defe": 70,
 "spe": 90,
-"spa": 135,
+"spa": 120,
 "spd": 75
 },
-"bst": 535,
+"bst": 515,
 "types": [
 "NORMAL"
 ],
