@@ -8,6 +8,14 @@ back the 6 resulting stats. Mirrors stats.py's baseline assumptions exactly
 (DV=15 via PERFECT_IVS_OPT, EV=252/stat, L50, neutral nature) so the two can
 be diffed directly.
 
+Covers plain species (id 1-254) and MON_EXTSPECIES mons -- every gen4+
+evolution this hack adds past the original Crystal roster, e.g. Togekiss/
+Honchkrow/Magnezone (id 256-509, split across wCurSpecies + an EXTSPECIES_MASK
+bit in wCurForm; see query_stats_by_id). Cosmetic/regional forms (Unown
+letters, Paldean Tauros, Hisuian Qwilfish, etc.) use a third mechanism, a
+variant-species-and-form table lookup in GetSpeciesAndFormIndex, and are
+not yet handled.
+
 Addresses below were resolved from polishedcrystal-3.2.3.sym for this build;
 they will need re-resolving if the ROM is rebuilt and symbols shift.
 """
@@ -41,6 +49,7 @@ TRAMPOLINE_ADDR = 0xc100
 
 PERFECT_IVS_OPT = 0x08
 EVS_OPT_MODERN = 0x02
+EXTSPECIES_MASK = 0x20
 
 STAT_ORDER = ['hp', 'atk', 'defe', 'spe', 'spa', 'spd']
 
@@ -105,6 +114,24 @@ def query_stats(species_id, form=0, level=50, ev=252, nature=0, core=None):
     return dict(zip(STAT_ORDER, vals))
 
 
+def query_stats_by_id(national_id, **kw):
+    """Query by the numeric id from pokemon_constants.asm's hex comments.
+    Ids 1-254 address BaseData directly via wCurSpecies (plain species).
+    Ids 256-509 are mons added via the two-byte MON_EXTSPECIES mechanism
+    (every gen4+ evolution this hack adds, e.g. Togekiss/Honchkrow): the
+    routine can't fit them in the single wCurSpecies byte, so it splits
+    them across wCurSpecies (low part) and an EXTSPECIES_MASK bit (0x20)
+    in wCurForm, reassembling them inside GetSpeciesAndFormIndex. Id 255
+    is the EGG sentinel and isn't a real species. Cosmetic/regional forms
+    (Unown letters, Paldean Tauros, etc.) use a third mechanism -- a
+    variant-species-and-form table lookup -- not handled here."""
+    if national_id <= 254:
+        return query_stats(national_id, **kw)
+    if national_id == 255:
+        raise ValueError('255 is the EGG sentinel, not a real species')
+    return query_stats(national_id - 256, form=EXTSPECIES_MASK, **kw)
+
+
 def load_species_ids(const_path='constants/pokemon_constants.asm'):
     """name -> numeric species id, parsed from the hex comments in
     pokemon_constants.asm (not line position -- there's a gap at 0x100)."""
@@ -119,11 +146,11 @@ def load_species_ids(const_path='constants/pokemon_constants.asm'):
 
 def validate(pokemon_json='meta_sim/data/pokemon.json'):
     """Diff stats.py's hand-rolled formula against the ROM's real
-    CalcPkmnStats for every species we can address with a single-byte
-    species id (1-255). Regional/cosmetic forms and gen4+ mons added via
-    the two-byte MON_EXTSPECIES mechanism (species id 256+, e.g. Togekiss,
-    Honchkrow, Magnezone) require replicating the variant-form-table lookup
-    and are out of scope here -- skipped, not silently wrong."""
+    CalcPkmnStats for every species addressable via plain species id or
+    the MON_EXTSPECIES mechanism (covers ids 1-254 and 256-509). Cosmetic/
+    regional forms (Unown letters, Paldean Tauros, Hisuian Qwilfish, etc.)
+    use a third mechanism -- a variant-species-and-form table lookup --
+    and are out of scope here: skipped, not silently assumed correct."""
     import json
     from stats import mon_stats
 
@@ -135,11 +162,11 @@ def validate(pokemon_json='meta_sim/data/pokemon.json'):
         if 'stats' not in m:
             continue
         sid = ids.get(name.rstrip('_'))
-        if '_' in name or not sid or sid > 255:
+        if '_' in name or not sid or sid == 255 or sid > 509:
             skipped += 1
             continue
         checked += 1
-        oracle_r = query_stats(sid, core=core)
+        oracle_r = query_stats_by_id(sid, core=core)
         py_r = mon_stats(m['stats'])
         if oracle_r != py_r:
             mismatches.append((name, sid, oracle_r, py_r))
@@ -148,7 +175,7 @@ def validate(pokemon_json='meta_sim/data/pokemon.json'):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        print(query_stats(int(sys.argv[1])))
+        print(query_stats_by_id(int(sys.argv[1])))
     else:
         checked, skipped, mismatches = validate()
         print(f'checked {checked} species against the ROM, skipped {skipped} '
