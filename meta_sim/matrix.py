@@ -7,9 +7,12 @@ draws -> a win rate ("threat score"), then flag the high and low outliers.
 
 WHAT THIS MODELS: raw stat / typing / movepool / speed tuning, at a uniform
 "max" build (DV15, 252 EVs everywhere, neutral nature), average damage roll,
-crits off. WHAT IT DOES NOT: switching, items, abilities beyond type
-multipliers, status/residual damage over time, hazards, multi-turn moves, the
-6v6 AI. It is a fast first-order signal, not a full battle.
+crits off, plus a small set of multiplier-style abilities (Huge Power/Pure
+Power, Adaptability, Technician, Sheer Force, Drought/Drizzle, and the
+defender's own Sand Stream Sp.Def boost on Rock-types -- see calc.py). WHAT IT
+DOES NOT: switching, items, weather chip damage, status/residual damage over
+time, hazards, multi-turn moves, the 6v6 AI. It is a fast first-order signal,
+not a full battle.
 
 Usage (from repo root):
     python3 meta_sim/matrix.py                 # fully-evolved, non-legendary
