@@ -1,0 +1,2562 @@
+{
+"ACROBATICS": {
+"effect": "EFFECT_CONDITIONAL_BOOST",
+"power": 55,
+"type": "FLYING",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"KARATE_CHOP": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 50,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 25,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DOUBLE_SLAP": {
+"effect": "EFFECT_MULTI_HIT",
+"power": 15,
+"type": "NORMAL",
+"acc": 85,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"AERIAL_ACE": {
+"effect": "EFFECT_ALWAYS_HIT",
+"power": 60,
+"type": "FLYING",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DRAGON_CLAW": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "DRAGON",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"PAY_DAY": {
+"effect": "EFFECT_PAY_DAY",
+"power": 40,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FIRE_PUNCH": {
+"effect": "EFFECT_BURN_HIT",
+"power": 75,
+"type": "FIRE",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ICE_PUNCH": {
+"effect": "EFFECT_FREEZE_HIT",
+"power": 75,
+"type": "ICE",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"THUNDERPUNCH": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 75,
+"type": "ELECTRIC",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SCRATCH": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 40,
+"type": "NORMAL",
+"acc": 100,
+"pp": 35,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"X_SCISSOR": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "BUG",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"NIGHT_SLASH": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 70,
+"type": "DARK",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"AIR_SLASH": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 75,
+"type": "FLYING",
+"acc": 95,
+"pp": 15,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SWORDS_DANCE": {
+"effect": "EFFECT_ATTACK_UP_2",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"CUT": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 60,
+"type": "STEEL",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"GUST": {
+"effect": "EFFECT_GUST",
+"power": 40,
+"type": "FLYING",
+"acc": 100,
+"pp": 35,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"WING_ATTACK": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 60,
+"type": "FLYING",
+"acc": 100,
+"pp": 35,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SUCKER_PUNCH": {
+"effect": "EFFECT_SUCKER_PUNCH",
+"power": 70,
+"type": "DARK",
+"acc": 100,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 1
+},
+"FLY": {
+"effect": "EFFECT_FLY",
+"power": 90,
+"type": "FLYING",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DAZZLINGLEAM": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "FAIRY",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"VOLT_SWITCH": {
+"effect": "EFFECT_SWITCH_HIT",
+"power": 70,
+"type": "ELECTRIC",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"VINE_WHIP": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 45,
+"type": "GRASS",
+"acc": 100,
+"pp": 25,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"STOMP": {
+"effect": "EFFECT_STOMP",
+"power": 65,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DOUBLE_KICK": {
+"effect": "EFFECT_DOUBLE_HIT",
+"power": 30,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FLARE_BLITZ": {
+"effect": "EFFECT_FLARE_BLITZ",
+"power": 120,
+"type": "FIRE",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"STONE_EDGE": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 100,
+"type": "ROCK",
+"acc": 80,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FOCUS_BLAST": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 120,
+"type": "FIGHTING",
+"acc": 70,
+"pp": 5,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"TOXIC_SPIKES": {
+"effect": "EFFECT_TOXIC_SPIKES",
+"power": 0,
+"type": "POISON",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HEADBUTT": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 70,
+"type": "NORMAL",
+"acc": 100,
+"pp": 15,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"HORN_ATTACK": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 65,
+"type": "NORMAL",
+"acc": 100,
+"pp": 25,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"TRICK": {
+"effect": "EFFECT_TRICK",
+"power": 0,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HEX": {
+"effect": "EFFECT_CONDITIONAL_BOOST",
+"power": 65,
+"type": "GHOST",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"TACKLE": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 40,
+"type": "NORMAL",
+"acc": 100,
+"pp": 35,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BODY_SLAM": {
+"effect": "EFFECT_BODY_SLAM",
+"power": 85,
+"type": "NORMAL",
+"acc": 100,
+"pp": 15,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"WRAP": {
+"effect": "EFFECT_TRAP",
+"power": 15,
+"type": "NORMAL",
+"acc": 90,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"TAKE_DOWN": {
+"effect": "EFFECT_RECOIL_HIT",
+"power": 90,
+"type": "NORMAL",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"THRASH": {
+"effect": "EFFECT_RAMPAGE",
+"power": 120,
+"type": "NORMAL",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DOUBLE_EDGE": {
+"effect": "EFFECT_RECOIL_HIT",
+"power": 120,
+"type": "NORMAL",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"HAIL": {
+"effect": "EFFECT_HAIL",
+"power": 0,
+"type": "ICE",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"POISON_STING": {
+"effect": "EFFECT_POISON_HIT",
+"power": 15,
+"type": "POISON",
+"acc": 100,
+"pp": 35,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"U_TURN": {
+"effect": "EFFECT_SWITCH_HIT",
+"power": 70,
+"type": "BUG",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"PIN_MISSILE": {
+"effect": "EFFECT_MULTI_HIT",
+"power": 25,
+"type": "BUG",
+"acc": 95,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"LEER": {
+"effect": "EFFECT_DEFENSE_DOWN",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"BITE": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 60,
+"type": "DARK",
+"acc": 100,
+"pp": 25,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"GROWL": {
+"effect": "EFFECT_ATTACK_DOWN",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ROAR": {
+"effect": "EFFECT_ROAR",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": -6
+},
+"SING": {
+"effect": "EFFECT_SLEEP",
+"power": 0,
+"type": "NORMAL",
+"acc": 75,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SUPERSONIC": {
+"effect": "EFFECT_CONFUSE",
+"power": 0,
+"type": "NORMAL",
+"acc": 65,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SONIC_BOOM": {
+"effect": "EFFECT_STATIC_DAMAGE",
+"power": 20,
+"type": "NORMAL",
+"acc": 90,
+"pp": 20,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"DISABLE": {
+"effect": "EFFECT_DISABLE",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ACID": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 40,
+"type": "POISON",
+"acc": 100,
+"pp": 30,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"EMBER": {
+"effect": "EFFECT_BURN_HIT",
+"power": 40,
+"type": "FIRE",
+"acc": 100,
+"pp": 25,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"FLAMETHROWER": {
+"effect": "EFFECT_BURN_HIT",
+"power": 90,
+"type": "FIRE",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"CALM_MIND": {
+"effect": "EFFECT_CALM_MIND",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"WATER_GUN": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 40,
+"type": "WATER",
+"acc": 100,
+"pp": 25,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"HYDRO_PUMP": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 110,
+"type": "WATER",
+"acc": 80,
+"pp": 5,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SURF": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 90,
+"type": "WATER",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"ICE_BEAM": {
+"effect": "EFFECT_FREEZE_HIT",
+"power": 90,
+"type": "ICE",
+"acc": 100,
+"pp": 10,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"BLIZZARD": {
+"effect": "EFFECT_FREEZE_HIT",
+"power": 110,
+"type": "ICE",
+"acc": 70,
+"pp": 5,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"PSYBEAM": {
+"effect": "EFFECT_CONFUSE_HIT",
+"power": 65,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 20,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"BUBBLE_BEAM": {
+"effect": "EFFECT_SPEED_DOWN_HIT",
+"power": 65,
+"type": "WATER",
+"acc": 100,
+"pp": 20,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"AURORA_BEAM": {
+"effect": "EFFECT_ATTACK_DOWN_HIT",
+"power": 65,
+"type": "ICE",
+"acc": 100,
+"pp": 20,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"HYPER_BEAM": {
+"effect": "EFFECT_HYPER_BEAM",
+"power": 150,
+"type": "NORMAL",
+"acc": 90,
+"pp": 5,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"PECK": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 35,
+"type": "FLYING",
+"acc": 100,
+"pp": 35,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DRILL_PECK": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "FLYING",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"CLOSE_COMBAT": {
+"effect": "EFFECT_CLOSE_COMBAT",
+"power": 120,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"LOW_KICK": {
+"effect": "EFFECT_LOW_KICK",
+"power": 1,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 20,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"COUNTER": {
+"effect": "EFFECT_COUNTER",
+"power": 1,
+"type": "FIGHTING",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": -5
+},
+"SEISMIC_TOSS": {
+"effect": "EFFECT_LEVEL_DAMAGE",
+"power": 1,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"STRENGTH": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ABSORB": {
+"effect": "EFFECT_LEECH_HIT",
+"power": 20,
+"type": "GRASS",
+"acc": 100,
+"pp": 25,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"MEGA_DRAIN": {
+"effect": "EFFECT_LEECH_HIT",
+"power": 40,
+"type": "GRASS",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"LEECH_SEED": {
+"effect": "EFFECT_LEECH_SEED",
+"power": 0,
+"type": "GRASS",
+"acc": 90,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"GROWTH": {
+"effect": "EFFECT_GROWTH",
+"power": 0,
+"type": "GRASS",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"RAZOR_LEAF": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 55,
+"type": "GRASS",
+"acc": 95,
+"pp": 25,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SOLAR_BEAM": {
+"effect": "EFFECT_SOLAR_BEAM",
+"power": 120,
+"type": "GRASS",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"POISONPOWDER": {
+"effect": "EFFECT_POISON",
+"power": 0,
+"type": "POISON",
+"acc": 75,
+"pp": 35,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"STUN_SPORE": {
+"effect": "EFFECT_PARALYZE",
+"power": 0,
+"type": "GRASS",
+"acc": 75,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SLEEP_POWDER": {
+"effect": "EFFECT_SLEEP",
+"power": 0,
+"type": "GRASS",
+"acc": 75,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"PETAL_DANCE": {
+"effect": "EFFECT_RAMPAGE",
+"power": 120,
+"type": "GRASS",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"STRING_SHOT": {
+"effect": "EFFECT_SPEED_DOWN_2",
+"power": 0,
+"type": "BUG",
+"acc": 95,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"DRAGON_RAGE": {
+"effect": "EFFECT_STATIC_DAMAGE",
+"power": 40,
+"type": "DRAGON",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"FIRE_SPIN": {
+"effect": "EFFECT_TRAP",
+"power": 40,
+"type": "FIRE",
+"acc": 90,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"THUNDERSHOCK": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 40,
+"type": "ELECTRIC",
+"acc": 100,
+"pp": 30,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"THUNDERBOLT": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 90,
+"type": "ELECTRIC",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"THUNDER_WAVE": {
+"effect": "EFFECT_PARALYZE",
+"power": 0,
+"type": "ELECTRIC",
+"acc": 90,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"THUNDER": {
+"effect": "EFFECT_THUNDER",
+"power": 110,
+"type": "ELECTRIC",
+"acc": 70,
+"pp": 10,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"ROCK_THROW": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 50,
+"type": "ROCK",
+"acc": 90,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"EARTHQUAKE": {
+"effect": "EFFECT_EARTHQUAKE",
+"power": 100,
+"type": "GROUND",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"AVALANCHE": {
+"effect": "EFFECT_CONDITIONAL_BOOST",
+"power": 60,
+"type": "ICE",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": -4
+},
+"DIG": {
+"effect": "EFFECT_FLY",
+"power": 90,
+"type": "GROUND",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"TOXIC": {
+"effect": "EFFECT_TOXIC",
+"power": 0,
+"type": "POISON",
+"acc": 90,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"CONFUSION": {
+"effect": "EFFECT_CONFUSE_HIT",
+"power": 50,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 25,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"PSYCHIC_M": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 90,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 10,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"HYPNOSIS": {
+"effect": "EFFECT_SLEEP",
+"power": 0,
+"type": "PSYCHIC",
+"acc": 60,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HONE_CLAWS": {
+"effect": "EFFECT_HONE_CLAWS",
+"power": 0,
+"type": "DARK",
+"acc": -1,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"AGILITY": {
+"effect": "EFFECT_SPEED_UP_2",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"QUICK_ATTACK": {
+"effect": "EFFECT_PRIORITY_HIT",
+"power": 40,
+"type": "NORMAL",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 1
+},
+"RAGE": {
+"effect": "EFFECT_RAGE",
+"power": 20,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"TELEPORT": {
+"effect": "EFFECT_TELEPORT",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": -6
+},
+"NIGHT_SHADE": {
+"effect": "EFFECT_LEVEL_DAMAGE",
+"power": 1,
+"type": "GHOST",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"DRAGON_PULSE": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 85,
+"type": "DRAGON",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SCREECH": {
+"effect": "EFFECT_DEFENSE_DOWN_2",
+"power": 0,
+"type": "NORMAL",
+"acc": 85,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"DOUBLE_TEAM": {
+"effect": "EFFECT_EVASION_UP",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"RECOVER": {
+"effect": "EFFECT_HEAL",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ROCK_BLAST": {
+"effect": "EFFECT_MULTI_HIT",
+"power": 25,
+"type": "ROCK",
+"acc": 90,
+"pp": 25,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"MINIMIZE": {
+"effect": "EFFECT_MINIMIZE",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SMOKESCREEN": {
+"effect": "EFFECT_ACCURACY_DOWN",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"CONFUSE_RAY": {
+"effect": "EFFECT_CONFUSE",
+"power": 0,
+"type": "GHOST",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"AQUA_TAIL": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 90,
+"type": "WATER",
+"acc": 90,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DEFENSE_CURL": {
+"effect": "EFFECT_DEFENSE_CURL",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"BARRIER": {
+"effect": "EFFECT_DEFENSE_UP_2",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"LIGHT_SCREEN": {
+"effect": "EFFECT_LIGHT_SCREEN",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HAZE": {
+"effect": "EFFECT_HAZE",
+"power": 0,
+"type": "ICE",
+"acc": -1,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"REFLECT": {
+"effect": "EFFECT_REFLECT",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"FOCUS_ENERGY": {
+"effect": "EFFECT_FOCUS_ENERGY",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"FLASH_CANNON": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 80,
+"type": "STEEL",
+"acc": 100,
+"pp": 10,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"METRONOME": {
+"effect": "EFFECT_METRONOME",
+"power": 0,
+"type": "UNKNOWN_T",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SCALD": {
+"effect": "EFFECT_BURN_HIT",
+"power": 70,
+"type": "WATER",
+"acc": 100,
+"pp": 15,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"TRICK_ROOM": {
+"effect": "EFFECT_TRICK_ROOM",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": -7
+},
+"SKILL_SWAP": {
+"effect": "EFFECT_SKILL_SWAP",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"LICK": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 30,
+"type": "GHOST",
+"acc": 100,
+"pp": 30,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"GUNK_SHOT": {
+"effect": "EFFECT_POISON_HIT",
+"power": 120,
+"type": "POISON",
+"acc": 80,
+"pp": 5,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"VENOSHOCK": {
+"effect": "EFFECT_CONDITIONAL_BOOST",
+"power": 65,
+"type": "POISON",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"EARTH_POWER": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 90,
+"type": "GROUND",
+"acc": 100,
+"pp": 10,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"FIRE_BLAST": {
+"effect": "EFFECT_BURN_HIT",
+"power": 110,
+"type": "FIRE",
+"acc": 85,
+"pp": 5,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"WATERFALL": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 80,
+"type": "WATER",
+"acc": 100,
+"pp": 15,
+"chance": 20,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ICICLE_CRASH": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 85,
+"type": "ICE",
+"acc": 90,
+"pp": 10,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SWIFT": {
+"effect": "EFFECT_ALWAYS_HIT",
+"power": 60,
+"type": "NORMAL",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"IRON_HEAD": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 80,
+"type": "STEEL",
+"acc": 100,
+"pp": 15,
+"chance": 20,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ICICLE_SPEAR": {
+"effect": "EFFECT_MULTI_HIT",
+"power": 25,
+"type": "ICE",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BULLDOZE": {
+"effect": "EFFECT_SPEED_DOWN_HIT",
+"power": 60,
+"type": "GROUND",
+"acc": 100,
+"pp": 20,
+"chance": 100,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"AMNESIA": {
+"effect": "EFFECT_SP_DEF_UP_2",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ROOST": {
+"effect": "EFFECT_ROOST",
+"power": 0,
+"type": "FLYING",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"FRESH_SNACK": {
+"effect": "EFFECT_HEAL",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HI_JUMP_KICK": {
+"effect": "EFFECT_JUMP_KICK",
+"power": 130,
+"type": "FIGHTING",
+"acc": 90,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"GLARE": {
+"effect": "EFFECT_PARALYZE",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"DREAM_EATER": {
+"effect": "EFFECT_DREAM_EATER",
+"power": 100,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"POISON_JAB": {
+"effect": "EFFECT_POISON_HIT",
+"power": 80,
+"type": "POISON",
+"acc": 100,
+"pp": 20,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BULLET_PUNCH": {
+"effect": "EFFECT_PRIORITY_HIT",
+"power": 40,
+"type": "STEEL",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 1
+},
+"LEECH_LIFE": {
+"effect": "EFFECT_LEECH_HIT",
+"power": 80,
+"type": "BUG",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DRAINING_KISS": {
+"effect": "EFFECT_LEECH_HIT",
+"power": 50,
+"type": "FAIRY",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"BRAVE_BIRD": {
+"effect": "EFFECT_RECOIL_HIT",
+"power": 120,
+"type": "FLYING",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"TRANSFORM": {
+"effect": "EFFECT_TRANSFORM",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"WATER_PULSE": {
+"effect": "EFFECT_CONFUSE_HIT",
+"power": 60,
+"type": "WATER",
+"acc": 100,
+"pp": 20,
+"chance": 20,
+"cat": "SPECIAL",
+"prio": 0
+},
+"DIZZY_PUNCH": {
+"effect": "EFFECT_CONFUSE_HIT",
+"power": 70,
+"type": "NORMAL",
+"acc": 100,
+"pp": 10,
+"chance": 20,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SPORE": {
+"effect": "EFFECT_SLEEP",
+"power": 0,
+"type": "GRASS",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"FLASH": {
+"effect": "EFFECT_ACCURACY_DOWN",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"EXTRASENSORY": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 80,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 20,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SPLASH": {
+"effect": "EFFECT_SPLASH",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"DRAGON_DANCE": {
+"effect": "EFFECT_DRAGON_DANCE",
+"power": 0,
+"type": "DRAGON",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"CRABHAMMER": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 100,
+"type": "WATER",
+"acc": 95,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"EXPLOSION": {
+"effect": "EFFECT_EXPLOSION",
+"power": 250,
+"type": "NORMAL",
+"acc": 100,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FURY_STRIKES": {
+"effect": "EFFECT_MULTI_HIT",
+"power": 20,
+"type": "NORMAL",
+"acc": 85,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BONEMERANG": {
+"effect": "EFFECT_DOUBLE_HIT",
+"power": 50,
+"type": "GROUND",
+"acc": 90,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"REST": {
+"effect": "EFFECT_HEAL",
+"power": 0,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ROCK_SLIDE": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 75,
+"type": "ROCK",
+"acc": 90,
+"pp": 10,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"HYPER_FANG": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 80,
+"type": "NORMAL",
+"acc": 90,
+"pp": 15,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BULK_UP": {
+"effect": "EFFECT_BULK_UP",
+"power": 0,
+"type": "FIGHTING",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"CONVERSION": {
+"effect": "EFFECT_CONVERSION",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 30,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"TRI_ATTACK": {
+"effect": "EFFECT_TRI_ATTACK",
+"power": 80,
+"type": "NORMAL",
+"acc": 100,
+"pp": 10,
+"chance": 20,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SUPER_FANG": {
+"effect": "EFFECT_SUPER_FANG",
+"power": 1,
+"type": "NORMAL",
+"acc": 90,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SLASH": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 70,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SUBSTITUTE": {
+"effect": "EFFECT_SUBSTITUTE",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"GIGA_IMPACT": {
+"effect": "EFFECT_HYPER_BEAM",
+"power": 150,
+"type": "NORMAL",
+"acc": 90,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SKETCH": {
+"effect": "EFFECT_SKETCH",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 1,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"DRAIN_PUNCH": {
+"effect": "EFFECT_LEECH_HIT",
+"power": 75,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"THIEF": {
+"effect": "EFFECT_THIEF",
+"power": 60,
+"type": "DARK",
+"acc": 100,
+"pp": 25,
+"chance": 100,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"WILL_O_WISP": {
+"effect": "EFFECT_BURN",
+"power": 0,
+"type": "FIRE",
+"acc": 85,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ZEN_HEADBUTT": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 80,
+"type": "PSYCHIC",
+"acc": 90,
+"pp": 15,
+"chance": 20,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FACADE": {
+"effect": "EFFECT_CONDITIONAL_BOOST",
+"power": 70,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FLAME_CHARGE": {
+"effect": "EFFECT_SPEED_UP_HIT",
+"power": 50,
+"type": "FIRE",
+"acc": 100,
+"pp": 20,
+"chance": 100,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"HYPER_VOICE": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 90,
+"type": "NORMAL",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"CURSE": {
+"effect": "EFFECT_CURSE",
+"power": 0,
+"type": "GHOST",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"GYRO_BALL": {
+"effect": "EFFECT_GYRO_BALL",
+"power": 1,
+"type": "STEEL",
+"acc": 100,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ENERGY_BALL": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 90,
+"type": "GRASS",
+"acc": 100,
+"pp": 10,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"AEROBLAST": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 100,
+"type": "FLYING",
+"acc": 95,
+"pp": 5,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SEED_BOMB": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "GRASS",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"REVERSAL": {
+"effect": "EFFECT_REVERSAL",
+"power": 1,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ASTONISH": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 30,
+"type": "GHOST",
+"acc": 100,
+"pp": 15,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"ICE_SHARD": {
+"effect": "EFFECT_PRIORITY_HIT",
+"power": 40,
+"type": "ICE",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 1
+},
+"PROTECT": {
+"effect": "EFFECT_PROTECT",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 4
+},
+"MACH_PUNCH": {
+"effect": "EFFECT_PRIORITY_HIT",
+"power": 40,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 1
+},
+"SCARY_FACE": {
+"effect": "EFFECT_SPEED_DOWN_2",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"FEINT_ATTACK": {
+"effect": "EFFECT_ALWAYS_HIT",
+"power": 60,
+"type": "DARK",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SWEET_KISS": {
+"effect": "EFFECT_CONFUSE",
+"power": 0,
+"type": "FAIRY",
+"acc": 75,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"BELLY_DRUM": {
+"effect": "EFFECT_BELLY_DRUM",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SLUDGE_BOMB": {
+"effect": "EFFECT_POISON_HIT",
+"power": 90,
+"type": "POISON",
+"acc": 100,
+"pp": 10,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"MUD_SLAP": {
+"effect": "EFFECT_ACCURACY_DOWN_HIT",
+"power": 20,
+"type": "GROUND",
+"acc": 100,
+"pp": 10,
+"chance": 100,
+"cat": "SPECIAL",
+"prio": 0
+},
+"OCTAZOOKA": {
+"effect": "EFFECT_ACCURACY_DOWN_HIT",
+"power": 75,
+"type": "WATER",
+"acc": 95,
+"pp": 10,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SPIKES": {
+"effect": "EFFECT_SPIKES",
+"power": 0,
+"type": "GROUND",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ZAP_CANNON": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 120,
+"type": "ELECTRIC",
+"acc": 50,
+"pp": 5,
+"chance": 100,
+"cat": "SPECIAL",
+"prio": 0
+},
+"FORESIGHT": {
+"effect": "EFFECT_FORESIGHT",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"DESTINY_BOND": {
+"effect": "EFFECT_DESTINY_BOND",
+"power": 0,
+"type": "GHOST",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"PERISH_SONG": {
+"effect": "EFFECT_PERISH_SONG",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ICY_WIND": {
+"effect": "EFFECT_SPEED_DOWN_HIT",
+"power": 55,
+"type": "ICE",
+"acc": 95,
+"pp": 15,
+"chance": 100,
+"cat": "SPECIAL",
+"prio": 0
+},
+"POWER_GEM": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 80,
+"type": "ROCK",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"WILD_CHARGE": {
+"effect": "EFFECT_RECOIL_HIT",
+"power": 90,
+"type": "ELECTRIC",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"POWER_WHIP": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 120,
+"type": "GRASS",
+"acc": 85,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"OUTRAGE": {
+"effect": "EFFECT_RAMPAGE",
+"power": 120,
+"type": "DRAGON",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SANDSTORM": {
+"effect": "EFFECT_SANDSTORM",
+"power": 0,
+"type": "ROCK",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"GIGA_DRAIN": {
+"effect": "EFFECT_LEECH_HIT",
+"power": 75,
+"type": "GRASS",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"ENDURE": {
+"effect": "EFFECT_ENDURE",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 4
+},
+"CHARM": {
+"effect": "EFFECT_ATTACK_DOWN_2",
+"power": 0,
+"type": "FAIRY",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ROLLOUT": {
+"effect": "EFFECT_ROLLOUT",
+"power": 30,
+"type": "ROCK",
+"acc": 90,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"FALSE_SWIPE": {
+"effect": "EFFECT_FALSE_SWIPE",
+"power": 40,
+"type": "NORMAL",
+"acc": 100,
+"pp": 40,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SWAGGER": {
+"effect": "EFFECT_SWAGGER",
+"power": 0,
+"type": "NORMAL",
+"acc": 85,
+"pp": 15,
+"chance": 100,
+"cat": "STATUS",
+"prio": 0
+},
+"SHELL_SMASH": {
+"effect": "EFFECT_SHELL_SMASH",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SPARK": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 65,
+"type": "ELECTRIC",
+"acc": 100,
+"pp": 20,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BUG_BITE": {
+"effect": "EFFECT_BUG_BITE",
+"power": 60,
+"type": "BUG",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"STEEL_WING": {
+"effect": "EFFECT_DEFENSE_UP_HIT",
+"power": 70,
+"type": "STEEL",
+"acc": 90,
+"pp": 25,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"MEAN_LOOK": {
+"effect": "EFFECT_MEAN_LOOK",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ATTRACT": {
+"effect": "EFFECT_ATTRACT",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SLEEP_TALK": {
+"effect": "EFFECT_SLEEP_TALK",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HEAL_BELL": {
+"effect": "EFFECT_HEAL_BELL",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"RETURN": {
+"effect": "EFFECT_RETURN",
+"power": 1,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"PSYSTRIKE": {
+"effect": "EFFECT_PSYSTRIKE",
+"power": 100,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"BUG_BUZZ": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 90,
+"type": "BUG",
+"acc": 100,
+"pp": 10,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SAFEGUARD": {
+"effect": "EFFECT_SAFEGUARD",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 25,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"PAIN_SPLIT": {
+"effect": "EFFECT_PAIN_SPLIT",
+"power": 0,
+"type": "GHOST",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SACRED_FIRE": {
+"effect": "EFFECT_SACRED_FIRE",
+"power": 100,
+"type": "FIRE",
+"acc": 95,
+"pp": 5,
+"chance": 50,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"MAGNITUDE": {
+"effect": "EFFECT_MAGNITUDE",
+"power": 1,
+"type": "GROUND",
+"acc": 100,
+"pp": 30,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DYNAMICPUNCH": {
+"effect": "EFFECT_CONFUSE_HIT",
+"power": 100,
+"type": "FIGHTING",
+"acc": 50,
+"pp": 5,
+"chance": 100,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"MEGAHORN": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 120,
+"type": "BUG",
+"acc": 85,
+"pp": 10,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DRAGONBREATH": {
+"effect": "EFFECT_PARALYZE_HIT",
+"power": 60,
+"type": "DRAGON",
+"acc": 100,
+"pp": 20,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"BATON_PASS": {
+"effect": "EFFECT_BATON_PASS",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 40,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"ENCORE": {
+"effect": "EFFECT_ENCORE",
+"power": 0,
+"type": "NORMAL",
+"acc": 100,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"PURSUIT": {
+"effect": "EFFECT_PURSUIT",
+"power": 40,
+"type": "DARK",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"RAPID_SPIN": {
+"effect": "EFFECT_RAPID_SPIN",
+"power": 50,
+"type": "NORMAL",
+"acc": 100,
+"pp": 20,
+"chance": 100,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"SHADOW_CLAW": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 70,
+"type": "GHOST",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"IRON_TAIL": {
+"effect": "EFFECT_DEFENSE_DOWN_HIT",
+"power": 100,
+"type": "STEEL",
+"acc": 80,
+"pp": 15,
+"chance": 30,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"METAL_CLAW": {
+"effect": "EFFECT_ATTACK_UP_HIT",
+"power": 50,
+"type": "STEEL",
+"acc": 95,
+"pp": 35,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"AURA_SPHERE": {
+"effect": "EFFECT_ALWAYS_HIT",
+"power": 80,
+"type": "FIGHTING",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"HEALINGLIGHT": {
+"effect": "EFFECT_HEALING_LIGHT",
+"power": 0,
+"type": "NORMAL",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"HURRICANE": {
+"effect": "EFFECT_CONFUSE_HIT",
+"power": 110,
+"type": "FLYING",
+"acc": 70,
+"pp": 10,
+"chance": 30,
+"cat": "SPECIAL",
+"prio": 0
+},
+"KNOCK_OFF": {
+"effect": "EFFECT_KNOCK_OFF",
+"power": 65,
+"type": "DARK",
+"acc": 100,
+"pp": 20,
+"chance": 100,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"HIDDEN_POWER": {
+"effect": "EFFECT_HIDDEN_POWER",
+"power": 70,
+"type": "UNKNOWN_T",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"CROSS_CHOP": {
+"effect": "EFFECT_NORMAL_HIT",
+"power": 100,
+"type": "FIGHTING",
+"acc": 80,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"AQUA_JET": {
+"effect": "EFFECT_PRIORITY_HIT",
+"power": 40,
+"type": "WATER",
+"acc": 100,
+"pp": 20,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 1
+},
+"RAIN_DANCE": {
+"effect": "EFFECT_RAIN_DANCE",
+"power": 0,
+"type": "WATER",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"SUNNY_DAY": {
+"effect": "EFFECT_SUNNY_DAY",
+"power": 0,
+"type": "FIRE",
+"acc": -1,
+"pp": 5,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"CRUNCH": {
+"effect": "EFFECT_DEFENSE_DOWN_HIT",
+"power": 80,
+"type": "DARK",
+"acc": 100,
+"pp": 15,
+"chance": 20,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"MIRROR_COAT": {
+"effect": "EFFECT_COUNTER",
+"power": 1,
+"type": "PSYCHIC",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": -5
+},
+"NASTY_PLOT": {
+"effect": "EFFECT_SP_ATK_UP_2",
+"power": 0,
+"type": "DARK",
+"acc": -1,
+"pp": 20,
+"chance": 0,
+"cat": "STATUS",
+"prio": 0
+},
+"EXTREMESPEED": {
+"effect": "EFFECT_PRIORITY_HIT",
+"power": 80,
+"type": "NORMAL",
+"acc": 100,
+"pp": 5,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 2
+},
+"ANCIENTPOWER": {
+"effect": "EFFECT_ALL_UP_HIT",
+"power": 60,
+"type": "ROCK",
+"acc": 100,
+"pp": 5,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"SHADOW_BALL": {
+"effect": "EFFECT_SP_DEF_DOWN_HIT",
+"power": 80,
+"type": "GHOST",
+"acc": 100,
+"pp": 15,
+"chance": 20,
+"cat": "SPECIAL",
+"prio": 0
+},
+"FUTURE_SIGHT": {
+"effect": "EFFECT_FUTURE_SIGHT",
+"power": 120,
+"type": "PSYCHIC",
+"acc": 100,
+"pp": 10,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"ROCK_SMASH": {
+"effect": "EFFECT_DEFENSE_DOWN_HIT",
+"power": 40,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 15,
+"chance": 50,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"BRICK_BREAK": {
+"effect": "EFFECT_BRICK_BREAK",
+"power": 75,
+"type": "FIGHTING",
+"acc": 100,
+"pp": 15,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"WHIRLPOOL": {
+"effect": "EFFECT_TRAP",
+"power": 40,
+"type": "WATER",
+"acc": 90,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"DARK_PULSE": {
+"effect": "EFFECT_FLINCH_HIT",
+"power": 80,
+"type": "DARK",
+"acc": 100,
+"pp": 15,
+"chance": 20,
+"cat": "SPECIAL",
+"prio": 0
+},
+"MOONBLAST": {
+"effect": "EFFECT_SP_ATK_DOWN_HIT",
+"power": 95,
+"type": "FAIRY",
+"acc": 100,
+"pp": 15,
+"chance": 10,
+"cat": "SPECIAL",
+"prio": 0
+},
+"PLAY_ROUGH": {
+"effect": "EFFECT_ATTACK_DOWN_HIT",
+"power": 90,
+"type": "FAIRY",
+"acc": 90,
+"pp": 10,
+"chance": 10,
+"cat": "PHYSICAL",
+"prio": 0
+},
+"DISARM_VOICE": {
+"effect": "EFFECT_ALWAYS_HIT",
+"power": 40,
+"type": "FAIRY",
+"acc": -1,
+"pp": 15,
+"chance": 0,
+"cat": "SPECIAL",
+"prio": 0
+},
+"STRUGGLE": {
+"effect": "EFFECT_RECOIL_HIT",
+"power": 50,
+"type": "UNKNOWN_T",
+"acc": -1,
+"pp": 1,
+"chance": 0,
+"cat": "PHYSICAL",
+"prio": 0
+}
+}

@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 318,  45,  49,  49,  65,  65,  45
+else
+	bst 348,  53,  49,  55,  73,  69,  49
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db GRASS, POISON ; type

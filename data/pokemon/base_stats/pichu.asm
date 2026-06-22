@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 205,  20,  40,  15,  35,  35,  60
+else
+	bst 235,  28,  44,  21,  39,  39,  64
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db ELECTRIC, ELECTRIC ; type

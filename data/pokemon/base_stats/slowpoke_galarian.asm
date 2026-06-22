@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 315,  90,  65,  65,  40,  40,  15
+else
+	bst 345,  98,  73,  69,  40,  46,  19
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db PSYCHIC, PSYCHIC ; type

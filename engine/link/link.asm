@@ -258,7 +258,10 @@ Gen2ToGen2LinkComms:
 	pop af
 	ldh [rIF], a
 
+	call LinkBattle_BackUpPlayerPartyMonsToLinkData
+	call LinkBattle_SetPlayerPartyMonsToLevel50
 	farcall StartBattle
+	call LinkBattle_RestorePlayerPartyMonsFromLinkData
 
 	ldh a, [rIF]
 	ld h, a
@@ -434,6 +437,13 @@ FixDataForLinkTransfer:
 	ret
 
 Link_PrepPartyData_Gen2:
+	ld a, [wLinkMode]
+	cp LINK_COLOSSEUM
+	jr nz, .skip_link_battle_level
+	call LinkBattle_BackUpPlayerPartyMonsToOTData
+	call LinkBattle_SetPlayerPartyMonsToLevel50
+
+.skip_link_battle_level
 	ld de, wLinkData
 	ld a, SERIAL_PREAMBLE_BYTE
 	ld b, SERIAL_PREAMBLE_LENGTH
@@ -466,6 +476,10 @@ Link_PrepPartyData_Gen2:
 	ld hl, wPartyMonNicknames
 	ld bc, PARTY_LENGTH * MON_NAME_LENGTH
 	rst CopyBytes
+
+	ld a, [wLinkMode]
+	cp LINK_COLOSSEUM
+	call z, LinkBattle_RestorePlayerPartyMonsFromOTData
 
 ; Okay, we did all that.  Now, are we in the trade center?
 	ld a, [wLinkMode]
@@ -561,6 +575,126 @@ Link_PrepPartyData_Gen2:
 
 	ld a, SERIAL_PATCH_LIST_PART_TERMINATOR
 	ld [de], a
+	ret
+
+LinkBattle_BackUpPlayerPartyMonsToOTData:
+	ld hl, wPartyMons
+	ld de, wOTPartyData
+	jr LinkBattle_CopyPlayerPartyMons
+
+LinkBattle_RestorePlayerPartyMonsFromOTData:
+	ld hl, wOTPartyData
+	ld de, wPartyMons
+	jr LinkBattle_CopyPlayerPartyMons
+
+LinkBattle_BackUpPlayerPartyMonsToLinkData:
+	ld hl, wPartyMons
+	ld de, wLinkData
+	jr LinkBattle_CopyPlayerPartyMons
+
+LinkBattle_RestorePlayerPartyMonsFromLinkData:
+	ld hl, wLinkData
+	ld de, wPartyMons
+
+LinkBattle_CopyPlayerPartyMons:
+	ld bc, PARTY_LENGTH * PARTYMON_STRUCT_LENGTH
+	rst CopyBytes
+	ret
+
+LinkBattle_SetPlayerPartyMonsToLevel50:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	dec a
+	ld e, a
+
+.loop
+	ld a, e
+	ld [wCurPartyMon], a
+	ld hl, wPartyMon1
+	push de
+	call GetPartyLocation
+	call LinkBattle_SetPartyMonToLevel50
+	pop de
+	ld a, e
+	and a
+	ret z
+	dec e
+	jr .loop
+
+LinkBattle_SetPartyMonToLevel50:
+	push hl
+	ld bc, MON_IS_EGG
+	add hl, bc
+	bit MON_IS_EGG_F, [hl]
+	pop hl
+	ret nz
+
+	push hl
+	call LinkBattle_LoadPartyMonBaseData
+	pop hl
+	push hl
+	call LinkBattle_SetPartyMonLevelAndExp
+	pop hl
+	push hl
+	call LinkBattle_RecalculatePartyMonStats
+	pop hl
+	; Fully heal the mon for the level-50 link battle: clear status, restore
+	; HP to the freshly recalculated max, and restore all PP. wCurPartyMon is
+	; already set by the caller's loop, which is what HealPartyMon consumes.
+	farjp HealPartyMon
+
+LinkBattle_LoadPartyMonBaseData:
+	ld a, [hl]
+	ld [wCurSpecies], a
+	ld [wCurPartySpecies], a
+	ld bc, MON_FORM
+	add hl, bc
+	ld a, [hl]
+	and SPECIESFORM_MASK
+	ld [wCurForm], a
+	jmp GetBaseData
+
+LinkBattle_SetPartyMonLevelAndExp:
+	push hl
+	ld bc, MON_LEVEL
+	add hl, bc
+	ld a, LINK_BATTLE_FORCED_LEVEL
+	ld [hl], a
+	ld [wCurPartyLevel], a
+	pop hl
+
+	ld bc, MON_EXP
+	add hl, bc
+	push hl
+	ld d, LINK_BATTLE_FORCED_LEVEL
+	farcall CalcExpAtLevel
+	pop hl
+	ldh a, [hProduct + 1]
+	ld [hli], a
+	ldh a, [hProduct + 2]
+	ld [hli], a
+	ldh a, [hProduct + 3]
+	ld [hl], a
+	ret
+
+LinkBattle_RecalculatePartyMonStats:
+	push hl
+	farcall GetHyperTraining
+	pop hl
+	push af
+	push hl
+	ld bc, MON_MAXHP
+	add hl, bc
+	ld d, h
+	ld e, l
+	pop hl
+	ld bc, MON_EVS - 1
+	add hl, bc
+	pop af
+	ld b, a
+	set 0, b
+	farcall CalcPkmnStats
 	ret
 
 Link_CopyOTData:

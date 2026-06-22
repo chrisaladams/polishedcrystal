@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 320,  40,  50,  45,  70,  45,  70
+else
+	bst 350,  48,  50,  49,  78,  51,  74
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db PSYCHIC, FLYING ; type

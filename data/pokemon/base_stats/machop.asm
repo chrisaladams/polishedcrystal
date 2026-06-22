@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 305,  70,  80,  50,  35,  35,  35
+else
+	bst 335,  78,  88,  54,  35,  41,  39
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db FIGHTING, FIGHTING ; type

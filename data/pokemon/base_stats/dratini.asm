@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 300,  41,  64,  45,  50,  50,  50
+else
+	bst 330,  49,  68,  51,  54,  54,  54
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db DRAGON, DRAGON ; type

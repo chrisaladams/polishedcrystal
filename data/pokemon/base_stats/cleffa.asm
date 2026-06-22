@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 218,  50,  25,  28,  45,  55,  15
+else
+	bst 248,  58,  25,  34,  53,  59,  19
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db FAIRY, FAIRY ; type

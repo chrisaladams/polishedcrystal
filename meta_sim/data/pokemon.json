@@ -1,0 +1,7523 @@
+{
+"quagsire": {
+"id": "quagsire",
+"stats": {
+"hp": 95,
+"atk": 95,
+"defe": 95,
+"spe": 35,
+"spa": 65,
+"spd": 65
+},
+"bst": 450,
+"types": [
+"WATER",
+"GROUND"
+],
+"abilities": [
+"DAMP",
+"WATER_ABSORB",
+"UNAWARE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"hypno": {
+"id": "hypno",
+"stats": {
+"hp": 92,
+"atk": 73,
+"defe": 70,
+"spe": 62,
+"spa": 73,
+"spd": 115
+},
+"bst": 485,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"INSOMNIA",
+"BAD_DREAMS",
+"INNER_FOCUS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"kangaskhan": {
+"id": "kangaskhan",
+"stats": {
+"hp": 105,
+"atk": 95,
+"defe": 80,
+"spe": 90,
+"spa": 40,
+"spd": 80
+},
+"bst": 490,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"EARLY_BIRD",
+"SCRAPPY",
+"PARENTAL_BOND"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"goldeen": {
+"id": "goldeen",
+"stats": {
+"hp": 53,
+"atk": 75,
+"defe": 64,
+"spe": 67,
+"spa": 35,
+"spd": 56
+},
+"bst": 350,
+"types": [
+"WATER",
+"NORMAL"
+],
+"abilities": [
+"SWIFT_SWIM",
+"WATER_VEIL",
+"LIGHTNING_ROD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"clodsire": {
+"id": "clodsire",
+"stats": {
+"hp": 130,
+"atk": 85,
+"defe": 70,
+"spe": 20,
+"spa": 45,
+"spd": 100
+},
+"bst": 450,
+"types": [
+"POISON",
+"GROUND"
+],
+"abilities": [
+"POISON_POINT",
+"WATER_ABSORB",
+"UNAWARE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"azumarill": {
+"id": "azumarill",
+"stats": {
+"hp": 100,
+"atk": 50,
+"defe": 80,
+"spe": 50,
+"spa": 90,
+"spd": 80
+},
+"bst": 450,
+"types": [
+"WATER",
+"FAIRY"
+],
+"abilities": [
+"THICK_FAT",
+"HUGE_POWER",
+"SAP_SIPPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"jolteon": {
+"id": "jolteon",
+"stats": {
+"hp": 65,
+"atk": 65,
+"defe": 60,
+"spe": 120,
+"spa": 110,
+"spd": 95
+},
+"bst": 515,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"VOLT_ABSORB",
+"STATIC",
+"QUICK_FEET"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"paras": {
+"id": "paras",
+"stats": {
+"hp": 43,
+"atk": 78,
+"defe": 59,
+"spe": 29,
+"spa": 45,
+"spd": 61
+},
+"bst": 315,
+"types": [
+"BUG",
+"GRASS"
+],
+"abilities": [
+"EFFECT_SPORE",
+"DRY_SKIN",
+"DAMP"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"typhlosion_plain": {
+"id": "typhlosion_plain",
+"stats": {
+"hp": 78,
+"atk": 84,
+"defe": 78,
+"spe": 100,
+"spa": 110,
+"spd": 85
+},
+"bst": 535,
+"types": [
+"FIRE",
+"GROUND"
+],
+"abilities": [
+"BLAZE",
+"FLAME_BODY",
+"FLASH_FIRE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"psyduck": {
+"id": "psyduck",
+"stats": {
+"hp": 58,
+"atk": 56,
+"defe": 54,
+"spe": 59,
+"spa": 69,
+"spd": 54
+},
+"bst": 350,
+"types": [
+"WATER"
+],
+"abilities": [
+"DAMP",
+"CLOUD_NINE",
+"SWIFT_SWIM"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"lugia": {
+"id": "lugia",
+"stats": {
+"hp": 106,
+"atk": 90,
+"defe": 130,
+"spe": 110,
+"spa": 90,
+"spd": 154
+},
+"bst": 680,
+"types": [
+"WATER",
+"FLYING"
+],
+"abilities": [
+"PRESSURE",
+"DRIZZLE",
+"MULTISCALE"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"doduo": {
+"id": "doduo",
+"stats": {
+"hp": 43,
+"atk": 93,
+"defe": 49,
+"spe": 79,
+"spa": 35,
+"spd": 41
+},
+"bst": 340,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"RUN_AWAY",
+"EARLY_BIRD",
+"TANGLED_FEET"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"aerodactyl": {
+"id": "aerodactyl",
+"stats": {
+"hp": 80,
+"atk": 105,
+"defe": 65,
+"spe": 130,
+"spa": 60,
+"spd": 75
+},
+"bst": 515,
+"types": [
+"ROCK",
+"FLYING"
+],
+"abilities": [
+"ROCK_HEAD",
+"UNNERVE",
+"TOUGH_CLAWS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"nidoqueen": {
+"id": "nidoqueen",
+"stats": {
+"hp": 90,
+"atk": 82,
+"defe": 87,
+"spe": 76,
+"spa": 95,
+"spd": 85
+},
+"bst": 515,
+"types": [
+"POISON",
+"GROUND"
+],
+"abilities": [
+"POISON_POINT",
+"RIVALRY",
+"SHEER_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"grimer_alolan": {
+"id": "grimer_alolan",
+"stats": {
+"hp": 88,
+"atk": 88,
+"defe": 54,
+"spe": 29,
+"spa": 40,
+"spd": 56
+},
+"bst": 355,
+"types": [
+"POISON",
+"DARK"
+],
+"abilities": [
+"POISON_TOUCH",
+"GLUTTONY",
+"CORROSION"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"girafarig": {
+"id": "girafarig",
+"stats": {
+"hp": 70,
+"atk": 85,
+"defe": 65,
+"spe": 95,
+"spa": 95,
+"spd": 65
+},
+"bst": 475,
+"types": [
+"PSYCHIC",
+"DARK"
+],
+"abilities": [
+"INNER_FOCUS",
+"EARLY_BIRD",
+"SAP_SIPPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"poliwag": {
+"id": "poliwag",
+"stats": {
+"hp": 48,
+"atk": 54,
+"defe": 44,
+"spe": 94,
+"spa": 44,
+"spd": 46
+},
+"bst": 330,
+"types": [
+"WATER"
+],
+"abilities": [
+"WATER_ABSORB",
+"DAMP",
+"SWIFT_SWIM"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"qwilfish_hisuian": {
+"id": "qwilfish_hisuian",
+"stats": {
+"hp": 65,
+"atk": 95,
+"defe": 85,
+"spe": 85,
+"spa": 55,
+"spd": 55
+},
+"bst": 440,
+"types": [
+"DARK",
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"SWIFT_SWIM",
+"INTIMIDATE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"raichu_alolan": {
+"id": "raichu_alolan",
+"stats": {
+"hp": 60,
+"atk": 95,
+"defe": 50,
+"spe": 120,
+"spa": 105,
+"spd": 85
+},
+"bst": 515,
+"types": [
+"ELECTRIC",
+"PSYCHIC"
+],
+"abilities": [
+"STATIC",
+"STATIC",
+"MOTOR_DRIVE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"venusaur": {
+"id": "venusaur",
+"stats": {
+"hp": 80,
+"atk": 87,
+"defe": 85,
+"spe": 80,
+"spa": 103,
+"spd": 100
+},
+"bst": 535,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"OVERGROW",
+"CHLOROPHYLL",
+"THICK_FAT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"kingdra": {
+"id": "kingdra",
+"stats": {
+"hp": 75,
+"atk": 95,
+"defe": 95,
+"spe": 85,
+"spa": 90,
+"spd": 95
+},
+"bst": 535,
+"types": [
+"WATER",
+"DRAGON"
+],
+"abilities": [
+"SWIFT_SWIM",
+"SNIPER",
+"DAMP"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"shuckle": {
+"id": "shuckle",
+"stats": {
+"hp": 20,
+"atk": 10,
+"defe": 230,
+"spe": 5,
+"spa": 10,
+"spd": 230
+},
+"bst": 505,
+"types": [
+"BUG",
+"ROCK"
+],
+"abilities": [
+"SOLID_ROCK",
+"GLUTTONY",
+"CONTRARY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"wobbuffet": {
+"id": "wobbuffet",
+"stats": {
+"hp": 190,
+"atk": 33,
+"defe": 58,
+"spe": 33,
+"spa": 33,
+"spd": 58
+},
+"bst": 405,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SHADOW_TAG",
+"SHADOW_TAG",
+"SHADOW_TAG"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"honchkrow": {
+"id": "honchkrow",
+"stats": {
+"hp": 105,
+"atk": 115,
+"defe": 52,
+"spe": 71,
+"spa": 105,
+"spd": 52
+},
+"bst": 500,
+"types": [
+"DARK",
+"FLYING"
+],
+"abilities": [
+"INSOMNIA",
+"SUPER_LUCK",
+"MOXIE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"arbok": {
+"id": "arbok",
+"stats": {
+"hp": 60,
+"atk": 110,
+"defe": 70,
+"spe": 80,
+"spa": 55,
+"spd": 80
+},
+"bst": 455,
+"types": [
+"POISON"
+],
+"abilities": [
+"INTIMIDATE",
+"SHED_SKIN",
+"UNNERVE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"poliwhirl": {
+"id": "poliwhirl",
+"stats": {
+"hp": 73,
+"atk": 73,
+"defe": 69,
+"spe": 94,
+"spa": 50,
+"spd": 56
+},
+"bst": 415,
+"types": [
+"WATER"
+],
+"abilities": [
+"WATER_ABSORB",
+"DAMP",
+"SWIFT_SWIM"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"remoraid": {
+"id": "remoraid",
+"stats": {
+"hp": 43,
+"atk": 69,
+"defe": 39,
+"spe": 69,
+"spa": 69,
+"spd": 41
+},
+"bst": 330,
+"types": [
+"WATER"
+],
+"abilities": [
+"HUSTLE",
+"SNIPER",
+"SNIPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"weezing_plain": {
+"id": "weezing_plain",
+"stats": {
+"hp": 65,
+"atk": 90,
+"defe": 120,
+"spe": 60,
+"spa": 85,
+"spd": 70
+},
+"bst": 490,
+"types": [
+"POISON"
+],
+"abilities": [
+"LEVITATE",
+"NEUTRALIZING_GAS",
+"STENCH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ponyta_plain": {
+"id": "ponyta_plain",
+"stats": {
+"hp": 50,
+"atk": 85,
+"defe": 55,
+"spe": 90,
+"spa": 65,
+"spd": 65
+},
+"bst": 410,
+"types": [
+"FIRE"
+],
+"abilities": [
+"RUN_AWAY",
+"FLASH_FIRE",
+"FLAME_BODY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"nidoran_f": {
+"id": "nidoran_f",
+"stats": {
+"hp": 63,
+"atk": 51,
+"defe": 56,
+"spe": 45,
+"spa": 44,
+"spd": 46
+},
+"bst": 305,
+"types": [
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"RIVALRY",
+"HUSTLE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"dragonair": {
+"id": "dragonair",
+"stats": {
+"hp": 61,
+"atk": 84,
+"defe": 65,
+"spe": 70,
+"spa": 70,
+"spd": 70
+},
+"bst": 420,
+"types": [
+"DRAGON"
+],
+"abilities": [
+"SHED_SKIN",
+"SHED_SKIN",
+"MARVEL_SCALE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"corsola_galarian": {
+"id": "corsola_galarian",
+"stats": {
+"hp": 55,
+"atk": 55,
+"defe": 100,
+"spe": 30,
+"spa": 65,
+"spd": 85
+},
+"bst": 390,
+"types": [
+"GHOST",
+"ROCK"
+],
+"abilities": [
+"WEAK_ARMOR",
+"WEAK_ARMOR",
+"CURSED_BODY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ponyta_galarian": {
+"id": "ponyta_galarian",
+"stats": {
+"hp": 50,
+"atk": 85,
+"defe": 55,
+"spe": 90,
+"spa": 65,
+"spd": 65
+},
+"bst": 410,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"RUN_AWAY",
+"PASTEL_VEIL",
+"ANTICIPATION"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"totodile": {
+"id": "totodile",
+"stats": {
+"hp": 58,
+"atk": 73,
+"defe": 68,
+"spe": 47,
+"spa": 44,
+"spd": 54
+},
+"bst": 344,
+"types": [
+"WATER"
+],
+"abilities": [
+"TORRENT",
+"GUTS",
+"SHEER_FORCE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"xatu": {
+"id": "xatu",
+"stats": {
+"hp": 65,
+"atk": 65,
+"defe": 70,
+"spe": 95,
+"spa": 105,
+"spd": 80
+},
+"bst": 480,
+"types": [
+"PSYCHIC",
+"FLYING"
+],
+"abilities": [
+"SYNCHRONIZE",
+"EARLY_BIRD",
+"MAGIC_BOUNCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"pidgeot": {
+"id": "pidgeot",
+"stats": {
+"hp": 83,
+"atk": 60,
+"defe": 70,
+"spe": 101,
+"spa": 115,
+"spd": 70
+},
+"bst": 499,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"TANGLED_FEET",
+"NO_GUARD"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"azurill": {
+"id": "azurill",
+"stats": {
+"hp": 58,
+"atk": 24,
+"defe": 44,
+"spe": 24,
+"spa": 24,
+"spd": 46
+},
+"bst": 220,
+"types": [
+"NORMAL",
+"FAIRY"
+],
+"abilities": [
+"THICK_FAT",
+"HUGE_POWER",
+"SAP_SIPPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"spearow": {
+"id": "spearow",
+"stats": {
+"hp": 48,
+"atk": 68,
+"defe": 36,
+"spe": 74,
+"spa": 31,
+"spd": 35
+},
+"bst": 292,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"KEEN_EYE",
+"SNIPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"scyther": {
+"id": "scyther",
+"stats": {
+"hp": 65,
+"atk": 120,
+"defe": 80,
+"spe": 105,
+"spa": 55,
+"spd": 80
+},
+"bst": 505,
+"types": [
+"BUG",
+"FLYING"
+],
+"abilities": [
+"SWARM",
+"TECHNICIAN",
+"STEADFAST"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"meowth_galarian": {
+"id": "meowth_galarian",
+"stats": {
+"hp": 58,
+"atk": 73,
+"defe": 69,
+"spe": 44,
+"spa": 40,
+"spd": 46
+},
+"bst": 330,
+"types": [
+"STEEL"
+],
+"abilities": [
+"BATTLE_ARMOR",
+"TOUGH_CLAWS",
+"STEELY_SPIRIT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"alakazam": {
+"id": "alakazam",
+"stats": {
+"hp": 55,
+"atk": 50,
+"defe": 45,
+"spe": 120,
+"spa": 120,
+"spd": 95
+},
+"bst": 485,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SYNCHRONIZE",
+"MAGIC_GUARD",
+"TRACE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"mareep": {
+"id": "mareep",
+"stats": {
+"hp": 63,
+"atk": 40,
+"defe": 46,
+"spe": 39,
+"spa": 73,
+"spd": 49
+},
+"bst": 310,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"FLUFFY",
+"MOTOR_DRIVE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"vulpix_alolan": {
+"id": "vulpix_alolan",
+"stats": {
+"hp": 46,
+"atk": 45,
+"defe": 46,
+"spe": 69,
+"spa": 54,
+"spd": 69
+},
+"bst": 329,
+"types": [
+"ICE"
+],
+"abilities": [
+"SNOW_CLOAK",
+"SNOW_CLOAK",
+"SNOW_WARNING"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"cursola": {
+"id": "cursola",
+"stats": {
+"hp": 60,
+"atk": 95,
+"defe": 50,
+"spe": 30,
+"spa": 145,
+"spd": 130
+},
+"bst": 510,
+"types": [
+"GHOST",
+"ROCK"
+],
+"abilities": [
+"WEAK_ARMOR",
+"WEAK_ARMOR",
+"PERISH_BODY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"cloyster": {
+"id": "cloyster",
+"stats": {
+"hp": 50,
+"atk": 95,
+"defe": 180,
+"spe": 70,
+"spa": 85,
+"spd": 45
+},
+"bst": 525,
+"types": [
+"WATER",
+"ICE"
+],
+"abilities": [
+"SHELL_ARMOR",
+"SKILL_LINK",
+"OVERCOAT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"horsea": {
+"id": "horsea",
+"stats": {
+"hp": 38,
+"atk": 40,
+"defe": 74,
+"spe": 64,
+"spa": 78,
+"spd": 31
+},
+"bst": 325,
+"types": [
+"WATER"
+],
+"abilities": [
+"SWIFT_SWIM",
+"SNIPER",
+"DAMP"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"celebi": {
+"id": "celebi",
+"stats": {
+"hp": 100,
+"atk": 100,
+"defe": 100,
+"spe": 100,
+"spa": 100,
+"spd": 100
+},
+"bst": 600,
+"types": [
+"GRASS",
+"FAIRY"
+],
+"abilities": [
+"NATURAL_CURE",
+"NATURAL_CURE",
+"MAGIC_GUARD"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"wigglytuff": {
+"id": "wigglytuff",
+"stats": {
+"hp": 145,
+"atk": 60,
+"defe": 55,
+"spe": 45,
+"spa": 95,
+"spd": 65
+},
+"bst": 465,
+"types": [
+"NORMAL",
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"COMPETITIVE",
+"SOUNDPROOF"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"voltorb_plain": {
+"id": "voltorb_plain",
+"stats": {
+"hp": 48,
+"atk": 30,
+"defe": 56,
+"spe": 104,
+"spa": 63,
+"spd": 59
+},
+"bst": 360,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"SOUNDPROOF",
+"STATIC",
+"AFTERMATH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"koffing": {
+"id": "koffing",
+"stats": {
+"hp": 48,
+"atk": 69,
+"defe": 99,
+"spe": 39,
+"spa": 64,
+"spd": 51
+},
+"bst": 370,
+"types": [
+"POISON"
+],
+"abilities": [
+"LEVITATE",
+"NEUTRALIZING_GAS",
+"STENCH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"unown": {
+"id": "unown",
+"stats": {
+"hp": 56,
+"atk": 76,
+"defe": 52,
+"spe": 52,
+"spa": 76,
+"spd": 54
+},
+"bst": 366,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"LEVITATE",
+"LEVITATE",
+"LEVITATE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"blastoise": {
+"id": "blastoise",
+"stats": {
+"hp": 79,
+"atk": 83,
+"defe": 100,
+"spe": 78,
+"spa": 90,
+"spd": 105
+},
+"bst": 535,
+"types": [
+"WATER",
+"STEEL"
+],
+"abilities": [
+"TORRENT",
+"RAIN_DISH",
+"MEGA_LAUNCHER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"togepi": {
+"id": "togepi",
+"stats": {
+"hp": 43,
+"atk": 20,
+"defe": 69,
+"spe": 24,
+"spa": 48,
+"spd": 71
+},
+"bst": 275,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"HUSTLE",
+"SERENE_GRACE",
+"SUPER_LUCK"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"sneasel_hisuian": {
+"id": "sneasel_hisuian",
+"stats": {
+"hp": 55,
+"atk": 95,
+"defe": 55,
+"spe": 115,
+"spa": 35,
+"spd": 75
+},
+"bst": 430,
+"types": [
+"POISON",
+"FIGHTING"
+],
+"abilities": [
+"INNER_FOCUS",
+"KEEN_EYE",
+"PICKPOCKET"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"eevee": {
+"id": "eevee",
+"stats": {
+"hp": 63,
+"atk": 59,
+"defe": 56,
+"spe": 59,
+"spa": 49,
+"spd": 69
+},
+"bst": 355,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"RUN_AWAY",
+"ADAPTABILITY",
+"ANTICIPATION"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"muk_alolan": {
+"id": "muk_alolan",
+"stats": {
+"hp": 105,
+"atk": 105,
+"defe": 75,
+"spe": 50,
+"spa": 65,
+"spd": 100
+},
+"bst": 500,
+"types": [
+"POISON",
+"DARK"
+],
+"abilities": [
+"POISON_TOUCH",
+"GLUTTONY",
+"CORROSION"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"snorlax": {
+"id": "snorlax",
+"stats": {
+"hp": 150,
+"atk": 110,
+"defe": 65,
+"spe": 30,
+"spa": 65,
+"spd": 100
+},
+"bst": 520,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"IMMUNITY",
+"THICK_FAT",
+"GLUTTONY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ariados": {
+"id": "ariados",
+"stats": {
+"hp": 70,
+"atk": 90,
+"defe": 70,
+"spe": 90,
+"spa": 60,
+"spd": 70
+},
+"bst": 450,
+"types": [
+"BUG",
+"DARK"
+],
+"abilities": [
+"SWARM",
+"INSOMNIA",
+"SNIPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"aipom": {
+"id": "aipom",
+"stats": {
+"hp": 63,
+"atk": 78,
+"defe": 59,
+"spe": 84,
+"spa": 40,
+"spd": 61
+},
+"bst": 385,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"RUN_AWAY",
+"PICKUP",
+"SKILL_LINK"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"mr__rime": {
+"id": "mr__rime",
+"stats": {
+"hp": 80,
+"atk": 85,
+"defe": 75,
+"spe": 70,
+"spa": 110,
+"spd": 100
+},
+"bst": 520,
+"types": [
+"ICE",
+"PSYCHIC"
+],
+"abilities": [
+"TANGLED_FEET",
+"SCREEN_CLEANER",
+"ICE_BODY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"wartortle": {
+"id": "wartortle",
+"stats": {
+"hp": 59,
+"atk": 63,
+"defe": 80,
+"spe": 58,
+"spa": 65,
+"spd": 80
+},
+"bst": 405,
+"types": [
+"WATER"
+],
+"abilities": [
+"TORRENT",
+"RAIN_DISH",
+"SHELL_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"cyndaquil": {
+"id": "cyndaquil",
+"stats": {
+"hp": 47,
+"atk": 56,
+"defe": 49,
+"spe": 69,
+"spa": 64,
+"spd": 54
+},
+"bst": 339,
+"types": [
+"FIRE"
+],
+"abilities": [
+"BLAZE",
+"FLAME_BODY",
+"FLASH_FIRE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"rhyhorn": {
+"id": "rhyhorn",
+"stats": {
+"hp": 88,
+"atk": 93,
+"defe": 99,
+"spe": 29,
+"spa": 30,
+"spd": 36
+},
+"bst": 375,
+"types": [
+"GROUND",
+"ROCK"
+],
+"abilities": [
+"ROCK_HEAD",
+"SOLID_ROCK",
+"RECKLESS"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"zubat": {
+"id": "zubat",
+"stats": {
+"hp": 48,
+"atk": 53,
+"defe": 41,
+"spe": 59,
+"spa": 30,
+"spd": 44
+},
+"bst": 275,
+"types": [
+"POISON",
+"FLYING"
+],
+"abilities": [
+"INNER_FOCUS",
+"ANTICIPATION",
+"INFILTRATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"graveler_alolan": {
+"id": "graveler_alolan",
+"stats": {
+"hp": 55,
+"atk": 95,
+"defe": 115,
+"spe": 35,
+"spa": 45,
+"spd": 45
+},
+"bst": 390,
+"types": [
+"ROCK",
+"ELECTRIC"
+],
+"abilities": [
+"MAGNET_PULL",
+"STURDY",
+"GALVANIZE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ampharos": {
+"id": "ampharos",
+"stats": {
+"hp": 95,
+"atk": 75,
+"defe": 90,
+"spe": 65,
+"spa": 125,
+"spd": 95
+},
+"bst": 545,
+"types": [
+"ELECTRIC",
+"DRAGON"
+],
+"abilities": [
+"STATIC",
+"STATIC",
+"MOLD_BREAKER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ledian": {
+"id": "ledian",
+"stats": {
+"hp": 60,
+"atk": 95,
+"defe": 50,
+"spe": 85,
+"spa": 50,
+"spd": 110
+},
+"bst": 450,
+"types": [
+"BUG",
+"FIGHTING"
+],
+"abilities": [
+"SWARM",
+"EARLY_BIRD",
+"IRON_FIST"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"venomoth": {
+"id": "venomoth",
+"stats": {
+"hp": 70,
+"atk": 65,
+"defe": 60,
+"spe": 90,
+"spa": 110,
+"spd": 75
+},
+"bst": 470,
+"types": [
+"BUG",
+"POISON"
+],
+"abilities": [
+"SHIELD_DUST",
+"TINTED_LENS",
+"WONDER_SKIN"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"octillery": {
+"id": "octillery",
+"stats": {
+"hp": 75,
+"atk": 110,
+"defe": 75,
+"spe": 45,
+"spa": 110,
+"spd": 80
+},
+"bst": 495,
+"types": [
+"WATER",
+"FIRE"
+],
+"abilities": [
+"SUCTION_CUPS",
+"SNIPER",
+"SNIPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ambipom": {
+"id": "ambipom",
+"stats": {
+"hp": 75,
+"atk": 105,
+"defe": 66,
+"spe": 115,
+"spa": 68,
+"spd": 66
+},
+"bst": 495,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"TECHNICIAN",
+"PICKUP",
+"SKILL_LINK"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"electabuzz": {
+"id": "electabuzz",
+"stats": {
+"hp": 65,
+"atk": 88,
+"defe": 57,
+"spe": 105,
+"spa": 100,
+"spd": 85
+},
+"bst": 500,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"STATIC",
+"VITAL_SPIRIT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"porygon2": {
+"id": "porygon2",
+"stats": {
+"hp": 75,
+"atk": 80,
+"defe": 80,
+"spe": 60,
+"spa": 105,
+"spd": 85
+},
+"bst": 485,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"TRACE",
+"DOWNLOAD",
+"ANALYTIC"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"nidorino": {
+"id": "nidorino",
+"stats": {
+"hp": 69,
+"atk": 80,
+"defe": 61,
+"spe": 69,
+"spa": 55,
+"spd": 61
+},
+"bst": 395,
+"types": [
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"RIVALRY",
+"HUSTLE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"metapod": {
+"id": "metapod",
+"stats": {
+"hp": 58,
+"atk": 24,
+"defe": 59,
+"spe": 34,
+"spa": 29,
+"spd": 31
+},
+"bst": 235,
+"types": [
+"BUG"
+],
+"abilities": [
+"SHED_SKIN",
+"SHED_SKIN",
+"SHED_SKIN"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"gliscor": {
+"id": "gliscor",
+"stats": {
+"hp": 75,
+"atk": 95,
+"defe": 120,
+"spe": 90,
+"spa": 45,
+"spd": 75
+},
+"bst": 500,
+"types": [
+"GROUND",
+"FLYING"
+],
+"abilities": [
+"HYPER_CUTTER",
+"SAND_VEIL",
+"POISON_HEAL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"persian_alolan": {
+"id": "persian_alolan",
+"stats": {
+"hp": 65,
+"atk": 70,
+"defe": 60,
+"spe": 115,
+"spa": 85,
+"spd": 65
+},
+"bst": 460,
+"types": [
+"DARK"
+],
+"abilities": [
+"FUR_COAT",
+"TECHNICIAN",
+"RATTLED"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"rapidash_plain": {
+"id": "rapidash_plain",
+"stats": {
+"hp": 65,
+"atk": 100,
+"defe": 70,
+"spe": 105,
+"spa": 80,
+"spd": 80
+},
+"bst": 500,
+"types": [
+"FIRE",
+"FAIRY"
+],
+"abilities": [
+"RUN_AWAY",
+"FLASH_FIRE",
+"FLAME_BODY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"steelix": {
+"id": "steelix",
+"stats": {
+"hp": 75,
+"atk": 105,
+"defe": 200,
+"spe": 30,
+"spa": 45,
+"spd": 65
+},
+"bst": 520,
+"types": [
+"STEEL",
+"GROUND"
+],
+"abilities": [
+"SHEER_FORCE",
+"STURDY",
+"SAND_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"marowak_alolan": {
+"id": "marowak_alolan",
+"stats": {
+"hp": 60,
+"atk": 80,
+"defe": 110,
+"spe": 70,
+"spa": 50,
+"spd": 80
+},
+"bst": 450,
+"types": [
+"FIRE",
+"GHOST"
+],
+"abilities": [
+"CURSED_BODY",
+"LIGHTNING_ROD",
+"ROCK_HEAD"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"drowzee": {
+"id": "drowzee",
+"stats": {
+"hp": 68,
+"atk": 52,
+"defe": 51,
+"spe": 46,
+"spa": 47,
+"spd": 94
+},
+"bst": 358,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"INSOMNIA",
+"BAD_DREAMS",
+"INNER_FOCUS"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"sudowoodo": {
+"id": "sudowoodo",
+"stats": {
+"hp": 75,
+"atk": 115,
+"defe": 120,
+"spe": 30,
+"spa": 30,
+"spd": 80
+},
+"bst": 450,
+"types": [
+"ROCK"
+],
+"abilities": [
+"STURDY",
+"ROCK_HEAD",
+"RATTLED"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"tauros_paldean": {
+"id": "tauros_paldean",
+"stats": {
+"hp": 75,
+"atk": 120,
+"defe": 105,
+"spe": 100,
+"spa": 30,
+"spd": 70
+},
+"bst": 500,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"INTIMIDATE",
+"ANGER_POINT",
+"CUD_CHEW"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"articuno_plain": {
+"id": "articuno_plain",
+"stats": {
+"hp": 90,
+"atk": 85,
+"defe": 100,
+"spe": 85,
+"spa": 95,
+"spd": 125
+},
+"bst": 580,
+"types": [
+"ICE",
+"FLYING"
+],
+"abilities": [
+"PRESSURE",
+"SNOW_WARNING",
+"SNOW_CLOAK"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"squirtle": {
+"id": "squirtle",
+"stats": {
+"hp": 52,
+"atk": 52,
+"defe": 69,
+"spe": 47,
+"spa": 54,
+"spd": 70
+},
+"bst": 344,
+"types": [
+"WATER"
+],
+"abilities": [
+"TORRENT",
+"RAIN_DISH",
+"SHELL_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"magcargo": {
+"id": "magcargo",
+"stats": {
+"hp": 70,
+"atk": 50,
+"defe": 135,
+"spe": 40,
+"spa": 115,
+"spd": 115
+},
+"bst": 525,
+"types": [
+"FIRE",
+"ROCK"
+],
+"abilities": [
+"MAGMA_ARMOR",
+"FLAME_BODY",
+"WEAK_ARMOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"tyrogue": {
+"id": "tyrogue",
+"stats": {
+"hp": 43,
+"atk": 39,
+"defe": 39,
+"spe": 39,
+"spa": 39,
+"spd": 41
+},
+"bst": 240,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"GUTS",
+"STEADFAST",
+"VITAL_SPIRIT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"poliwrath": {
+"id": "poliwrath",
+"stats": {
+"hp": 90,
+"atk": 105,
+"defe": 95,
+"spe": 70,
+"spa": 60,
+"spd": 90
+},
+"bst": 510,
+"types": [
+"WATER",
+"FIGHTING"
+],
+"abilities": [
+"WATER_ABSORB",
+"DAMP",
+"SWIFT_SWIM"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"clefairy": {
+"id": "clefairy",
+"stats": {
+"hp": 78,
+"atk": 45,
+"defe": 54,
+"spe": 39,
+"spa": 68,
+"spd": 69
+},
+"bst": 353,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"MAGIC_GUARD",
+"CUTE_CHARM"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"electivire": {
+"id": "electivire",
+"stats": {
+"hp": 75,
+"atk": 115,
+"defe": 67,
+"spe": 100,
+"spa": 95,
+"spd": 85
+},
+"bst": 537,
+"types": [
+"ELECTRIC",
+"FIGHTING"
+],
+"abilities": [
+"MOTOR_DRIVE",
+"MOTOR_DRIVE",
+"VITAL_SPIRIT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"porygon_z": {
+"id": "porygon_z",
+"stats": {
+"hp": 85,
+"atk": 80,
+"defe": 70,
+"spe": 90,
+"spa": 135,
+"spd": 75
+},
+"bst": 535,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"ADAPTABILITY",
+"DOWNLOAD",
+"ANALYTIC"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ninetales_plain": {
+"id": "ninetales_plain",
+"stats": {
+"hp": 73,
+"atk": 67,
+"defe": 75,
+"spe": 109,
+"spa": 91,
+"spd": 90
+},
+"bst": 505,
+"types": [
+"FIRE",
+"GHOST"
+],
+"abilities": [
+"FLASH_FIRE",
+"FOREWARN",
+"DROUGHT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"sneasel_plain": {
+"id": "sneasel_plain",
+"stats": {
+"hp": 55,
+"atk": 95,
+"defe": 55,
+"spe": 115,
+"spa": 35,
+"spd": 75
+},
+"bst": 430,
+"types": [
+"DARK",
+"ICE"
+],
+"abilities": [
+"INNER_FOCUS",
+"KEEN_EYE",
+"PICKPOCKET"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"espeon": {
+"id": "espeon",
+"stats": {
+"hp": 65,
+"atk": 65,
+"defe": 60,
+"spe": 110,
+"spa": 130,
+"spd": 95
+},
+"bst": 525,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SYNCHRONIZE",
+"MAGIC_GUARD",
+"MAGIC_BOUNCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"sirfetch_d": {
+"id": "sirfetch_d",
+"stats": {
+"hp": 62,
+"atk": 135,
+"defe": 95,
+"spe": 65,
+"spa": 68,
+"spd": 82
+},
+"bst": 507,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"STEADFAST",
+"STEADFAST",
+"SCRAPPY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"sandshrew_plain": {
+"id": "sandshrew_plain",
+"stats": {
+"hp": 58,
+"atk": 83,
+"defe": 89,
+"spe": 44,
+"spa": 20,
+"spd": 36
+},
+"bst": 330,
+"types": [
+"GROUND"
+],
+"abilities": [
+"SAND_VEIL",
+"SHARPNESS",
+"SAND_RUSH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"spinarak": {
+"id": "spinarak",
+"stats": {
+"hp": 40,
+"atk": 70,
+"defe": 40,
+"spe": 50,
+"spa": 45,
+"spd": 40
+},
+"bst": 285,
+"types": [
+"BUG",
+"POISON"
+],
+"abilities": [
+"SWARM",
+"INSOMNIA",
+"SNIPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"mr__mime_galarian": {
+"id": "mr__mime_galarian",
+"stats": {
+"hp": 50,
+"atk": 70,
+"defe": 65,
+"spe": 100,
+"spa": 90,
+"spd": 90
+},
+"bst": 465,
+"types": [
+"ICE",
+"PSYCHIC"
+],
+"abilities": [
+"VITAL_SPIRIT",
+"SCREEN_CLEANER",
+"ICE_BODY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"stantler": {
+"id": "stantler",
+"stats": {
+"hp": 73,
+"atk": 100,
+"defe": 62,
+"spe": 90,
+"spa": 85,
+"spd": 65
+},
+"bst": 475,
+"types": [
+"NORMAL",
+"PSYCHIC"
+],
+"abilities": [
+"INTIMIDATE",
+"FRISK",
+"SAP_SIPPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"abra": {
+"id": "abra",
+"stats": {
+"hp": 33,
+"atk": 20,
+"defe": 21,
+"spe": 94,
+"spa": 113,
+"spd": 59
+},
+"bst": 340,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SYNCHRONIZE",
+"MAGIC_GUARD",
+"TRACE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"bayleef": {
+"id": "bayleef",
+"stats": {
+"hp": 60,
+"atk": 62,
+"defe": 80,
+"spe": 60,
+"spa": 63,
+"spd": 80
+},
+"bst": 405,
+"types": [
+"GRASS"
+],
+"abilities": [
+"OVERGROW",
+"NATURAL_CURE",
+"LEAF_GUARD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"hitmonlee": {
+"id": "hitmonlee",
+"stats": {
+"hp": 50,
+"atk": 120,
+"defe": 53,
+"spe": 87,
+"spa": 35,
+"spd": 110
+},
+"bst": 455,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"LIMBER",
+"RECKLESS",
+"UNBURDEN"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"tauros_paldean_fire": {
+"id": "tauros_paldean_fire",
+"stats": {
+"hp": 75,
+"atk": 110,
+"defe": 105,
+"spe": 100,
+"spa": 40,
+"spd": 70
+},
+"bst": 500,
+"types": [
+"FIGHTING",
+"FIRE"
+],
+"abilities": [
+"INTIMIDATE",
+"ANGER_POINT",
+"CUD_CHEW"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"primeape": {
+"id": "primeape",
+"stats": {
+"hp": 65,
+"atk": 105,
+"defe": 60,
+"spe": 95,
+"spa": 60,
+"spd": 70
+},
+"bst": 455,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"GORILLA_TACTICS",
+"ANGER_POINT",
+"DEFIANT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"growlithe_plain": {
+"id": "growlithe_plain",
+"stats": {
+"hp": 63,
+"atk": 74,
+"defe": 51,
+"spe": 64,
+"spa": 74,
+"spd": 54
+},
+"bst": 380,
+"types": [
+"FIRE",
+"NORMAL"
+],
+"abilities": [
+"INTIMIDATE",
+"FLASH_FIRE",
+"JUSTIFIED"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"dragonite": {
+"id": "dragonite",
+"stats": {
+"hp": 91,
+"atk": 134,
+"defe": 95,
+"spe": 80,
+"spa": 100,
+"spd": 100
+},
+"bst": 600,
+"types": [
+"DRAGON",
+"FLYING"
+],
+"abilities": [
+"INNER_FOCUS",
+"MARVEL_SCALE",
+"INNER_FOCUS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"togetic": {
+"id": "togetic",
+"stats": {
+"hp": 63,
+"atk": 40,
+"defe": 91,
+"spe": 44,
+"spa": 88,
+"spd": 109
+},
+"bst": 435,
+"types": [
+"FAIRY",
+"FLYING"
+],
+"abilities": [
+"HUSTLE",
+"SERENE_GRACE",
+"SUPER_LUCK"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"nidoran_m": {
+"id": "nidoran_m",
+"stats": {
+"hp": 54,
+"atk": 65,
+"defe": 44,
+"spe": 54,
+"spa": 40,
+"spd": 46
+},
+"bst": 303,
+"types": [
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"RIVALRY",
+"HUSTLE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"exeggutor_alolan": {
+"id": "exeggutor_alolan",
+"stats": {
+"hp": 95,
+"atk": 105,
+"defe": 85,
+"spe": 45,
+"spa": 125,
+"spd": 75
+},
+"bst": 530,
+"types": [
+"GRASS",
+"DRAGON"
+],
+"abilities": [
+"FRISK",
+"FRISK",
+"HARVEST"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"sunflora": {
+"id": "sunflora",
+"stats": {
+"hp": 75,
+"atk": 75,
+"defe": 75,
+"spe": 60,
+"spa": 105,
+"spd": 85
+},
+"bst": 475,
+"types": [
+"GRASS",
+"FIRE"
+],
+"abilities": [
+"CHLOROPHYLL",
+"SOLAR_POWER",
+"EARLY_BIRD"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"skiploom": {
+"id": "skiploom",
+"stats": {
+"hp": 55,
+"atk": 45,
+"defe": 50,
+"spe": 90,
+"spa": 55,
+"spd": 65
+},
+"bst": 360,
+"types": [
+"GRASS",
+"FLYING"
+],
+"abilities": [
+"CHLOROPHYLL",
+"WIND_RIDER",
+"INFILTRATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"houndoom": {
+"id": "houndoom",
+"stats": {
+"hp": 75,
+"atk": 90,
+"defe": 50,
+"spe": 95,
+"spa": 110,
+"spd": 80
+},
+"bst": 500,
+"types": [
+"DARK",
+"FIRE"
+],
+"abilities": [
+"EARLY_BIRD",
+"FLASH_FIRE",
+"SOLAR_POWER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"raichu_plain": {
+"id": "raichu_plain",
+"stats": {
+"hp": 60,
+"atk": 100,
+"defe": 55,
+"spe": 120,
+"spa": 100,
+"spd": 80
+},
+"bst": 515,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"LIGHTNING_ROD",
+"NO_GUARD"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"porygon": {
+"id": "porygon",
+"stats": {
+"hp": 65,
+"atk": 60,
+"defe": 70,
+"spe": 40,
+"spa": 85,
+"spd": 75
+},
+"bst": 395,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"TRACE",
+"DOWNLOAD",
+"ANALYTIC"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"golduck": {
+"id": "golduck",
+"stats": {
+"hp": 80,
+"atk": 82,
+"defe": 78,
+"spe": 85,
+"spa": 95,
+"spd": 80
+},
+"bst": 500,
+"types": [
+"WATER",
+"PSYCHIC"
+],
+"abilities": [
+"DAMP",
+"CLOUD_NINE",
+"SWIFT_SWIM"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"golem_alolan": {
+"id": "golem_alolan",
+"stats": {
+"hp": 90,
+"atk": 120,
+"defe": 130,
+"spe": 50,
+"spa": 55,
+"spd": 65
+},
+"bst": 510,
+"types": [
+"ROCK",
+"ELECTRIC"
+],
+"abilities": [
+"MAGNET_PULL",
+"STURDY",
+"GALVANIZE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"diglett_plain": {
+"id": "diglett_plain",
+"stats": {
+"hp": 18,
+"atk": 63,
+"defe": 31,
+"spe": 99,
+"spa": 35,
+"spd": 49
+},
+"bst": 295,
+"types": [
+"GROUND"
+],
+"abilities": [
+"SAND_VEIL",
+"TANGLING_HAIR",
+"SAND_FORCE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"yanma": {
+"id": "yanma",
+"stats": {
+"hp": 73,
+"atk": 69,
+"defe": 49,
+"spe": 99,
+"spa": 79,
+"spd": 51
+},
+"bst": 420,
+"types": [
+"BUG",
+"FLYING"
+],
+"abilities": [
+"SPEED_BOOST",
+"COMPOUND_EYES",
+"FRISK"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"gengar": {
+"id": "gengar",
+"stats": {
+"hp": 60,
+"atk": 65,
+"defe": 60,
+"spe": 110,
+"spa": 120,
+"spd": 75
+},
+"bst": 490,
+"types": [
+"GHOST",
+"POISON"
+],
+"abilities": [
+"CURSED_BODY",
+"LEVITATE",
+"CURSED_BODY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"weavile": {
+"id": "weavile",
+"stats": {
+"hp": 70,
+"atk": 105,
+"defe": 65,
+"spe": 120,
+"spa": 45,
+"spd": 85
+},
+"bst": 490,
+"types": [
+"DARK",
+"ICE"
+],
+"abilities": [
+"PRESSURE",
+"TECHNICIAN",
+"PICKPOCKET"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"chikorita": {
+"id": "chikorita",
+"stats": {
+"hp": 53,
+"atk": 53,
+"defe": 69,
+"spe": 49,
+"spa": 53,
+"spd": 71
+},
+"bst": 348,
+"types": [
+"GRASS"
+],
+"abilities": [
+"OVERGROW",
+"NATURAL_CURE",
+"LEAF_GUARD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"slowpoke_plain": {
+"id": "slowpoke_plain",
+"stats": {
+"hp": 98,
+"atk": 73,
+"defe": 69,
+"spe": 19,
+"spa": 40,
+"spd": 46
+},
+"bst": 345,
+"types": [
+"WATER",
+"PSYCHIC"
+],
+"abilities": [
+"OBLIVIOUS",
+"OWN_TEMPO",
+"REGENERATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"misdreavus": {
+"id": "misdreavus",
+"stats": {
+"hp": 60,
+"atk": 60,
+"defe": 60,
+"spe": 85,
+"spa": 85,
+"spd": 85
+},
+"bst": 435,
+"types": [
+"GHOST"
+],
+"abilities": [
+"LEVITATE",
+"LEVITATE",
+"LEVITATE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"charmeleon": {
+"id": "charmeleon",
+"stats": {
+"hp": 58,
+"atk": 64,
+"defe": 58,
+"spe": 80,
+"spa": 80,
+"spd": 65
+},
+"bst": 405,
+"types": [
+"FIRE"
+],
+"abilities": [
+"BLAZE",
+"SOLAR_POWER",
+"FLAME_BODY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"noctowl": {
+"id": "noctowl",
+"stats": {
+"hp": 100,
+"atk": 60,
+"defe": 60,
+"spe": 75,
+"spa": 96,
+"spd": 96
+},
+"bst": 487,
+"types": [
+"GHOST",
+"FLYING"
+],
+"abilities": [
+"INSOMNIA",
+"KEEN_EYE",
+"TINTED_LENS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"overqwil": {
+"id": "overqwil",
+"stats": {
+"hp": 85,
+"atk": 115,
+"defe": 95,
+"spe": 85,
+"spa": 65,
+"spd": 65
+},
+"bst": 510,
+"types": [
+"DARK",
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"SWIFT_SWIM",
+"INTIMIDATE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"granbull": {
+"id": "granbull",
+"stats": {
+"hp": 90,
+"atk": 120,
+"defe": 75,
+"spe": 60,
+"spa": 60,
+"spd": 60
+},
+"bst": 465,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"INTIMIDATE",
+"QUICK_FEET",
+"RATTLED"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"marill": {
+"id": "marill",
+"stats": {
+"hp": 78,
+"atk": 24,
+"defe": 54,
+"spe": 44,
+"spa": 24,
+"spd": 56
+},
+"bst": 280,
+"types": [
+"WATER",
+"FAIRY"
+],
+"abilities": [
+"THICK_FAT",
+"HUGE_POWER",
+"SAP_SIPPER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"caterpie": {
+"id": "caterpie",
+"stats": {
+"hp": 53,
+"atk": 34,
+"defe": 39,
+"spe": 49,
+"spa": 24,
+"spd": 26
+},
+"bst": 225,
+"types": [
+"BUG"
+],
+"abilities": [
+"SHIELD_DUST",
+"SHIELD_DUST",
+"RUN_AWAY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"larvitar": {
+"id": "larvitar",
+"stats": {
+"hp": 58,
+"atk": 72,
+"defe": 54,
+"spe": 45,
+"spa": 45,
+"spd": 56
+},
+"bst": 330,
+"types": [
+"ROCK",
+"GROUND"
+],
+"abilities": [
+"GUTS",
+"BATTLE_ARMOR",
+"SAND_VEIL"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"machoke": {
+"id": "machoke",
+"stats": {
+"hp": 80,
+"atk": 100,
+"defe": 70,
+"spe": 45,
+"spa": 50,
+"spd": 60
+},
+"bst": 405,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"GUTS",
+"NO_GUARD",
+"STEADFAST"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"smoochum": {
+"id": "smoochum",
+"stats": {
+"hp": 50,
+"atk": 35,
+"defe": 45,
+"spe": 75,
+"spa": 90,
+"spd": 65
+},
+"bst": 360,
+"types": [
+"ICE",
+"PSYCHIC"
+],
+"abilities": [
+"OBLIVIOUS",
+"FILTER",
+"HYDRATION"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"tauros_paldean_water": {
+"id": "tauros_paldean_water",
+"stats": {
+"hp": 75,
+"atk": 110,
+"defe": 105,
+"spe": 100,
+"spa": 40,
+"spd": 70
+},
+"bst": 500,
+"types": [
+"FIGHTING",
+"WATER"
+],
+"abilities": [
+"INTIMIDATE",
+"ANGER_POINT",
+"CUD_CHEW"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"heracross": {
+"id": "heracross",
+"stats": {
+"hp": 80,
+"atk": 125,
+"defe": 75,
+"spe": 85,
+"spa": 40,
+"spd": 95
+},
+"bst": 500,
+"types": [
+"BUG",
+"FIGHTING"
+],
+"abilities": [
+"MOXIE",
+"GUTS",
+"SKILL_LINK"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"bellossom": {
+"id": "bellossom",
+"stats": {
+"hp": 75,
+"atk": 80,
+"defe": 95,
+"spe": 50,
+"spa": 100,
+"spd": 110
+},
+"bst": 510,
+"types": [
+"GRASS",
+"FAIRY"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"OWN_TEMPO"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"magikarp": {
+"id": "magikarp",
+"stats": {
+"hp": 28,
+"atk": 14,
+"defe": 59,
+"spe": 84,
+"spa": 19,
+"spd": 26
+},
+"bst": 230,
+"types": [
+"WATER"
+],
+"abilities": [
+"SWIFT_SWIM",
+"SWIFT_SWIM",
+"RATTLED"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"gyarados": {
+"id": "gyarados",
+"stats": {
+"hp": 95,
+"atk": 125,
+"defe": 79,
+"spe": 81,
+"spa": 60,
+"spd": 100
+},
+"bst": 540,
+"types": [
+"WATER",
+"FLYING"
+],
+"abilities": [
+"INTIMIDATE",
+"MOXIE",
+"MOLD_BREAKER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"rhydon": {
+"id": "rhydon",
+"stats": {
+"hp": 95,
+"atk": 130,
+"defe": 120,
+"spe": 40,
+"spa": 45,
+"spd": 50
+},
+"bst": 480,
+"types": [
+"GROUND",
+"ROCK"
+],
+"abilities": [
+"ROCK_HEAD",
+"SOLID_ROCK",
+"RECKLESS"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"seadra": {
+"id": "seadra",
+"stats": {
+"hp": 55,
+"atk": 65,
+"defe": 95,
+"spe": 85,
+"spa": 95,
+"spd": 45
+},
+"bst": 440,
+"types": [
+"WATER"
+],
+"abilities": [
+"POISON_POINT",
+"SNIPER",
+"DAMP"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"perrserker": {
+"id": "perrserker",
+"stats": {
+"hp": 80,
+"atk": 110,
+"defe": 100,
+"spe": 60,
+"spa": 50,
+"spd": 60
+},
+"bst": 460,
+"types": [
+"STEEL"
+],
+"abilities": [
+"BATTLE_ARMOR",
+"TOUGH_CLAWS",
+"STEELY_SPIRIT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"bulbasaur": {
+"id": "bulbasaur",
+"stats": {
+"hp": 53,
+"atk": 49,
+"defe": 55,
+"spe": 49,
+"spa": 73,
+"spd": 69
+},
+"bst": 348,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"OVERGROW",
+"CHLOROPHYLL",
+"EFFECT_SPORE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"rapidash_galarian": {
+"id": "rapidash_galarian",
+"stats": {
+"hp": 65,
+"atk": 100,
+"defe": 70,
+"spe": 105,
+"spa": 80,
+"spd": 80
+},
+"bst": 500,
+"types": [
+"PSYCHIC",
+"FAIRY"
+],
+"abilities": [
+"RUN_AWAY",
+"PASTEL_VEIL",
+"ANTICIPATION"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"hitmonchan": {
+"id": "hitmonchan",
+"stats": {
+"hp": 50,
+"atk": 105,
+"defe": 79,
+"spe": 76,
+"spa": 35,
+"spd": 110
+},
+"bst": 455,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"KEEN_EYE",
+"IRON_FIST",
+"INNER_FOCUS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"slowbro_galarian": {
+"id": "slowbro_galarian",
+"stats": {
+"hp": 95,
+"atk": 100,
+"defe": 100,
+"spe": 30,
+"spa": 100,
+"spd": 75
+},
+"bst": 500,
+"types": [
+"POISON",
+"PSYCHIC"
+],
+"abilities": [
+"QUICK_DRAW",
+"OWN_TEMPO",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"lanturn": {
+"id": "lanturn",
+"stats": {
+"hp": 125,
+"atk": 58,
+"defe": 58,
+"spe": 67,
+"spa": 91,
+"spd": 86
+},
+"bst": 485,
+"types": [
+"WATER",
+"ELECTRIC"
+],
+"abilities": [
+"VOLT_ABSORB",
+"ILLUMINATE",
+"WATER_ABSORB"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"mantine": {
+"id": "mantine",
+"stats": {
+"hp": 85,
+"atk": 40,
+"defe": 75,
+"spe": 70,
+"spa": 80,
+"spd": 140
+},
+"bst": 490,
+"types": [
+"WATER",
+"FLYING"
+],
+"abilities": [
+"SWIFT_SWIM",
+"WATER_ABSORB",
+"WATER_VEIL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"slowbro_plain": {
+"id": "slowbro_plain",
+"stats": {
+"hp": 95,
+"atk": 75,
+"defe": 120,
+"spe": 30,
+"spa": 100,
+"spd": 80
+},
+"bst": 500,
+"types": [
+"WATER",
+"PSYCHIC"
+],
+"abilities": [
+"OBLIVIOUS",
+"OWN_TEMPO",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"elekid": {
+"id": "elekid",
+"stats": {
+"hp": 50,
+"atk": 63,
+"defe": 37,
+"spe": 100,
+"spa": 65,
+"spd": 55
+},
+"bst": 370,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"STATIC",
+"VITAL_SPIRIT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"delibird": {
+"id": "delibird",
+"stats": {
+"hp": 65,
+"atk": 90,
+"defe": 55,
+"spe": 95,
+"spa": 98,
+"spd": 60
+},
+"bst": 463,
+"types": [
+"ICE",
+"FLYING"
+],
+"abilities": [
+"VITAL_SPIRIT",
+"HUSTLE",
+"INSOMNIA"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"pikachu": {
+"id": "pikachu",
+"stats": {
+"hp": 40,
+"atk": 60,
+"defe": 40,
+"spe": 100,
+"spa": 60,
+"spd": 50
+},
+"bst": 350,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"STATIC",
+"LIGHTNING_ROD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"quilava": {
+"id": "quilava",
+"stats": {
+"hp": 58,
+"atk": 64,
+"defe": 58,
+"spe": 80,
+"spa": 80,
+"spd": 65
+},
+"bst": 405,
+"types": [
+"FIRE"
+],
+"abilities": [
+"BLAZE",
+"FLAME_BODY",
+"FLASH_FIRE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"shellder": {
+"id": "shellder",
+"stats": {
+"hp": 38,
+"atk": 73,
+"defe": 104,
+"spe": 44,
+"spa": 45,
+"spd": 31
+},
+"bst": 335,
+"types": [
+"WATER"
+],
+"abilities": [
+"SHELL_ARMOR",
+"SKILL_LINK",
+"OVERCOAT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"dugtrio_alolan": {
+"id": "dugtrio_alolan",
+"stats": {
+"hp": 35,
+"atk": 100,
+"defe": 60,
+"spe": 110,
+"spa": 50,
+"spd": 70
+},
+"bst": 425,
+"types": [
+"GROUND",
+"STEEL"
+],
+"abilities": [
+"SAND_VEIL",
+"TANGLING_HAIR",
+"SAND_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"zapdos_plain": {
+"id": "zapdos_plain",
+"stats": {
+"hp": 90,
+"atk": 90,
+"defe": 85,
+"spe": 100,
+"spa": 125,
+"spd": 90
+},
+"bst": 580,
+"types": [
+"ELECTRIC",
+"FLYING"
+],
+"abilities": [
+"PRESSURE",
+"DRIZZLE",
+"STATIC"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"pupitar": {
+"id": "pupitar",
+"stats": {
+"hp": 70,
+"atk": 84,
+"defe": 70,
+"spe": 51,
+"spa": 65,
+"spd": 70
+},
+"bst": 410,
+"types": [
+"ROCK",
+"GROUND"
+],
+"abilities": [
+"SHED_SKIN",
+"SHED_SKIN",
+"BATTLE_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"vulpix_plain": {
+"id": "vulpix_plain",
+"stats": {
+"hp": 46,
+"atk": 45,
+"defe": 46,
+"spe": 69,
+"spa": 54,
+"spd": 69
+},
+"bst": 329,
+"types": [
+"FIRE"
+],
+"abilities": [
+"FLASH_FIRE",
+"FOREWARN",
+"DROUGHT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"kabutops": {
+"id": "kabutops",
+"stats": {
+"hp": 60,
+"atk": 115,
+"defe": 105,
+"spe": 80,
+"spa": 65,
+"spd": 70
+},
+"bst": 495,
+"types": [
+"ROCK",
+"WATER"
+],
+"abilities": [
+"SWIFT_SWIM",
+"BATTLE_ARMOR",
+"WEAK_ARMOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ledyba": {
+"id": "ledyba",
+"stats": {
+"hp": 40,
+"atk": 50,
+"defe": 30,
+"spe": 55,
+"spa": 45,
+"spd": 80
+},
+"bst": 300,
+"types": [
+"BUG",
+"FLYING"
+],
+"abilities": [
+"SWARM",
+"EARLY_BIRD",
+"RATTLED"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"meganium": {
+"id": "meganium",
+"stats": {
+"hp": 80,
+"atk": 82,
+"defe": 100,
+"spe": 80,
+"spa": 93,
+"spd": 100
+},
+"bst": 535,
+"types": [
+"GRASS",
+"FAIRY"
+],
+"abilities": [
+"OVERGROW",
+"NATURAL_CURE",
+"MEGA_SOL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"chansey": {
+"id": "chansey",
+"stats": {
+"hp": 150,
+"atk": 5,
+"defe": 5,
+"spe": 50,
+"spa": 35,
+"spd": 90
+},
+"bst": 335,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"NATURAL_CURE",
+"SERENE_GRACE",
+"NATURAL_CURE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"piloswine": {
+"id": "piloswine",
+"stats": {
+"hp": 100,
+"atk": 100,
+"defe": 80,
+"spe": 50,
+"spa": 60,
+"spd": 60
+},
+"bst": 450,
+"types": [
+"ICE",
+"GROUND"
+],
+"abilities": [
+"OBLIVIOUS",
+"SNOW_CLOAK",
+"THICK_FAT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"raticate_plain": {
+"id": "raticate_plain",
+"stats": {
+"hp": 60,
+"atk": 92,
+"defe": 60,
+"spe": 108,
+"spa": 50,
+"spd": 70
+},
+"bst": 440,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"RUN_AWAY",
+"GUTS",
+"HUSTLE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"rhyperior": {
+"id": "rhyperior",
+"stats": {
+"hp": 120,
+"atk": 140,
+"defe": 120,
+"spe": 40,
+"spa": 55,
+"spd": 50
+},
+"bst": 525,
+"types": [
+"STEEL",
+"ROCK"
+],
+"abilities": [
+"LIGHTNING_ROD",
+"SOLID_ROCK",
+"RECKLESS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"sylveon": {
+"id": "sylveon",
+"stats": {
+"hp": 95,
+"atk": 65,
+"defe": 65,
+"spe": 60,
+"spa": 110,
+"spd": 130
+},
+"bst": 525,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"SERENE_GRACE",
+"PIXILATE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"flaaffy": {
+"id": "flaaffy",
+"stats": {
+"hp": 70,
+"atk": 60,
+"defe": 60,
+"spe": 50,
+"spa": 85,
+"spd": 65
+},
+"bst": 390,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"FLUFFY",
+"MOTOR_DRIVE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"kadabra": {
+"id": "kadabra",
+"stats": {
+"hp": 40,
+"atk": 35,
+"defe": 30,
+"spe": 105,
+"spa": 120,
+"spd": 70
+},
+"bst": 400,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SYNCHRONIZE",
+"MAGIC_GUARD",
+"TRACE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"lickitung": {
+"id": "lickitung",
+"stats": {
+"hp": 98,
+"atk": 59,
+"defe": 79,
+"spe": 34,
+"spa": 64,
+"spd": 81
+},
+"bst": 415,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"OWN_TEMPO",
+"OBLIVIOUS",
+"CLOUD_NINE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"dudunsparce": {
+"id": "dudunsparce",
+"stats": {
+"hp": 125,
+"atk": 100,
+"defe": 80,
+"spe": 70,
+"spa": 85,
+"spd": 75
+},
+"bst": 535,
+"types": [
+"NORMAL",
+"DRAGON"
+],
+"abilities": [
+"SERENE_GRACE",
+"RUN_AWAY",
+"SAND_STREAM"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"vileplume": {
+"id": "vileplume",
+"stats": {
+"hp": 75,
+"atk": 80,
+"defe": 85,
+"spe": 50,
+"spa": 120,
+"spd": 100
+},
+"bst": 510,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"EFFECT_SPORE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"gloom": {
+"id": "gloom",
+"stats": {
+"hp": 68,
+"atk": 65,
+"defe": 76,
+"spe": 44,
+"spa": 93,
+"spd": 79
+},
+"bst": 425,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"STENCH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"mewtwo_plain": {
+"id": "mewtwo_plain",
+"stats": {
+"hp": 106,
+"atk": 110,
+"defe": 90,
+"spe": 130,
+"spa": 154,
+"spd": 90
+},
+"bst": 680,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"PRESSURE",
+"INSOMNIA",
+"UNNERVE"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"bonsly": {
+"id": "bonsly",
+"stats": {
+"hp": 60,
+"atk": 85,
+"defe": 100,
+"spe": 10,
+"spa": 10,
+"spd": 60
+},
+"bst": 325,
+"types": [
+"ROCK"
+],
+"abilities": [
+"STURDY",
+"ROCK_HEAD",
+"RATTLED"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"pineco": {
+"id": "pineco",
+"stats": {
+"hp": 58,
+"atk": 73,
+"defe": 94,
+"spe": 19,
+"spa": 35,
+"spd": 41
+},
+"bst": 320,
+"types": [
+"BUG"
+],
+"abilities": [
+"STURDY",
+"STURDY",
+"OVERCOAT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"sandslash_alolan": {
+"id": "sandslash_alolan",
+"stats": {
+"hp": 75,
+"atk": 100,
+"defe": 120,
+"spe": 65,
+"spa": 25,
+"spd": 65
+},
+"bst": 450,
+"types": [
+"ICE",
+"STEEL"
+],
+"abilities": [
+"SNOW_CLOAK",
+"SHARPNESS",
+"SLUSH_RUSH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"suicune": {
+"id": "suicune",
+"stats": {
+"hp": 100,
+"atk": 75,
+"defe": 115,
+"spe": 85,
+"spa": 90,
+"spd": 115
+},
+"bst": 580,
+"types": [
+"WATER"
+],
+"abilities": [
+"PRESSURE",
+"INNER_FOCUS",
+"WATER_ABSORB"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"butterfree": {
+"id": "butterfree",
+"stats": {
+"hp": 65,
+"atk": 45,
+"defe": 60,
+"spe": 90,
+"spa": 100,
+"spd": 90
+},
+"bst": 450,
+"types": [
+"BUG",
+"PSYCHIC"
+],
+"abilities": [
+"COMPOUND_EYES",
+"LEVITATE",
+"TINTED_LENS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"hoothoot": {
+"id": "hoothoot",
+"stats": {
+"hp": 75,
+"atk": 34,
+"defe": 36,
+"spe": 54,
+"spa": 50,
+"spd": 60
+},
+"bst": 309,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"INSOMNIA",
+"KEEN_EYE",
+"TINTED_LENS"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"furret": {
+"id": "furret",
+"stats": {
+"hp": 90,
+"atk": 85,
+"defe": 65,
+"spe": 105,
+"spa": 45,
+"spd": 55
+},
+"bst": 445,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"RUN_AWAY",
+"KEEN_EYE",
+"FRISK"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"crobat": {
+"id": "crobat",
+"stats": {
+"hp": 85,
+"atk": 85,
+"defe": 80,
+"spe": 130,
+"spa": 70,
+"spd": 80
+},
+"bst": 530,
+"types": [
+"POISON",
+"FLYING"
+],
+"abilities": [
+"INNER_FOCUS",
+"ANTICIPATION",
+"INFILTRATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"mr__mime_plain": {
+"id": "mr__mime_plain",
+"stats": {
+"hp": 40,
+"atk": 35,
+"defe": 65,
+"spe": 95,
+"spa": 110,
+"spd": 120
+},
+"bst": 465,
+"types": [
+"PSYCHIC",
+"FAIRY"
+],
+"abilities": [
+"SOUNDPROOF",
+"FILTER",
+"TECHNICIAN"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"kabuto": {
+"id": "kabuto",
+"stats": {
+"hp": 38,
+"atk": 88,
+"defe": 94,
+"spe": 59,
+"spa": 55,
+"spd": 51
+},
+"bst": 385,
+"types": [
+"ROCK",
+"WATER"
+],
+"abilities": [
+"SWIFT_SWIM",
+"BATTLE_ARMOR",
+"WEAK_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"mew": {
+"id": "mew",
+"stats": {
+"hp": 100,
+"atk": 100,
+"defe": 100,
+"spe": 100,
+"spa": 100,
+"spd": 100
+},
+"bst": 600,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SYNCHRONIZE",
+"SYNCHRONIZE",
+"MAGIC_GUARD"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"chinchou": {
+"id": "chinchou",
+"stats": {
+"hp": 83,
+"atk": 38,
+"defe": 44,
+"spe": 71,
+"spa": 64,
+"spd": 60
+},
+"bst": 360,
+"types": [
+"WATER",
+"ELECTRIC"
+],
+"abilities": [
+"VOLT_ABSORB",
+"ILLUMINATE",
+"WATER_ABSORB"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"exeggcute": {
+"id": "exeggcute",
+"stats": {
+"hp": 68,
+"atk": 40,
+"defe": 84,
+"spe": 44,
+"spa": 68,
+"spd": 51
+},
+"bst": 355,
+"types": [
+"GRASS",
+"PSYCHIC"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"HARVEST"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"croconaw": {
+"id": "croconaw",
+"stats": {
+"hp": 73,
+"atk": 88,
+"defe": 84,
+"spe": 62,
+"spa": 59,
+"spd": 69
+},
+"bst": 435,
+"types": [
+"WATER"
+],
+"abilities": [
+"TORRENT",
+"GUTS",
+"SHEER_FORCE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"glaceon": {
+"id": "glaceon",
+"stats": {
+"hp": 65,
+"atk": 60,
+"defe": 110,
+"spe": 95,
+"spa": 130,
+"spd": 65
+},
+"bst": 525,
+"types": [
+"ICE"
+],
+"abilities": [
+"SNOW_CLOAK",
+"SNOW_WARNING",
+"ICE_BODY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ho_oh": {
+"id": "ho_oh",
+"stats": {
+"hp": 106,
+"atk": 130,
+"defe": 90,
+"spe": 90,
+"spa": 110,
+"spd": 154
+},
+"bst": 680,
+"types": [
+"FIRE",
+"FLYING"
+],
+"abilities": [
+"PRESSURE",
+"DROUGHT",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"dunsparce": {
+"id": "dunsparce",
+"stats": {
+"hp": 108,
+"atk": 90,
+"defe": 74,
+"spe": 60,
+"spa": 69,
+"spd": 71
+},
+"bst": 472,
+"types": [
+"NORMAL",
+"GROUND"
+],
+"abilities": [
+"SERENE_GRACE",
+"RUN_AWAY",
+"SAND_STREAM"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"corsola_plain": {
+"id": "corsola_plain",
+"stats": {
+"hp": 65,
+"atk": 55,
+"defe": 95,
+"spe": 35,
+"spa": 65,
+"spd": 95
+},
+"bst": 410,
+"types": [
+"WATER",
+"ROCK"
+],
+"abilities": [
+"HUSTLE",
+"NATURAL_CURE",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"clefable": {
+"id": "clefable",
+"stats": {
+"hp": 95,
+"atk": 70,
+"defe": 73,
+"spe": 60,
+"spa": 85,
+"spd": 90
+},
+"bst": 473,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"MAGIC_GUARD",
+"UNAWARE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"togekiss": {
+"id": "togekiss",
+"stats": {
+"hp": 85,
+"atk": 50,
+"defe": 95,
+"spe": 80,
+"spa": 110,
+"spd": 115
+},
+"bst": 535,
+"types": [
+"FAIRY",
+"FLYING"
+],
+"abilities": [
+"HUSTLE",
+"SERENE_GRACE",
+"SUPER_LUCK"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"mantyke": {
+"id": "mantyke",
+"stats": {
+"hp": 45,
+"atk": 20,
+"defe": 56,
+"spe": 54,
+"spa": 68,
+"spd": 124
+},
+"bst": 367,
+"types": [
+"WATER",
+"FLYING"
+],
+"abilities": [
+"SWIFT_SWIM",
+"WATER_ABSORB",
+"WATER_VEIL"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"sandshrew_alolan": {
+"id": "sandshrew_alolan",
+"stats": {
+"hp": 58,
+"atk": 83,
+"defe": 94,
+"spe": 44,
+"spa": 10,
+"spd": 41
+},
+"bst": 330,
+"types": [
+"ICE",
+"STEEL"
+],
+"abilities": [
+"SNOW_CLOAK",
+"SHARPNESS",
+"SLUSH_RUSH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"fearow": {
+"id": "fearow",
+"stats": {
+"hp": 85,
+"atk": 95,
+"defe": 80,
+"spe": 100,
+"spa": 61,
+"spd": 64
+},
+"bst": 485,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"KEEN_EYE",
+"SNIPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"machamp": {
+"id": "machamp",
+"stats": {
+"hp": 90,
+"atk": 130,
+"defe": 80,
+"spe": 60,
+"spa": 65,
+"spd": 85
+},
+"bst": 510,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"GUTS",
+"NO_GUARD",
+"STEADFAST"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"jynx": {
+"id": "jynx",
+"stats": {
+"hp": 70,
+"atk": 60,
+"defe": 40,
+"spe": 90,
+"spa": 120,
+"spd": 100
+},
+"bst": 480,
+"types": [
+"ICE",
+"PSYCHIC"
+],
+"abilities": [
+"OBLIVIOUS",
+"FILTER",
+"DRY_SKIN"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"ninetales_alolan": {
+"id": "ninetales_alolan",
+"stats": {
+"hp": 73,
+"atk": 67,
+"defe": 75,
+"spe": 105,
+"spa": 75,
+"spd": 100
+},
+"bst": 495,
+"types": [
+"ICE",
+"FAIRY"
+],
+"abilities": [
+"SNOW_CLOAK",
+"SNOW_CLOAK",
+"SNOW_WARNING"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"muk_plain": {
+"id": "muk_plain",
+"stats": {
+"hp": 105,
+"atk": 105,
+"defe": 75,
+"spe": 50,
+"spa": 65,
+"spd": 100
+},
+"bst": 500,
+"types": [
+"POISON"
+],
+"abilities": [
+"STENCH",
+"STICKY_HOLD",
+"POISON_TOUCH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"golbat": {
+"id": "golbat",
+"stats": {
+"hp": 75,
+"atk": 80,
+"defe": 70,
+"spe": 90,
+"spa": 65,
+"spd": 75
+},
+"bst": 455,
+"types": [
+"POISON",
+"FLYING"
+],
+"abilities": [
+"INNER_FOCUS",
+"ANTICIPATION",
+"INFILTRATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"machop": {
+"id": "machop",
+"stats": {
+"hp": 78,
+"atk": 88,
+"defe": 54,
+"spe": 39,
+"spa": 35,
+"spd": 41
+},
+"bst": 335,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"GUTS",
+"NO_GUARD",
+"STEADFAST"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"forretress": {
+"id": "forretress",
+"stats": {
+"hp": 75,
+"atk": 90,
+"defe": 140,
+"spe": 40,
+"spa": 60,
+"spd": 60
+},
+"bst": 465,
+"types": [
+"BUG",
+"STEEL"
+],
+"abilities": [
+"STURDY",
+"STURDY",
+"OVERCOAT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"electrode_hisuian": {
+"id": "electrode_hisuian",
+"stats": {
+"hp": 60,
+"atk": 50,
+"defe": 70,
+"spe": 150,
+"spa": 80,
+"spd": 80
+},
+"bst": 490,
+"types": [
+"ELECTRIC",
+"GRASS"
+],
+"abilities": [
+"SOUNDPROOF",
+"STATIC",
+"AFTERMATH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"entei": {
+"id": "entei",
+"stats": {
+"hp": 115,
+"atk": 115,
+"defe": 85,
+"spe": 100,
+"spa": 90,
+"spd": 75
+},
+"bst": 580,
+"types": [
+"FIRE"
+],
+"abilities": [
+"PRESSURE",
+"INNER_FOCUS",
+"FLASH_FIRE"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"hitmontop": {
+"id": "hitmontop",
+"stats": {
+"hp": 50,
+"atk": 95,
+"defe": 95,
+"spe": 70,
+"spa": 35,
+"spd": 110
+},
+"bst": 455,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"INTIMIDATE",
+"TECHNICIAN",
+"STEADFAST"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"magmortar": {
+"id": "magmortar",
+"stats": {
+"hp": 75,
+"atk": 95,
+"defe": 60,
+"spe": 93,
+"spa": 120,
+"spd": 95
+},
+"bst": 538,
+"types": [
+"FIRE",
+"FIGHTING"
+],
+"abilities": [
+"FLAME_BODY",
+"FLAME_BODY",
+"VITAL_SPIRIT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"phanpy": {
+"id": "phanpy",
+"stats": {
+"hp": 98,
+"atk": 68,
+"defe": 64,
+"spe": 44,
+"spa": 40,
+"spd": 46
+},
+"bst": 360,
+"types": [
+"GROUND"
+],
+"abilities": [
+"PICKUP",
+"PICKUP",
+"SAND_VEIL"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"arcanine_hisuian": {
+"id": "arcanine_hisuian",
+"stats": {
+"hp": 95,
+"atk": 115,
+"defe": 80,
+"spe": 90,
+"spa": 95,
+"spd": 80
+},
+"bst": 555,
+"types": [
+"FIRE",
+"ROCK"
+],
+"abilities": [
+"INTIMIDATE",
+"FLASH_FIRE",
+"ROCK_HEAD"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"haunter": {
+"id": "haunter",
+"stats": {
+"hp": 45,
+"atk": 50,
+"defe": 45,
+"spe": 95,
+"spa": 115,
+"spd": 55
+},
+"bst": 405,
+"types": [
+"GHOST",
+"POISON"
+],
+"abilities": [
+"LEVITATE",
+"LEVITATE",
+"LEVITATE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"slugma": {
+"id": "slugma",
+"stats": {
+"hp": 60,
+"atk": 40,
+"defe": 55,
+"spe": 24,
+"spa": 78,
+"spd": 46
+},
+"bst": 303,
+"types": [
+"FIRE"
+],
+"abilities": [
+"MAGMA_ARMOR",
+"FLAME_BODY",
+"WEAK_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"marowak_plain": {
+"id": "marowak_plain",
+"stats": {
+"hp": 60,
+"atk": 80,
+"defe": 110,
+"spe": 70,
+"spa": 50,
+"spd": 80
+},
+"bst": 450,
+"types": [
+"GROUND"
+],
+"abilities": [
+"ROCK_HEAD",
+"LIGHTNING_ROD",
+"BATTLE_ARMOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"mime_jr_": {
+"id": "mime_jr_",
+"stats": {
+"hp": 30,
+"atk": 35,
+"defe": 45,
+"spe": 65,
+"spa": 80,
+"spd": 95
+},
+"bst": 350,
+"types": [
+"PSYCHIC",
+"FAIRY"
+],
+"abilities": [
+"SOUNDPROOF",
+"FILTER",
+"TECHNICIAN"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"jumpluff": {
+"id": "jumpluff",
+"stats": {
+"hp": 75,
+"atk": 55,
+"defe": 70,
+"spe": 110,
+"spa": 75,
+"spd": 95
+},
+"bst": 480,
+"types": [
+"GRASS",
+"FLYING"
+],
+"abilities": [
+"CHLOROPHYLL",
+"WIND_RIDER",
+"INFILTRATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"rattata_plain": {
+"id": "rattata_plain",
+"stats": {
+"hp": 38,
+"atk": 64,
+"defe": 39,
+"spe": 76,
+"spa": 25,
+"spd": 41
+},
+"bst": 283,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"RUN_AWAY",
+"GUTS",
+"HUSTLE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"tentacruel": {
+"id": "tentacruel",
+"stats": {
+"hp": 80,
+"atk": 70,
+"defe": 65,
+"spe": 100,
+"spa": 80,
+"spd": 120
+},
+"bst": 515,
+"types": [
+"WATER",
+"POISON"
+],
+"abilities": [
+"CLEAR_BODY",
+"LIQUID_OOZE",
+"RAIN_DISH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"murkrow": {
+"id": "murkrow",
+"stats": {
+"hp": 60,
+"atk": 85,
+"defe": 42,
+"spe": 91,
+"spa": 85,
+"spd": 42
+},
+"bst": 405,
+"types": [
+"DARK",
+"FLYING"
+],
+"abilities": [
+"INSOMNIA",
+"SUPER_LUCK",
+"PRANKSTER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"geodude_alolan": {
+"id": "geodude_alolan",
+"stats": {
+"hp": 40,
+"atk": 80,
+"defe": 100,
+"spe": 20,
+"spa": 30,
+"spd": 30
+},
+"bst": 300,
+"types": [
+"ROCK",
+"ELECTRIC"
+],
+"abilities": [
+"MAGNET_PULL",
+"STURDY",
+"GALVANIZE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"natu": {
+"id": "natu",
+"stats": {
+"hp": 48,
+"atk": 50,
+"defe": 49,
+"spe": 74,
+"spa": 78,
+"spd": 51
+},
+"bst": 350,
+"types": [
+"PSYCHIC",
+"FLYING"
+],
+"abilities": [
+"SYNCHRONIZE",
+"EARLY_BIRD",
+"MAGIC_BOUNCE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"pinsir": {
+"id": "pinsir",
+"stats": {
+"hp": 65,
+"atk": 125,
+"defe": 100,
+"spe": 85,
+"spa": 55,
+"spd": 70
+},
+"bst": 500,
+"types": [
+"BUG"
+],
+"abilities": [
+"HYPER_CUTTER",
+"MOLD_BREAKER",
+"MOXIE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"umbreon": {
+"id": "umbreon",
+"stats": {
+"hp": 95,
+"atk": 65,
+"defe": 105,
+"spe": 65,
+"spa": 65,
+"spd": 120
+},
+"bst": 515,
+"types": [
+"DARK"
+],
+"abilities": [
+"SYNCHRONIZE",
+"MAGIC_GUARD",
+"INNER_FOCUS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"dodrio": {
+"id": "dodrio",
+"stats": {
+"hp": 60,
+"atk": 110,
+"defe": 70,
+"spe": 110,
+"spa": 60,
+"spd": 60
+},
+"bst": 470,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"RUN_AWAY",
+"EARLY_BIRD",
+"TANGLED_FEET"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"diglett_alolan": {
+"id": "diglett_alolan",
+"stats": {
+"hp": 18,
+"atk": 63,
+"defe": 36,
+"spe": 94,
+"spa": 35,
+"spd": 49
+},
+"bst": 295,
+"types": [
+"GROUND",
+"STEEL"
+],
+"abilities": [
+"SAND_VEIL",
+"TANGLING_HAIR",
+"SAND_FORCE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"grimer_plain": {
+"id": "grimer_plain",
+"stats": {
+"hp": 88,
+"atk": 88,
+"defe": 54,
+"spe": 29,
+"spa": 40,
+"spd": 56
+},
+"bst": 355,
+"types": [
+"POISON"
+],
+"abilities": [
+"STENCH",
+"STICKY_HOLD",
+"POISON_TOUCH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"donphan": {
+"id": "donphan",
+"stats": {
+"hp": 90,
+"atk": 120,
+"defe": 120,
+"spe": 50,
+"spa": 60,
+"spd": 60
+},
+"bst": 500,
+"types": [
+"GROUND"
+],
+"abilities": [
+"STURDY",
+"STURDY",
+"SAND_VEIL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"happiny": {
+"id": "happiny",
+"stats": {
+"hp": 108,
+"atk": 9,
+"defe": 11,
+"spe": 34,
+"spa": 19,
+"spd": 69
+},
+"bst": 250,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"NATURAL_CURE",
+"SERENE_GRACE",
+"NATURAL_CURE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"charizard": {
+"id": "charizard",
+"stats": {
+"hp": 75,
+"atk": 101,
+"defe": 75,
+"spe": 100,
+"spa": 109,
+"spd": 75
+},
+"bst": 535,
+"types": [
+"FIRE",
+"DRAGON"
+],
+"abilities": [
+"BLAZE",
+"SOLAR_POWER",
+"TOUGH_CLAWS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"raikou": {
+"id": "raikou",
+"stats": {
+"hp": 90,
+"atk": 85,
+"defe": 75,
+"spe": 115,
+"spa": 115,
+"spd": 100
+},
+"bst": 580,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"PRESSURE",
+"INNER_FOCUS",
+"VOLT_ABSORB"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"slowking_plain": {
+"id": "slowking_plain",
+"stats": {
+"hp": 95,
+"atk": 75,
+"defe": 80,
+"spe": 30,
+"spa": 100,
+"spd": 120
+},
+"bst": 500,
+"types": [
+"WATER",
+"PSYCHIC"
+],
+"abilities": [
+"OBLIVIOUS",
+"OWN_TEMPO",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"kakuna": {
+"id": "kakuna",
+"stats": {
+"hp": 53,
+"atk": 29,
+"defe": 54,
+"spe": 39,
+"spa": 29,
+"spd": 31
+},
+"bst": 235,
+"types": [
+"BUG",
+"POISON"
+],
+"abilities": [
+"SHED_SKIN",
+"SHED_SKIN",
+"SHED_SKIN"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"parasect": {
+"id": "parasect",
+"stats": {
+"hp": 60,
+"atk": 115,
+"defe": 100,
+"spe": 45,
+"spa": 60,
+"spd": 80
+},
+"bst": 460,
+"types": [
+"BUG",
+"GRASS"
+],
+"abilities": [
+"EFFECT_SPORE",
+"DRY_SKIN",
+"DAMP"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"tangrowth": {
+"id": "tangrowth",
+"stats": {
+"hp": 100,
+"atk": 100,
+"defe": 125,
+"spe": 50,
+"spa": 110,
+"spd": 50
+},
+"bst": 535,
+"types": [
+"GRASS"
+],
+"abilities": [
+"CHLOROPHYLL",
+"LEAF_GUARD",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"nidoking": {
+"id": "nidoking",
+"stats": {
+"hp": 81,
+"atk": 112,
+"defe": 77,
+"spe": 85,
+"spa": 85,
+"spd": 75
+},
+"bst": 515,
+"types": [
+"POISON",
+"GROUND"
+],
+"abilities": [
+"POISON_POINT",
+"RIVALRY",
+"SHEER_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"houndour": {
+"id": "houndour",
+"stats": {
+"hp": 53,
+"atk": 60,
+"defe": 36,
+"spe": 69,
+"spa": 88,
+"spd": 54
+},
+"bst": 360,
+"types": [
+"DARK",
+"FIRE"
+],
+"abilities": [
+"EARLY_BIRD",
+"FLASH_FIRE",
+"UNNERVE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"cleffa": {
+"id": "cleffa",
+"stats": {
+"hp": 58,
+"atk": 25,
+"defe": 34,
+"spe": 19,
+"spa": 53,
+"spd": 59
+},
+"bst": 248,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"MAGIC_GUARD",
+"CUTE_CHARM"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"lickilicky": {
+"id": "lickilicky",
+"stats": {
+"hp": 110,
+"atk": 85,
+"defe": 95,
+"spe": 50,
+"spa": 80,
+"spd": 95
+},
+"bst": 515,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"OWN_TEMPO",
+"OBLIVIOUS",
+"CLOUD_NINE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"scizor": {
+"id": "scizor",
+"stats": {
+"hp": 70,
+"atk": 120,
+"defe": 100,
+"spe": 65,
+"spa": 55,
+"spd": 80
+},
+"bst": 490,
+"types": [
+"BUG",
+"STEEL"
+],
+"abilities": [
+"SWARM",
+"TECHNICIAN",
+"LIGHT_METAL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"tauros_plain": {
+"id": "tauros_plain",
+"stats": {
+"hp": 75,
+"atk": 110,
+"defe": 95,
+"spe": 110,
+"spa": 40,
+"spd": 70
+},
+"bst": 500,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"INTIMIDATE",
+"ANGER_POINT",
+"SHEER_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"victreebel": {
+"id": "victreebel",
+"stats": {
+"hp": 80,
+"atk": 115,
+"defe": 65,
+"spe": 80,
+"spa": 110,
+"spd": 70
+},
+"bst": 520,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"GLUTTONY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"rattata_alolan": {
+"id": "rattata_alolan",
+"stats": {
+"hp": 38,
+"atk": 64,
+"defe": 39,
+"spe": 76,
+"spa": 25,
+"spd": 41
+},
+"bst": 283,
+"types": [
+"DARK",
+"NORMAL"
+],
+"abilities": [
+"GLUTTONY",
+"HUSTLE",
+"THICK_FAT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"sunkern": {
+"id": "sunkern",
+"stats": {
+"hp": 45,
+"atk": 34,
+"defe": 34,
+"spe": 34,
+"spa": 45,
+"spd": 45
+},
+"bst": 237,
+"types": [
+"GRASS"
+],
+"abilities": [
+"CHLOROPHYLL",
+"SOLAR_POWER",
+"EARLY_BIRD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"seel": {
+"id": "seel",
+"stats": {
+"hp": 73,
+"atk": 49,
+"defe": 61,
+"spe": 49,
+"spa": 49,
+"spd": 74
+},
+"bst": 355,
+"types": [
+"WATER"
+],
+"abilities": [
+"THICK_FAT",
+"HYDRATION",
+"ICE_BODY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"nidorina": {
+"id": "nidorina",
+"stats": {
+"hp": 78,
+"atk": 66,
+"defe": 71,
+"spe": 60,
+"spa": 59,
+"spd": 61
+},
+"bst": 395,
+"types": [
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"RIVALRY",
+"HUSTLE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"annihilape": {
+"id": "annihilape",
+"stats": {
+"hp": 110,
+"atk": 115,
+"defe": 80,
+"spe": 90,
+"spa": 50,
+"spd": 90
+},
+"bst": 535,
+"types": [
+"FIGHTING",
+"GHOST"
+],
+"abilities": [
+"GORILLA_TACTICS",
+"INNER_FOCUS",
+"DEFIANT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"farfetch_d_plain": {
+"id": "farfetch_d_plain",
+"stats": {
+"hp": 70,
+"atk": 98,
+"defe": 65,
+"spe": 74,
+"spa": 58,
+"spd": 66
+},
+"bst": 431,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"INNER_FOCUS",
+"DEFIANT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"cubone": {
+"id": "cubone",
+"stats": {
+"hp": 58,
+"atk": 54,
+"defe": 99,
+"spe": 39,
+"spa": 44,
+"spd": 56
+},
+"bst": 350,
+"types": [
+"GROUND"
+],
+"abilities": [
+"ROCK_HEAD",
+"CURSED_BODY",
+"BATTLE_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"electrode_plain": {
+"id": "electrode_plain",
+"stats": {
+"hp": 60,
+"atk": 50,
+"defe": 70,
+"spe": 150,
+"spa": 80,
+"spd": 80
+},
+"bst": 490,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"SOUNDPROOF",
+"STATIC",
+"AFTERMATH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"arcanine_plain": {
+"id": "arcanine_plain",
+"stats": {
+"hp": 90,
+"atk": 110,
+"defe": 80,
+"spe": 95,
+"spa": 100,
+"spd": 80
+},
+"bst": 555,
+"types": [
+"FIRE",
+"NORMAL"
+],
+"abilities": [
+"INTIMIDATE",
+"FLASH_FIRE",
+"JUSTIFIED"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"politoed": {
+"id": "politoed",
+"stats": {
+"hp": 90,
+"atk": 75,
+"defe": 80,
+"spe": 75,
+"spa": 90,
+"spd": 100
+},
+"bst": 510,
+"types": [
+"WATER",
+"GRASS"
+],
+"abilities": [
+"WATER_ABSORB",
+"DAMP",
+"DRIZZLE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"moltres_plain": {
+"id": "moltres_plain",
+"stats": {
+"hp": 90,
+"atk": 100,
+"defe": 90,
+"spe": 90,
+"spa": 125,
+"spd": 85
+},
+"bst": 580,
+"types": [
+"FIRE",
+"FLYING"
+],
+"abilities": [
+"PRESSURE",
+"DROUGHT",
+"FLAME_BODY"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"mankey": {
+"id": "mankey",
+"stats": {
+"hp": 48,
+"atk": 88,
+"defe": 41,
+"spe": 74,
+"spa": 35,
+"spd": 49
+},
+"bst": 335,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"VITAL_SPIRIT",
+"ANGER_POINT",
+"DEFIANT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ursaring": {
+"id": "ursaring",
+"stats": {
+"hp": 90,
+"atk": 130,
+"defe": 75,
+"spe": 55,
+"spa": 75,
+"spd": 75
+},
+"bst": 500,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"GUTS",
+"QUICK_FEET",
+"UNNERVE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"hoppip": {
+"id": "hoppip",
+"stats": {
+"hp": 35,
+"atk": 35,
+"defe": 40,
+"spe": 70,
+"spa": 45,
+"spd": 55
+},
+"bst": 280,
+"types": [
+"GRASS",
+"FLYING"
+],
+"abilities": [
+"CHLOROPHYLL",
+"WIND_RIDER",
+"INFILTRATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"zapdos_galarian": {
+"id": "zapdos_galarian",
+"stats": {
+"hp": 90,
+"atk": 125,
+"defe": 90,
+"spe": 100,
+"spa": 85,
+"spd": 90
+},
+"bst": 580,
+"types": [
+"FIGHTING",
+"FLYING"
+],
+"abilities": [
+"DEFIANT",
+"DEFIANT",
+"DEFIANT"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"jigglypuff": {
+"id": "jigglypuff",
+"stats": {
+"hp": 123,
+"atk": 49,
+"defe": 26,
+"spe": 24,
+"spa": 49,
+"spd": 29
+},
+"bst": 300,
+"types": [
+"NORMAL",
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"COMPETITIVE",
+"SOUNDPROOF"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"magneton": {
+"id": "magneton",
+"stats": {
+"hp": 50,
+"atk": 60,
+"defe": 95,
+"spe": 70,
+"spa": 120,
+"spd": 70
+},
+"bst": 465,
+"types": [
+"ELECTRIC",
+"STEEL"
+],
+"abilities": [
+"MAGNET_PULL",
+"LEVITATE",
+"ANALYTIC"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"slowpoke_galarian": {
+"id": "slowpoke_galarian",
+"stats": {
+"hp": 98,
+"atk": 73,
+"defe": 69,
+"spe": 19,
+"spa": 40,
+"spd": 46
+},
+"bst": 345,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"GLUTTONY",
+"OWN_TEMPO",
+"REGENERATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"munchlax": {
+"id": "munchlax",
+"stats": {
+"hp": 135,
+"atk": 85,
+"defe": 45,
+"spe": 5,
+"spa": 40,
+"spd": 85
+},
+"bst": 395,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"PICKUP",
+"THICK_FAT",
+"GLUTTONY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"blissey": {
+"id": "blissey",
+"stats": {
+"hp": 255,
+"atk": 10,
+"defe": 10,
+"spe": 55,
+"spa": 75,
+"spd": 125
+},
+"bst": 530,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"NATURAL_CURE",
+"SERENE_GRACE",
+"NATURAL_CURE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"omastar": {
+"id": "omastar",
+"stats": {
+"hp": 70,
+"atk": 60,
+"defe": 125,
+"spe": 55,
+"spa": 115,
+"spd": 70
+},
+"bst": 495,
+"types": [
+"ROCK",
+"WATER"
+],
+"abilities": [
+"SWIFT_SWIM",
+"SHELL_ARMOR",
+"WEAK_ARMOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"pidgey": {
+"id": "pidgey",
+"stats": {
+"hp": 48,
+"atk": 49,
+"defe": 44,
+"spe": 60,
+"spa": 39,
+"spd": 41
+},
+"bst": 281,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"TANGLED_FEET",
+"BIG_PECKS"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ekans": {
+"id": "ekans",
+"stats": {
+"hp": 43,
+"atk": 68,
+"defe": 50,
+"spe": 59,
+"spa": 40,
+"spd": 58
+},
+"bst": 318,
+"types": [
+"POISON"
+],
+"abilities": [
+"INTIMIDATE",
+"SHED_SKIN",
+"UNNERVE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"gastly": {
+"id": "gastly",
+"stats": {
+"hp": 38,
+"atk": 35,
+"defe": 36,
+"spe": 84,
+"spa": 108,
+"spd": 39
+},
+"bst": 340,
+"types": [
+"GHOST",
+"POISON"
+],
+"abilities": [
+"LEVITATE",
+"LEVITATE",
+"LEVITATE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"swinub": {
+"id": "swinub",
+"stats": {
+"hp": 58,
+"atk": 58,
+"defe": 44,
+"spe": 54,
+"spa": 30,
+"spd": 36
+},
+"bst": 280,
+"types": [
+"ICE",
+"GROUND"
+],
+"abilities": [
+"OBLIVIOUS",
+"SNOW_CLOAK",
+"THICK_FAT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"oddish": {
+"id": "oddish",
+"stats": {
+"hp": 53,
+"atk": 50,
+"defe": 61,
+"spe": 34,
+"spa": 83,
+"spd": 69
+},
+"bst": 350,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"RUN_AWAY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"exeggutor_plain": {
+"id": "exeggutor_plain",
+"stats": {
+"hp": 95,
+"atk": 95,
+"defe": 85,
+"spe": 55,
+"spa": 125,
+"spd": 75
+},
+"bst": 530,
+"types": [
+"GRASS",
+"PSYCHIC"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"HARVEST"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"snubbull": {
+"id": "snubbull",
+"stats": {
+"hp": 68,
+"atk": 88,
+"defe": 54,
+"spe": 34,
+"spa": 40,
+"spd": 46
+},
+"bst": 330,
+"types": [
+"FAIRY"
+],
+"abilities": [
+"INTIMIDATE",
+"RUN_AWAY",
+"RATTLED"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ursaluna_plain": {
+"id": "ursaluna_plain",
+"stats": {
+"hp": 130,
+"atk": 120,
+"defe": 105,
+"spe": 50,
+"spa": 45,
+"spd": 80
+},
+"bst": 530,
+"types": [
+"GROUND",
+"NORMAL"
+],
+"abilities": [
+"GUTS",
+"BULLETPROOF",
+"UNNERVE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"moltres_galarian": {
+"id": "moltres_galarian",
+"stats": {
+"hp": 90,
+"atk": 85,
+"defe": 90,
+"spe": 90,
+"spa": 100,
+"spd": 125
+},
+"bst": 580,
+"types": [
+"DARK",
+"FLYING"
+],
+"abilities": [
+"BERSERK",
+"BERSERK",
+"BERSERK"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"qwilfish_plain": {
+"id": "qwilfish_plain",
+"stats": {
+"hp": 75,
+"atk": 95,
+"defe": 85,
+"spe": 85,
+"spa": 55,
+"spd": 65
+},
+"bst": 460,
+"types": [
+"WATER",
+"POISON"
+],
+"abilities": [
+"POISON_POINT",
+"SWIFT_SWIM",
+"INTIMIDATE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"teddiursa": {
+"id": "teddiursa",
+"stats": {
+"hp": 68,
+"atk": 88,
+"defe": 54,
+"spe": 44,
+"spa": 50,
+"spd": 56
+},
+"bst": 360,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"PICKUP",
+"QUICK_FEET",
+"HONEY_GATHER"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"dewgong": {
+"id": "dewgong",
+"stats": {
+"hp": 90,
+"atk": 70,
+"defe": 80,
+"spe": 70,
+"spa": 80,
+"spd": 95
+},
+"bst": 485,
+"types": [
+"WATER",
+"ICE"
+],
+"abilities": [
+"THICK_FAT",
+"HYDRATION",
+"ICE_BODY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"mismagius": {
+"id": "mismagius",
+"stats": {
+"hp": 60,
+"atk": 60,
+"defe": 60,
+"spe": 110,
+"spa": 110,
+"spd": 110
+},
+"bst": 510,
+"types": [
+"GHOST",
+"FAIRY"
+],
+"abilities": [
+"LEVITATE",
+"LEVITATE",
+"LEVITATE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"magmar": {
+"id": "magmar",
+"stats": {
+"hp": 65,
+"atk": 95,
+"defe": 57,
+"spe": 93,
+"spa": 100,
+"spd": 85
+},
+"bst": 495,
+"types": [
+"FIRE"
+],
+"abilities": [
+"FLAME_BODY",
+"FLAME_BODY",
+"VITAL_SPIRIT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"farfetch_d_galarian": {
+"id": "farfetch_d_galarian",
+"stats": {
+"hp": 60,
+"atk": 103,
+"defe": 61,
+"spe": 59,
+"spa": 58,
+"spd": 66
+},
+"bst": 407,
+"types": [
+"FIGHTING"
+],
+"abilities": [
+"STEADFAST",
+"STEADFAST",
+"SCRAPPY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"vaporeon": {
+"id": "vaporeon",
+"stats": {
+"hp": 130,
+"atk": 65,
+"defe": 60,
+"spe": 65,
+"spa": 110,
+"spd": 95
+},
+"bst": 525,
+"types": [
+"WATER"
+],
+"abilities": [
+"WATER_ABSORB",
+"DRIZZLE",
+"HYDRATION"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"meowth_alolan": {
+"id": "meowth_alolan",
+"stats": {
+"hp": 48,
+"atk": 35,
+"defe": 41,
+"spe": 94,
+"spa": 58,
+"spd": 44
+},
+"bst": 320,
+"types": [
+"DARK"
+],
+"abilities": [
+"PICKUP",
+"TOUGH_CLAWS",
+"RATTLED"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ursaluna_bloodmoon": {
+"id": "ursaluna_bloodmoon",
+"stats": {
+"hp": 113,
+"atk": 70,
+"defe": 120,
+"spe": 52,
+"spa": 135,
+"spd": 65
+},
+"bst": 555,
+"types": [
+"GROUND",
+"NORMAL"
+],
+"abilities": [
+"MINDS_EYE",
+"MINDS_EYE",
+"MINDS_EYE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"weedle": {
+"id": "weedle",
+"stats": {
+"hp": 48,
+"atk": 43,
+"defe": 34,
+"spe": 54,
+"spa": 20,
+"spd": 26
+},
+"bst": 225,
+"types": [
+"BUG",
+"POISON"
+],
+"abilities": [
+"SHIELD_DUST",
+"SHIELD_DUST",
+"RUN_AWAY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"omanyte": {
+"id": "omanyte",
+"stats": {
+"hp": 43,
+"atk": 40,
+"defe": 104,
+"spe": 39,
+"spa": 98,
+"spd": 61
+},
+"bst": 385,
+"types": [
+"ROCK",
+"WATER"
+],
+"abilities": [
+"SWIFT_SWIM",
+"SHELL_ARMOR",
+"WEAK_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"tangela": {
+"id": "tangela",
+"stats": {
+"hp": 65,
+"atk": 55,
+"defe": 115,
+"spe": 60,
+"spa": 100,
+"spd": 50
+},
+"bst": 445,
+"types": [
+"GRASS"
+],
+"abilities": [
+"CHLOROPHYLL",
+"LEAF_GUARD",
+"REGENERATOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"beedrill": {
+"id": "beedrill",
+"stats": {
+"hp": 65,
+"atk": 105,
+"defe": 50,
+"spe": 85,
+"spa": 55,
+"spd": 90
+},
+"bst": 450,
+"types": [
+"BUG",
+"POISON"
+],
+"abilities": [
+"SWARM",
+"SNIPER",
+"ADAPTABILITY"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"wyrdeer": {
+"id": "wyrdeer",
+"stats": {
+"hp": 103,
+"atk": 105,
+"defe": 72,
+"spe": 65,
+"spa": 105,
+"spd": 75
+},
+"bst": 525,
+"types": [
+"NORMAL",
+"PSYCHIC"
+],
+"abilities": [
+"INTIMIDATE",
+"FRISK",
+"SAP_SIPPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"kleavor": {
+"id": "kleavor",
+"stats": {
+"hp": 70,
+"atk": 135,
+"defe": 95,
+"spe": 85,
+"spa": 45,
+"spd": 70
+},
+"bst": 500,
+"types": [
+"BUG",
+"ROCK"
+],
+"abilities": [
+"SWARM",
+"SHEER_FORCE",
+"SHARPNESS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"wynaut": {
+"id": "wynaut",
+"stats": {
+"hp": 95,
+"atk": 23,
+"defe": 48,
+"spe": 23,
+"spa": 23,
+"spd": 48
+},
+"bst": 260,
+"types": [
+"PSYCHIC"
+],
+"abilities": [
+"SHADOW_TAG",
+"SHADOW_TAG",
+"SHADOW_TAG"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"persian_plain": {
+"id": "persian_plain",
+"stats": {
+"hp": 65,
+"atk": 80,
+"defe": 60,
+"spe": 115,
+"spa": 75,
+"spd": 65
+},
+"bst": 460,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"SUPER_LUCK",
+"TECHNICIAN",
+"UNNERVE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"igglybuff": {
+"id": "igglybuff",
+"stats": {
+"hp": 98,
+"atk": 34,
+"defe": 21,
+"spe": 19,
+"spa": 44,
+"spd": 24
+},
+"bst": 240,
+"types": [
+"NORMAL",
+"FAIRY"
+],
+"abilities": [
+"CUTE_CHARM",
+"COMPETITIVE",
+"SOUNDPROOF"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"magnemite": {
+"id": "magnemite",
+"stats": {
+"hp": 33,
+"atk": 35,
+"defe": 74,
+"spe": 49,
+"spa": 103,
+"spd": 61
+},
+"bst": 355,
+"types": [
+"ELECTRIC",
+"STEEL"
+],
+"abilities": [
+"MAGNET_PULL",
+"LEVITATE",
+"ANALYTIC"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"kingler": {
+"id": "kingler",
+"stats": {
+"hp": 55,
+"atk": 130,
+"defe": 115,
+"spe": 75,
+"spa": 50,
+"spd": 60
+},
+"bst": 485,
+"types": [
+"WATER"
+],
+"abilities": [
+"HYPER_CUTTER",
+"SHELL_ARMOR",
+"SHEER_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"bellsprout": {
+"id": "bellsprout",
+"stats": {
+"hp": 58,
+"atk": 79,
+"defe": 39,
+"spe": 44,
+"spa": 74,
+"spd": 36
+},
+"bst": 330,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"GLUTTONY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"slowking_galarian": {
+"id": "slowking_galarian",
+"stats": {
+"hp": 95,
+"atk": 65,
+"defe": 80,
+"spe": 30,
+"spa": 110,
+"spd": 120
+},
+"bst": 500,
+"types": [
+"POISON",
+"PSYCHIC"
+],
+"abilities": [
+"GLUTTONY",
+"OWN_TEMPO",
+"REGENERATOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"graveler_plain": {
+"id": "graveler_plain",
+"stats": {
+"hp": 55,
+"atk": 95,
+"defe": 115,
+"spe": 35,
+"spa": 45,
+"spd": 45
+},
+"bst": 390,
+"types": [
+"ROCK",
+"GROUND"
+],
+"abilities": [
+"ROCK_HEAD",
+"STURDY",
+"SAND_VEIL"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"mewtwo_armored": {
+"id": "mewtwo_armored",
+"stats": {
+"hp": 106,
+"atk": 110,
+"defe": 100,
+"spe": 130,
+"spa": 134,
+"spd": 100
+},
+"bst": 680,
+"types": [
+"PSYCHIC",
+"STEEL"
+],
+"abilities": [
+"PRESSURE",
+"INSOMNIA",
+"UNNERVE"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"leafeon": {
+"id": "leafeon",
+"stats": {
+"hp": 65,
+"atk": 110,
+"defe": 130,
+"spe": 95,
+"spa": 60,
+"spd": 65
+},
+"bst": 525,
+"types": [
+"GRASS"
+],
+"abilities": [
+"LEAF_GUARD",
+"NATURAL_CURE",
+"CHLOROPHYLL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"voltorb_hisuian": {
+"id": "voltorb_hisuian",
+"stats": {
+"hp": 48,
+"atk": 30,
+"defe": 56,
+"spe": 104,
+"spa": 63,
+"spd": 59
+},
+"bst": 360,
+"types": [
+"ELECTRIC",
+"GRASS"
+],
+"abilities": [
+"SOUNDPROOF",
+"STATIC",
+"AFTERMATH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"wooper_paldean": {
+"id": "wooper_paldean",
+"stats": {
+"hp": 63,
+"atk": 53,
+"defe": 49,
+"spe": 19,
+"spa": 25,
+"spd": 31
+},
+"bst": 240,
+"types": [
+"POISON",
+"GROUND"
+],
+"abilities": [
+"POISON_POINT",
+"WATER_ABSORB",
+"UNAWARE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"yanmega": {
+"id": "yanmega",
+"stats": {
+"hp": 86,
+"atk": 76,
+"defe": 86,
+"spe": 95,
+"spa": 105,
+"spd": 56
+},
+"bst": 504,
+"types": [
+"BUG",
+"DRAGON"
+],
+"abilities": [
+"SPEED_BOOST",
+"TINTED_LENS",
+"LEVITATE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"wooper_plain": {
+"id": "wooper_plain",
+"stats": {
+"hp": 63,
+"atk": 53,
+"defe": 49,
+"spe": 19,
+"spa": 25,
+"spd": 31
+},
+"bst": 240,
+"types": [
+"WATER",
+"GROUND"
+],
+"abilities": [
+"DAMP",
+"WATER_ABSORB",
+"UNAWARE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"weezing_galarian": {
+"id": "weezing_galarian",
+"stats": {
+"hp": 65,
+"atk": 90,
+"defe": 120,
+"spe": 60,
+"spa": 85,
+"spd": 70
+},
+"bst": 490,
+"types": [
+"POISON",
+"FAIRY"
+],
+"abilities": [
+"LEVITATE",
+"NEUTRALIZING_GAS",
+"WHITE_SMOKE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"feraligatr": {
+"id": "feraligatr",
+"stats": {
+"hp": 85,
+"atk": 110,
+"defe": 100,
+"spe": 88,
+"spa": 69,
+"spd": 83
+},
+"bst": 535,
+"types": [
+"WATER",
+"DARK"
+],
+"abilities": [
+"TORRENT",
+"INTIMIDATE",
+"SHEER_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"charmander": {
+"id": "charmander",
+"stats": {
+"hp": 47,
+"atk": 56,
+"defe": 49,
+"spe": 69,
+"spa": 64,
+"spd": 54
+},
+"bst": 339,
+"types": [
+"FIRE"
+],
+"abilities": [
+"BLAZE",
+"SOLAR_POWER",
+"FLAME_BODY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ditto": {
+"id": "ditto",
+"stats": {
+"hp": 78,
+"atk": 28,
+"defe": 48,
+"spe": 108,
+"spa": 28,
+"spd": 48
+},
+"bst": 338,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"LIMBER",
+"LIMBER",
+"IMPOSTER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"gligar": {
+"id": "gligar",
+"stats": {
+"hp": 65,
+"atk": 75,
+"defe": 95,
+"spe": 85,
+"spa": 35,
+"spd": 55
+},
+"bst": 410,
+"types": [
+"GROUND",
+"FLYING"
+],
+"abilities": [
+"HYPER_CUTTER",
+"SAND_VEIL",
+"IMMUNITY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"pidgeotto": {
+"id": "pidgeotto",
+"stats": {
+"hp": 71,
+"atk": 64,
+"defe": 59,
+"spe": 75,
+"spa": 54,
+"spd": 56
+},
+"bst": 379,
+"types": [
+"NORMAL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"TANGLED_FEET",
+"BIG_PECKS"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"growlithe_hisuian": {
+"id": "growlithe_hisuian",
+"stats": {
+"hp": 68,
+"atk": 79,
+"defe": 51,
+"spe": 59,
+"spa": 69,
+"spd": 54
+},
+"bst": 380,
+"types": [
+"FIRE",
+"ROCK"
+],
+"abilities": [
+"INTIMIDATE",
+"FLASH_FIRE",
+"ROCK_HEAD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"magby": {
+"id": "magby",
+"stats": {
+"hp": 50,
+"atk": 75,
+"defe": 37,
+"spe": 83,
+"spa": 70,
+"spd": 55
+},
+"bst": 370,
+"types": [
+"FIRE"
+],
+"abilities": [
+"FLAME_BODY",
+"FLAME_BODY",
+"VITAL_SPIRIT"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"mamoswine": {
+"id": "mamoswine",
+"stats": {
+"hp": 110,
+"atk": 120,
+"defe": 80,
+"spe": 80,
+"spa": 70,
+"spd": 60
+},
+"bst": 520,
+"types": [
+"ICE",
+"GROUND"
+],
+"abilities": [
+"OBLIVIOUS",
+"SNOW_CLOAK",
+"THICK_FAT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"lapras": {
+"id": "lapras",
+"stats": {
+"hp": 130,
+"atk": 85,
+"defe": 80,
+"spe": 60,
+"spa": 85,
+"spd": 95
+},
+"bst": 535,
+"types": [
+"WATER",
+"ICE"
+],
+"abilities": [
+"WATER_ABSORB",
+"SHELL_ARMOR",
+"HYDRATION"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"smeargle": {
+"id": "smeargle",
+"stats": {
+"hp": 55,
+"atk": 20,
+"defe": 35,
+"spe": 100,
+"spa": 20,
+"spd": 45
+},
+"bst": 275,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"OWN_TEMPO",
+"TECHNICIAN",
+"OWN_TEMPO"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"farigiraf": {
+"id": "farigiraf",
+"stats": {
+"hp": 120,
+"atk": 95,
+"defe": 70,
+"spe": 70,
+"spa": 115,
+"spd": 70
+},
+"bst": 540,
+"types": [
+"PSYCHIC",
+"DARK"
+],
+"abilities": [
+"CUD_CHEW",
+"ARMOR_TAIL",
+"SAP_SIPPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"raticate_alolan": {
+"id": "raticate_alolan",
+"stats": {
+"hp": 80,
+"atk": 82,
+"defe": 70,
+"spe": 88,
+"spa": 40,
+"spd": 80
+},
+"bst": 440,
+"types": [
+"DARK",
+"NORMAL"
+],
+"abilities": [
+"GLUTTONY",
+"HUSTLE",
+"THICK_FAT"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"miltank": {
+"id": "miltank",
+"stats": {
+"hp": 95,
+"atk": 80,
+"defe": 105,
+"spe": 90,
+"spa": 40,
+"spd": 70
+},
+"bst": 480,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"THICK_FAT",
+"SCRAPPY",
+"SAP_SIPPER"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"staryu": {
+"id": "staryu",
+"stats": {
+"hp": 38,
+"atk": 45,
+"defe": 59,
+"spe": 89,
+"spa": 78,
+"spd": 61
+},
+"bst": 370,
+"types": [
+"WATER"
+],
+"abilities": [
+"ILLUMINATE",
+"NATURAL_CURE",
+"ANALYTIC"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"flareon": {
+"id": "flareon",
+"stats": {
+"hp": 65,
+"atk": 130,
+"defe": 60,
+"spe": 70,
+"spa": 95,
+"spd": 110
+},
+"bst": 530,
+"types": [
+"FIRE"
+],
+"abilities": [
+"FLASH_FIRE",
+"DROUGHT",
+"GUTS"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"geodude_plain": {
+"id": "geodude_plain",
+"stats": {
+"hp": 40,
+"atk": 80,
+"defe": 100,
+"spe": 20,
+"spa": 30,
+"spd": 30
+},
+"bst": 300,
+"types": [
+"ROCK",
+"GROUND"
+],
+"abilities": [
+"ROCK_HEAD",
+"STURDY",
+"SAND_VEIL"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"articuno_galarian": {
+"id": "articuno_galarian",
+"stats": {
+"hp": 90,
+"atk": 85,
+"defe": 85,
+"spe": 95,
+"spa": 125,
+"spd": 100
+},
+"bst": 580,
+"types": [
+"PSYCHIC",
+"FLYING"
+],
+"abilities": [
+"COMPETITIVE",
+"COMPETITIVE",
+"COMPETITIVE"
+],
+"fully_evolved": true,
+"legendary": true
+},
+"sentret": {
+"id": "sentret",
+"stats": {
+"hp": 45,
+"atk": 50,
+"defe": 35,
+"spe": 70,
+"spa": 35,
+"spd": 45
+},
+"bst": 280,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"RUN_AWAY",
+"KEEN_EYE",
+"FRISK"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"dugtrio_plain": {
+"id": "dugtrio_plain",
+"stats": {
+"hp": 50,
+"atk": 100,
+"defe": 55,
+"spe": 120,
+"spa": 50,
+"spd": 70
+},
+"bst": 445,
+"types": [
+"GROUND"
+],
+"abilities": [
+"SAND_VEIL",
+"TANGLING_HAIR",
+"SAND_FORCE"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"starmie": {
+"id": "starmie",
+"stats": {
+"hp": 60,
+"atk": 75,
+"defe": 85,
+"spe": 115,
+"spa": 100,
+"spd": 85
+},
+"bst": 520,
+"types": [
+"WATER",
+"PSYCHIC"
+],
+"abilities": [
+"ILLUMINATE",
+"NATURAL_CURE",
+"ANALYTIC"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"venonat": {
+"id": "venonat",
+"stats": {
+"hp": 68,
+"atk": 63,
+"defe": 56,
+"spe": 49,
+"spa": 40,
+"spd": 59
+},
+"bst": 335,
+"types": [
+"BUG",
+"POISON"
+],
+"abilities": [
+"COMPOUND_EYES",
+"TINTED_LENS",
+"RUN_AWAY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"ivysaur": {
+"id": "ivysaur",
+"stats": {
+"hp": 60,
+"atk": 62,
+"defe": 63,
+"spe": 60,
+"spa": 80,
+"spd": 80
+},
+"bst": 405,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"OVERGROW",
+"CHLOROPHYLL",
+"EFFECT_SPORE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"onix": {
+"id": "onix",
+"stats": {
+"hp": 35,
+"atk": 80,
+"defe": 130,
+"spe": 70,
+"spa": 30,
+"spd": 45
+},
+"bst": 390,
+"types": [
+"ROCK",
+"GROUND"
+],
+"abilities": [
+"ROCK_HEAD",
+"STURDY",
+"WEAK_ARMOR"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"typhlosion_hisuian": {
+"id": "typhlosion_hisuian",
+"stats": {
+"hp": 73,
+"atk": 84,
+"defe": 78,
+"spe": 95,
+"spa": 120,
+"spd": 85
+},
+"bst": 535,
+"types": [
+"FIRE",
+"GHOST"
+],
+"abilities": [
+"BLAZE",
+"FLAME_BODY",
+"FRISK"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"seaking": {
+"id": "seaking",
+"stats": {
+"hp": 80,
+"atk": 112,
+"defe": 65,
+"spe": 83,
+"spa": 55,
+"spd": 80
+},
+"bst": 475,
+"types": [
+"WATER",
+"NORMAL"
+],
+"abilities": [
+"SWIFT_SWIM",
+"WATER_VEIL",
+"LIGHTNING_ROD"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"tentacool": {
+"id": "tentacool",
+"stats": {
+"hp": 48,
+"atk": 44,
+"defe": 41,
+"spe": 74,
+"spa": 54,
+"spd": 104
+},
+"bst": 365,
+"types": [
+"WATER",
+"POISON"
+],
+"abilities": [
+"CLEAR_BODY",
+"LIQUID_OOZE",
+"RAIN_DISH"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"golem_plain": {
+"id": "golem_plain",
+"stats": {
+"hp": 90,
+"atk": 120,
+"defe": 130,
+"spe": 50,
+"spa": 55,
+"spd": 65
+},
+"bst": 510,
+"types": [
+"ROCK",
+"GROUND"
+],
+"abilities": [
+"ROCK_HEAD",
+"STURDY",
+"SAND_VEIL"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"sandslash_plain": {
+"id": "sandslash_plain",
+"stats": {
+"hp": 75,
+"atk": 100,
+"defe": 110,
+"spe": 65,
+"spa": 45,
+"spd": 55
+},
+"bst": 450,
+"types": [
+"GROUND"
+],
+"abilities": [
+"SAND_VEIL",
+"SHARPNESS",
+"SAND_RUSH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"dratini": {
+"id": "dratini",
+"stats": {
+"hp": 49,
+"atk": 68,
+"defe": 51,
+"spe": 54,
+"spa": 54,
+"spd": 54
+},
+"bst": 330,
+"types": [
+"DRAGON"
+],
+"abilities": [
+"SHED_SKIN",
+"SHED_SKIN",
+"MARVEL_SCALE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"sneasler": {
+"id": "sneasler",
+"stats": {
+"hp": 80,
+"atk": 115,
+"defe": 60,
+"spe": 115,
+"spa": 40,
+"spd": 80
+},
+"bst": 490,
+"types": [
+"POISON",
+"FIGHTING"
+],
+"abilities": [
+"TECHNICIAN",
+"UNBURDEN",
+"POISON_TOUCH"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"krabby": {
+"id": "krabby",
+"stats": {
+"hp": 38,
+"atk": 113,
+"defe": 94,
+"spe": 54,
+"spa": 25,
+"spd": 31
+},
+"bst": 355,
+"types": [
+"WATER"
+],
+"abilities": [
+"HYPER_CUTTER",
+"SHELL_ARMOR",
+"SHEER_FORCE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"weepinbell": {
+"id": "weepinbell",
+"stats": {
+"hp": 73,
+"atk": 94,
+"defe": 54,
+"spe": 59,
+"spa": 89,
+"spd": 51
+},
+"bst": 420,
+"types": [
+"GRASS",
+"POISON"
+],
+"abilities": [
+"CHLOROPHYLL",
+"CHLOROPHYLL",
+"GLUTTONY"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"meowth_plain": {
+"id": "meowth_plain",
+"stats": {
+"hp": 48,
+"atk": 49,
+"defe": 41,
+"spe": 94,
+"spa": 44,
+"spd": 44
+},
+"bst": 320,
+"types": [
+"NORMAL"
+],
+"abilities": [
+"PICKUP",
+"TECHNICIAN",
+"UNNERVE"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"magnezone": {
+"id": "magnezone",
+"stats": {
+"hp": 70,
+"atk": 70,
+"defe": 115,
+"spe": 60,
+"spa": 130,
+"spd": 90
+},
+"bst": 535,
+"types": [
+"ELECTRIC",
+"STEEL"
+],
+"abilities": [
+"MAGNET_PULL",
+"LEVITATE",
+"ANALYTIC"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"skarmory": {
+"id": "skarmory",
+"stats": {
+"hp": 85,
+"atk": 80,
+"defe": 140,
+"spe": 70,
+"spa": 40,
+"spd": 70
+},
+"bst": 485,
+"types": [
+"STEEL",
+"FLYING"
+],
+"abilities": [
+"KEEN_EYE",
+"STURDY",
+"WEAK_ARMOR"
+],
+"fully_evolved": true,
+"legendary": false
+},
+"pichu": {
+"id": "pichu",
+"stats": {
+"hp": 28,
+"atk": 44,
+"defe": 21,
+"spe": 64,
+"spa": 39,
+"spd": 39
+},
+"bst": 235,
+"types": [
+"ELECTRIC"
+],
+"abilities": [
+"STATIC",
+"STATIC",
+"LIGHTNING_ROD"
+],
+"fully_evolved": false,
+"legendary": false
+},
+"tyranitar": {
+"id": "tyranitar",
+"stats": {
+"hp": 100,
+"atk": 134,
+"defe": 100,
+"spe": 61,
+"spa": 95,
+"spd": 100
+},
+"bst": 590,
+"types": [
+"ROCK",
+"DARK"
+],
+"abilities": [
+"SAND_STREAM",
+"BATTLE_ARMOR",
+"UNNERVE"
+],
+"fully_evolved": true,
+"legendary": false
+}
+}
