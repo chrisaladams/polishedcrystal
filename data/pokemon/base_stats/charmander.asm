@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 309,  39,  52,  43,  60,  50,  65
+else
+	bst 339,  47,  56,  49,  64,  54,  69
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db FIRE, FIRE ; type

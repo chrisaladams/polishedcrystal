@@ -58,7 +58,10 @@ else
 endc
 
 ; this game's link version
-DEF LINK_VERSION EQU 4
+; Bump whenever battle-affecting link logic changes (party normalization,
+; healing, clauses, base stats, abilities) so mismatched builds can't connect
+; and desync. v6: L50 full-heal + sleep/evasion clauses + balance changes.
+DEF LINK_VERSION EQU 6
 ; This is the minimum link version allowed for trading
 DEF LINK_MIN_TRADE_VERSION EQU 3
 

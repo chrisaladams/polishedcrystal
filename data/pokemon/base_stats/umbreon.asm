@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 525,  95,  65, 110,  60, 130,  65
+else
+	bst 515,  95,  65, 105,  65, 120,  65
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db DARK, DARK ; type

@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 510,  75,  95, 125,  45,  75,  95
+else
+	bst 500,  75,  95, 120,  45,  75,  90
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db GROUND, FLYING ; type

@@ -2,7 +2,7 @@ if DEF(FAITHFUL)
 	bst 500,  60,  65,  60, 130,  75, 110
 	;   bst   hp  atk  def  sat  sdf  spe
 else
-	bst 510,  65,  60,  70, 130,  75, 110
+	bst 490,  60,  65,  60, 120,  75, 110
 	;   bst   hp  atk  def  sat  sdf  spe
 endc
 
@@ -13,9 +13,9 @@ endc
 	dn GENDER_F50, HATCH_MEDIUM_FAST ; gender ratio, step cycles to hatch
 
 if DEF(FAITHFUL)
-	abilities_for GENGAR, CURSED_BODY, CURSED_BODY, SHADOW_TAG
+	abilities_for GENGAR, CURSED_BODY, CURSED_BODY, CURSED_BODY
 else
-	abilities_for GENGAR, CURSED_BODY, LEVITATE, SHADOW_TAG
+	abilities_for GENGAR, CURSED_BODY, LEVITATE, CURSED_BODY
 endc
 	db GROWTH_MEDIUM_SLOW ; growth rate
 	dn EGG_INDETERMINATE, EGG_INDETERMINATE ; egg groups

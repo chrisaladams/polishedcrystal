@@ -1,0 +1,430 @@
+"""Pragmatic 6v6 battle engine + heuristic AI for meta-tuning.
+
+This is the "Option A" engine: a clean, uniform turn simulator built on the
+same L50 data the 1v1 matrix uses. It is NOT a port of the ROM's trainer AI
+(engine/battle/ai/*.asm, ~4400 lines) -- it is a consistent yardstick applied
+identically to both sides so cross-mon comparison is fair.
+
+Models the high-impact ~80% of mechanics and approximates the long tail:
+  modelled : damage + STAB + type chart, stat stages, the major statuses
+             (sleep/paralysis/burn/poison/toxic/freeze + confusion), on-hit
+             secondary effects (status/flinch/recoil), self-stat setup moves,
+             recovery, Leech Seed, entry hazards (Spikes/Toxic Spikes),
+             priority, switching, and a heuristic move/switch AI. Sleep Clause
+             is mirrored from the shipped game (toggle: SLEEP_CLAUSE).
+  approxd.  : confusion as a flat self-hit chance; multi-hit as its average
+             hit count; two-turn moves resolve in one turn; Explosion = big
+             hit then user faints.
+  ignored   : weather, screens, trapping, Perish Song, Transform/Sketch/
+             Metronome, abilities, held items. (So Ditto/Wobbuffet/Smeargle
+             and weather/screen teams are understated -- documented.)
+
+Damage uses a random roll (0.85-1.00) since this is Monte Carlo; crits off.
+"""
+import random
+
+from stats import mon_stats
+
+STAB = 1.5
+SLEEP_CLAUSE = True          # mirror the shipped Sleep Clause
+MAX_TURNS = 300              # battle longer than this -> draw (anti-stall guard)
+
+# ---- stat-stage multipliers (Gen table) --------------------------------------
+def stage_mult(stage):
+    stage = max(-6, min(6, stage))
+    return (2 + stage) / 2 if stage >= 0 else 2 / (2 - stage)
+
+# ---- self-boost moves: effect -> {stat: delta} -------------------------------
+BOOST = {
+    'EFFECT_ATTACK_UP_2':  {'atk': 2}, 'EFFECT_DEFENSE_UP_2': {'defe': 2},
+    'EFFECT_SPEED_UP_2':   {'spe': 2}, 'EFFECT_SP_ATK_UP_2':  {'spa': 2},
+    'EFFECT_SP_DEF_UP_2':  {'spd': 2}, 'EFFECT_DEFENSE_CURL': {'defe': 1},
+    'EFFECT_DRAGON_DANCE': {'atk': 1, 'spe': 1},
+    'EFFECT_BULK_UP':      {'atk': 1, 'defe': 1},
+    'EFFECT_CALM_MIND':    {'spa': 1, 'spd': 1},
+    'EFFECT_GROWTH':       {'atk': 1, 'spa': 1},
+    'EFFECT_HONE_CLAWS':   {'atk': 1},
+    'EFFECT_SHELL_SMASH':  {'atk': 2, 'spa': 2, 'spe': 2, 'defe': -1, 'spd': -1},
+}
+# opponent stat-drop status moves
+DROP = {'EFFECT_SPEED_DOWN_2': {'spe': -2}, 'EFFECT_ATTACK_DOWN_2': {'atk': -2},
+        'EFFECT_DEFENSE_DOWN_2': {'defe': -2}, 'EFFECT_ACCURACY_DOWN': {'acc': -1}}
+
+# status-inflicting status moves: effect -> status key
+INFLICT = {'EFFECT_SLEEP': 'slp', 'EFFECT_PARALYZE': 'par', 'EFFECT_TOXIC': 'tox',
+           'EFFECT_POISON': 'psn', 'EFFECT_BURN': 'brn', 'EFFECT_CONFUSE': 'cnf'}
+# on-hit secondary status: effect -> status key (applied at `chance`%)
+ONHIT = {'EFFECT_BURN_HIT': 'brn', 'EFFECT_PARALYZE_HIT': 'par',
+         'EFFECT_FREEZE_HIT': 'frz', 'EFFECT_POISON_HIT': 'psn'}
+HEAL_EFFECTS = {'EFFECT_HEAL', 'EFFECT_HEALING_LIGHT', 'EFFECT_ROOST'}
+RECOIL_EFFECTS = {'EFFECT_RECOIL_HIT', 'EFFECT_FLARE_BLITZ', 'EFFECT_CLOSE_COMBAT',
+                  'EFFECT_JUMP_KICK', 'EFFECT_BRICK_BREAK'}  # close combat = self def/spd drop, approx as none
+MULTI = {'EFFECT_MULTI_HIT': 3, 'EFFECT_DOUBLE_HIT': 2}
+
+
+def type_mult(move_type, def_types, chart):
+    m = 1.0
+    for dt in def_types:
+        m *= chart.get(f"{move_type}>{dt}", 1.0)
+    return m
+
+
+class Pmon:
+    """Battle-time wrapper around a pokemon.json entry + a chosen moveset."""
+    __slots__ = ('id', 'types', 'base', 'moves', 'maxhp', 'hp', 'status',
+                 'sleep', 'tox', 'stage', 'seeded', 'confused', 'fainted')
+
+    def __init__(self, mid, mon, moveset):
+        self.id = mid
+        self.types = mon['types']
+        self.base = mon['stats']           # already L50 stats dict
+        self.moves = moveset               # list of move-name strings
+        self.maxhp = self.base['hp']
+        self.hp = self.maxhp
+        self.status = None                 # None/'par'/'brn'/'psn'/'tox'/'slp'/'frz'
+        self.sleep = 0                     # remaining sleep turns
+        self.tox = 0                       # toxic counter
+        self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0)
+        self.seeded = False
+        self.confused = 0
+        self.fainted = False
+
+    def stat(self, key):
+        v = self.base[key] * stage_mult(self.stage.get(key, 0))
+        if key == 'spe' and self.status == 'par':
+            v *= 0.25
+        return v
+
+    def reset_volatile(self):              # cleared on switch out
+        self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0)
+        self.seeded = False
+        self.confused = 0
+
+
+class Side:
+    def __init__(self, team):
+        self.team = team                   # list[Pmon]
+        self.active = 0
+        self.spikes = 0                    # 0..3 layers
+        self.tspikes = 0                   # 0..2 layers
+        self.slept_by_foe = False          # sleep-clause bookkeeping
+
+    @property
+    def mon(self):
+        return self.team[self.active]
+
+    def alive_indices(self):
+        return [i for i, m in enumerate(self.team) if not m.fainted]
+
+
+# ---- damage ------------------------------------------------------------------
+def move_damage(att, dfn, move, chart, rng):
+    """Expected/rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
+    if move['cat'] == 'STATUS' or move['power'] <= 0:
+        return 0, 1.0
+    eff = type_mult(move['type'], dfn.types, chart)
+    if eff == 0.0:
+        return 0, 0.0
+    if move['cat'] == 'PHYSICAL':
+        a, d = att.stat('atk'), dfn.stat('defe')
+        if att.status == 'brn':
+            a *= 0.5
+    else:
+        a, d = att.stat('spa'), dfn.stat('spd')
+    base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
+    stab = STAB if move['type'] in att.types else 1.0
+    roll = rng.uniform(0.85, 1.0)
+    hits = MULTI.get(move['effect'], 1)
+    return int(base * stab * eff * roll) * hits, eff
+
+
+def expected_damage(att, dfn, move, chart):
+    """Deterministic average damage, for AI scoring (no RNG)."""
+    if move['cat'] == 'STATUS' or move['power'] <= 0:
+        return 0, type_mult(move['type'], dfn.types, chart) if move['power'] else 1.0
+    eff = type_mult(move['type'], dfn.types, chart)
+    if eff == 0.0:
+        return 0, 0.0
+    if move['cat'] == 'PHYSICAL':
+        a, d = att.stat('atk'), dfn.stat('defe')
+        if att.status == 'brn':
+            a *= 0.5
+    else:
+        a, d = att.stat('spa'), dfn.stat('spd')
+    base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
+    stab = STAB if move['type'] in att.types else 1.0
+    hits = MULTI.get(move['effect'], 1)
+    acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
+    return int(base * stab * eff * 0.925) * hits * acc, eff
+
+
+# ---- heuristic AI ------------------------------------------------------------
+def choose_move(side, foe, moves, chart):
+    """Return the index into att.moves the heuristic AI plays this turn."""
+    att, dfn = side.mon, foe.mon
+    best_dmg_i, best_dmg = 0, -1.0
+    util = []                              # (priority_score, index)
+    for i, mv in enumerate(att.moves):
+        m = moves[mv]
+        dmg, eff = expected_damage(att, dfn, m, chart)
+        if dmg > best_dmg:
+            best_dmg, best_dmg_i = dmg, i
+        e = m['effect']
+        # ---- utility scoring (only if it doesn't already KO) ----
+        if e in HEAL_EFFECTS and att.hp < att.maxhp * 0.55:
+            util.append((3.0, i))
+        elif e in BOOST and att.hp > att.maxhp * 0.6:
+            # set up only when reasonably safe (foe unlikely to OHKO)
+            util.append((2.0, i))
+        elif e in INFLICT and dfn.status is None:
+            # status the foe -- great for walls; require it to be allowed
+            if not (INFLICT[e] == 'slp' and SLEEP_CLAUSE and foe.slept_by_foe):
+                util.append((1.5, i))
+        elif e == 'EFFECT_LEECH_SEED' and not dfn.seeded and 'GRASS' not in dfn.types:
+            util.append((1.4, i))
+        elif e in ('EFFECT_SPIKES', 'EFFECT_TOXIC_SPIKES'):
+            util.append((1.2, i))
+
+    # If best damaging move OHKOs, just attack.
+    if best_dmg >= dfn.hp:
+        return best_dmg_i
+    # Otherwise weigh utility vs chip damage.
+    if util:
+        util.sort(reverse=True)
+        score, idx = util[0]
+        # damage worth a chunk of the foe still competes with weak utility
+        dmg_frac = best_dmg / max(dfn.hp, 1)
+        if dmg_frac < 0.45 or score >= 2.5:
+            # randomise a little so setup/status isn't robotic
+            if random.random() < 0.8:
+                return idx
+    return best_dmg_i
+
+
+def matchup_score(mon, foe, moves, chart):
+    """How good is `mon` against active `foe`? offense - defense, for switching."""
+    off = 0.0
+    for mv in mon.moves:
+        m = moves[mv]
+        if m['cat'] != 'STATUS' and m['power'] > 0:
+            off = max(off, type_mult(m['type'], foe.types, chart) *
+                      (STAB if m['type'] in mon.types else 1.0))
+    deff = 0.0
+    for mv in foe.moves:
+        m = moves[mv]
+        if m['cat'] != 'STATUS' and m['power'] > 0:
+            deff = max(deff, type_mult(m['type'], mon.types, chart))
+    return off - deff
+
+
+def choose_switch(side, foe, moves, chart, forced):
+    """Pick a teammate index to send in. Returns index, or None to stay."""
+    alive = [i for i in side.alive_indices() if forced or i != side.active]
+    if not alive:
+        return None
+    best_i, best = None, -99.0
+    for i in alive:
+        s = matchup_score(side.team[i], foe.mon, moves, chart)
+        if s > best:
+            best, best_i = s, i
+    if forced:
+        return best_i
+    # voluntary switch only when current matchup is clearly bad and a teammate is clearly better
+    cur = matchup_score(side.mon, foe.mon, moves, chart)
+    if best - cur >= 2.0 and cur < 0 and random.random() < 0.5:
+        return best_i
+    return None
+
+
+# ---- per-turn mechanics ------------------------------------------------------
+def apply_switch(side, idx, chart):
+    side.mon.reset_volatile()
+    side.active = idx
+    m = side.mon
+    # entry hazards
+    if side.spikes and 'FLYING' not in m.types:
+        m.hp -= m.maxhp * [0, 1/8, 1/6, 1/4][side.spikes]
+    if side.tspikes and 'FLYING' not in m.types:
+        if 'POISON' in m.types:
+            side.tspikes = 0               # absorbed
+        elif 'STEEL' not in m.types and m.status is None:
+            m.status = 'tox' if side.tspikes >= 2 else 'psn'
+    if m.hp <= 0:
+        m.fainted = True
+
+
+def end_of_turn(mon, foe_side):
+    """Residual damage/heal. Returns False if mon faints."""
+    if mon.fainted:
+        return False
+    if mon.status == 'brn' or mon.status == 'psn':
+        mon.hp -= mon.maxhp / 8
+    elif mon.status == 'tox':
+        mon.tox += 1
+        mon.hp -= mon.maxhp * mon.tox / 16
+    if mon.seeded and not mon.fainted:
+        drain = min(mon.maxhp / 8, max(mon.hp, 0))
+        mon.hp -= drain
+    if mon.hp <= 0:
+        mon.fainted = True
+        return False
+    return True
+
+
+def perform(att_side, dfn_side, moves, chart, rng):
+    """Execute the active mon's chosen action for att_side against dfn_side."""
+    att, dfn = att_side.mon, dfn_side.mon
+
+    # pre-move status gates
+    if att.status == 'frz':
+        if rng.random() < 0.2:
+            att.status = None
+        else:
+            return
+    if att.status == 'slp':
+        att.sleep -= 1
+        if att.sleep <= 0:
+            att.status = None
+        else:
+            return
+    if att.status == 'par' and rng.random() < 0.25:
+        return
+    if att.confused > 0:
+        att.confused -= 1
+        if rng.random() < 0.5:             # hurt self in confusion (approx)
+            att.hp -= att.maxhp / 8
+            if att.hp <= 0:
+                att.fainted = True
+            return
+
+    idx = choose_move(att_side, dfn_side, moves, chart)
+    mv = att.moves[idx]
+    m = moves[mv]
+
+    # accuracy
+    if m['acc'] >= 0 and rng.random() > m['acc'] / 100.0:
+        return
+
+    e = m['effect']
+    if e == 'EFFECT_EXPLOSION':
+        dmg, _ = move_damage(att, dfn, m, chart, rng)
+        dfn.hp -= dmg * 2
+        att.hp = 0
+        att.fainted = True
+        if dfn.hp <= 0:
+            dfn.fainted = True
+        return
+
+    if m['cat'] != 'STATUS' and m['power'] > 0:
+        dmg, eff = move_damage(att, dfn, m, chart, rng)
+        dfn.hp -= dmg
+        if dfn.hp <= 0:
+            dfn.fainted = True
+            return
+        # on-hit secondaries
+        if e in ONHIT and dfn.status is None and rng.random() < m['chance'] / 100.0:
+            st = ONHIT[e]
+            if not (st == 'slp'):          # on-hit sleep doesn't exist; guard anyway
+                dfn.status = st
+                if st == 'tox':
+                    dfn.tox = 0
+        if e == 'EFFECT_FLINCH_HIT' and rng.random() < m['chance'] / 100.0:
+            pass                            # flinch handled by turn order in battle loop (approx: ignore)
+        if e in RECOIL_EFFECTS:
+            att.hp -= dmg / 3
+            if att.hp <= 0:
+                att.fainted = True
+        return
+
+    # ---- status / utility moves ----
+    if e in BOOST:
+        for k, d in BOOST[e].items():
+            att.stage[k] = max(-6, min(6, att.stage.get(k, 0) + d))
+        if e == 'EFFECT_SHELL_SMASH':
+            pass
+        return
+    if e == 'EFFECT_BELLY_DRUM':
+        att.stage['atk'] = 6
+        att.hp -= att.maxhp / 2
+        if att.hp <= 0:
+            att.fainted = True
+        return
+    if e in DROP:
+        for k, d in DROP[e].items():
+            if k in dfn.stage:
+                dfn.stage[k] = max(-6, min(6, dfn.stage[k] + d))
+        return
+    if e in INFLICT and dfn.status is None:
+        st = INFLICT[e]
+        if st == 'slp':
+            if SLEEP_CLAUSE and dfn_side.slept_by_foe:
+                return
+            dfn.status = 'slp'
+            dfn.sleep = rng.randint(1, 3)
+            dfn_side.slept_by_foe = True
+        elif st == 'cnf':
+            dfn.confused = rng.randint(2, 4)
+        else:
+            dfn.status = st
+            if st == 'tox':
+                dfn.tox = 0
+        return
+    if e in HEAL_EFFECTS:
+        att.hp = min(att.maxhp, att.hp + att.maxhp / 2)
+        return
+    if e == 'EFFECT_LEECH_SEED':
+        dfn.seeded = True
+        return
+    if e == 'EFFECT_SPIKES':
+        dfn_side.spikes = min(3, dfn_side.spikes + 1)
+        return
+    if e == 'EFFECT_TOXIC_SPIKES':
+        dfn_side.tspikes = min(2, dfn_side.tspikes + 1)
+        return
+    # unmodelled status move: no-op
+
+
+def run_battle(team_a, team_b, moves, chart, seed=None):
+    """Run one 6v6. Returns 0 if side A wins, 1 if B, -1 on turn-limit draw."""
+    rng = random.Random(seed)
+    A, B = Side([Pmon(*t) for t in team_a]), Side([Pmon(*t) for t in team_b])
+    apply_switch(A, 0, chart)
+    apply_switch(B, 0, chart)
+
+    for _ in range(MAX_TURNS):
+        # ---- switching decisions (forced first if a side's active fainted) ----
+        for s, foe in ((A, B), (B, A)):
+            if s.mon.fainted:
+                nxt = choose_switch(s, foe, moves, chart, forced=True)
+                if nxt is not None:
+                    apply_switch(s, nxt, chart)
+        if not A.alive_indices():
+            return 1
+        if not B.alive_indices():
+            return 0
+        for s, foe in ((A, B), (B, A)):
+            if not s.mon.fainted:
+                nxt = choose_switch(s, foe, moves, chart, forced=False)
+                if nxt is not None:
+                    apply_switch(s, nxt, chart)
+
+        # ---- order by (priority of chosen move, speed) ----
+        ia = choose_move(A, B, moves, chart)
+        ib = choose_move(B, A, moves, chart)
+        pa, pb = moves[A.mon.moves[ia]]['prio'], moves[B.mon.moves[ib]]['prio']
+        sa, sb = A.mon.stat('spe'), B.mon.stat('spe')
+        a_first = (pa, sa) > (pb, sb) or ((pa, sa) == (pb, sb) and rng.random() < 0.5)
+        order = (A, B) if a_first else (B, A)
+
+        for s, foe in (order, order[::-1]):
+            if s.mon.fainted or foe.mon.fainted:
+                continue
+            perform(s, foe, moves, chart, rng)
+        # ---- residuals ----
+        for s, foe in ((A, B), (B, A)):
+            end_of_turn(s.mon, foe)
+        if not A.alive_indices():
+            return 1
+        if not B.alive_indices():
+            return 0
+    return -1

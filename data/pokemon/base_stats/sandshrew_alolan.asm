@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 300,  50,  75,  90,  10,  35,  40
+else
+	bst 330,  58,  83,  94,  10,  41,  44
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db ICE, STEEL ; type

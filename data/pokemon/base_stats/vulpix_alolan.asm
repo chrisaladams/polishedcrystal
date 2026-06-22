@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 299,  38,  41,  40,  50,  65,  65
+else
+	bst 329,  46,  45,  46,  54,  69,  69
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db ICE, ICE ; type

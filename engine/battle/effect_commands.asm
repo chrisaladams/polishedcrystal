@@ -2048,6 +2048,11 @@ BattleCommand_checkhit:
 	ld b, 7
 
 .not_external_acc
+	; Evasion Clause: in link battles, ignore the target's evasion boosts
+	; (Double Team / Minimize / Bright Powder) so accuracy can't be stalled.
+	ld a, [wLinkMode]
+	and a
+	jr nz, .reset_evasion
 	; Handle stat modifiers
 	; Unaware ignores enemy stat changes, identification also does if above 0
 	call GetTrueUserIgnorableAbility
@@ -3909,6 +3914,19 @@ UnevolvedEviolite:
 	cp EVIOLITE
 	pop bc
 	ret nz
+
+	; Restrict Eviolite to genuinely weak, "true" not-fully-evolved mons.
+	; Strong cross-gen pre-evolutions (Scyther, Rhydon, Porygon2, etc.) are
+	; near-final-stage in power, so they're excluded to stop them stacking
+	; 1.5x defenses on top of ~500 BST. Curate EvioliteExcludedSpecies below.
+	push bc
+	ld a, MON_SPECIES
+	call OpponentPartyAttr
+	ld hl, EvioliteExcludedSpecies
+	ld de, 1
+	call IsInArray ; carry set if excluded
+	pop bc
+	ret c
 	; fallthrough
 SetDefenseBoost:
 ; Boosts defense in bc by x1.5. Assumes bc<43690
@@ -3920,6 +3938,14 @@ SetDefenseBoost:
 	ld b, h
 	ld c, l
 	ret
+
+EvioliteExcludedSpecies:
+; Strong cross-gen pre-evolutions that should NOT benefit from Eviolite.
+	db SCYTHER, RHYDON, PORYGON2, ELECTABUZZ, MAGMAR, MAGNETON
+	db URSARING, PILOSWINE, TANGELA, LICKITUNG, GOLBAT, DUNSPARCE
+	db GLIGAR, TOGETIC, SEADRA
+	db GIRAFARIG, STANTLER, PRIMEAPE, QWILFISH, MR__MIME
+	db -1
 
 BattleCommand_damagestats:
 ; Return move power d, player level e, enemy defense c and player attack b.
@@ -4889,6 +4915,11 @@ BattleCommand_sleep:
 	jr c, .ability_ok
 	jr nz, .failed
 
+	; Sleep Clause: in link battles a player may not put a second of the
+	; opponent's Pokemon to sleep while one is already asleep.
+	call CheckLinkSleepClause
+	jr c, .failed_ineffective
+
 	ld a, [wAttackMissed]
 	and a
 	jr nz, .failed_ineffective
@@ -4934,6 +4965,40 @@ BattleCommand_sleep:
 	call AnimateFailedMove
 	call PrintDoesntAffect
 	farjp EndAbility
+
+CheckLinkSleepClause:
+; Sleep Clause for link battles. Returns carry set if the sleep should be
+; blocked because the target's party already holds a sleeping Pokemon.
+; Returns no-carry (allowed) outside link battles or if none are asleep.
+	ld a, [wLinkMode]
+	and a
+	ret z ; not a link battle -> clause inactive (carry clear)
+
+	; Pick the target (opponent) party based on whose turn it is.
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .target_player
+	ld a, [wOTPartyCount]
+	ld hl, wOTPartyMon1
+	jr .scan
+.target_player
+	ld a, [wPartyCount]
+	ld hl, wPartyMon1
+.scan
+	ld b, a
+	ld de, MON_STATUS
+	add hl, de
+	ld de, PARTYMON_STRUCT_LENGTH
+.loop
+	ld a, [hl]
+	and SLP_MASK
+	scf
+	ret nz ; a party member is already asleep -> block
+	add hl, de
+	dec b
+	jr nz, .loop
+	and a ; clear carry -> allowed
+	ret
 
 CanPoisonTarget:
 	ld a, b

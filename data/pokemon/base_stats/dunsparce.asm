@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 415, 100,  70,  70,  65,  65,  45
+else
+	bst 472, 108,  90,  74,  69,  71,  60
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 if DEF(FAITHFUL)

@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 425,  35, 100,  50,  50,  70, 120
+else
+	bst 445,  50, 100,  55,  50,  70, 120
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db GROUND, GROUND ; type
@@ -7,7 +11,7 @@
 	db NO_ITEM, SOFT_SAND ; held items
 	dn GENDER_F50, HATCH_MEDIUM_FAST ; gender ratio, step cycles to hatch
 
-	abilities_for DUGTRIO, SAND_VEIL, ARENA_TRAP, SAND_FORCE
+	abilities_for DUGTRIO, SAND_VEIL, TANGLING_HAIR, SAND_FORCE
 	db GROWTH_MEDIUM_FAST ; growth rate
 	dn EGG_GROUND, EGG_GROUND ; egg groups
 

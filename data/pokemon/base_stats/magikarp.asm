@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 200,  20,  10,  55,  15,  20,  80
+else
+	bst 230,  28,  14,  59,  19,  26,  84
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db WATER, WATER ; type

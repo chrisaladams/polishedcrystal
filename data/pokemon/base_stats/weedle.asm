@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 195,  40,  35,  30,  20,  20,  50
+else
+	bst 225,  48,  43,  34,  20,  26,  54
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db BUG, POISON ; type

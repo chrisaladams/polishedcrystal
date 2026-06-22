@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 320,  50,  50,  95,  40,  50,  35
+else
+	bst 350,  58,  54,  99,  44,  56,  39
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db GROUND, GROUND ; type
