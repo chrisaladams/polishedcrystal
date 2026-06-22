@@ -1805,14 +1805,14 @@
 "sudowoodo": {
 "id": "sudowoodo",
 "stats": {
-"hp": 75,
+"hp": 90,
 "atk": 115,
 "defe": 120,
 "spe": 30,
 "spa": 30,
-"spd": 80
+"spd": 95
 },
-"bst": 450,
+"bst": 480,
 "types": [
 "ROCK"
 ],
@@ -1894,14 +1894,14 @@
 "magcargo": {
 "id": "magcargo",
 "stats": {
-"hp": 70,
+"hp": 85,
 "atk": 50,
 "defe": 135,
 "spe": 40,
 "spa": 115,
 "spd": 115
 },
-"bst": 525,
+"bst": 540,
 "types": [
 "FIRE",
 "ROCK"
@@ -2097,14 +2097,14 @@
 "sirfetch_d": {
 "id": "sirfetch_d",
 "stats": {
-"hp": 62,
+"hp": 80,
 "atk": 135,
 "defe": 95,
-"spe": 65,
+"spe": 75,
 "spa": 68,
 "spd": 82
 },
-"bst": 507,
+"bst": 535,
 "types": [
 "FIGHTING"
 ],
@@ -3181,14 +3181,14 @@
 "hitmonchan": {
 "id": "hitmonchan",
 "stats": {
-"hp": 50,
+"hp": 70,
 "atk": 105,
-"defe": 79,
+"defe": 85,
 "spe": 76,
 "spa": 35,
 "spd": 110
 },
-"bst": 455,
+"bst": 481,
 "types": [
 "FIGHTING"
 ],
@@ -4154,11 +4154,11 @@
 "hp": 65,
 "atk": 60,
 "defe": 110,
-"spe": 65,
+"spe": 85,
 "spa": 130,
 "spd": 95
 },
-"bst": 525,
+"bst": 545,
 "types": [
 "ICE"
 ],
@@ -4559,14 +4559,14 @@
 "hitmontop": {
 "id": "hitmontop",
 "stats": {
-"hp": 50,
-"atk": 95,
+"hp": 70,
+"atk": 100,
 "defe": 95,
 "spe": 70,
 "spa": 35,
 "spd": 110
 },
-"bst": 455,
+"bst": 480,
 "types": [
 "FIGHTING"
 ],
@@ -5415,14 +5415,14 @@
 "annihilape": {
 "id": "annihilape",
 "stats": {
-"hp": 110,
-"atk": 115,
+"hp": 100,
+"atk": 100,
 "defe": 80,
-"spe": 90,
+"spe": 75,
 "spa": 50,
 "spd": 90
 },
-"bst": 535,
+"bst": 495,
 "types": [
 "FIGHTING",
 "GHOST"
@@ -5778,11 +5778,11 @@
 "hp": 70,
 "atk": 60,
 "defe": 125,
-"spe": 55,
+"spe": 70,
 "spa": 115,
-"spd": 70
+"spd": 80
 },
-"bst": 495,
+"bst": 520,
 "types": [
 "ROCK",
 "WATER"
