@@ -27,17 +27,10 @@ tuning, NOT a full battle: it ignores switching, status over time, hazards,
 and most item effects. Documented in meta_sim/matrix.py output.
 """
 from stats import LEVEL
+import abilities
 
 STAB = 1.5
 ROLL = 0.925  # average damage roll
-TECHNICIAN_THRESHOLD = 60
-
-ATK_DOUBLERS = {'HUGE_POWER', 'PURE_POWER'}
-ADAPTABILITY_STAB = 2.0
-WEATHER_OWN_BOOST = {
-    'DROUGHT': {'FIRE': 1.5, 'WATER': 0.5},
-    'DRIZZLE': {'WATER': 1.5, 'FIRE': 0.5},
-}
 
 def type_mult(move_type, def_types, chart):
     m = 1.0
@@ -56,36 +49,16 @@ def damage(attacker, defender, move, chart, atk_ability=None):
     eff = type_mult(move['type'], defender['types'], chart)
     if eff == 0.0:
         return 0
-    if move['cat'] == 'PHYSICAL':
-        a, d = attacker['stats']['atk'], defender['stats']['defe']
-        if atk_ability in ATK_DOUBLERS:
-            a *= 2
-    else:
-        a, d = attacker['stats']['spa'], defender['stats']['spd']
-    base = ((( (2 * LEVEL) // 5 + 2) * move['power'] * a) // d) // 50 + 2
     is_stab = move['type'] in attacker['types']
-    stab = (ADAPTABILITY_STAB if atk_ability == 'ADAPTABILITY' else STAB) if is_stab else 1.0
-    dmg = base * stab * eff * ROLL
-    if atk_ability == 'TECHNICIAN' and move['power'] <= TECHNICIAN_THRESHOLD:
-        dmg *= 1.5
-    if atk_ability == 'SHEER_FORCE' and move.get('chance', 0) > 0:
-        dmg *= 1.3
-    boost = WEATHER_OWN_BOOST.get(atk_ability, {}).get(move['type'])
-    if boost:
-        dmg *= boost
+    atk_mult, dmg_mult = abilities.offense_multipliers(atk_ability, move, is_stab)
+    if move['cat'] == 'PHYSICAL':
+        a, d = attacker['stats']['atk'] * atk_mult, defender['stats']['defe']
+    else:
+        a, d = attacker['stats']['spa'] * atk_mult, defender['stats']['spd']
+    base = ((( (2 * LEVEL) // 5 + 2) * move['power'] * a) // d) // 50 + 2
+    stab = abilities.stab_mult(atk_ability, is_stab)
+    dmg = base * stab * eff * dmg_mult * ROLL
     return int(dmg)
-
-def defending_sand_mult(defender, move):
-    """Sp.Def multiplier from the defender's own Sand Stream while it's a
-    Rock-type taking a special hit (its sand is always "up" in this static
-    1v1 model). Returns 1.0 if not applicable."""
-    if move['cat'] != 'SPECIAL':
-        return 1.0
-    if 'SAND_STREAM' not in defender.get('abilities', []):
-        return 1.0
-    if 'ROCK' not in defender['types']:
-        return 1.0
-    return 1.5
 
 def best_move(attacker, defender, moves, learnset, chart):
     """Pick attacker's highest-average-damage legal move vs defender, trying
@@ -94,11 +67,11 @@ def best_move(attacker, defender, moves, learnset, chart):
     boost if applicable.
     Returns (move_name, damage, type_effectiveness) or (None, 0, 0)."""
     best = (None, 0, 0.0)
-    abilities = attacker.get('abilities') or [None]
+    atk_abilities = attacker.get('abilities') or [None]
     for mv in learnset:
         m = moves[mv]
-        sand = defending_sand_mult(defender, m)
-        for ab in set(abilities):
+        sand = abilities.defending_sand_mult(defender.get('abilities'), defender['types'], m)
+        for ab in set(atk_abilities):
             dmg = damage(attacker, defender, m, chart, atk_ability=ab)
             if sand != 1.0:
                 dmg = int(dmg / sand)
