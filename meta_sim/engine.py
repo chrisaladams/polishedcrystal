@@ -14,18 +14,25 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              is mirrored from the shipped game (toggle: SLEEP_CLAUSE).
   approxd.  : confusion as a flat self-hit chance; multi-hit as its average
              hit count; two-turn moves resolve in one turn; Explosion = big
-             hit then user faints.
+             hit then user faints. Each mon commits to one ability and one
+             item for the whole battle (see abilities.py/items.py) instead
+             of switching among abilities per move like the 1v1 matrix does.
   ignored   : weather, screens, trapping, Perish Song, Transform/Sketch/
-             Metronome, abilities, held items. (So Ditto/Wobbuffet/Smeargle
-             and weather/screen teams are understated -- documented.)
+             Metronome, and most abilities/items beyond the modeled
+             multiplier-style subset in abilities.py/items.py. (So Ditto/
+             Wobbuffet/Smeargle and weather/screen teams are understated --
+             documented.)
 
 Damage uses a random roll (0.85-1.00) since this is Monte Carlo; crits off.
 """
 import random
 
 from stats import mon_stats
+import abilities
+import items
 
 STAB = 1.5
+CHOICE_ITEMS = {'CHOICE_BAND', 'CHOICE_SPECS', 'CHOICE_SCARF'}
 SLEEP_CLAUSE = True          # mirror the shipped Sleep Clause
 MAX_TURNS = 300              # battle longer than this -> draw (anti-stall guard)
 
@@ -71,14 +78,17 @@ def type_mult(move_type, def_types, chart):
 
 class Pmon:
     """Battle-time wrapper around a pokemon.json entry + a chosen moveset."""
-    __slots__ = ('id', 'types', 'base', 'moves', 'maxhp', 'hp', 'status',
-                 'sleep', 'tox', 'stage', 'seeded', 'confused', 'fainted')
+    __slots__ = ('id', 'types', 'base', 'moves', 'ability', 'item', 'maxhp',
+                 'hp', 'status', 'sleep', 'tox', 'stage', 'seeded', 'confused',
+                 'fainted', 'locked_move')
 
-    def __init__(self, mid, mon, moveset):
+    def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
         self.types = mon['types']
         self.base = mon['stats']           # already L50 stats dict
         self.moves = moveset               # list of move-name strings
+        self.ability = ability             # one ability for the whole battle
+        self.item = item                   # one held item for the whole battle
         self.maxhp = self.base['hp']
         self.hp = self.maxhp
         self.status = None                 # None/'par'/'brn'/'psn'/'tox'/'slp'/'frz'
@@ -88,17 +98,24 @@ class Pmon:
         self.seeded = False
         self.confused = 0
         self.fainted = False
+        self.locked_move = None            # Choice-item move lock (index into self.moves)
 
     def stat(self, key):
         v = self.base[key] * stage_mult(self.stage.get(key, 0))
-        if key == 'spe' and self.status == 'par':
-            v *= 0.25
+        if key == 'spe':
+            if self.status == 'par':
+                v *= 0.25
+            if self.item == 'CHOICE_SCARF':
+                v *= items.CHOICE_SCARF_SPEED_MULT
+        if key in ('defe', 'spd') and self.item == 'EVIOLITE':
+            v *= items.EVIOLITE_DEF_MULT
         return v
 
     def reset_volatile(self):              # cleared on switch out
         self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0)
         self.seeded = False
         self.confused = 0
+        self.locked_move = None            # Choice lock releases on switch
 
 
 class Side:
@@ -118,6 +135,28 @@ class Side:
 
 
 # ---- damage ------------------------------------------------------------------
+def _damage_terms(att, dfn, move, chart):
+    """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
+    eff = type_mult(move['type'], dfn.types, chart)
+    is_stab = move['type'] in att.types
+    atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
+    if move['cat'] == 'PHYSICAL':
+        a, d = att.stat('atk') * atk_mult, dfn.stat('defe')
+        if att.status == 'brn':
+            a *= 0.5
+        if att.item == 'CHOICE_BAND':
+            a *= items.CHOICE_STAT_MULT
+    else:
+        a, d = att.stat('spa') * atk_mult, dfn.stat('spd')
+        if att.item == 'CHOICE_SPECS':
+            a *= items.CHOICE_STAT_MULT
+    d *= abilities.defending_sand_mult([dfn.ability] if dfn.ability else [], dfn.types, move)
+    stab = abilities.stab_mult(att.ability, is_stab)
+    if att.item == 'LIFE_ORB':
+        dmg_mult *= items.LIFE_ORB_DMG_MULT
+    return eff, a, d, stab, dmg_mult
+
+
 def move_damage(att, dfn, move, chart, rng):
     """Expected/rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
@@ -125,17 +164,11 @@ def move_damage(att, dfn, move, chart, rng):
     eff = type_mult(move['type'], dfn.types, chart)
     if eff == 0.0:
         return 0, 0.0
-    if move['cat'] == 'PHYSICAL':
-        a, d = att.stat('atk'), dfn.stat('defe')
-        if att.status == 'brn':
-            a *= 0.5
-    else:
-        a, d = att.stat('spa'), dfn.stat('spd')
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
-    stab = STAB if move['type'] in att.types else 1.0
     roll = rng.uniform(0.85, 1.0)
     hits = MULTI.get(move['effect'], 1)
-    return int(base * stab * eff * roll) * hits, eff
+    return int(base * stab * eff * dmg_mult * roll) * hits, eff
 
 
 def expected_damage(att, dfn, move, chart):
@@ -145,23 +178,19 @@ def expected_damage(att, dfn, move, chart):
     eff = type_mult(move['type'], dfn.types, chart)
     if eff == 0.0:
         return 0, 0.0
-    if move['cat'] == 'PHYSICAL':
-        a, d = att.stat('atk'), dfn.stat('defe')
-        if att.status == 'brn':
-            a *= 0.5
-    else:
-        a, d = att.stat('spa'), dfn.stat('spd')
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
-    stab = STAB if move['type'] in att.types else 1.0
     hits = MULTI.get(move['effect'], 1)
     acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
-    return int(base * stab * eff * 0.925) * hits * acc, eff
+    return int(base * stab * eff * dmg_mult * 0.925) * hits * acc, eff
 
 
 # ---- heuristic AI ------------------------------------------------------------
 def choose_move(side, foe, moves, chart):
     """Return the index into att.moves the heuristic AI plays this turn."""
     att, dfn = side.mon, foe.mon
+    if att.locked_move is not None:
+        return att.locked_move
     best_dmg_i, best_dmg = 0, -1.0
     util = []                              # (priority_score, index)
     for i, mv in enumerate(att.moves):
@@ -268,6 +297,8 @@ def end_of_turn(mon, foe_side):
     if mon.hp <= 0:
         mon.fainted = True
         return False
+    if mon.item == 'LEFTOVERS' and mon.hp < mon.maxhp:
+        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * items.LEFTOVERS_HEAL_FRAC)
     return True
 
 
@@ -300,6 +331,8 @@ def perform(att_side, dfn_side, moves, chart, rng):
     idx = choose_move(att_side, dfn_side, moves, chart)
     mv = att.moves[idx]
     m = moves[mv]
+    if att.item in CHOICE_ITEMS and m['cat'] != 'STATUS' and m['power'] > 0:
+        att.locked_move = idx     # locks in on use, regardless of hit/miss
 
     # accuracy
     if m['acc'] >= 0 and rng.random() > m['acc'] / 100.0:
@@ -318,6 +351,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng)
         dfn.hp -= dmg
+        if att.item == 'LIFE_ORB' and dmg > 0:
+            att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
+            if att.hp <= 0:
+                att.fainted = True
         if dfn.hp <= 0:
             dfn.fainted = True
             return
