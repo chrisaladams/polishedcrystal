@@ -23,6 +23,16 @@ from engine import (BOOST, HEAL_EFFECTS, INFLICT, type_mult)
 import abilities
 import items
 
+# Variable/fixed-power moves are stored with power=1 in moves.json (the ROM
+# computes their real power at battle time). Estimate a representative power
+# here purely for moveset-ranking purposes; engine.py computes the real
+# per-instance value during battle (see effective_power/_fixed_damage).
+VARIABLE_POWER_EST = {
+    'EFFECT_LEVEL_DAMAGE': 50, 'EFFECT_SUPER_FANG': 50, 'EFFECT_GYRO_BALL': 60,
+    'EFFECT_REVERSAL': 60, 'EFFECT_RETURN': 102, 'EFFECT_MAGNITUDE': 71,
+    'EFFECT_LOW_KICK': 80,
+}
+
 # role-relevant utility effect buckets
 SETUP = set(BOOST) | {'EFFECT_BELLY_DRUM'}
 STATUS = set(INFLICT)
@@ -76,7 +86,8 @@ def pick_moveset(mid, mon, moves, chart, role):
         m = moves[mv]
         cat_fit = 1.15 if (m['cat'] == 'PHYSICAL') == phys_bias else 1.0
         stab = 1.5 if m['type'] in mon['types'] else 1.0
-        return m['power'] * cat_fit * stab
+        power = VARIABLE_POWER_EST.get(m['effect'], m['power'])
+        return power * cat_fit * stab
 
     dmg = sorted((mv for mv in pool if moves[mv]['cat'] != 'STATUS'
                   and moves[mv]['power'] > 0), key=dmg_key, reverse=True)
@@ -153,7 +164,7 @@ def make_mon(mid, pool, moves, chart):
     """Return (mid, mon, moveset, ability, item) tuple ready for engine.Pmon."""
     m = pool[mid]
     ability = abilities.pick_ability(m.get('abilities'))
-    item = items.pick_item(mid, m, m['_role'])
+    item = items.pick_item(mid, m, m['_role'], ability)
     return (mid, m, pick_moveset(mid, m, moves, chart, m['_role']), ability, item)
 
 

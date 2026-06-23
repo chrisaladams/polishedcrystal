@@ -165,11 +165,56 @@ def _sand_spdef(dfn, move, weather):
     return 1.0
 
 
-def sturdy_cap(dfn, dmg):
-    """Sturdy: a mon at full HP survives an otherwise-lethal hit with 1 HP."""
-    if dfn.ability == 'STURDY' and dfn.hp == dfn.maxhp and dmg >= dfn.hp:
+def survive_cap(dfn, dmg):
+    """Sturdy / Focus Sash: a mon at full HP survives an otherwise-lethal hit
+    with 1 HP. Focus Sash is single-use and is consumed on the save."""
+    if dfn.hp < dfn.maxhp or dmg < dfn.hp:
+        return dmg
+    if dfn.ability == 'STURDY':
+        return dfn.hp - 1
+    if dfn.item == 'FOCUS_SASH':
+        dfn.item = None
         return dfn.hp - 1
     return dmg
+
+
+# ---- variable/fixed-power moves -----------------------------------------------
+# moves.json stores these with power=1 (the ROM computes the real value at
+# battle time). LEVEL_DAMAGE/SUPER_FANG bypass the stat formula entirely
+# (fixed/fractional damage); the rest plug a computed power into the normal
+# formula. Low Kick is approximated with a fixed mid power since this ROM's
+# extracted data has no per-species weight to drive the real weight-class
+# table -- documented limitation, not a faithful port.
+def _fixed_damage(move, att, dfn):
+    e = move['effect']
+    if e == 'EFFECT_LEVEL_DAMAGE':
+        return 50  # = attacker's level
+    if e == 'EFFECT_SUPER_FANG':
+        return max(1, dfn.hp // 2)
+    return None
+
+
+def effective_power(move, att, dfn):
+    e = move['effect']
+    if e == 'EFFECT_GYRO_BALL':
+        return min(150, max(1, int(25 * dfn.stat('spe') / max(att.stat('spe'), 1)) + 1))
+    if e == 'EFFECT_LOW_KICK':
+        return 80
+    if e == 'EFFECT_REVERSAL':
+        frac = att.hp / att.maxhp
+        if frac >= 0.6875: return 20
+        if frac >= 0.3542: return 40
+        if frac >= 0.2083: return 80
+        if frac >= 0.1042: return 100
+        if frac >= 0.0417: return 150
+        return 200
+    if e == 'EFFECT_RETURN':
+        return 102  # max happiness, matching the uniform max-build baseline
+    if e == 'EFFECT_MAGNITUDE':
+        return 71   # average power across the magnitude 4-10 roll
+    if e == 'EFFECT_CONDITIONAL_BOOST' and att.status not in (None, 'slp', 'frz'):
+        return move['power'] * 2   # Facade
+    return move['power']
 
 
 def _damage_terms(att, dfn, move, chart, weather=None, moving_last=False):
@@ -186,7 +231,7 @@ def _damage_terms(att, dfn, move, chart, weather=None, moving_last=False):
     if move['cat'] == 'PHYSICAL':
         a = att.stat('atk', ignore_stage=ign_atk) * amult
         d = dfn.stat('defe', ignore_stage=ign_def)
-        if att.status == 'brn' and att.ability != 'GUTS':
+        if att.status == 'brn' and att.ability != 'GUTS' and move['effect'] != 'EFFECT_CONDITIONAL_BOOST':
             a *= 0.5
         if att.item == 'CHOICE_BAND':
             a *= items.CHOICE_STAT_MULT
@@ -213,10 +258,14 @@ def move_damage(att, dfn, move, chart, rng, weather=None, moving_last=False):
     eff = type_eff(att, dfn, move, chart)
     if eff == 0.0:
         return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather, moving_last)
-    base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
-    roll = rng.uniform(0.85, 1.0)
     hits = MULTI.get(move['effect'], 1)
+    fixed = _fixed_damage(move, att, dfn)
+    if fixed is not None:
+        return int(fixed) * hits, eff
+    power = effective_power(move, att, dfn)
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather, moving_last)
+    base = ((((2 * 50) // 5 + 2) * power * a) // d) // 50 + 2
+    roll = rng.uniform(0.85, 1.0)
     return int(base * stab * eff * dmg_mult * roll) * hits, eff
 
 
@@ -227,10 +276,14 @@ def expected_damage(att, dfn, move, chart, weather=None):
     eff = type_eff(att, dfn, move, chart)
     if eff == 0.0:
         return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather)
-    base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
     hits = MULTI.get(move['effect'], 1)
     acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
+    fixed = _fixed_damage(move, att, dfn)
+    if fixed is not None:
+        return int(fixed * acc) * hits, eff
+    power = effective_power(move, att, dfn)
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather)
+    base = ((((2 * 50) // 5 + 2) * power * a) // d) // 50 + 2
     return int(base * stab * eff * dmg_mult * 0.925) * hits * acc, eff
 
 
@@ -414,6 +467,13 @@ def end_of_turn(mon, foe_side, weather=None, rng=None):
         return False
     if mon.item == 'LEFTOVERS' and mon.hp < mon.maxhp:
         mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * items.LEFTOVERS_HEAL_FRAC)
+    # self-status orbs: activate at end of turn if still unstatused (so the
+    # status itself doesn't deal damage until the following end_of_turn)
+    if mon.status is None:
+        if mon.item == 'TOXIC_ORB' and abilities.can_be_statused(mon.ability, 'tox'):
+            mon.status, mon.tox = 'tox', 0
+        elif mon.item == 'FLAME_ORB' and abilities.can_be_statused(mon.ability, 'brn'):
+            mon.status = 'brn'
     return True
 
 
@@ -509,7 +569,7 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None, moving_last=Fal
     e = m['effect']
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng, weather)
-        dfn.hp -= sturdy_cap(dfn, dmg * 2)
+        dfn.hp -= survive_cap(dfn, dmg * 2)
         att.hp = 0
         att.fainted = True
         if dfn.hp <= 0:
@@ -519,7 +579,7 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None, moving_last=Fal
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng, weather, moving_last)
         pre_hp = dfn.hp
-        dfn.hp -= sturdy_cap(dfn, dmg)
+        dfn.hp -= survive_cap(dfn, dmg)
         if dfn.ability == 'BERSERK' and dfn.hp > 0 and pre_hp >= dfn.maxhp / 2 > dfn.hp:
             dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
