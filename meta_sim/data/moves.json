@@ -8,7 +8,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "KARATE_CHOP": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -19,7 +26,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DOUBLE_SLAP": {
 "effect": "EFFECT_MULTI_HIT",
@@ -30,7 +44,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AERIAL_ACE": {
 "effect": "EFFECT_ALWAYS_HIT",
@@ -41,7 +62,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAGON_CLAW": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -52,7 +80,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PAY_DAY": {
 "effect": "EFFECT_PAY_DAY",
@@ -63,7 +98,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FIRE_PUNCH": {
 "effect": "EFFECT_BURN_HIT",
@@ -74,7 +116,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ICE_PUNCH": {
 "effect": "EFFECT_FREEZE_HIT",
@@ -85,7 +134,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "THUNDERPUNCH": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -96,7 +152,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SCRATCH": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -107,7 +170,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "X_SCISSOR": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -118,7 +188,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "NIGHT_SLASH": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -129,7 +206,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AIR_SLASH": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -140,7 +224,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SWORDS_DANCE": {
 "effect": "EFFECT_ATTACK_UP_2",
@@ -151,7 +242,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CUT": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -162,7 +260,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GUST": {
 "effect": "EFFECT_GUST",
@@ -173,7 +278,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WING_ATTACK": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -184,7 +296,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SUCKER_PUNCH": {
 "effect": "EFFECT_SUCKER_PUNCH",
@@ -195,7 +314,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 1,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FLY": {
 "effect": "EFFECT_FLY",
@@ -206,7 +332,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DAZZLINGLEAM": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -217,7 +350,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "VOLT_SWITCH": {
 "effect": "EFFECT_SWITCH_HIT",
@@ -228,7 +368,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "VINE_WHIP": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -239,7 +386,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "STOMP": {
 "effect": "EFFECT_STOMP",
@@ -250,7 +404,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DOUBLE_KICK": {
 "effect": "EFFECT_DOUBLE_HIT",
@@ -261,7 +422,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FLARE_BLITZ": {
 "effect": "EFFECT_FLARE_BLITZ",
@@ -272,7 +440,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "STONE_EDGE": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -283,7 +458,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FOCUS_BLAST": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -294,7 +476,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TOXIC_SPIKES": {
 "effect": "EFFECT_TOXIC_SPIKES",
@@ -305,7 +494,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HEADBUTT": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -316,7 +512,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HORN_ATTACK": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -327,7 +530,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TRICK": {
 "effect": "EFFECT_TRICK",
@@ -338,7 +548,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HEX": {
 "effect": "EFFECT_CONDITIONAL_BOOST",
@@ -349,7 +566,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TACKLE": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -360,7 +584,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BODY_SLAM": {
 "effect": "EFFECT_BODY_SLAM",
@@ -371,7 +602,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WRAP": {
 "effect": "EFFECT_TRAP",
@@ -382,7 +620,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TAKE_DOWN": {
 "effect": "EFFECT_RECOIL_HIT",
@@ -393,7 +638,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": true
 },
 "THRASH": {
 "effect": "EFFECT_RAMPAGE",
@@ -404,7 +656,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DOUBLE_EDGE": {
 "effect": "EFFECT_RECOIL_HIT",
@@ -415,7 +674,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": true
 },
 "HAIL": {
 "effect": "EFFECT_HAIL",
@@ -426,7 +692,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "POISON_STING": {
 "effect": "EFFECT_POISON_HIT",
@@ -437,7 +710,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "U_TURN": {
 "effect": "EFFECT_SWITCH_HIT",
@@ -448,7 +728,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PIN_MISSILE": {
 "effect": "EFFECT_MULTI_HIT",
@@ -459,7 +746,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "LEER": {
 "effect": "EFFECT_DEFENSE_DOWN",
@@ -470,7 +764,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BITE": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -481,7 +782,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GROWL": {
 "effect": "EFFECT_ATTACK_DOWN",
@@ -492,7 +800,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "ROAR": {
 "effect": "EFFECT_ROAR",
@@ -503,7 +818,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": -6,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "SING": {
 "effect": "EFFECT_SLEEP",
@@ -514,7 +836,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "SUPERSONIC": {
 "effect": "EFFECT_CONFUSE",
@@ -525,7 +854,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "SONIC_BOOM": {
 "effect": "EFFECT_STATIC_DAMAGE",
@@ -536,7 +872,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DISABLE": {
 "effect": "EFFECT_DISABLE",
@@ -547,7 +890,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ACID": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -558,7 +908,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "EMBER": {
 "effect": "EFFECT_BURN_HIT",
@@ -569,7 +926,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FLAMETHROWER": {
 "effect": "EFFECT_BURN_HIT",
@@ -580,7 +944,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CALM_MIND": {
 "effect": "EFFECT_CALM_MIND",
@@ -591,7 +962,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WATER_GUN": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -602,7 +980,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HYDRO_PUMP": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -613,7 +998,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SURF": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -624,7 +1016,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ICE_BEAM": {
 "effect": "EFFECT_FREEZE_HIT",
@@ -635,7 +1034,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BLIZZARD": {
 "effect": "EFFECT_FREEZE_HIT",
@@ -646,7 +1052,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PSYBEAM": {
 "effect": "EFFECT_CONFUSE_HIT",
@@ -657,7 +1070,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BUBBLE_BEAM": {
 "effect": "EFFECT_SPEED_DOWN_HIT",
@@ -668,7 +1088,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AURORA_BEAM": {
 "effect": "EFFECT_ATTACK_DOWN_HIT",
@@ -679,7 +1106,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HYPER_BEAM": {
 "effect": "EFFECT_HYPER_BEAM",
@@ -690,7 +1124,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PECK": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -701,7 +1142,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRILL_PECK": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -712,7 +1160,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CLOSE_COMBAT": {
 "effect": "EFFECT_CLOSE_COMBAT",
@@ -723,7 +1178,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "LOW_KICK": {
 "effect": "EFFECT_LOW_KICK",
@@ -734,7 +1196,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "COUNTER": {
 "effect": "EFFECT_COUNTER",
@@ -745,7 +1214,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": -5,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SEISMIC_TOSS": {
 "effect": "EFFECT_LEVEL_DAMAGE",
@@ -756,7 +1232,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "STRENGTH": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -767,7 +1250,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ABSORB": {
 "effect": "EFFECT_LEECH_HIT",
@@ -778,7 +1268,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MEGA_DRAIN": {
 "effect": "EFFECT_LEECH_HIT",
@@ -789,7 +1286,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "LEECH_SEED": {
 "effect": "EFFECT_LEECH_SEED",
@@ -800,7 +1304,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GROWTH": {
 "effect": "EFFECT_GROWTH",
@@ -811,7 +1322,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "RAZOR_LEAF": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -822,7 +1340,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SOLAR_BEAM": {
 "effect": "EFFECT_SOLAR_BEAM",
@@ -833,7 +1358,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "POISONPOWDER": {
 "effect": "EFFECT_POISON",
@@ -844,7 +1376,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": true,
+"recoil": false
 },
 "STUN_SPORE": {
 "effect": "EFFECT_PARALYZE",
@@ -855,7 +1394,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": true,
+"recoil": false
 },
 "SLEEP_POWDER": {
 "effect": "EFFECT_SLEEP",
@@ -866,7 +1412,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": true,
+"recoil": false
 },
 "PETAL_DANCE": {
 "effect": "EFFECT_RAMPAGE",
@@ -877,7 +1430,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "STRING_SHOT": {
 "effect": "EFFECT_SPEED_DOWN_2",
@@ -888,7 +1448,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAGON_RAGE": {
 "effect": "EFFECT_STATIC_DAMAGE",
@@ -899,7 +1466,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FIRE_SPIN": {
 "effect": "EFFECT_TRAP",
@@ -910,7 +1484,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "THUNDERSHOCK": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -921,7 +1502,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "THUNDERBOLT": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -932,7 +1520,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "THUNDER_WAVE": {
 "effect": "EFFECT_PARALYZE",
@@ -943,7 +1538,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "THUNDER": {
 "effect": "EFFECT_THUNDER",
@@ -954,7 +1556,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ROCK_THROW": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -965,7 +1574,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "EARTHQUAKE": {
 "effect": "EFFECT_EARTHQUAKE",
@@ -976,7 +1592,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AVALANCHE": {
 "effect": "EFFECT_CONDITIONAL_BOOST",
@@ -987,7 +1610,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": -4,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DIG": {
 "effect": "EFFECT_FLY",
@@ -998,7 +1628,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TOXIC": {
 "effect": "EFFECT_TOXIC",
@@ -1009,7 +1646,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CONFUSION": {
 "effect": "EFFECT_CONFUSE_HIT",
@@ -1020,7 +1664,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PSYCHIC_M": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -1031,7 +1682,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HYPNOSIS": {
 "effect": "EFFECT_SLEEP",
@@ -1042,7 +1700,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HONE_CLAWS": {
 "effect": "EFFECT_HONE_CLAWS",
@@ -1053,7 +1718,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AGILITY": {
 "effect": "EFFECT_SPEED_UP_2",
@@ -1064,7 +1736,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "QUICK_ATTACK": {
 "effect": "EFFECT_PRIORITY_HIT",
@@ -1075,7 +1754,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 1,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "RAGE": {
 "effect": "EFFECT_RAGE",
@@ -1086,7 +1772,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TELEPORT": {
 "effect": "EFFECT_TELEPORT",
@@ -1097,7 +1790,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": -6,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "NIGHT_SHADE": {
 "effect": "EFFECT_LEVEL_DAMAGE",
@@ -1108,7 +1808,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAGON_PULSE": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1119,7 +1826,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": true,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SCREECH": {
 "effect": "EFFECT_DEFENSE_DOWN_2",
@@ -1130,7 +1844,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "DOUBLE_TEAM": {
 "effect": "EFFECT_EVASION_UP",
@@ -1141,7 +1862,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "RECOVER": {
 "effect": "EFFECT_HEAL",
@@ -1152,7 +1880,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ROCK_BLAST": {
 "effect": "EFFECT_MULTI_HIT",
@@ -1163,7 +1898,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MINIMIZE": {
 "effect": "EFFECT_MINIMIZE",
@@ -1174,7 +1916,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SMOKESCREEN": {
 "effect": "EFFECT_ACCURACY_DOWN",
@@ -1185,7 +1934,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CONFUSE_RAY": {
 "effect": "EFFECT_CONFUSE",
@@ -1196,7 +1952,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AQUA_TAIL": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1207,7 +1970,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DEFENSE_CURL": {
 "effect": "EFFECT_DEFENSE_CURL",
@@ -1218,7 +1988,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BARRIER": {
 "effect": "EFFECT_DEFENSE_UP_2",
@@ -1229,7 +2006,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "LIGHT_SCREEN": {
 "effect": "EFFECT_LIGHT_SCREEN",
@@ -1240,7 +2024,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HAZE": {
 "effect": "EFFECT_HAZE",
@@ -1251,7 +2042,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "REFLECT": {
 "effect": "EFFECT_REFLECT",
@@ -1262,7 +2060,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FOCUS_ENERGY": {
 "effect": "EFFECT_FOCUS_ENERGY",
@@ -1273,7 +2078,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FLASH_CANNON": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -1284,7 +2096,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "METRONOME": {
 "effect": "EFFECT_METRONOME",
@@ -1295,7 +2114,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SCALD": {
 "effect": "EFFECT_BURN_HIT",
@@ -1306,7 +2132,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TRICK_ROOM": {
 "effect": "EFFECT_TRICK_ROOM",
@@ -1317,7 +2150,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": -7,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SKILL_SWAP": {
 "effect": "EFFECT_SKILL_SWAP",
@@ -1328,7 +2168,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "LICK": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -1339,7 +2186,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GUNK_SHOT": {
 "effect": "EFFECT_POISON_HIT",
@@ -1350,7 +2204,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "VENOSHOCK": {
 "effect": "EFFECT_CONDITIONAL_BOOST",
@@ -1361,7 +2222,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "EARTH_POWER": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -1372,7 +2240,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FIRE_BLAST": {
 "effect": "EFFECT_BURN_HIT",
@@ -1383,7 +2258,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WATERFALL": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1394,7 +2276,14 @@
 "chance": 20,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ICICLE_CRASH": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1405,7 +2294,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SWIFT": {
 "effect": "EFFECT_ALWAYS_HIT",
@@ -1416,7 +2312,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "IRON_HEAD": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1427,7 +2330,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ICICLE_SPEAR": {
 "effect": "EFFECT_MULTI_HIT",
@@ -1438,7 +2348,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BULLDOZE": {
 "effect": "EFFECT_SPEED_DOWN_HIT",
@@ -1449,7 +2366,14 @@
 "chance": 100,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AMNESIA": {
 "effect": "EFFECT_SP_DEF_UP_2",
@@ -1460,7 +2384,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ROOST": {
 "effect": "EFFECT_ROOST",
@@ -1471,7 +2402,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FRESH_SNACK": {
 "effect": "EFFECT_HEAL",
@@ -1482,7 +2420,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HI_JUMP_KICK": {
 "effect": "EFFECT_JUMP_KICK",
@@ -1493,7 +2438,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GLARE": {
 "effect": "EFFECT_PARALYZE",
@@ -1504,7 +2456,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DREAM_EATER": {
 "effect": "EFFECT_DREAM_EATER",
@@ -1515,7 +2474,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "POISON_JAB": {
 "effect": "EFFECT_POISON_HIT",
@@ -1526,7 +2492,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BULLET_PUNCH": {
 "effect": "EFFECT_PRIORITY_HIT",
@@ -1537,7 +2510,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 1,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "LEECH_LIFE": {
 "effect": "EFFECT_LEECH_HIT",
@@ -1548,7 +2528,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAINING_KISS": {
 "effect": "EFFECT_LEECH_HIT",
@@ -1559,7 +2546,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BRAVE_BIRD": {
 "effect": "EFFECT_RECOIL_HIT",
@@ -1570,7 +2564,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": true
 },
 "TRANSFORM": {
 "effect": "EFFECT_TRANSFORM",
@@ -1581,7 +2582,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WATER_PULSE": {
 "effect": "EFFECT_CONFUSE_HIT",
@@ -1592,7 +2600,14 @@
 "chance": 20,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": true,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DIZZY_PUNCH": {
 "effect": "EFFECT_CONFUSE_HIT",
@@ -1603,7 +2618,14 @@
 "chance": 20,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SPORE": {
 "effect": "EFFECT_SLEEP",
@@ -1614,7 +2636,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": true,
+"recoil": false
 },
 "FLASH": {
 "effect": "EFFECT_ACCURACY_DOWN",
@@ -1625,7 +2654,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "EXTRASENSORY": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1636,7 +2672,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SPLASH": {
 "effect": "EFFECT_SPLASH",
@@ -1647,7 +2690,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAGON_DANCE": {
 "effect": "EFFECT_DRAGON_DANCE",
@@ -1658,7 +2708,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CRABHAMMER": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1669,7 +2726,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "EXPLOSION": {
 "effect": "EFFECT_EXPLOSION",
@@ -1680,7 +2744,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FURY_STRIKES": {
 "effect": "EFFECT_MULTI_HIT",
@@ -1691,7 +2762,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BONEMERANG": {
 "effect": "EFFECT_DOUBLE_HIT",
@@ -1702,7 +2780,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "REST": {
 "effect": "EFFECT_HEAL",
@@ -1713,7 +2798,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ROCK_SLIDE": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1724,7 +2816,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HYPER_FANG": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1735,7 +2834,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BULK_UP": {
 "effect": "EFFECT_BULK_UP",
@@ -1746,7 +2852,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CONVERSION": {
 "effect": "EFFECT_CONVERSION",
@@ -1757,7 +2870,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "TRI_ATTACK": {
 "effect": "EFFECT_TRI_ATTACK",
@@ -1768,7 +2888,14 @@
 "chance": 20,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SUPER_FANG": {
 "effect": "EFFECT_SUPER_FANG",
@@ -1779,7 +2906,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SLASH": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1790,7 +2924,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": true,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SUBSTITUTE": {
 "effect": "EFFECT_SUBSTITUTE",
@@ -1801,7 +2942,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GIGA_IMPACT": {
 "effect": "EFFECT_HYPER_BEAM",
@@ -1812,7 +2960,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SKETCH": {
 "effect": "EFFECT_SKETCH",
@@ -1823,7 +2978,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAIN_PUNCH": {
 "effect": "EFFECT_LEECH_HIT",
@@ -1834,7 +2996,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "THIEF": {
 "effect": "EFFECT_THIEF",
@@ -1845,7 +3014,14 @@
 "chance": 100,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WILL_O_WISP": {
 "effect": "EFFECT_BURN",
@@ -1856,7 +3032,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ZEN_HEADBUTT": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1867,7 +3050,14 @@
 "chance": 20,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FACADE": {
 "effect": "EFFECT_CONDITIONAL_BOOST",
@@ -1878,7 +3068,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FLAME_CHARGE": {
 "effect": "EFFECT_SPEED_UP_HIT",
@@ -1889,7 +3086,14 @@
 "chance": 100,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HYPER_VOICE": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1900,7 +3104,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "CURSE": {
 "effect": "EFFECT_CURSE",
@@ -1911,7 +3122,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GYRO_BALL": {
 "effect": "EFFECT_GYRO_BALL",
@@ -1922,7 +3140,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ENERGY_BALL": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -1933,7 +3158,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AEROBLAST": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1944,7 +3176,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SEED_BOMB": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -1955,7 +3194,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "REVERSAL": {
 "effect": "EFFECT_REVERSAL",
@@ -1966,7 +3212,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ASTONISH": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -1977,7 +3230,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ICE_SHARD": {
 "effect": "EFFECT_PRIORITY_HIT",
@@ -1988,7 +3248,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 1,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PROTECT": {
 "effect": "EFFECT_PROTECT",
@@ -1999,7 +3266,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 4,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MACH_PUNCH": {
 "effect": "EFFECT_PRIORITY_HIT",
@@ -2010,7 +3284,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 1,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SCARY_FACE": {
 "effect": "EFFECT_SPEED_DOWN_2",
@@ -2021,7 +3302,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FEINT_ATTACK": {
 "effect": "EFFECT_ALWAYS_HIT",
@@ -2032,7 +3320,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SWEET_KISS": {
 "effect": "EFFECT_CONFUSE",
@@ -2043,7 +3338,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BELLY_DRUM": {
 "effect": "EFFECT_BELLY_DRUM",
@@ -2054,7 +3356,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SLUDGE_BOMB": {
 "effect": "EFFECT_POISON_HIT",
@@ -2065,7 +3374,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MUD_SLAP": {
 "effect": "EFFECT_ACCURACY_DOWN_HIT",
@@ -2076,7 +3392,14 @@
 "chance": 100,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "OCTAZOOKA": {
 "effect": "EFFECT_ACCURACY_DOWN_HIT",
@@ -2087,7 +3410,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SPIKES": {
 "effect": "EFFECT_SPIKES",
@@ -2098,7 +3428,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ZAP_CANNON": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -2109,7 +3446,14 @@
 "chance": 100,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FORESIGHT": {
 "effect": "EFFECT_FORESIGHT",
@@ -2120,7 +3464,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DESTINY_BOND": {
 "effect": "EFFECT_DESTINY_BOND",
@@ -2131,7 +3482,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PERISH_SONG": {
 "effect": "EFFECT_PERISH_SONG",
@@ -2142,7 +3500,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "ICY_WIND": {
 "effect": "EFFECT_SPEED_DOWN_HIT",
@@ -2153,7 +3518,14 @@
 "chance": 100,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "POWER_GEM": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -2164,7 +3536,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WILD_CHARGE": {
 "effect": "EFFECT_RECOIL_HIT",
@@ -2175,7 +3554,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": true
 },
 "POWER_WHIP": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -2186,7 +3572,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "OUTRAGE": {
 "effect": "EFFECT_RAMPAGE",
@@ -2197,7 +3590,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SANDSTORM": {
 "effect": "EFFECT_SANDSTORM",
@@ -2208,7 +3608,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "GIGA_DRAIN": {
 "effect": "EFFECT_LEECH_HIT",
@@ -2219,7 +3626,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ENDURE": {
 "effect": "EFFECT_ENDURE",
@@ -2230,7 +3644,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 4,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CHARM": {
 "effect": "EFFECT_ATTACK_DOWN_2",
@@ -2241,7 +3662,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ROLLOUT": {
 "effect": "EFFECT_ROLLOUT",
@@ -2252,7 +3680,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FALSE_SWIPE": {
 "effect": "EFFECT_FALSE_SWIPE",
@@ -2263,7 +3698,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SWAGGER": {
 "effect": "EFFECT_SWAGGER",
@@ -2274,7 +3716,14 @@
 "chance": 100,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SHELL_SMASH": {
 "effect": "EFFECT_SHELL_SMASH",
@@ -2285,7 +3734,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SPARK": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -2296,7 +3752,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BUG_BITE": {
 "effect": "EFFECT_BUG_BITE",
@@ -2307,7 +3770,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "STEEL_WING": {
 "effect": "EFFECT_DEFENSE_UP_HIT",
@@ -2318,7 +3788,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MEAN_LOOK": {
 "effect": "EFFECT_MEAN_LOOK",
@@ -2329,7 +3806,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ATTRACT": {
 "effect": "EFFECT_ATTRACT",
@@ -2340,7 +3824,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SLEEP_TALK": {
 "effect": "EFFECT_SLEEP_TALK",
@@ -2351,7 +3842,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HEAL_BELL": {
 "effect": "EFFECT_HEAL_BELL",
@@ -2362,7 +3860,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "RETURN": {
 "effect": "EFFECT_RETURN",
@@ -2373,7 +3878,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PSYSTRIKE": {
 "effect": "EFFECT_PSYSTRIKE",
@@ -2384,7 +3896,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BUG_BUZZ": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -2395,7 +3914,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "SAFEGUARD": {
 "effect": "EFFECT_SAFEGUARD",
@@ -2406,7 +3932,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PAIN_SPLIT": {
 "effect": "EFFECT_PAIN_SPLIT",
@@ -2417,7 +3950,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SACRED_FIRE": {
 "effect": "EFFECT_SACRED_FIRE",
@@ -2428,7 +3968,14 @@
 "chance": 50,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MAGNITUDE": {
 "effect": "EFFECT_MAGNITUDE",
@@ -2439,7 +3986,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DYNAMICPUNCH": {
 "effect": "EFFECT_CONFUSE_HIT",
@@ -2450,7 +4004,14 @@
 "chance": 100,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": true,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MEGAHORN": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -2461,7 +4022,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DRAGONBREATH": {
 "effect": "EFFECT_PARALYZE_HIT",
@@ -2472,7 +4040,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BATON_PASS": {
 "effect": "EFFECT_BATON_PASS",
@@ -2483,7 +4058,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ENCORE": {
 "effect": "EFFECT_ENCORE",
@@ -2494,7 +4076,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PURSUIT": {
 "effect": "EFFECT_PURSUIT",
@@ -2505,7 +4094,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "RAPID_SPIN": {
 "effect": "EFFECT_RAPID_SPIN",
@@ -2516,7 +4112,14 @@
 "chance": 100,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SHADOW_CLAW": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -2527,7 +4130,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "IRON_TAIL": {
 "effect": "EFFECT_DEFENSE_DOWN_HIT",
@@ -2538,7 +4148,14 @@
 "chance": 30,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "METAL_CLAW": {
 "effect": "EFFECT_ATTACK_UP_HIT",
@@ -2549,7 +4166,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AURA_SPHERE": {
 "effect": "EFFECT_ALWAYS_HIT",
@@ -2560,7 +4184,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": true,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HEALINGLIGHT": {
 "effect": "EFFECT_HEALING_LIGHT",
@@ -2571,7 +4202,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HURRICANE": {
 "effect": "EFFECT_CONFUSE_HIT",
@@ -2582,7 +4220,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "KNOCK_OFF": {
 "effect": "EFFECT_KNOCK_OFF",
@@ -2593,7 +4238,14 @@
 "chance": 100,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "HIDDEN_POWER": {
 "effect": "EFFECT_HIDDEN_POWER",
@@ -2604,7 +4256,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CROSS_CHOP": {
 "effect": "EFFECT_NORMAL_HIT",
@@ -2615,7 +4274,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "AQUA_JET": {
 "effect": "EFFECT_PRIORITY_HIT",
@@ -2626,7 +4292,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 1,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "RAIN_DANCE": {
 "effect": "EFFECT_RAIN_DANCE",
@@ -2637,7 +4310,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SUNNY_DAY": {
 "effect": "EFFECT_SUNNY_DAY",
@@ -2648,7 +4328,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "CRUNCH": {
 "effect": "EFFECT_DEFENSE_DOWN_HIT",
@@ -2659,7 +4346,14 @@
 "chance": 20,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MIRROR_COAT": {
 "effect": "EFFECT_COUNTER",
@@ -2670,7 +4364,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": -5,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "NASTY_PLOT": {
 "effect": "EFFECT_SP_ATK_UP_2",
@@ -2681,7 +4382,14 @@
 "chance": 0,
 "cat": "STATUS",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "EXTREMESPEED": {
 "effect": "EFFECT_PRIORITY_HIT",
@@ -2692,7 +4400,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 2,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ANCIENTPOWER": {
 "effect": "EFFECT_ALL_UP_HIT",
@@ -2703,7 +4418,14 @@
 "chance": 10,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "SHADOW_BALL": {
 "effect": "EFFECT_SP_DEF_DOWN_HIT",
@@ -2714,7 +4436,14 @@
 "chance": 20,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": true,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "FUTURE_SIGHT": {
 "effect": "EFFECT_FUTURE_SIGHT",
@@ -2725,7 +4454,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "ROCK_SMASH": {
 "effect": "EFFECT_DEFENSE_DOWN_HIT",
@@ -2736,7 +4472,14 @@
 "chance": 50,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "BRICK_BREAK": {
 "effect": "EFFECT_BRICK_BREAK",
@@ -2747,7 +4490,14 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "WHIRLPOOL": {
 "effect": "EFFECT_TRAP",
@@ -2758,7 +4508,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DARK_PULSE": {
 "effect": "EFFECT_FLINCH_HIT",
@@ -2769,7 +4526,14 @@
 "chance": 20,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": true,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "MOONBLAST": {
 "effect": "EFFECT_SP_ATK_DOWN_HIT",
@@ -2780,7 +4544,14 @@
 "chance": 30,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "PLAY_ROUGH": {
 "effect": "EFFECT_ATTACK_DOWN_HIT",
@@ -2791,7 +4562,14 @@
 "chance": 10,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": false
 },
 "DISARM_VOICE": {
 "effect": "EFFECT_ALWAYS_HIT",
@@ -2802,7 +4580,14 @@
 "chance": 0,
 "cat": "SPECIAL",
 "prio": 0,
-"contact": false
+"contact": false,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": true,
+"powder": false,
+"recoil": false
 },
 "STRUGGLE": {
 "effect": "EFFECT_RECOIL_HIT",
@@ -2813,6 +4598,13 @@
 "chance": 0,
 "cat": "PHYSICAL",
 "prio": 0,
-"contact": true
+"contact": true,
+"punch": false,
+"pulse": false,
+"bullet": false,
+"slice": false,
+"sound": false,
+"powder": false,
+"recoil": true
 }
 }

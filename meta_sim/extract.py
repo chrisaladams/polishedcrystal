@@ -96,6 +96,22 @@ for s in open('data/moves/abnormal_contact_moves.asm').read().splitlines():
 for n,mv in moves.items():
     mv['contact']=(mv['cat']=='PHYSICAL') != (n in abnormal)
 
+# move-flag lists that ability triggers key off (Iron Fist/punch, Mega Launcher/
+# pulse, Bulletproof/bullet, Sharpness/slice, Soundproof+Punk Rock/sound,
+# powder). Each file is a simple `db MOVE` list; mirror them onto each move.
+FLAG_FILES={'punch':'punching_moves','pulse':'launcher_moves','bullet':'bullet_moves',
+            'slice':'slicing_moves','sound':'sound_moves','powder':'powder_moves'}
+for flag,fn in FLAG_FILES.items():
+    names=set()
+    try: src=open(f'data/moves/{fn}.asm').read().splitlines()
+    except FileNotFoundError: src=[]
+    for s in src:
+        mm=re.match(r'\s*db\s+([A-Z_0-9]+)',s)
+        if mm and mm.group(1) in moves: names.add(mm.group(1))
+    for n,mv in moves.items(): mv[flag]=n in names
+# recoil flag (Reckless) straight off the effect
+for n,mv in moves.items(): mv['recoil']=mv['effect']=='EFFECT_RECOIL_HIT'
+
 # ---------------------------------------------------------------- type chart
 EFF={'NO_EFFECT':0.0,'NOT_VERY_EFFECTIVE':0.5,'SUPER_EFFECTIVE':2.0}
 chart={}

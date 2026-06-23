@@ -125,32 +125,52 @@ chosen the same way in all three):
   random` delta is how much it benefits from a cohesive team around it — the
   thing the 1v1 matrix and random teams structurally can't see.
 
-Modelled (the high-impact ~80%): damage + stat stages, the major statuses
-(sleep/paralysis/burn/poison/toxic/freeze + confusion), on-hit secondary
-effects, self-stat setup moves, recovery, Leech Seed, entry hazards
-(Spikes/Toxic Spikes), priority, switching, and a sizeable **ability + held-item
-layer** — each mon commits to one ability + item for the battle (`abilities.py`
-/ `items.py`):
+Modelled: damage + stat stages, the major statuses (sleep/paralysis/burn/
+poison/toxic/freeze + confusion), on-hit secondary effects, self-stat setup
+moves, recovery, Leech Seed, entry hazards (Spikes/Toxic Spikes), priority,
+switching, a held-item layer (Choice band/specs/scarf, Life Orb, Leftovers,
+Eviolite), and a **near-complete ability layer**.
 
-- *offense* — Huge/Pure Power, Adaptability, Technician, Sheer Force.
-- *defense* — type-immunity abilities (Levitate, Flash Fire, Water/Volt Absorb,
-  Sap Sipper, Lightning Rod, Motor Drive, Dry Skin → the move does 0) and
-  damage-halvers (Thick Fat). Flips whole matchups; applied in both tools.
-- *switch-in* — Intimidate (−1 the foe's Attack as it comes in).
-- *weather* — Drought/Drizzle/Sand Stream/Snow Warning set weather while their
-  owner is active: Fire/Water damage scales in sun/rain, Rock gets +Sp.Def in
-  sand, Swift Swim/Chlorophyll/Sand/Slush Rush double Speed, and sand chips
-  non-Rock/Ground/Steel.
-- *items* — Choice band/specs/scarf, Life Orb, Leftovers, Eviolite (true-NFE).
+**Abilities — 94 of the ROM's 154 carry a real effect** (each mon commits to
+its most battle-swinging one; see `abilities.py`), grouped by hook:
+- *damage* — Huge/Pure Power, Adaptability, Technician, Sheer Force, Tough
+  Claws, Iron Fist, Mega Launcher, Sharpness, Punk Rock, Reckless, Steely
+  Spirit, Sand Force, Analytic, Solar Power, Guts, Hustle, Gorilla Tactics,
+  the −ate set (Pixilate/Refrigerate/Aerilate/Galvanize), Tinted Lens,
+  Protean/Libero, the pinch abilities (Overgrow/Blaze/Torrent/Swarm).
+- *defense* — type immunities (Levitate, Flash Fire, Water/Volt Absorb, Storm
+  Drain, Sap Sipper, Lightning Rod, Motor Drive, Dry Skin, Well Baked Body,
+  Earth Eater, Bulletproof, Soundproof → 0 damage), halvers (Thick Fat,
+  Heatproof, Fur Coat, Ice Scales, Fluffy, Punk Rock, Purifying Salt),
+  Filter/Solid Rock/Prism Armor, Multiscale, Marvel Scale, Sturdy, Wonder Guard.
+- *switch* — Intimidate (+ Defiant/Competitive backlash, Clear Body-style
+  prevention), Download, Regenerator, Natural Cure.
+- *on-hit / on-KO* — Rough Skin/Iron Barbs, Flame Body/Static/Poison Point/
+  Effect Spore, Poison Touch, Tangling Hair, Aftermath, Justified/Rattled/
+  Stamina/Weak Armor/Water Compaction, Berserk, Moxie/Beast Boost/Soul Heart.
+- *end-of-turn* — Speed Boost, Poison Heal, Magic Guard, Rain Dish/Ice Body/
+  Dry Skin/Solar Power, Shed Skin.
+- *misc* — Unaware, Contrary/Simple, Scrappy/Mind's Eye, Prankster/Gale Wings/
+  Triage priority, Quick Feet, Synchronize, the status-immunity set
+  (Immunity/Limber/Insomnia/…), weather setters + Swift Swim/Chlorophyll/Sand/
+  Slush Rush, and trapping (Shadow Tag/Arena Trap/Magnet Pull).
 
-**Sleep Clause is mirrored** from the shipped game (toggle `SLEEP_CLAUSE` in
-`engine.py`).
+Of the remaining 60: ~48 are genuine no-ops in a 1v1/6v6 stat sim (Run Away,
+Keen Eye, Pickup, Shield Dust, evasion abilities under the shipped evasion
+clause, …) — listed in `NOOP_ABILITIES`; ~11 need mechanics this abstraction
+lacks (Trace/Imposter/Forecast/form-change/Neutralizing Gas/terrain) — listed
+in `UNMODELLED_ABILITIES`; and a handful are edge cases (Anger Point is moot
+with crits off, Skill Link folds into the averaged multi-hit model, Magic
+Bounce/Liquid Ooze).
+
+The 1v1 matrix shares the stateless parts (damage/typing/immunity multipliers);
+the switch/turn/KO hooks are 6v6-only. **Sleep Clause is mirrored** from the
+shipped game (toggle `SLEEP_CLAUSE` in `engine.py`).
 
 Approximated / ignored (so don't over-read these): confusion as a flat
 self-hit chance; multi-hit as average hit count; two-turn moves resolve in one
-turn; **no screens, trapping, or Perish Song**, and abilities outside the set
-above (Sturdy, Regenerator, Magic Guard/Bounce, type-changing −ate abilities,
-Unaware, Speed Boost) and most items. Consequently Ditto / Wobbuffet / Smeargle
+turn; **no screens or Perish Song**; and the unmodellable abilities above
+(form-change/copy/terrain). Consequently Ditto / Wobbuffet / Smeargle
 (Transform/Counter/mechanic mons) are understated by design — a known blind
 spot, not a balance verdict. The 6v6 numbers are *sampled*, so deltas within
 ~±5% (more for rare roles with fewer games) are noise; raise `--games` to

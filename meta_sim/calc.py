@@ -46,40 +46,45 @@ def damage(attacker, defender, move, chart, atk_ability=None):
     Returns 0 for status moves or zero-power / immune moves."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0
-    # type chart + the defender's best defensive ability (Levitate-style
-    # immunity -> 0, Thick Fat-style halving -> 0.5)
-    eff = (type_mult(move['type'], defender['types'], chart) *
-           abilities.best_defending_type_mult(defender.get('abilities'), move['type']))
+    def_abilities = defender.get('abilities') or [None]
+    # defender's best-case defensive ability: immune (Levitate/Bulletproof/...) -> 0
+    if any(ab and abilities.defending_immune(ab, move) for ab in def_abilities):
+        return 0
+    mt = abilities.effective_type(atk_ability, move)        # -ate / Normalize
+    eff = type_mult(mt, defender['types'], chart)
+    if abilities.scrappy_hits_ghost(atk_ability) and mt in ('NORMAL', 'FIGHTING') \
+            and 'GHOST' in defender['types']:
+        eff = type_mult(mt, [t for t in defender['types'] if t != 'GHOST'], chart)
+    if any(ab == 'WONDER_GUARD' for ab in def_abilities) and eff <= 1.0:
+        return 0
     if eff == 0.0:
         return 0
-    is_stab = move['type'] in attacker['types']
-    atk_mult, dmg_mult = abilities.offense_multipliers(atk_ability, move, is_stab)
-    # a weather-setting attacker gets its own best-case Fire/Water boost
-    dmg_mult *= abilities.own_weather_dmg_mult(atk_ability, move['type'])
+    # best-case attacker state: own weather up if it's a setter
+    weather = abilities.WEATHER_SETTERS.get(atk_ability)
+    amult = abilities.attacker_mult(atk_ability, move, mt, weather=weather, eff=eff)
     if move['cat'] == 'PHYSICAL':
-        a, d = attacker['stats']['atk'] * atk_mult, defender['stats']['defe']
+        a, d = attacker['stats']['atk'] * amult, defender['stats']['defe']
     else:
-        a, d = attacker['stats']['spa'] * atk_mult, defender['stats']['spd']
+        a, d = attacker['stats']['spa'] * amult, defender['stats']['spd']
     base = ((( (2 * LEVEL) // 5 + 2) * move['power'] * a) // d) // 50 + 2
-    stab = abilities.stab_mult(atk_ability, is_stab)
-    dmg = base * stab * eff * dmg_mult * ROLL
+    is_stab = abilities.gives_stab(atk_ability, mt, attacker['types'])
+    stab = abilities.stab_value(atk_ability) if is_stab else 1.0
+    # defender's best-case damage reduction (Thick Fat/Filter/Multiscale/...)
+    dmult = min((abilities.defender_mult(ab, move, mt, eff, 1.0) for ab in def_abilities), default=1.0)
+    dmg = base * stab * eff * dmult * abilities.weather_dmg_mult(weather, mt) * ROLL
     return int(dmg)
 
 def best_move(attacker, defender, moves, learnset, chart):
     """Pick attacker's highest-average-damage legal move vs defender, trying
-    each of the attacker's abilities (best case, matching the uniform max-
-    build philosophy) and applying the defender's own Sand Stream Sp.Def
-    boost if applicable.
+    each of the attacker's abilities (best case, matching the uniform max-build
+    philosophy); the defender gets its best-case defensive ability per move.
     Returns (move_name, damage, type_effectiveness) or (None, 0, 0)."""
     best = (None, 0, 0.0)
     atk_abilities = attacker.get('abilities') or [None]
     for mv in learnset:
         m = moves[mv]
-        sand = abilities.defending_sand_mult(defender.get('abilities'), defender['types'], m)
         for ab in set(atk_abilities):
             dmg = damage(attacker, defender, m, chart, atk_ability=ab)
-            if sand != 1.0:
-                dmg = int(dmg / sand)
             if dmg > best[1]:
                 best = (mv, dmg, type_mult(m['type'], defender['types'], chart))
     return best

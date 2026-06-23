@@ -100,14 +100,17 @@ class Pmon:
         self.fainted = False
         self.locked_move = None            # Choice-item move lock (index into self.moves)
 
-    def stat(self, key, weather=None):
-        v = self.base[key] * stage_mult(self.stage.get(key, 0))
+    def stat(self, key, weather=None, ignore_stage=False):
+        stage = 0 if ignore_stage else self.stage.get(key, 0)
+        v = self.base[key] * stage_mult(stage)
         if key == 'spe':
-            if self.status == 'par':
+            if self.status == 'par' and self.ability != 'QUICK_FEET':
                 v *= 0.25
             if self.item == 'CHOICE_SCARF':
                 v *= items.CHOICE_SCARF_SPEED_MULT
             v *= abilities.weather_speed_mult(self.ability, weather)
+            if self.ability == 'QUICK_FEET' and self.status:
+                v *= 1.5
         if key in ('defe', 'spd') and self.item == 'EVIOLITE':
             v *= items.EVIOLITE_DEF_MULT
         return v
@@ -136,11 +139,23 @@ class Side:
 
 
 # ---- damage ------------------------------------------------------------------
-def eff_mult(move, dfn, chart):
-    """Type effectiveness including the defender's ability (Levitate-style
-    immunity -> 0, Thick Fat-style halving -> 0.5)."""
-    return (type_mult(move['type'], dfn.types, chart)
-            * abilities.defending_type_mult(dfn.ability, move['type']))
+def type_eff(att, dfn, move, chart):
+    """Type effectiveness for the effective move type, honouring Scrappy
+    (Normal/Fighting hit Ghost) and defender ability immunities / Wonder Guard.
+    Returns the multiplier (0.0 if the move can't connect)."""
+    if abilities.defending_immune(dfn.ability, move):
+        return 0.0
+    mt = abilities.effective_type(att.ability, move)
+    eff = 1.0
+    for t in dfn.types:
+        e = chart.get(f'{mt}>{t}', 1.0)
+        if e == 0.0 and t == 'GHOST' and mt in ('NORMAL', 'FIGHTING') \
+                and abilities.scrappy_hits_ghost(att.ability):
+            e = 1.0
+        eff *= e
+    if abilities.wonder_guard_blocks(dfn.ability, eff):
+        return 0.0
+    return eff
 
 
 def _sand_spdef(dfn, move, weather):
@@ -157,37 +172,48 @@ def sturdy_cap(dfn, dmg):
     return dmg
 
 
-def _damage_terms(att, dfn, move, chart, weather=None):
+def _damage_terms(att, dfn, move, chart, weather=None, moving_last=False):
     """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
-    eff = eff_mult(move, dfn, chart)
-    is_stab = move['type'] in att.types
-    atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
+    mt = abilities.effective_type(att.ability, move)
+    eff = type_eff(att, dfn, move, chart)
+    is_stab = abilities.gives_stab(att.ability, mt, att.types)
+    amult = abilities.attacker_mult(att.ability, move, mt,
+                                    statused=att.status is not None,
+                                    hp_frac=att.hp / att.maxhp, weather=weather,
+                                    moving_last=moving_last, eff=eff)
+    ign_atk = dfn.ability == 'UNAWARE'      # defender ignores attacker's boosts
+    ign_def = att.ability == 'UNAWARE'      # attacker ignores defender's boosts
     if move['cat'] == 'PHYSICAL':
-        a, d = att.stat('atk') * atk_mult, dfn.stat('defe')
-        if att.status == 'brn':
+        a = att.stat('atk', ignore_stage=ign_atk) * amult
+        d = dfn.stat('defe', ignore_stage=ign_def)
+        if att.status == 'brn' and att.ability != 'GUTS':
             a *= 0.5
         if att.item == 'CHOICE_BAND':
             a *= items.CHOICE_STAT_MULT
+        if dfn.ability == 'MARVEL_SCALE' and dfn.status:
+            d *= 1.5
     else:
-        a, d = att.stat('spa') * atk_mult, dfn.stat('spd')
+        a = att.stat('spa', ignore_stage=ign_atk) * amult
+        d = dfn.stat('spd', ignore_stage=ign_def)
         if att.item == 'CHOICE_SPECS':
             a *= items.CHOICE_STAT_MULT
     d *= _sand_spdef(dfn, move, weather)
-    stab = abilities.stab_mult(att.ability, is_stab)
-    dmg_mult *= abilities.weather_dmg_mult(weather, move['type'])
+    stab = abilities.stab_value(att.ability) if is_stab else 1.0
+    dmg_mult = abilities.weather_dmg_mult(weather, mt)
+    dmg_mult *= abilities.defender_mult(dfn.ability, move, mt, eff, dfn.hp / dfn.maxhp)
     if att.item == 'LIFE_ORB':
         dmg_mult *= items.LIFE_ORB_DMG_MULT
     return eff, a, d, stab, dmg_mult
 
 
-def move_damage(att, dfn, move, chart, rng, weather=None):
+def move_damage(att, dfn, move, chart, rng, weather=None, moving_last=False):
     """Expected/rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0, 1.0
-    eff = eff_mult(move, dfn, chart)
+    eff = type_eff(att, dfn, move, chart)
     if eff == 0.0:
         return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather)
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather, moving_last)
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
     roll = rng.uniform(0.85, 1.0)
     hits = MULTI.get(move['effect'], 1)
@@ -197,8 +223,8 @@ def move_damage(att, dfn, move, chart, rng, weather=None):
 def expected_damage(att, dfn, move, chart, weather=None):
     """Deterministic average damage, for AI scoring (no RNG)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
-        return 0, eff_mult(move, dfn, chart) if move['power'] else 1.0
-    eff = eff_mult(move, dfn, chart)
+        return 0, type_eff(att, dfn, move, chart) if move['power'] else 1.0
+    eff = type_eff(att, dfn, move, chart)
     if eff == 0.0:
         return 0, 0.0
     eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart, weather)
@@ -262,15 +288,14 @@ def matchup_score(mon, foe, moves, chart):
     for mv in mon.moves:
         m = moves[mv]
         if m['cat'] != 'STATUS' and m['power'] > 0:
-            off = max(off, type_mult(m['type'], foe.types, chart) *
-                      abilities.defending_type_mult(foe.ability, m['type']) *
-                      (STAB if m['type'] in mon.types else 1.0))
+            e = 0.0 if abilities.defending_immune(foe.ability, m) else type_mult(m['type'], foe.types, chart)
+            off = max(off, e * (STAB if m['type'] in mon.types else 1.0))
     deff = 0.0
     for mv in foe.moves:
         m = moves[mv]
         if m['cat'] != 'STATUS' and m['power'] > 0:
-            deff = max(deff, type_mult(m['type'], mon.types, chart) *
-                       abilities.defending_type_mult(mon.ability, m['type']))
+            e = 0.0 if abilities.defending_immune(mon.ability, m) else type_mult(m['type'], mon.types, chart)
+            deff = max(deff, e)
     return off - deff
 
 
@@ -278,6 +303,10 @@ def choose_switch(side, foe, moves, chart, forced):
     """Pick a teammate index to send in. Returns index, or None to stay."""
     alive = [i for i in side.alive_indices() if forced or i != side.active]
     if not alive:
+        return None
+    # trapping abilities block a voluntary switch (a forced post-faint switch
+    # still happens -- the trapped mon already fainted)
+    if not forced and abilities.traps(foe.mon.ability, side.mon.types, side.mon.ability):
         return None
     best_i, best = None, -99.0
     for i in alive:
@@ -305,40 +334,81 @@ def apply_switch(side, idx, chart, foe_side=None):
     out.reset_volatile()
     side.active = idx
     m = side.mon
-    # entry hazards
-    if side.spikes and 'FLYING' not in m.types:
+    grounded = 'FLYING' not in m.types and m.ability != 'LEVITATE'
+    # entry hazards (Magic Guard ignores the chip; airborne mons dodge Spikes)
+    if side.spikes and grounded and m.ability != 'MAGIC_GUARD':
         m.hp -= m.maxhp * [0, 1/8, 1/6, 1/4][side.spikes]
-    if side.tspikes and 'FLYING' not in m.types:
+    if side.tspikes and grounded:
         if 'POISON' in m.types:
             side.tspikes = 0               # absorbed
         elif 'STEEL' not in m.types and m.status is None:
-            m.status = 'tox' if side.tspikes >= 2 else 'psn'
+            st = 'tox' if side.tspikes >= 2 else 'psn'
+            if abilities.can_be_statused(m.ability, st):
+                m.status = st
+                if st == 'tox':
+                    m.tox = 0
     if m.hp <= 0:
         m.fainted = True
         return
-    # Intimidate: drop the opposing active mon's Attack one stage on switch-in
-    if m.ability == 'INTIMIDATE' and foe_side is not None and not foe_side.mon.fainted:
-        f = foe_side.mon
-        f.stage['atk'] = max(-6, f.stage['atk'] - 1)
+    if foe_side is not None and not foe_side.mon.fainted:
+        on_switch_in(m, foe_side.mon)
+
+
+def on_switch_in(m, foe):
+    """Switch-in abilities: Intimidate (with Defiant/Competitive backlash and
+    Clear Body-style prevention) and Download."""
+    if m.ability == 'INTIMIDATE':
+        if not abilities.prevents_drop(foe.ability, 'atk'):
+            foe.stage['atk'] = max(-6, foe.stage['atk'] - 1)
+        if foe.ability == 'DEFIANT':
+            foe.stage['atk'] = min(6, foe.stage['atk'] + 2)
+        elif foe.ability == 'COMPETITIVE':
+            foe.stage['spa'] = min(6, foe.stage['spa'] + 2)
+    elif m.ability == 'DOWNLOAD':
+        if foe.stat('defe') <= foe.stat('spd'):
+            m.stage['atk'] = min(6, m.stage['atk'] + 1)
+        else:
+            m.stage['spa'] = min(6, m.stage['spa'] + 1)
 
 
 SAND_IMMUNE = {'ROCK', 'GROUND', 'STEEL'}
 
 
-def end_of_turn(mon, foe_side, weather=None):
-    """Residual damage/heal. Returns False if mon faints."""
+def end_of_turn(mon, foe_side, weather=None, rng=None):
+    """Residual damage/heal + end-of-turn abilities. Returns False if mon faints.
+    Magic Guard zeroes all indirect chip; Poison Heal turns poison into healing."""
     if mon.fainted:
         return False
-    if mon.status == 'brn' or mon.status == 'psn':
-        mon.hp -= mon.maxhp / 8
+    guard = mon.ability == 'MAGIC_GUARD'
+    if mon.status in ('brn', 'psn'):
+        if mon.ability == 'POISON_HEAL' and mon.status == 'psn':
+            mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8)
+        elif not guard:
+            mon.hp -= mon.maxhp / 8
     elif mon.status == 'tox':
         mon.tox += 1
-        mon.hp -= mon.maxhp * mon.tox / 16
-    if mon.seeded and not mon.fainted:
+        if mon.ability == 'POISON_HEAL':
+            mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8)
+        elif not guard:
+            mon.hp -= mon.maxhp * mon.tox / 16
+    if mon.seeded and not mon.fainted and not guard:
         drain = min(mon.maxhp / 8, max(mon.hp, 0))
         mon.hp -= drain
-    if weather == 'sand' and not (SAND_IMMUNE & set(mon.types)):
+    # weather residuals
+    if weather == 'sand' and not guard and not (SAND_IMMUNE & set(mon.types)):
         mon.hp -= mon.maxhp / 16
+    if weather == 'rain' and mon.ability in ('RAIN_DISH', 'DRY_SKIN'):
+        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8 if mon.ability == 'DRY_SKIN'
+                     else mon.hp + mon.maxhp / 16)
+    if weather == 'hail' and mon.ability == 'ICE_BODY':
+        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 16)
+    if weather == 'sun' and mon.ability in ('SOLAR_POWER', 'DRY_SKIN') and not guard:
+        mon.hp -= mon.maxhp / 8
+    # Speed Boost / Shed Skin
+    if mon.ability == 'SPEED_BOOST':
+        mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
+    if mon.ability == 'SHED_SKIN' and mon.status and rng and rng.random() < 1/3:
+        mon.status, mon.sleep, mon.tox = None, 0, 0
     if mon.hp <= 0:
         mon.fainted = True
         return False
@@ -347,7 +417,60 @@ def end_of_turn(mon, foe_side, weather=None):
     return True
 
 
-def perform(att_side, dfn_side, moves, chart, rng, weather=None):
+def on_ko(att):
+    """KO-triggered self-boost abilities."""
+    a = att.ability
+    if a in ('MOXIE', 'CHILLING_NEIGH'):
+        att.stage['atk'] = min(6, att.stage['atk'] + 1)
+    elif a in ('GRIM_NEIGH', 'SOUL_HEART'):
+        att.stage['spa'] = min(6, att.stage['spa'] + 1)
+    elif a == 'BEAST_BOOST':
+        k = 'atk' if att.base['atk'] >= att.base['spa'] else 'spa'
+        att.stage[k] = min(6, att.stage[k] + 1)
+
+
+def on_hit(att, dfn, move, rng):
+    """Contact-punish, on-hit status, and hit-reaction stat abilities."""
+    contact = move.get('contact')
+    if dfn.fainted:
+        if dfn.ability == 'AFTERMATH' and contact and att.ability != 'MAGIC_GUARD':
+            att.hp -= att.maxhp / 4
+            if att.hp <= 0:
+                att.fainted = True
+        return
+    da, mt = dfn.ability, move['type']
+    if contact:
+        if da in ('ROUGH_SKIN', 'IRON_BARBS') and att.ability != 'MAGIC_GUARD':
+            att.hp -= att.maxhp / 8
+            if att.hp <= 0:
+                att.fainted = True
+        elif att.status is None and rng.random() < 0.3:
+            st = {'FLAME_BODY': 'brn', 'STATIC': 'par', 'POISON_POINT': 'psn'}.get(da)
+            if da == 'EFFECT_SPORE':
+                st = rng.choice(['par', 'psn'])
+            if st and abilities.can_be_statused(att.ability, st):
+                att.status = st
+                if st == 'tox':
+                    att.tox = 0
+        if da in ('TANGLING_HAIR', 'GOOEY') and not abilities.prevents_drop(att.ability, 'spe'):
+            att.stage['spe'] = max(-6, att.stage['spe'] - 1)
+        if att.ability == 'POISON_TOUCH' and dfn.status is None and rng.random() < 0.3 \
+                and abilities.can_be_statused(dfn.ability, 'psn'):
+            dfn.status = 'psn'
+    if da == 'JUSTIFIED' and mt == 'DARK':
+        dfn.stage['atk'] = min(6, dfn.stage['atk'] + 1)
+    elif da == 'RATTLED' and mt in ('BUG', 'DARK', 'GHOST'):
+        dfn.stage['spe'] = min(6, dfn.stage['spe'] + 1)
+    elif da == 'STAMINA':
+        dfn.stage['defe'] = min(6, dfn.stage['defe'] + 1)
+    elif da == 'WEAK_ARMOR' and move['cat'] == 'PHYSICAL':
+        dfn.stage['defe'] = max(-6, dfn.stage['defe'] - 1)
+        dfn.stage['spe'] = min(6, dfn.stage['spe'] + 2)
+    elif da == 'WATER_COMPACTION' and mt == 'WATER':
+        dfn.stage['defe'] = min(6, dfn.stage['defe'] + 2)
+
+
+def perform(att_side, dfn_side, moves, chart, rng, weather=None, moving_last=False):
     """Execute the active mon's chosen action for att_side against dfn_side."""
     att, dfn = att_side.mon, dfn_side.mon
 
@@ -394,62 +517,80 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None):
         return
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
-        dmg, eff = move_damage(att, dfn, m, chart, rng, weather)
+        dmg, eff = move_damage(att, dfn, m, chart, rng, weather, moving_last)
+        pre_hp = dfn.hp
         dfn.hp -= sturdy_cap(dfn, dmg)
-        if att.item == 'LIFE_ORB' and dmg > 0:
+        if dfn.ability == 'BERSERK' and dfn.hp > 0 and pre_hp >= dfn.maxhp / 2 > dfn.hp:
+            dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
+        if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:
                 att.fainted = True
         if dfn.hp <= 0:
             dfn.fainted = True
+            on_ko(att)
+            on_hit(att, dfn, m, rng)       # Aftermath etc. on a contact KO
             return
-        # on-hit secondaries
+        # on-hit secondary status (gated by the target's ability)
         if e in ONHIT and dfn.status is None and rng.random() < m['chance'] / 100.0:
             st = ONHIT[e]
-            if not (st == 'slp'):          # on-hit sleep doesn't exist; guard anyway
+            if st != 'slp' and abilities.can_be_statused(dfn.ability, st, weather):
                 dfn.status = st
                 if st == 'tox':
                     dfn.tox = 0
-        if e == 'EFFECT_FLINCH_HIT' and rng.random() < m['chance'] / 100.0:
-            pass                            # flinch handled by turn order in battle loop (approx: ignore)
-        if e in RECOIL_EFFECTS:
+        if e in RECOIL_EFFECTS and att.ability not in ('ROCK_HEAD', 'MAGIC_GUARD'):
             att.hp -= dmg / 3
             if att.hp <= 0:
                 att.fainted = True
+        on_hit(att, dfn, m, rng)
         return
 
     # ---- status / utility moves ----
     if e in BOOST:
         for k, d in BOOST[e].items():
-            att.stage[k] = max(-6, min(6, att.stage.get(k, 0) + d))
-        if e == 'EFFECT_SHELL_SMASH':
-            pass
+            delta = abilities.transform_self_change(att.ability, d)
+            att.stage[k] = max(-6, min(6, att.stage.get(k, 0) + delta))
         return
     if e == 'EFFECT_BELLY_DRUM':
-        att.stage['atk'] = 6
+        att.stage['atk'] = -6 if att.ability == 'CONTRARY' else 6
         att.hp -= att.maxhp / 2
         if att.hp <= 0:
             att.fainted = True
         return
     if e in DROP:
         for k, d in DROP[e].items():
-            if k in dfn.stage:
-                dfn.stage[k] = max(-6, min(6, dfn.stage[k] + d))
+            if k not in dfn.stage or abilities.prevents_drop(dfn.ability, k):
+                continue
+            delta = -d if dfn.ability == 'CONTRARY' else (d * 2 if dfn.ability == 'SIMPLE' else d)
+            dfn.stage[k] = max(-6, min(6, dfn.stage[k] + delta))
+            if d < 0 and dfn.ability == 'DEFIANT':
+                dfn.stage['atk'] = min(6, dfn.stage['atk'] + 2)
+            elif d < 0 and dfn.ability == 'COMPETITIVE':
+                dfn.stage['spa'] = min(6, dfn.stage['spa'] + 2)
         return
     if e in INFLICT and dfn.status is None:
         st = INFLICT[e]
         if st == 'slp':
             if SLEEP_CLAUSE and dfn_side.slept_by_foe:
                 return
+            if not abilities.can_be_statused(dfn.ability, 'slp', weather):
+                return
             dfn.status = 'slp'
             dfn.sleep = rng.randint(1, 3)
             dfn_side.slept_by_foe = True
         elif st == 'cnf':
-            dfn.confused = rng.randint(2, 4)
-        else:
+            if abilities.can_be_statused(dfn.ability, 'cnf'):
+                dfn.confused = rng.randint(2, 4)
+        elif abilities.can_be_statused(dfn.ability, st, weather):
             dfn.status = st
             if st == 'tox':
                 dfn.tox = 0
+            # Synchronize bounces the status back to the source
+            if dfn.ability == 'SYNCHRONIZE' and st in ('psn', 'tox', 'par', 'brn') \
+                    and att.status is None and abilities.can_be_statused(att.ability, st):
+                att.status = st
+                if st == 'tox':
+                    att.tox = 0
         return
     if e in HEAL_EFFECTS:
         att.hp = min(att.maxhp, att.hp + att.maxhp / 2)
@@ -505,22 +646,24 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
 
         weather = current_weather(A, B)
 
-        # ---- order by (priority of chosen move, speed) ----
+        # ---- order by (priority [+ ability bonus], speed) ----
         ia = choose_move(A, B, moves, chart, weather)
         ib = choose_move(B, A, moves, chart, weather)
-        pa, pb = moves[A.mon.moves[ia]]['prio'], moves[B.mon.moves[ib]]['prio']
+        ma, mb = moves[A.mon.moves[ia]], moves[B.mon.moves[ib]]
+        pa = ma['prio'] + abilities.priority_bonus(A.mon.ability, ma, A.mon.hp / A.mon.maxhp)
+        pb = mb['prio'] + abilities.priority_bonus(B.mon.ability, mb, B.mon.hp / B.mon.maxhp)
         sa, sb = A.mon.stat('spe', weather), B.mon.stat('spe', weather)
         a_first = (pa, sa) > (pb, sb) or ((pa, sa) == (pb, sb) and rng.random() < 0.5)
         order = (A, B) if a_first else (B, A)
 
-        for s, foe in (order, order[::-1]):
+        for i, (s, foe) in enumerate((order, order[::-1])):
             if s.mon.fainted or foe.mon.fainted:
                 continue
-            perform(s, foe, moves, chart, rng, weather)
+            perform(s, foe, moves, chart, rng, weather, moving_last=(i == 1))
         # ---- residuals (recompute weather: a faint may have removed the setter) ----
         weather = current_weather(A, B)
         for s, foe in ((A, B), (B, A)):
-            end_of_turn(s.mon, foe, weather)
+            end_of_turn(s.mon, foe, weather, rng)
         if not A.alive_indices():
             return 1
         if not B.alive_indices():
