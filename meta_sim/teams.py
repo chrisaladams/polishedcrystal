@@ -39,6 +39,18 @@ STATUS = set(INFLICT)
 HAZARD = {'EFFECT_SPIKES', 'EFFECT_TOXIC_SPIKES'}
 SUPPORT = HEAL_EFFECTS | {'EFFECT_LEECH_SEED'}
 
+# sleep is the most disruptive status (it stops the foe acting entirely), then
+# speed-control paralysis, then chip-damage statuses -- used to pick the best
+# move within the STATUS bucket instead of an arbitrary movepool-order one.
+STATUS_PRIORITY = {'EFFECT_SLEEP': 5, 'EFFECT_PARALYZE': 4, 'EFFECT_TOXIC': 3,
+                    'EFFECT_CONFUSE': 2, 'EFFECT_POISON': 1, 'EFFECT_BURN': 1}
+
+
+def _setup_score(effect):
+    if effect == 'EFFECT_BELLY_DRUM':
+        return 6
+    return sum(abs(v) for v in BOOST.get(effect, {}).values())
+
 
 def _damaging(mon, moves):
     out = []
@@ -110,21 +122,31 @@ def pick_moveset(mid, mon, moves, chart, role):
         if len(chosen) >= 3:
             break
 
-    # role utility slot(s)
-    def first(eff_set):
-        return next((mv for mv in pool if moves[mv]['effect'] in eff_set), None)
+    # role utility slot(s) -- pick the *best* move in a bucket, not just the
+    # first one the movepool happens to list (that was picking arbitrary status
+    # moves over a mon's signature sleep move, e.g. Gengar without Hypnosis).
+    def best(eff_set):
+        cands = [mv for mv in pool if moves[mv]['effect'] in eff_set]
+        if not cands:
+            return None
+        if eff_set is SETUP:
+            return max(cands, key=lambda mv: _setup_score(moves[mv]['effect']))
+        if eff_set is STATUS:
+            return max(cands, key=lambda mv: (STATUS_PRIORITY.get(moves[mv]['effect'], 0),
+                                               moves[mv]['acc']))
+        return max(cands, key=lambda mv: moves[mv]['acc'])
 
     utils = []
     if role in ('sweeper', 'tank'):
-        u = first(SETUP)
+        u = best(SETUP)
         if u: utils.append(u)
     if role == 'wall':
         for bucket in (HEAL_EFFECTS, STATUS, {'EFFECT_LEECH_SEED'}):
-            u = first(bucket)
+            u = best(bucket)
             if u and u not in utils:
                 utils.append(u)
     if role == 'pivot':
-        u = first(STATUS) or first(HAZARD)
+        u = best(STATUS) or best(HAZARD)
         if u: utils.append(u)
 
     for u in utils:
