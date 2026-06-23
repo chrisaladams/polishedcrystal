@@ -479,14 +479,14 @@
 "shuckle": {
 "id": "shuckle",
 "stats": {
-"hp": 20,
+"hp": 40,
 "atk": 10,
 "defe": 230,
 "spe": 5,
 "spa": 10,
 "spd": 230
 },
-"bst": 505,
+"bst": 525,
 "types": [
 "BUG",
 "ROCK"
@@ -2011,10 +2011,10 @@
 "atk": 80,
 "defe": 70,
 "spe": 90,
-"spa": 110,
+"spa": 100,
 "spd": 75
 },
-"bst": 505,
+"bst": 495,
 "types": [
 "NORMAL"
 ],
@@ -2573,19 +2573,19 @@
 "hp": 80,
 "atk": 120,
 "defe": 130,
-"spe": 45,
+"spe": 55,
 "spa": 55,
-"spd": 65
+"spd": 80
 },
-"bst": 495,
+"bst": 520,
 "types": [
 "ROCK",
 "ELECTRIC"
 ],
 "abilities": [
-"MAGNET_PULL",
+"GALVANIZE",
 "STURDY",
-"GALVANIZE"
+"MAGNET_PULL"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -2606,7 +2606,7 @@
 ],
 "abilities": [
 "SAND_VEIL",
-"TANGLING_HAIR",
+"ARENA_TRAP",
 "SAND_FORCE"
 ],
 "fully_evolved": false,
@@ -2653,7 +2653,7 @@
 "abilities": [
 "CURSED_BODY",
 "LEVITATE",
-"CURSED_BODY"
+"SHADOW_TAG"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -2801,17 +2801,17 @@
 "defe": 95,
 "spe": 85,
 "spa": 65,
-"spd": 65
+"spd": 80
 },
-"bst": 510,
+"bst": 525,
 "types": [
 "DARK",
 "POISON"
 ],
 "abilities": [
-"POISON_POINT",
+"INTIMIDATE",
 "SWIFT_SWIM",
-"INTIMIDATE"
+"POISON_POINT"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -4219,22 +4219,22 @@
 "corsola_plain": {
 "id": "corsola_plain",
 "stats": {
-"hp": 65,
+"hp": 75,
 "atk": 55,
 "defe": 95,
-"spe": 35,
-"spa": 65,
+"spe": 45,
+"spa": 75,
 "spd": 95
 },
-"bst": 410,
+"bst": 440,
 "types": [
 "WATER",
 "ROCK"
 ],
 "abilities": [
-"HUSTLE",
+"REGENERATOR",
 "NATURAL_CURE",
-"REGENERATOR"
+"HUSTLE"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -5126,11 +5126,11 @@
 "hp": 60,
 "atk": 115,
 "defe": 100,
-"spe": 45,
+"spe": 60,
 "spa": 60,
-"spd": 80
+"spd": 90
 },
-"bst": 460,
+"bst": 485,
 "types": [
 "BUG",
 "GRASS"
@@ -5237,19 +5237,19 @@
 "id": "lickilicky",
 "stats": {
 "hp": 110,
-"atk": 85,
+"atk": 100,
 "defe": 95,
 "spe": 50,
-"spa": 80,
+"spa": 90,
 "spd": 95
 },
-"bst": 515,
+"bst": 540,
 "types": [
 "NORMAL"
 ],
 "abilities": [
 "OWN_TEMPO",
-"OBLIVIOUS",
+"THICK_FAT",
 "CLOUD_NINE"
 ],
 "fully_evolved": true,
@@ -7102,7 +7102,7 @@
 ],
 "abilities": [
 "SAND_VEIL",
-"TANGLING_HAIR",
+"ARENA_TRAP",
 "SAND_FORCE"
 ],
 "fully_evolved": true,
