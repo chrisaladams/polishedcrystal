@@ -288,46 +288,88 @@ def expected_damage(att, dfn, move, chart, weather=None):
 
 
 # ---- heuristic AI ------------------------------------------------------------
+def _max_expected_damage(attacker, defender, moves, chart, weather):
+    """Best expected damage `attacker` can deal `defender` with a damaging move."""
+    best = 0.0
+    for mv in attacker.moves:
+        m = moves[mv]
+        if m['cat'] == 'STATUS' or m['power'] <= 0:
+            continue
+        dmg, _ = expected_damage(attacker, defender, m, chart, weather)
+        if dmg > best:
+            best = dmg
+    return best
+
+
 def choose_move(side, foe, moves, chart, weather=None, rng=random):
-    """Return the index into att.moves the heuristic AI plays this turn."""
+    """Pick a move with a 1-ply look at the foe's likely response.
+
+    A pure max-damage picker can't tell a fast revenge-killer (KOs before it's
+    hit) from a frail flailer, or a durable waller (survives to status/heal/set
+    up) from a mon that just dies. So we gate utility on survival: estimate
+    whether the active will still be standing next turn, and only value
+    setup/status/heal/hazards when it will. This stops the bot from dragging
+    support and speed-control mons down to greedy-attacker behaviour."""
     att, dfn = side.mon, foe.mon
     if att.locked_move is not None:
         return att.locked_move
+
     best_dmg_i, best_dmg = 0, -1.0
-    util = []                              # (priority_score, index)
     for i, mv in enumerate(att.moves):
         m = moves[mv]
-        dmg, eff = expected_damage(att, dfn, m, chart, weather)
+        if m['cat'] == 'STATUS' or m['power'] <= 0:
+            continue
+        dmg, _ = expected_damage(att, dfn, m, chart, weather)
         if dmg > best_dmg:
             best_dmg, best_dmg_i = dmg, i
-        e = m['effect']
-        # ---- utility scoring (only if it doesn't already KO) ----
-        if e in HEAL_EFFECTS and att.hp < att.maxhp * 0.55:
-            util.append((3.0, i))
-        elif e in BOOST and att.hp > att.maxhp * 0.6:
-            # set up only when reasonably safe (foe unlikely to OHKO)
-            util.append((2.0, i))
-        elif e in INFLICT and dfn.status is None:
-            # status the foe -- great for walls; require it to be allowed
-            if not (INFLICT[e] == 'slp' and SLEEP_CLAUSE and foe.slept_by_foe):
-                util.append((1.5, i))
-        elif e == 'EFFECT_LEECH_SEED' and not dfn.seeded and 'GRASS' not in dfn.types:
-            util.append((1.4, i))
-        elif e in ('EFFECT_SPIKES', 'EFFECT_TOXIC_SPIKES'):
+    if best_dmg < 0:
+        best_dmg = 0.0
+
+    foe_dmg = _max_expected_damage(dfn, att, moves, chart, weather)
+    i_outspeed = att.stat('spe', weather) > dfn.stat('spe', weather)
+    i_ko = best_dmg >= dfn.hp
+    foe_ko = foe_dmg >= att.hp
+    # "doomed": the foe is expected to faint me next turn whatever I do -- i.e.
+    # it KOs me and I can't KO it first. No point setting up / statusing / healing.
+    doomed = foe_ko and not (i_ko and i_outspeed)
+
+    # If I can KO this turn, just do it (revenge-killing a faster glass cannon,
+    # or trading up when I'm slower -- swinging is right either way).
+    if i_ko:
+        return best_dmg_i
+
+    util = []                              # (priority_score, index)
+    for i, mv in enumerate(att.moves):
+        e = moves[mv]['effect']
+        if e in HEAL_EFFECTS and att.hp < att.maxhp * 0.6 and not doomed:
+            # heal more eagerly the lower I am, but only if it isn't futile
+            util.append((3.0 + (att.maxhp - att.hp) / att.maxhp, i))
+        elif e in BOOST and not doomed and foe_dmg < att.hp * 0.5:
+            # set up only when I clearly survive; sweeping is better if I'm fast
+            util.append((2.0 + (0.6 if i_outspeed else 0.0), i))
+        elif e in INFLICT and dfn.status is None and not doomed:
+            if INFLICT[e] == 'slp' and SLEEP_CLAUSE and foe.slept_by_foe:
+                continue
+            st = INFLICT[e]
+            score = 1.5
+            if st in ('slp', 'par') and not i_outspeed:
+                score += 1.0      # neutralises a foe that would otherwise outrun me
+            elif st in ('tox', 'psn', 'brn'):
+                score += 0.4      # chip a bulky foe I can't break quickly
+            util.append((score, i))
+        elif (e == 'EFFECT_LEECH_SEED' and not dfn.seeded
+              and 'GRASS' not in dfn.types and not doomed):
+            util.append((1.6, i))
+        elif e in ('EFFECT_SPIKES', 'EFFECT_TOXIC_SPIKES') and not doomed:
             util.append((1.2, i))
 
-    # If best damaging move OHKOs, just attack.
-    if best_dmg >= dfn.hp:
-        return best_dmg_i
-    # Otherwise weigh utility vs chip damage.
     if util:
         util.sort(reverse=True)
         score, idx = util[0]
-        # damage worth a chunk of the foe still competes with weak utility
+        # a damaging move that takes a big chunk still competes with weak utility
         dmg_frac = best_dmg / max(dfn.hp, 1)
-        if dmg_frac < 0.45 or score >= 2.5:
-            # randomise a little so setup/status isn't robotic
-            if rng.random() < 0.8:
+        if dmg_frac < 0.5 or score >= 2.8:
+            if rng.random() < 0.85:        # a little noise so it isn't robotic
                 return idx
     return best_dmg_i
 
