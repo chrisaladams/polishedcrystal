@@ -7,7 +7,7 @@
 	db NO_ITEM, HARD_STONE ; held items
 	dn GENDER_F75, HATCH_MEDIUM_FAST ; gender ratio, step cycles to hatch
 
-	abilities_for CORSOLA, HUSTLE, NATURAL_CURE, REGENERATOR
+	abilities_for CORSOLA, REGENERATOR, NATURAL_CURE, HUSTLE
 	db GROWTH_FAST ; growth rate
 	dn EGG_WATER_1, EGG_WATER_3 ; egg groups
 
