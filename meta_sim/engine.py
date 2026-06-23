@@ -33,7 +33,8 @@ import items
 
 STAB = 1.5
 CHOICE_ITEMS = {'CHOICE_BAND', 'CHOICE_SPECS', 'CHOICE_SCARF'}
-SLEEP_CLAUSE = True          # mirror the shipped Sleep Clause
+SLEEP_CLAUSE = False         # shipped game dropped the Sleep Clause (sleep is
+                             # unrestricted, 1-3 turns); mirror that here
 MAX_TURNS = 300              # battle longer than this -> draw (anti-stall guard)
 
 # ---- stat-stage multipliers (Gen table) --------------------------------------
