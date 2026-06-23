@@ -150,6 +150,13 @@ def _sand_spdef(dfn, move, weather):
     return 1.0
 
 
+def sturdy_cap(dfn, dmg):
+    """Sturdy: a mon at full HP survives an otherwise-lethal hit with 1 HP."""
+    if dfn.ability == 'STURDY' and dfn.hp == dfn.maxhp and dmg >= dfn.hp:
+        return dfn.hp - 1
+    return dmg
+
+
 def _damage_terms(att, dfn, move, chart, weather=None):
     """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
     eff = eff_mult(move, dfn, chart)
@@ -288,7 +295,14 @@ def choose_switch(side, foe, moves, chart, forced):
 
 # ---- per-turn mechanics ------------------------------------------------------
 def apply_switch(side, idx, chart, foe_side=None):
-    side.mon.reset_volatile()
+    # switch-out abilities act on the outgoing mon (only on a real switch)
+    out = side.mon
+    if idx != side.active and not out.fainted:
+        if out.ability == 'REGENERATOR':
+            out.hp = min(out.maxhp, out.hp + out.maxhp / 3)
+        elif out.ability == 'NATURAL_CURE':
+            out.status, out.sleep, out.tox = None, 0, 0
+    out.reset_volatile()
     side.active = idx
     m = side.mon
     # entry hazards
@@ -372,7 +386,7 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None):
     e = m['effect']
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng, weather)
-        dfn.hp -= dmg * 2
+        dfn.hp -= sturdy_cap(dfn, dmg * 2)
         att.hp = 0
         att.fainted = True
         if dfn.hp <= 0:
@@ -381,7 +395,7 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None):
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng, weather)
-        dfn.hp -= dmg
+        dfn.hp -= sturdy_cap(dfn, dmg)
         if att.item == 'LIFE_ORB' and dmg > 0:
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:

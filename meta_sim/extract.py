@@ -84,6 +84,18 @@ for s in open('data/moves/priorities.asm').read().splitlines():
     if m and m.group(1) in moves:
         moves[m.group(1)]['prio']=int(m.group(2))
 
+# contact flag: a move makes contact if it's Physical, except for the entries
+# in AbnormalContactMoves (which flip the default -- a few Physical moves that
+# don't make contact, and a couple of Special moves that do). Mirrors the ROM's
+# CheckContactMove. Used by Tough Claws (data/moves/abnormal_contact_moves.asm).
+abnormal=set()
+for s in open('data/moves/abnormal_contact_moves.asm').read().splitlines():
+    m=re.match(r'\s*db\s+([A-Z_0-9]+)\s*(;.*)?$',s)
+    if m and m.group(1) in moves:
+        abnormal.add(m.group(1))
+for n,mv in moves.items():
+    mv['contact']=(mv['cat']=='PHYSICAL') != (n in abnormal)
+
 # ---------------------------------------------------------------- type chart
 EFF={'NO_EFFECT':0.0,'NOT_VERY_EFFECTIVE':0.5,'SUPER_EFFECTIVE':2.0}
 chart={}

@@ -56,8 +56,9 @@ ABILITY_PRIORITY = [
     'DROUGHT', 'DRIZZLE', 'SAND_STREAM', 'SNOW_WARNING',
     'LEVITATE', 'WATER_ABSORB', 'VOLT_ABSORB', 'FLASH_FIRE', 'SAP_SIPPER',
     'DRY_SKIN', 'LIGHTNING_ROD', 'MOTOR_DRIVE',
-    'HUGE_POWER', 'PURE_POWER', 'ADAPTABILITY',
-    'INTIMIDATE', 'THICK_FAT',
+    'REGENERATOR', 'STURDY',
+    'HUGE_POWER', 'PURE_POWER', 'ADAPTABILITY', 'TOUGH_CLAWS',
+    'INTIMIDATE', 'THICK_FAT', 'NATURAL_CURE',
     'TECHNICIAN', 'SHEER_FORCE',
     'SWIFT_SWIM', 'CHLOROPHYLL', 'SAND_RUSH', 'SLUSH_RUSH',
 ]
@@ -120,6 +121,8 @@ def offense_multipliers(ability, move, is_stab):
     if ability == 'TECHNICIAN' and move['power'] <= TECHNICIAN_THRESHOLD:
         dmg_mult *= 1.5
     if ability == 'SHEER_FORCE' and move.get('chance', 0) > 0:
+        dmg_mult *= 1.3
+    if ability == 'TOUGH_CLAWS' and move.get('contact'):
         dmg_mult *= 1.3
     return atk_mult, dmg_mult
 
