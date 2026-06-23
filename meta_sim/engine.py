@@ -288,7 +288,7 @@ def expected_damage(att, dfn, move, chart, weather=None):
 
 
 # ---- heuristic AI ------------------------------------------------------------
-def choose_move(side, foe, moves, chart, weather=None):
+def choose_move(side, foe, moves, chart, weather=None, rng=random):
     """Return the index into att.moves the heuristic AI plays this turn."""
     att, dfn = side.mon, foe.mon
     if att.locked_move is not None:
@@ -327,7 +327,7 @@ def choose_move(side, foe, moves, chart, weather=None):
         dmg_frac = best_dmg / max(dfn.hp, 1)
         if dmg_frac < 0.45 or score >= 2.5:
             # randomise a little so setup/status isn't robotic
-            if random.random() < 0.8:
+            if rng.random() < 0.8:
                 return idx
     return best_dmg_i
 
@@ -352,7 +352,7 @@ def matchup_score(mon, foe, moves, chart):
     return off - deff
 
 
-def choose_switch(side, foe, moves, chart, forced):
+def choose_switch(side, foe, moves, chart, forced, rng=random):
     """Pick a teammate index to send in. Returns index, or None to stay."""
     alive = [i for i in side.alive_indices() if forced or i != side.active]
     if not alive:
@@ -370,7 +370,7 @@ def choose_switch(side, foe, moves, chart, forced):
         return best_i
     # voluntary switch only when current matchup is clearly bad and a teammate is clearly better
     cur = matchup_score(side.mon, foe.mon, moves, chart)
-    if best - cur >= 2.0 and cur < 0 and random.random() < 0.5:
+    if best - cur >= 2.0 and cur < 0 and rng.random() < 0.5:
         return best_i
     return None
 
@@ -556,7 +556,7 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None, moving_last=Fal
                 att.fainted = True
             return
 
-    idx = choose_move(att_side, dfn_side, moves, chart, weather)
+    idx = choose_move(att_side, dfn_side, moves, chart, weather, rng)
     mv = att.moves[idx]
     m = moves[mv]
     if att.item in CHOICE_ITEMS and m['cat'] != 'STATUS' and m['power'] > 0:
@@ -691,7 +691,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
         # ---- switching decisions (forced first if a side's active fainted) ----
         for s, foe in ((A, B), (B, A)):
             if s.mon.fainted:
-                nxt = choose_switch(s, foe, moves, chart, forced=True)
+                nxt = choose_switch(s, foe, moves, chart, forced=True, rng=rng)
                 if nxt is not None:
                     apply_switch(s, nxt, chart, foe)
         if not A.alive_indices():
@@ -700,15 +700,15 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
             return 0
         for s, foe in ((A, B), (B, A)):
             if not s.mon.fainted:
-                nxt = choose_switch(s, foe, moves, chart, forced=False)
+                nxt = choose_switch(s, foe, moves, chart, forced=False, rng=rng)
                 if nxt is not None:
                     apply_switch(s, nxt, chart, foe)
 
         weather = current_weather(A, B)
 
         # ---- order by (priority [+ ability bonus], speed) ----
-        ia = choose_move(A, B, moves, chart, weather)
-        ib = choose_move(B, A, moves, chart, weather)
+        ia = choose_move(A, B, moves, chart, weather, rng)
+        ib = choose_move(B, A, moves, chart, weather, rng)
         ma, mb = moves[A.mon.moves[ia]], moves[B.mon.moves[ib]]
         pa = ma['prio'] + abilities.priority_bonus(A.mon.ability, ma, A.mon.hp / A.mon.maxhp)
         pb = mb['prio'] + abilities.priority_bonus(B.mon.ability, mb, B.mon.hp / B.mon.maxhp)
