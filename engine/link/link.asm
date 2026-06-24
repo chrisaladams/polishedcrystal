@@ -639,9 +639,7 @@ LinkBattle_SetPartyMonToLevel50:
 	push hl
 	call LinkBattle_RecalculatePartyMonStats
 	pop hl
-	; Fully heal the mon for the level-50 link battle: clear status, restore
-	; HP to the freshly recalculated max, and restore all PP. wCurPartyMon is
-	; already set by the caller's loop, which is what HealPartyMon consumes.
+	; HealPartyMon reads wCurPartyMon, which the caller's loop already set.
 	farjp HealPartyMon
 
 LinkBattle_LoadPartyMonBaseData:
