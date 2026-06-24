@@ -32,7 +32,16 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              Speed Boost (+1 Speed each turn), Poison Heal (poison/toxic
              heals 1/8 max HP instead of damaging), Rock Head (no recoil
              from recoil-effect moves, unlike Life Orb recoil which it
-             doesn't block).
+             doesn't block). Status-immunity abilities (Insomnia/Vital
+             Spirit block sleep, Own Tempo blocks confusion, Limber blocks
+             paralysis, Water Veil blocks burn, Immunity blocks poison/
+             toxic, Magma Armor blocks freeze) checked at every status-
+             inflicting move and on-hit secondary. Hustle (1.5x Atk, 0.8x
+             accuracy on attacking moves), Tinted Lens (2x not-very-
+             effective damage), Motor Drive (immune to Electric + Speed
+             boost, alongside the absorb cluster above), Lightning Rod
+             (+1 SpAtk when actually hit by an Electric move -- unlike
+             Motor Drive it does not grant immunity).
   approxd.  : confusion as a flat self-hit chance; multi-hit as its average
              hit count; two-turn moves resolve in one turn; Explosion = big
              hit then user faints; Dry Skin modeled as Water Absorb only
@@ -97,7 +106,21 @@ def is_grounded(mon):
 # type-absorb abilities: ability -> the type it's immune to (and triggers on)
 ABSORB_TYPES = {'FLASH_FIRE': 'FIRE', 'WATER_ABSORB': 'WATER',
                 'VOLT_ABSORB': 'ELECTRIC', 'SAP_SIPPER': 'GRASS',
-                'DRY_SKIN': 'WATER'}
+                'DRY_SKIN': 'WATER', 'MOTOR_DRIVE': 'ELECTRIC'}
+
+# status-immunity abilities: ability -> the status key(s) they block
+STATUS_IMMUNE = {'INSOMNIA': 'slp', 'VITAL_SPIRIT': 'slp', 'OWN_TEMPO': 'cnf',
+                  'LIMBER': 'par', 'WATER_VEIL': 'brn', 'IMMUNITY': 'psn',
+                  'MAGMA_ARMOR': 'frz'}
+
+
+def status_blocked(mon, st):
+    block = STATUS_IMMUNE.get(mon.ability)
+    if block is None:
+        return False
+    if block == 'psn':
+        return st in ('psn', 'tox')
+    return block == st
 
 
 def eff_mult(move_type, defender, chart):
@@ -118,6 +141,8 @@ def apply_absorb(mon, move_type):
         mon.flash_fire = True
     elif ab == 'SAP_SIPPER':
         mon.stage['atk'] = min(6, mon.stage['atk'] + 1)
+    elif ab == 'MOTOR_DRIVE':
+        mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
     else:                       # WATER_ABSORB, VOLT_ABSORB, DRY_SKIN
         mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 4)
 
@@ -198,6 +223,8 @@ def _damage_terms(att, dfn, move, chart):
             a *= 1.5                       # Guts also ignores the burn Atk drop below
         elif att.status == 'brn':
             a *= 0.5
+        if att.ability == 'HUSTLE':
+            a *= 1.5
         if att.item == 'CHOICE_BAND':
             a *= items.CHOICE_STAT_MULT
     else:
@@ -217,6 +244,8 @@ def _damage_terms(att, dfn, move, chart):
         dmg_mult *= 0.75
     if dfn.ability == 'MULTISCALE' and dfn.hp >= dfn.maxhp:
         dmg_mult *= 0.5
+    if att.ability == 'TINTED_LENS' and 0 < eff < 1.0:
+        dmg_mult *= 2.0
     return eff, a, d, stab, dmg_mult
 
 
@@ -425,7 +454,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
         att.locked_move = idx     # locks in on use, regardless of hit/miss
 
     # accuracy
-    if m['acc'] >= 0 and rng.random() > m['acc'] / 100.0:
+    acc = m['acc']
+    if att.ability == 'HUSTLE' and m['cat'] != 'STATUS' and acc >= 0:
+        acc *= 0.8
+    if acc >= 0 and rng.random() > acc / 100.0:
         return
 
     e = m['effect']
@@ -446,6 +478,8 @@ def perform(att_side, dfn_side, moves, chart, rng):
         dmg, eff = move_damage(att, dfn, m, chart, rng)
         if dmg == 0 and eff == 0.0:
             apply_absorb(dfn, m['type'])
+        elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
+            dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
         sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
         dfn.hp -= dmg
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
@@ -461,7 +495,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
         # on-hit secondaries
         if e in ONHIT and dfn.status is None and rng.random() < m['chance'] / 100.0:
             st = ONHIT[e]
-            if not (st == 'slp'):          # on-hit sleep doesn't exist; guard anyway
+            if st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
                 dfn.status = st
                 if st == 'tox':
                     dfn.tox = 0
@@ -494,14 +528,18 @@ def perform(att_side, dfn_side, moves, chart, rng):
         return
     if e in INFLICT and dfn.status is None:
         st = INFLICT[e]
+        if st == 'cnf':
+            if not status_blocked(dfn, st):
+                dfn.confused = rng.randint(2, 4)
+            return
+        if status_blocked(dfn, st):
+            return
         if st == 'slp':
             if SLEEP_CLAUSE and dfn_side.slept_by_foe:
                 return
             dfn.status = 'slp'
             dfn.sleep = rng.randint(1, 3)
             dfn_side.slept_by_foe = True
-        elif st == 'cnf':
-            dfn.confused = rng.randint(2, 4)
         else:
             dfn.status = st
             if st == 'tox':
