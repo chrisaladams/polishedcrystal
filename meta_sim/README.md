@@ -91,16 +91,29 @@ mons that depend on team synergy (the support/stall mons 1v1 understates).
 Modelled (the high-impact ~80%): damage + stat stages, the major statuses
 (sleep/paralysis/burn/poison/toxic/freeze + confusion), on-hit secondary
 effects, self-stat setup moves, recovery, Leech Seed, entry hazards
-(Spikes/Toxic Spikes), priority, switching. **Sleep Clause is mirrored** from
-the shipped game (toggle `SLEEP_CLAUSE` in `engine.py`).
+(Spikes/Toxic Spikes), priority, switching, held items (Choice items, Life
+Orb, Leftovers, Eviolite), and a broad ability subset: switch-in/event
+abilities (Imposter, Intimidate, Levitate, Sturdy, Regenerator), type-absorb
+abilities (Flash Fire, Water/Volt Absorb, Sap Sipper, Dry Skin, Motor Drive,
+Lightning Rod), damage modifiers (Guts, Thick Fat, Solid Rock/Filter,
+Multiscale, Unaware, Hustle, Tinted Lens), residual-turn abilities (Magic
+Guard, Speed Boost, Poison Heal, Rock Head), and status-immunity abilities
+(Insomnia/Vital Spirit, Own Tempo, Limber, Water Veil, Immunity, Magma
+Armor). Each mon commits to one ability for the whole battle, picked by
+`abilities.pick_ability`'s impact-ordered priority list (not just "first
+listed") so it doesn't default to a no-op ability over a modeled one.
+**Sleep Clause is mirrored** from the shipped game (toggle `SLEEP_CLAUSE` in
+`engine.py`).
 
 Approximated / ignored (so don't over-read these): confusion as a flat
 self-hit chance; multi-hit as average hit count; two-turn moves resolve in one
-turn; **no weather, screens, trapping, Perish Song, held items, or abilities**.
-Consequently Ditto / Wobbuffet / Smeargle (Transform/Counter/mechanic mons) and
-weather/screen teams are understated by design — that's a known blind spot, not
-a balance verdict. The 6v6 numbers are *sampled*, so deltas within ~±5% (more
-for rare roles with fewer games) are noise; raise `--games` to tighten.
+turn; **no weather, screens, trapping, Perish Song**, or abilities/items
+beyond the modeled subset above (see `engine.py`'s module docstring for the
+full list). Consequently Ditto / Wobbuffet / Smeargle (Transform/Counter/
+mechanic mons) and weather/screen teams are understated by design — that's a
+known blind spot, not a balance verdict. The 6v6 numbers are *sampled*, so
+deltas within ~±5% (more for rare roles with fewer games) are noise; raise
+`--games` to tighten.
 
 This is **Option A**: a clean, uniform heuristic AI chosen as a fair yardstick.
 A faithful port of the ROM's trainer AI (`engine/battle/ai/*.asm`) would match
