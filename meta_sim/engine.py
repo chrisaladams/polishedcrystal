@@ -18,12 +18,28 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              (-1 foe Attack on switch-in), Levitate (immune to Ground moves
              and grounded hazards), Sturdy (survives a lethal hit from full
              HP at 1 HP), Regenerator (heal 1/3 max HP on switching out).
+             Type-absorb abilities (Flash Fire, Water/Volt Absorb, Sap
+             Sipper, Dry Skin-as-water-absorb): immune to their type, plus
+             the on-absorb effect (heal 1/4 max HP, +1 Atk, or a permanent
+             1.5x Fire-move boost for the rest of the battle). Damage-
+             modifier abilities: Guts (1.5x Atk while statused, ignores the
+             burn Atk drop), Thick Fat (0.5x incoming Fire/Ice), Solid Rock/
+             Filter (0.75x incoming super-effective), Multiscale (0.5x
+             incoming damage at full HP), Unaware (ignores the other mon's
+             relevant stat stage when computing damage). Residual-turn
+             abilities: Magic Guard (immune to all indirect damage --
+             hazards, status, Leech Seed, confusion, recoil, Belly Drum),
+             Speed Boost (+1 Speed each turn), Poison Heal (poison/toxic
+             heals 1/8 max HP instead of damaging), Rock Head (no recoil
+             from recoil-effect moves, unlike Life Orb recoil which it
+             doesn't block).
   approxd.  : confusion as a flat self-hit chance; multi-hit as its average
              hit count; two-turn moves resolve in one turn; Explosion = big
-             hit then user faints. Each mon commits to one (non-event)
-             ability and one item for the whole battle (see
-             abilities.py/items.py) instead of switching among abilities per
-             move like the 1v1 matrix does.
+             hit then user faints; Dry Skin modeled as Water Absorb only
+             (its Fire weakness/sun-and-rain HP drain are not modeled). Each
+             mon commits to one (non-event) ability and one item for the
+             whole battle (see abilities.py/items.py) instead of switching
+             among abilities per move like the 1v1 matrix does.
   ignored   : weather, screens, other trapping, Perish Song, Sketch/
              Metronome, and abilities/items beyond the modeled subset above
              and in abilities.py/items.py. (So Wobbuffet/Smeargle and
@@ -78,18 +94,39 @@ def is_grounded(mon):
     return 'FLYING' not in mon.types and mon.ability != 'LEVITATE'
 
 
+# type-absorb abilities: ability -> the type it's immune to (and triggers on)
+ABSORB_TYPES = {'FLASH_FIRE': 'FIRE', 'WATER_ABSORB': 'WATER',
+                'VOLT_ABSORB': 'ELECTRIC', 'SAP_SIPPER': 'GRASS',
+                'DRY_SKIN': 'WATER'}
+
+
 def eff_mult(move_type, defender, chart):
-    """type_mult, plus the Levitate/Ground special case."""
+    """type_mult, plus the Levitate/Ground and type-absorb special cases."""
     if move_type == 'GROUND' and not is_grounded(defender):
         return 0.0
+    if ABSORB_TYPES.get(defender.ability) == move_type:
+        return 0.0
     return type_mult(move_type, defender.types, chart)
+
+
+def apply_absorb(mon, move_type):
+    """On-absorb side effect for an immune type-absorb ability hit."""
+    ab = mon.ability
+    if ABSORB_TYPES.get(ab) != move_type:
+        return
+    if ab == 'FLASH_FIRE':
+        mon.flash_fire = True
+    elif ab == 'SAP_SIPPER':
+        mon.stage['atk'] = min(6, mon.stage['atk'] + 1)
+    else:                       # WATER_ABSORB, VOLT_ABSORB, DRY_SKIN
+        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 4)
 
 
 class Pmon:
     """Battle-time wrapper around a pokemon.json entry + a chosen moveset."""
     __slots__ = ('id', 'types', 'base', 'moves', 'ability', 'item', 'maxhp',
                  'hp', 'status', 'sleep', 'tox', 'stage', 'seeded', 'confused',
-                 'fainted', 'locked_move')
+                 'fainted', 'locked_move', 'flash_fire')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -108,9 +145,11 @@ class Pmon:
         self.confused = 0
         self.fainted = False
         self.locked_move = None            # Choice-item move lock (index into self.moves)
+        self.flash_fire = False            # Flash Fire: permanent 1.5x own Fire moves once triggered
 
-    def stat(self, key):
-        v = self.base[key] * stage_mult(self.stage.get(key, 0))
+    def stat(self, key, ignore_stage=False):
+        stage = 0 if ignore_stage else self.stage.get(key, 0)
+        v = self.base[key] * stage_mult(stage)
         if key == 'spe':
             if self.status == 'par':
                 v *= 0.25
@@ -125,6 +164,7 @@ class Pmon:
         self.seeded = False
         self.confused = 0
         self.locked_move = None            # Choice lock releases on switch
+        self.flash_fire = False            # Flash Fire boost is lost on switch-out
 
 
 class Side:
@@ -149,20 +189,34 @@ def _damage_terms(att, dfn, move, chart):
     eff = eff_mult(move['type'], dfn, chart)
     is_stab = move['type'] in att.types
     atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
+    # Unaware: ignore the *other* mon's relevant stat stage when computing damage
+    unaware_att, unaware_dfn = att.ability == 'UNAWARE', dfn.ability == 'UNAWARE'
     if move['cat'] == 'PHYSICAL':
-        a, d = att.stat('atk') * atk_mult, dfn.stat('defe')
-        if att.status == 'brn':
+        a = att.stat('atk', ignore_stage=unaware_dfn) * atk_mult
+        d = dfn.stat('defe', ignore_stage=unaware_att)
+        if att.ability == 'GUTS' and att.status is not None:
+            a *= 1.5                       # Guts also ignores the burn Atk drop below
+        elif att.status == 'brn':
             a *= 0.5
         if att.item == 'CHOICE_BAND':
             a *= items.CHOICE_STAT_MULT
     else:
-        a, d = att.stat('spa') * atk_mult, dfn.stat('spd')
+        a = att.stat('spa', ignore_stage=unaware_dfn) * atk_mult
+        d = dfn.stat('spd', ignore_stage=unaware_att)
         if att.item == 'CHOICE_SPECS':
             a *= items.CHOICE_STAT_MULT
     d *= abilities.defending_sand_mult([dfn.ability] if dfn.ability else [], dfn.types, move)
     stab = abilities.stab_mult(att.ability, is_stab)
     if att.item == 'LIFE_ORB':
         dmg_mult *= items.LIFE_ORB_DMG_MULT
+    if att.ability == 'FLASH_FIRE' and att.flash_fire and move['type'] == 'FIRE':
+        dmg_mult *= 1.5
+    if dfn.ability == 'THICK_FAT' and move['type'] in ('FIRE', 'ICE'):
+        dmg_mult *= 0.5
+    if dfn.ability in ('SOLID_ROCK', 'FILTER') and eff > 1.0:
+        dmg_mult *= 0.75
+    if dfn.ability == 'MULTISCALE' and dfn.hp >= dfn.maxhp:
+        dmg_mult *= 0.5
     return eff, a, d, stab, dmg_mult
 
 
@@ -284,7 +338,7 @@ def apply_switch(side, idx, foe_side, chart):
     m = side.mon
     # entry hazards (grounded mons only -- Flying-type or Levitate skip these)
     grounded = is_grounded(m)
-    if side.spikes and grounded:
+    if side.spikes and grounded and m.ability != 'MAGIC_GUARD':
         m.hp -= m.maxhp * [0, 1/8, 1/6, 1/4][side.spikes]
     if side.tspikes and grounded:
         if 'POISON' in m.types:
@@ -316,19 +370,24 @@ def end_of_turn(mon, foe_side):
     """Residual damage/heal. Returns False if mon faints."""
     if mon.fainted:
         return False
-    if mon.status == 'brn' or mon.status == 'psn':
-        mon.hp -= mon.maxhp / 8
-    elif mon.status == 'tox':
-        mon.tox += 1
-        mon.hp -= mon.maxhp * mon.tox / 16
-    if mon.seeded and not mon.fainted:
-        drain = min(mon.maxhp / 8, max(mon.hp, 0))
-        mon.hp -= drain
+    if mon.ability == 'POISON_HEAL' and mon.status in ('psn', 'tox'):
+        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8)
+    elif mon.ability != 'MAGIC_GUARD':
+        if mon.status == 'brn' or mon.status == 'psn':
+            mon.hp -= mon.maxhp / 8
+        elif mon.status == 'tox':
+            mon.tox += 1
+            mon.hp -= mon.maxhp * mon.tox / 16
+        if mon.seeded:
+            drain = min(mon.maxhp / 8, max(mon.hp, 0))
+            mon.hp -= drain
     if mon.hp <= 0:
         mon.fainted = True
         return False
     if mon.item == 'LEFTOVERS' and mon.hp < mon.maxhp:
         mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * items.LEFTOVERS_HEAL_FRAC)
+    if mon.ability == 'SPEED_BOOST':
+        mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
     return True
 
 
@@ -353,9 +412,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
     if att.confused > 0:
         att.confused -= 1
         if rng.random() < 0.5:             # hurt self in confusion (approx)
-            att.hp -= att.maxhp / 8
-            if att.hp <= 0:
-                att.fainted = True
+            if att.ability != 'MAGIC_GUARD':
+                att.hp -= att.maxhp / 8
+                if att.hp <= 0:
+                    att.fainted = True
             return
 
     idx = choose_move(att_side, dfn_side, moves, chart)
@@ -384,9 +444,11 @@ def perform(att_side, dfn_side, moves, chart, rng):
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng)
+        if dmg == 0 and eff == 0.0:
+            apply_absorb(dfn, m['type'])
         sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
         dfn.hp -= dmg
-        if att.item == 'LIFE_ORB' and dmg > 0:
+        if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:
                 att.fainted = True
@@ -405,7 +467,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
                     dfn.tox = 0
         if e == 'EFFECT_FLINCH_HIT' and rng.random() < m['chance'] / 100.0:
             pass                            # flinch handled by turn order in battle loop (approx: ignore)
-        if e in RECOIL_EFFECTS:
+        if e in RECOIL_EFFECTS and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD'):
             att.hp -= dmg / 3
             if att.hp <= 0:
                 att.fainted = True
@@ -420,9 +482,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
         return
     if e == 'EFFECT_BELLY_DRUM':
         att.stage['atk'] = 6
-        att.hp -= att.maxhp / 2
-        if att.hp <= 0:
-            att.fainted = True
+        if att.ability != 'MAGIC_GUARD':
+            att.hp -= att.maxhp / 2
+            if att.hp <= 0:
+                att.fainted = True
         return
     if e in DROP:
         for k, d in DROP[e].items():
