@@ -548,14 +548,14 @@
 "arbok": {
 "id": "arbok",
 "stats": {
-"hp": 60,
-"atk": 110,
-"defe": 70,
+"hp": 70,
+"atk": 100,
+"defe": 74,
 "spe": 80,
-"spa": 55,
-"spd": 80
+"spa": 65,
+"spd": 79
 },
-"bst": 455,
+"bst": 468,
 "types": [
 "POISON"
 ],
@@ -1288,13 +1288,13 @@
 "id": "ariados",
 "stats": {
 "hp": 70,
-"atk": 90,
+"atk": 100,
 "defe": 70,
-"spe": 90,
+"spe": 100,
 "spa": 60,
 "spd": 70
 },
-"bst": 450,
+"bst": 470,
 "types": [
 "BUG",
 "DARK"
@@ -1491,14 +1491,14 @@
 "ledian": {
 "id": "ledian",
 "stats": {
-"hp": 60,
+"hp": 65,
 "atk": 95,
 "defe": 50,
 "spe": 85,
-"spa": 50,
+"spa": 55,
 "spd": 110
 },
-"bst": 450,
+"bst": 460,
 "types": [
 "BUG",
 "FIGHTING"
@@ -1806,14 +1806,14 @@
 "sudowoodo": {
 "id": "sudowoodo",
 "stats": {
-"hp": 75,
+"hp": 90,
 "atk": 115,
 "defe": 120,
 "spe": 30,
 "spa": 30,
-"spd": 80
+"spd": 95
 },
-"bst": 450,
+"bst": 480,
 "types": [
 "ROCK"
 ],
@@ -1895,14 +1895,14 @@
 "magcargo": {
 "id": "magcargo",
 "stats": {
-"hp": 70,
+"hp": 85,
 "atk": 50,
 "defe": 135,
 "spe": 40,
 "spa": 115,
 "spd": 115
 },
-"bst": 525,
+"bst": 540,
 "types": [
 "FIRE",
 "ROCK"
@@ -2142,14 +2142,14 @@
 "spinarak": {
 "id": "spinarak",
 "stats": {
-"hp": 40,
-"atk": 70,
-"defe": 40,
-"spe": 50,
-"spa": 45,
-"spd": 40
+"hp": 48,
+"atk": 68,
+"defe": 44,
+"spe": 34,
+"spa": 40,
+"spd": 46
 },
-"bst": 285,
+"bst": 280,
 "types": [
 "BUG",
 "POISON"
@@ -2459,14 +2459,14 @@
 "skiploom": {
 "id": "skiploom",
 "stats": {
-"hp": 55,
+"hp": 65,
 "atk": 45,
 "defe": 50,
-"spe": 90,
-"spa": 55,
+"spe": 80,
+"spa": 45,
 "spd": 65
 },
-"bst": 360,
+"bst": 350,
 "types": [
 "GRASS",
 "FLYING"
@@ -2572,14 +2572,14 @@
 "golem_alolan": {
 "id": "golem_alolan",
 "stats": {
-"hp": 90,
+"hp": 80,
 "atk": 120,
 "defe": 130,
-"spe": 50,
+"spe": 55,
 "spa": 55,
-"spd": 65
+"spd": 80
 },
-"bst": 510,
+"bst": 520,
 "types": [
 "ROCK",
 "ELECTRIC"
@@ -2803,9 +2803,9 @@
 "defe": 95,
 "spe": 85,
 "spa": 65,
-"spd": 65
+"spd": 80
 },
-"bst": 510,
+"bst": 525,
 "types": [
 "DARK",
 "POISON"
@@ -3342,14 +3342,14 @@
 "pikachu": {
 "id": "pikachu",
 "stats": {
-"hp": 40,
-"atk": 60,
+"hp": 35,
+"atk": 65,
 "defe": 40,
-"spe": 100,
+"spe": 95,
 "spa": 60,
 "spd": 50
 },
-"bst": 350,
+"bst": 345,
 "types": [
 "ELECTRIC"
 ],
@@ -3525,11 +3525,11 @@
 "hp": 40,
 "atk": 50,
 "defe": 30,
-"spe": 55,
-"spa": 45,
+"spe": 65,
+"spa": 20,
 "spd": 80
 },
-"bst": 300,
+"bst": 285,
 "types": [
 "BUG",
 "FLYING"
@@ -3837,14 +3837,14 @@
 "bonsly": {
 "id": "bonsly",
 "stats": {
-"hp": 60,
-"atk": 85,
-"defe": 100,
-"spe": 10,
+"hp": 58,
+"atk": 88,
+"defe": 99,
+"spe": 14,
 "spa": 10,
-"spd": 60
+"spd": 51
 },
-"bst": 325,
+"bst": 320,
 "types": [
 "ROCK"
 ],
@@ -3926,14 +3926,14 @@
 "butterfree": {
 "id": "butterfree",
 "stats": {
-"hp": 65,
+"hp": 60,
 "atk": 45,
-"defe": 60,
+"defe": 50,
 "spe": 90,
-"spa": 100,
-"spd": 90
+"spa": 110,
+"spd": 110
 },
-"bst": 450,
+"bst": 465,
 "types": [
 "BUG",
 "PSYCHIC"
@@ -3973,13 +3973,13 @@
 "id": "furret",
 "stats": {
 "hp": 90,
-"atk": 85,
-"defe": 65,
-"spe": 105,
+"atk": 96,
+"defe": 64,
+"spe": 108,
 "spa": 45,
-"spd": 55
+"spd": 60
 },
-"bst": 445,
+"bst": 463,
 "types": [
 "NORMAL"
 ],
@@ -4156,11 +4156,11 @@
 "hp": 65,
 "atk": 60,
 "defe": 110,
-"spe": 95,
+"spe": 85,
 "spa": 130,
-"spd": 65
+"spd": 95
 },
-"bst": 525,
+"bst": 545,
 "types": [
 "ICE"
 ],
@@ -4221,14 +4221,14 @@
 "corsola_plain": {
 "id": "corsola_plain",
 "stats": {
-"hp": 65,
+"hp": 75,
 "atk": 55,
 "defe": 95,
-"spe": 35,
-"spa": 65,
+"spe": 45,
+"spa": 75,
 "spd": 95
 },
-"bst": 410,
+"bst": 440,
 "types": [
 "WATER",
 "ROCK"
@@ -4718,14 +4718,14 @@
 "mime_jr_": {
 "id": "mime_jr_",
 "stats": {
-"hp": 30,
-"atk": 35,
-"defe": 45,
-"spe": 65,
-"spa": 80,
-"spd": 95
+"hp": 28,
+"atk": 25,
+"defe": 51,
+"spe": 64,
+"spa": 78,
+"spd": 94
 },
-"bst": 350,
+"bst": 340,
 "types": [
 "PSYCHIC",
 "FAIRY"
@@ -5128,11 +5128,11 @@
 "hp": 60,
 "atk": 115,
 "defe": 100,
-"spe": 45,
+"spe": 60,
 "spa": 60,
-"spd": 80
+"spd": 90
 },
-"bst": 460,
+"bst": 485,
 "types": [
 "BUG",
 "GRASS"
@@ -5239,13 +5239,13 @@
 "id": "lickilicky",
 "stats": {
 "hp": 110,
-"atk": 85,
+"atk": 100,
 "defe": 95,
 "spe": 50,
-"spa": 80,
+"spa": 90,
 "spd": 95
 },
-"bst": 515,
+"bst": 540,
 "types": [
 "NORMAL"
 ],
@@ -5620,12 +5620,12 @@
 "hoppip": {
 "id": "hoppip",
 "stats": {
-"hp": 35,
-"atk": 35,
-"defe": 40,
-"spe": 70,
-"spa": 45,
-"spd": 55
+"hp": 43,
+"atk": 39,
+"defe": 46,
+"spe": 54,
+"spa": 39,
+"spd": 59
 },
 "bst": 280,
 "types": [
@@ -6276,14 +6276,14 @@
 "beedrill": {
 "id": "beedrill",
 "stats": {
-"hp": 65,
-"atk": 105,
-"defe": 50,
-"spe": 85,
-"spa": 55,
+"hp": 70,
+"atk": 100,
+"defe": 55,
+"spe": 115,
+"spa": 45,
 "spd": 90
 },
-"bst": 450,
+"bst": 475,
 "types": [
 "BUG",
 "POISON"
@@ -6368,10 +6368,10 @@
 "id": "persian_plain",
 "stats": {
 "hp": 65,
-"atk": 80,
+"atk": 85,
 "defe": 60,
 "spe": 115,
-"spa": 75,
+"spa": 70,
 "spd": 65
 },
 "bst": 460,
@@ -7070,14 +7070,14 @@
 "sentret": {
 "id": "sentret",
 "stats": {
-"hp": 45,
+"hp": 43,
 "atk": 50,
-"defe": 35,
-"spe": 70,
-"spa": 35,
-"spd": 45
+"defe": 40,
+"spe": 24,
+"spa": 39,
+"spd": 49
 },
-"bst": 280,
+"bst": 245,
 "types": [
 "NORMAL"
 ],
