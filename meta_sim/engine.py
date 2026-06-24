@@ -12,16 +12,22 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              recovery, Leech Seed, entry hazards (Spikes/Toxic Spikes),
              priority, switching, and a heuristic move/switch AI. Sleep Clause
              is mirrored from the shipped game (toggle: SLEEP_CLAUSE).
+             Switch-in/event abilities: Imposter (Transform onto the foe's
+             current types/stats/stages/ability/moves -- self-disarming,
+             since the ability slot is overwritten by the copy), Intimidate
+             (-1 foe Attack on switch-in), Levitate (immune to Ground moves
+             and grounded hazards), Sturdy (survives a lethal hit from full
+             HP at 1 HP), Regenerator (heal 1/3 max HP on switching out).
   approxd.  : confusion as a flat self-hit chance; multi-hit as its average
              hit count; two-turn moves resolve in one turn; Explosion = big
-             hit then user faints. Each mon commits to one ability and one
-             item for the whole battle (see abilities.py/items.py) instead
-             of switching among abilities per move like the 1v1 matrix does.
-  ignored   : weather, screens, trapping, Perish Song, Transform/Sketch/
-             Metronome, and most abilities/items beyond the modeled
-             multiplier-style subset in abilities.py/items.py. (So Ditto/
-             Wobbuffet/Smeargle and weather/screen teams are understated --
-             documented.)
+             hit then user faints. Each mon commits to one (non-event)
+             ability and one item for the whole battle (see
+             abilities.py/items.py) instead of switching among abilities per
+             move like the 1v1 matrix does.
+  ignored   : weather, screens, other trapping, Perish Song, Sketch/
+             Metronome, and abilities/items beyond the modeled subset above
+             and in abilities.py/items.py. (So Wobbuffet/Smeargle and
+             weather/screen teams are still understated -- documented.)
 
 Damage uses a random roll (0.85-1.00) since this is Monte Carlo; crits off.
 """
@@ -74,6 +80,17 @@ def type_mult(move_type, def_types, chart):
     for dt in def_types:
         m *= chart.get(f"{move_type}>{dt}", 1.0)
     return m
+
+
+def is_grounded(mon):
+    return 'FLYING' not in mon.types and mon.ability != 'LEVITATE'
+
+
+def eff_mult(move_type, defender, chart):
+    """type_mult, plus the Levitate/Ground special case."""
+    if move_type == 'GROUND' and not is_grounded(defender):
+        return 0.0
+    return type_mult(move_type, defender.types, chart)
 
 
 class Pmon:
@@ -137,7 +154,7 @@ class Side:
 # ---- damage ------------------------------------------------------------------
 def _damage_terms(att, dfn, move, chart):
     """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
-    eff = type_mult(move['type'], dfn.types, chart)
+    eff = eff_mult(move['type'], dfn, chart)
     is_stab = move['type'] in att.types
     atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
     if move['cat'] == 'PHYSICAL':
@@ -161,7 +178,7 @@ def move_damage(att, dfn, move, chart, rng):
     """Expected/rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0, 1.0
-    eff = type_mult(move['type'], dfn.types, chart)
+    eff = eff_mult(move['type'], dfn, chart)
     if eff == 0.0:
         return 0, 0.0
     eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
@@ -174,8 +191,8 @@ def move_damage(att, dfn, move, chart, rng):
 def expected_damage(att, dfn, move, chart):
     """Deterministic average damage, for AI scoring (no RNG)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
-        return 0, type_mult(move['type'], dfn.types, chart) if move['power'] else 1.0
-    eff = type_mult(move['type'], dfn.types, chart)
+        return 0, eff_mult(move['type'], dfn, chart) if move['power'] else 1.0
+    eff = eff_mult(move['type'], dfn, chart)
     if eff == 0.0:
         return 0, 0.0
     eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
@@ -236,13 +253,13 @@ def matchup_score(mon, foe, moves, chart):
     for mv in mon.moves:
         m = moves[mv]
         if m['cat'] != 'STATUS' and m['power'] > 0:
-            off = max(off, type_mult(m['type'], foe.types, chart) *
+            off = max(off, eff_mult(m['type'], foe, chart) *
                       (STAB if m['type'] in mon.types else 1.0))
     deff = 0.0
     for mv in foe.moves:
         m = moves[mv]
         if m['cat'] != 'STATUS' and m['power'] > 0:
-            deff = max(deff, type_mult(m['type'], mon.types, chart))
+            deff = max(deff, eff_mult(m['type'], mon, chart))
     return off - deff
 
 
@@ -266,20 +283,41 @@ def choose_switch(side, foe, moves, chart, forced):
 
 
 # ---- per-turn mechanics ------------------------------------------------------
-def apply_switch(side, idx, chart):
-    side.mon.reset_volatile()
+def apply_switch(side, idx, foe_side, chart):
+    old = side.mon
+    old.reset_volatile()
+    if idx != side.active and old.ability == 'REGENERATOR' and not old.fainted:
+        old.hp = min(old.maxhp, old.hp + old.maxhp / 3)
     side.active = idx
     m = side.mon
-    # entry hazards
-    if side.spikes and 'FLYING' not in m.types:
+    # entry hazards (grounded mons only -- Flying-type or Levitate skip these)
+    grounded = is_grounded(m)
+    if side.spikes and grounded:
         m.hp -= m.maxhp * [0, 1/8, 1/6, 1/4][side.spikes]
-    if side.tspikes and 'FLYING' not in m.types:
+    if side.tspikes and grounded:
         if 'POISON' in m.types:
             side.tspikes = 0               # absorbed
         elif 'STEEL' not in m.types and m.status is None:
             m.status = 'tox' if side.tspikes >= 2 else 'psn'
     if m.hp <= 0:
         m.fainted = True
+        return
+
+    # switch-in ability events (need to see the foe's already-active mon)
+    foe = foe_side.mon if foe_side else None
+    if foe and not foe.fainted:
+        if m.ability == 'INTIMIDATE':
+            foe.stage['atk'] = max(-6, foe.stage['atk'] - 1)
+        if m.ability == 'IMPOSTER':
+            # Transform onto the foe: types/stats/stages/ability/moves copy,
+            # HP stays the user's own. Self-disarming -- once 'ability' is
+            # overwritten it no longer reads as IMPOSTER, so this can't
+            # re-trigger on a later switch-in.
+            m.types = list(foe.types)
+            m.base = dict(foe.base)
+            m.stage = dict(foe.stage)
+            m.ability = foe.ability
+            m.moves = list(foe.moves)
 
 
 def end_of_turn(mon, foe_side):
@@ -341,22 +379,30 @@ def perform(att_side, dfn_side, moves, chart, rng):
     e = m['effect']
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng)
+        sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
         dfn.hp -= dmg * 2
         att.hp = 0
         att.fainted = True
         if dfn.hp <= 0:
-            dfn.fainted = True
+            if sturdy:
+                dfn.hp = 1
+            else:
+                dfn.fainted = True
         return
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng)
+        sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
         dfn.hp -= dmg
         if att.item == 'LIFE_ORB' and dmg > 0:
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:
                 att.fainted = True
         if dfn.hp <= 0:
-            dfn.fainted = True
+            if sturdy:
+                dfn.hp = 1
+            else:
+                dfn.fainted = True
             return
         # on-hit secondaries
         if e in ONHIT and dfn.status is None and rng.random() < m['chance'] / 100.0:
@@ -425,8 +471,8 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
     """Run one 6v6. Returns 0 if side A wins, 1 if B, -1 on turn-limit draw."""
     rng = random.Random(seed)
     A, B = Side([Pmon(*t) for t in team_a]), Side([Pmon(*t) for t in team_b])
-    apply_switch(A, 0, chart)
-    apply_switch(B, 0, chart)
+    apply_switch(A, 0, B, chart)
+    apply_switch(B, 0, A, chart)
 
     for _ in range(MAX_TURNS):
         # ---- switching decisions (forced first if a side's active fainted) ----
@@ -434,7 +480,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
             if s.mon.fainted:
                 nxt = choose_switch(s, foe, moves, chart, forced=True)
                 if nxt is not None:
-                    apply_switch(s, nxt, chart)
+                    apply_switch(s, nxt, foe, chart)
         if not A.alive_indices():
             return 1
         if not B.alive_indices():
@@ -443,7 +489,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
             if not s.mon.fainted:
                 nxt = choose_switch(s, foe, moves, chart, forced=False)
                 if nxt is not None:
-                    apply_switch(s, nxt, chart)
+                    apply_switch(s, nxt, foe, chart)
 
         # ---- order by (priority of chosen move, speed) ----
         ia = choose_move(A, B, moves, chart)
