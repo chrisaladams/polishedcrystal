@@ -7,10 +7,9 @@ This is a fork of [Rangi42's Polished Crystal](https://github.com/Rangi42/polish
 A pass at tightening up the meta for L50 link battles, nothing more:
 
 - **Stat compression** — buffed a bunch of weak/early-game mons, trimmed a handful of top-tier ceilings, so the power band is tighter across the roster.
-- **Trapping fixed** — Gengar lost Shadow Tag, Dugtrio/Diglett lost Arena Trap. Trapping someone with no way to switch isn't really a fun interaction. Wobbuffet/Wynaut keep it since it's their whole gimmick.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes).
 - **Moody removed.**
-- **Sleep and evasion clauses** for link battles — can't stack a second mon to sleep at once, and Double Team/Minimize no longer raise miss rate. Both gated to real link play only, so singleplayer and the Battle Tower are untouched.
+- **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as upstream ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
 - **Link-battle healing/leveling** — mons get forced to L50 and topped off before a link battle, so games aren't decided by who happened to grind more.
 - A few mart/item tweaks to go with the above.
 
