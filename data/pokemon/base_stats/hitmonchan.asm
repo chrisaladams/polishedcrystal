@@ -1,5 +1,10 @@
+if DEF(FAITHFUL)
 	bst 455,  50, 105,  79,  35, 110,  76
 	;   bst   hp  atk  def  sat  sdf  spe
+else
+	bst 481,  70, 105,  85,  35, 110,  76
+	;   bst   hp  atk  def  sat  sdf  spe
+endc
 
 	db FIGHTING, FIGHTING ; type
 	db 45 ; catch rate

@@ -480,14 +480,14 @@
 "shuckle": {
 "id": "shuckle",
 "stats": {
-"hp": 20,
+"hp": 40,
 "atk": 10,
 "defe": 230,
 "spe": 5,
 "spa": 10,
 "spd": 230
 },
-"bst": 505,
+"bst": 525,
 "types": [
 "BUG",
 "ROCK"
@@ -1538,13 +1538,13 @@
 "id": "octillery",
 "stats": {
 "hp": 75,
-"atk": 110,
+"atk": 105,
 "defe": 75,
-"spe": 45,
-"spa": 110,
-"spd": 80
+"spe": 55,
+"spa": 105,
+"spd": 75
 },
-"bst": 495,
+"bst": 490,
 "types": [
 "WATER",
 "FIRE"
@@ -2098,14 +2098,14 @@
 "sirfetch_d": {
 "id": "sirfetch_d",
 "stats": {
-"hp": 62,
+"hp": 80,
 "atk": 135,
 "defe": 95,
-"spe": 65,
+"spe": 75,
 "spa": 68,
 "spd": 82
 },
-"bst": 507,
+"bst": 535,
 "types": [
 "FIGHTING"
 ],
@@ -2933,14 +2933,14 @@
 "smoochum": {
 "id": "smoochum",
 "stats": {
-"hp": 50,
-"atk": 35,
-"defe": 45,
-"spe": 75,
-"spa": 90,
-"spd": 65
+"hp": 53,
+"atk": 30,
+"defe": 21,
+"spe": 69,
+"spa": 93,
+"spd": 69
 },
-"bst": 360,
+"bst": 335,
 "types": [
 "ICE",
 "PSYCHIC"
@@ -3183,14 +3183,14 @@
 "hitmonchan": {
 "id": "hitmonchan",
 "stats": {
-"hp": 50,
+"hp": 70,
 "atk": 105,
-"defe": 79,
+"defe": 85,
 "spe": 76,
 "spa": 35,
 "spd": 110
 },
-"bst": 455,
+"bst": 481,
 "types": [
 "FIGHTING"
 ],
@@ -4561,14 +4561,14 @@
 "hitmontop": {
 "id": "hitmontop",
 "stats": {
-"hp": 50,
-"atk": 95,
+"hp": 70,
+"atk": 100,
 "defe": 95,
 "spe": 70,
 "spa": 35,
 "spd": 110
 },
-"bst": 455,
+"bst": 480,
 "types": [
 "FIGHTING"
 ],
@@ -5417,14 +5417,14 @@
 "annihilape": {
 "id": "annihilape",
 "stats": {
-"hp": 110,
-"atk": 115,
+"hp": 100,
+"atk": 100,
 "defe": 80,
-"spe": 90,
+"spe": 75,
 "spa": 50,
 "spd": 90
 },
-"bst": 535,
+"bst": 495,
 "types": [
 "FIGHTING",
 "GHOST"
@@ -5781,11 +5781,11 @@
 "hp": 70,
 "atk": 60,
 "defe": 125,
-"spe": 55,
+"spe": 70,
 "spa": 115,
-"spd": 70
+"spd": 80
 },
-"bst": 495,
+"bst": 520,
 "types": [
 "ROCK",
 "WATER"
