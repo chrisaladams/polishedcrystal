@@ -13,9 +13,9 @@ endc
 	dn GENDER_F50, HATCH_MEDIUM_FAST ; gender ratio, step cycles to hatch
 
 if DEF(FAITHFUL)
-	abilities_for GENGAR, CURSED_BODY, CURSED_BODY, CURSED_BODY
+	abilities_for GENGAR, CURSED_BODY, CURSED_BODY, SHADOW_TAG
 else
-	abilities_for GENGAR, CURSED_BODY, LEVITATE, CURSED_BODY
+	abilities_for GENGAR, CURSED_BODY, LEVITATE, SHADOW_TAG
 endc
 	db GROWTH_MEDIUM_SLOW ; growth rate
 	dn EGG_INDETERMINATE, EGG_INDETERMINATE ; egg groups

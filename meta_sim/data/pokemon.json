@@ -2008,14 +2008,14 @@
 "porygon_z": {
 "id": "porygon_z",
 "stats": {
-"hp": 85,
+"hp": 80,
 "atk": 80,
 "defe": 70,
 "spe": 90,
-"spa": 135,
+"spa": 100,
 "spd": 75
 },
-"bst": 535,
+"bst": 495,
 "types": [
 "NORMAL"
 ],
@@ -2585,9 +2585,9 @@
 "ELECTRIC"
 ],
 "abilities": [
-"MAGNET_PULL",
+"GALVANIZE",
 "STURDY",
-"GALVANIZE"
+"MAGNET_PULL"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -2608,7 +2608,7 @@
 ],
 "abilities": [
 "SAND_VEIL",
-"TANGLING_HAIR",
+"ARENA_TRAP",
 "SAND_FORCE"
 ],
 "fully_evolved": false,
@@ -2655,7 +2655,7 @@
 "abilities": [
 "CURSED_BODY",
 "LEVITATE",
-"CURSED_BODY"
+"SHADOW_TAG"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -2811,9 +2811,9 @@
 "POISON"
 ],
 "abilities": [
-"POISON_POINT",
+"INTIMIDATE",
 "SWIFT_SWIM",
-"INTIMIDATE"
+"POISON_POINT"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -4234,9 +4234,9 @@
 "ROCK"
 ],
 "abilities": [
-"HUSTLE",
+"REGENERATOR",
 "NATURAL_CURE",
-"REGENERATOR"
+"HUSTLE"
 ],
 "fully_evolved": true,
 "legendary": false
@@ -5251,7 +5251,7 @@
 ],
 "abilities": [
 "OWN_TEMPO",
-"OBLIVIOUS",
+"THICK_FAT",
 "CLOUD_NINE"
 ],
 "fully_evolved": true,
@@ -7105,7 +7105,7 @@
 ],
 "abilities": [
 "SAND_VEIL",
-"TANGLING_HAIR",
+"ARENA_TRAP",
 "SAND_FORCE"
 ],
 "fully_evolved": true,
