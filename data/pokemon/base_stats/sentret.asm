@@ -1,8 +1,8 @@
 if DEF(FAITHFUL)
-	bst 215,  35,  46,  34,  35,  45,  20
+	bst 245,  43,  50,  40,  39,  49,  24
 	;   bst   hp  atk  def  sat  sdf  spe
 else
-	bst 280,  45,  50,  35,  35,  45,  70
+	bst 245,  43,  50,  40,  39,  49,  24
 	;   bst   hp  atk  def  sat  sdf  spe
 endc
 

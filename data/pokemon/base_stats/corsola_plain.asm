@@ -1,4 +1,4 @@
-	bst 410,  65,  55,  95,  65,  95,  35
+	bst 440,  75,  55,  95,  75,  95,  45
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db WATER, ROCK ; type

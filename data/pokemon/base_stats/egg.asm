@@ -1,7 +1,7 @@
 if DEF(FAITHFUL)
-	bst 60,  10,  10,  10,  10,  10,  10
+	bst  90,  18,  14,  14,  14,  16,  14
 else
-	bst 90,  18,  14,  14,  14,  16,  14
+	bst  90,  18,  14,  14,  14,  16,  14
 endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
