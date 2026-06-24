@@ -33,11 +33,10 @@ Damage uses a random roll (0.85-1.00) since this is Monte Carlo; crits off.
 """
 import random
 
-from stats import mon_stats
+from typechart import STAB, type_mult
 import abilities
 import items
 
-STAB = 1.5
 CHOICE_ITEMS = {'CHOICE_BAND', 'CHOICE_SPECS', 'CHOICE_SCARF'}
 SLEEP_CLAUSE = False         # shipped game dropped the Sleep Clause (sleep is unrestricted, 1-3 turns); mirror that here
 MAX_TURNS = 300              # battle longer than this -> draw (anti-stall guard)
@@ -73,13 +72,6 @@ HEAL_EFFECTS = {'EFFECT_HEAL', 'EFFECT_HEALING_LIGHT', 'EFFECT_ROOST'}
 RECOIL_EFFECTS = {'EFFECT_RECOIL_HIT', 'EFFECT_FLARE_BLITZ', 'EFFECT_CLOSE_COMBAT',
                   'EFFECT_JUMP_KICK', 'EFFECT_BRICK_BREAK'}  # close combat = self def/spd drop, approx as none
 MULTI = {'EFFECT_MULTI_HIT': 3, 'EFFECT_DOUBLE_HIT': 2}
-
-
-def type_mult(move_type, def_types, chart):
-    m = 1.0
-    for dt in def_types:
-        m *= chart.get(f"{move_type}>{dt}", 1.0)
-    return m
 
 
 def is_grounded(mon):
@@ -174,32 +166,32 @@ def _damage_terms(att, dfn, move, chart):
     return eff, a, d, stab, dmg_mult
 
 
-def move_damage(att, dfn, move, chart, rng):
-    """Expected/rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
-    if move['cat'] == 'STATUS' or move['power'] <= 0:
-        return 0, 1.0
-    eff = eff_mult(move['type'], dfn, chart)
+def _resolve_damage(att, dfn, move, chart, roll):
+    """Shared finisher for move_damage/expected_damage: one eff_mult/_damage_terms
+    pass, applied with whichever damage roll the caller wants (RNG or the flat
+    average). Returns (damage, type_effectiveness)."""
+    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
     if eff == 0.0:
         return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
-    roll = rng.uniform(0.85, 1.0)
     hits = MULTI.get(move['effect'], 1)
     return int(base * stab * eff * dmg_mult * roll) * hits, eff
+
+
+def move_damage(att, dfn, move, chart, rng):
+    """Rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
+    if move['cat'] == 'STATUS' or move['power'] <= 0:
+        return 0, 1.0
+    return _resolve_damage(att, dfn, move, chart, rng.uniform(0.85, 1.0))
 
 
 def expected_damage(att, dfn, move, chart):
     """Deterministic average damage, for AI scoring (no RNG)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0, eff_mult(move['type'], dfn, chart) if move['power'] else 1.0
-    eff = eff_mult(move['type'], dfn, chart)
-    if eff == 0.0:
-        return 0, 0.0
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
-    base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
-    hits = MULTI.get(move['effect'], 1)
+    dmg, eff = _resolve_damage(att, dfn, move, chart, 0.925)
     acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
-    return int(base * stab * eff * dmg_mult * 0.925) * hits * acc, eff
+    return dmg * acc, eff
 
 
 # ---- heuristic AI ------------------------------------------------------------

@@ -12,7 +12,8 @@ only variable between the two runs is *team composition*.
 """
 import random
 
-from engine import (BOOST, HEAL_EFFECTS, INFLICT, type_mult)
+from engine import BOOST, HEAL_EFFECTS, INFLICT
+from pool import eligible
 import abilities
 import items
 
@@ -126,13 +127,7 @@ def build_pool(mons, learnsets, args):
     from stats import mon_stats
     pool = {}
     for mid, m in mons.items():
-        if 'stats' not in m or 'types' not in m:
-            continue
-        if not args.include_unevolved and not m.get('fully_evolved'):
-            continue
-        if not args.include_legendary and m.get('legendary'):
-            continue
-        if not learnsets.get(mid):
+        if not eligible(m, args) or not learnsets.get(mid):
             continue
         m = dict(m)
         m['stats'] = mon_stats(m['stats'])

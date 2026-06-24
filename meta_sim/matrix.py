@@ -26,21 +26,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from stats import mon_stats          # noqa: E402
 from calc import best_move, hits_to_ko  # noqa: E402
+from pool import eligible             # noqa: E402
 
 def load(name):
     return json.load(open(os.path.join(HERE, 'data', name)))
 
 def build_pool(mons, args):
-    pool = {}
-    for mid, m in mons.items():
-        if 'stats' not in m or 'types' not in m:
-            continue
-        if not args.include_unevolved and not m.get('fully_evolved'):
-            continue
-        if not args.include_legendary and m.get('legendary'):
-            continue
-        pool[mid] = m
-    return pool
+    return {mid: m for mid, m in mons.items() if eligible(m, args)}
 
 def first_mover(a, b):
     """Return 1 if a moves first, -1 if b, 0 if tie. a/b = (priority, speed)."""

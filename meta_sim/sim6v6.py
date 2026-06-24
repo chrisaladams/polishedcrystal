@@ -28,7 +28,7 @@ import os, sys, json, argparse, csv, random
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from engine import run_battle                       # noqa: E402
+from engine import run_battle, SLEEP_CLAUSE          # noqa: E402
 from teams import build_pool, random_team, role_team  # noqa: E402
 
 
@@ -110,8 +110,9 @@ def main():
     # ---------------- report ----------------
     pool_desc = ("fully-evolved" if not args.include_unevolved else "all") + \
                 (", incl. legendary" if args.include_legendary else ", non-legendary")
+    clause_desc = "Sleep Clause on" if SLEEP_CLAUSE else "Sleep Clause off (matches shipped game)"
     print(f"\n6v6 Monte Carlo  |  pool: {len(ids)} ({pool_desc})  |  "
-          f"{args.games} battles/mode  |  heuristic AI, Sleep Clause on")
+          f"{args.games} battles/mode  |  heuristic AI, {clause_desc}")
     print(f"CSV: {args.csv}")
 
     def col(mode):

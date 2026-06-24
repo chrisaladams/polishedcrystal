@@ -27,16 +27,10 @@ tuning, NOT a full battle: it ignores switching, status over time, hazards,
 and most item effects. Documented in meta_sim/matrix.py output.
 """
 from stats import LEVEL
+from typechart import STAB, type_mult
 import abilities
 
-STAB = 1.5
 ROLL = 0.925  # average damage roll
-
-def type_mult(move_type, def_types, chart):
-    m = 1.0
-    for dt in def_types:
-        m *= chart.get(f"{move_type}>{dt}", 1.0)
-    return m
 
 def damage(attacker, defender, move, chart, atk_ability=None):
     """Return average damage (int) move does from attacker to defender.
