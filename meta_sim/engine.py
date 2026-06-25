@@ -183,7 +183,8 @@ class Pmon:
     """Battle-time wrapper around a pokemon.json entry + a chosen moveset."""
     __slots__ = ('id', 'types', 'base', 'moves', 'ability', 'item', 'maxhp',
                  'hp', 'status', 'sleep', 'tox', 'stage', 'seeded', 'confused',
-                 'fainted', 'locked_move', 'flash_fire', 'dmg_dealt', 'kos')
+                 'fainted', 'locked_move', 'flash_fire', 'dmg_dealt', 'kos',
+                 'status_infl', 'heal_done')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -205,6 +206,8 @@ class Pmon:
         self.flash_fire = False            # Flash Fire: permanent 1.5x own Fire moves once triggered
         self.dmg_dealt = 0.0                # sum of useful damage dealt, as a fraction of each target's max HP
         self.kos = 0                        # faints this mon's own moves directly caused
+        self.status_infl = 0                # major statuses/confusion this mon's own moves landed on a foe
+        self.heal_done = 0.0                # HP this mon recovered via its own heal moves / Leech Seed drain, as a fraction of its own max HP
 
     def stat(self, key, ignore_stage=False):
         stage = 0 if ignore_stage else self.stage.get(key, 0)
@@ -460,7 +463,9 @@ def end_of_turn(mon, foe_side):
                     if seeder.hp <= 0:
                         seeder.fainted = True
                 else:
-                    seeder.hp = min(seeder.maxhp, seeder.hp + drain)
+                    healed = min(seeder.maxhp - seeder.hp, drain)
+                    seeder.hp += healed
+                    seeder.heal_done += healed / seeder.maxhp
     if mon.hp <= 0:
         mon.fainted = True
         return False
@@ -560,6 +565,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
             st = ONHIT[e]
             if st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
                 dfn.status = st
+                att.status_infl += 1
                 if st == 'tox':
                     dfn.tox = 0
                 apply_synchronize(dfn, att, st)
@@ -601,6 +607,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
         if st == 'cnf':
             if not status_blocked(dfn, st):
                 dfn.confused = rng.randint(2, 4)
+                att.status_infl += 1
             return
         if status_blocked(dfn, st):
             return
@@ -615,9 +622,12 @@ def perform(att_side, dfn_side, moves, chart, rng):
             if st == 'tox':
                 dfn.tox = 0
             apply_synchronize(dfn, att, st)
+        att.status_infl += 1
         return
     if e in HEAL_EFFECTS:
-        att.hp = min(att.maxhp, att.hp + att.maxhp / 2)
+        healed = min(att.maxhp - att.hp, att.maxhp / 2)
+        att.hp += healed
+        att.heal_done += healed / att.maxhp
         return
     if e == 'EFFECT_LEECH_SEED':
         dfn.seeded = True
@@ -634,20 +644,28 @@ def perform(att_side, dfn_side, moves, chart, rng):
 def run_battle(team_a, team_b, moves, chart, seed=None):
     """Run one 6v6. Returns (result, contrib_a, contrib_b):
       result    : 0 if side A wins, 1 if B, -1 on turn-limit draw.
-      contrib_* : list of (dmg_dealt, kos) per mon, same order as team_a/team_b.
-                  dmg_dealt is useful damage this mon dealt, summed as a fraction
-                  of each target's max HP (capped per-hit so overkill on an
-                  already-doomed mon doesn't inflate the score); kos is faints
-                  this mon's own moves directly caused. A per-mon signal, unlike
-                  the team-wide win/loss, so a mon's value isn't conflated with
-                  its teammates' (see sim6v6.py's role-team-builder note)."""
+      contrib_* : list of (dmg_dealt, kos, status_infl, heal_done) per mon, same
+                  order as team_a/team_b.
+                    dmg_dealt    : useful damage this mon dealt, summed as a
+                                   fraction of each target's max HP (capped
+                                   per-hit so overkill on an already-doomed mon
+                                   doesn't inflate the score)
+                    kos          : faints this mon's own moves directly caused
+                    status_infl  : major statuses/confusion this mon's own
+                                   moves landed on a foe
+                    heal_done    : HP this mon recovered via its own heal moves
+                                   or Leech Seed drain, as a fraction of its own
+                                   max HP
+                  A per-mon signal, unlike the team-wide win/loss, so a mon's
+                  value isn't conflated with its teammates' (see sim6v6.py's
+                  role-team-builder note)."""
     rng = random.Random(seed)
     A, B = Side([Pmon(*t) for t in team_a]), Side([Pmon(*t) for t in team_b])
     apply_switch(A, 0, B, chart)
     apply_switch(B, 0, A, chart)
 
     def contrib(side):
-        return [(m.dmg_dealt, m.kos) for m in side.team]
+        return [(m.dmg_dealt, m.kos, m.status_infl, m.heal_done) for m in side.team]
 
     for _ in range(MAX_TURNS):
         # ---- switching decisions (forced first if a side's active fainted) ----
