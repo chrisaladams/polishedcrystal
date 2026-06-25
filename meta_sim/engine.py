@@ -41,7 +41,15 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              effective damage), Motor Drive (immune to Electric + Speed
              boost, alongside the absorb cluster above), Lightning Rod
              (+1 SpAtk when actually hit by an Electric move -- unlike
-             Motor Drive it does not grant immunity).
+             Motor Drive it does not grant immunity). Status-utility
+             abilities: Natural Cure (clears status on switch-out), Shed Skin
+             (30%/turn chance to clear status), Synchronize (reflects a
+             paralysis/burn/poison/toxic it receives back onto the inflictor),
+             Serene Grace (doubles on-hit secondary-effect chance), and the
+             contact-status abilities Static/Flame Body/Poison Point (30%
+             chance to par/brn/psn a physical attacker -- "contact" is
+             approximated as "hit by a physical move", since the data carries
+             no contact flag).
   approxd.  : confusion as a flat self-hit chance; multi-hit as its average
              hit count; two-turn moves resolve in one turn; Explosion = big
              hit then user faints; Dry Skin modeled as Water Absorb only
@@ -113,6 +121,17 @@ STATUS_IMMUNE = {'INSOMNIA': 'slp', 'VITAL_SPIRIT': 'slp', 'OWN_TEMPO': 'cnf',
                   'LIMBER': 'par', 'WATER_VEIL': 'brn', 'IMMUNITY': 'psn',
                   'MAGMA_ARMOR': 'frz'}
 
+# contact-status abilities: a defender's ability -> the status it may inflict on
+# a physical attacker. The data has no contact flag, so we approximate "on
+# contact" as "hit by a physical move" (true for the large majority of physical
+# moves). Fires at CONTACT_STATUS_CHANCE.
+CONTACT_STATUS = {'STATIC': 'par', 'FLAME_BODY': 'brn', 'POISON_POINT': 'psn'}
+CONTACT_STATUS_CHANCE = 0.30
+
+# Synchronize reflects these major statuses back onto whoever inflicted them
+# (sleep/freeze are not reflected, mirroring the games).
+SYNC_STATUSES = {'par', 'brn', 'psn', 'tox'}
+
 
 def status_blocked(mon, st):
     block = STATUS_IMMUNE.get(mon.ability)
@@ -121,6 +140,19 @@ def status_blocked(mon, st):
     if block == 'psn':
         return st in ('psn', 'tox')
     return block == st
+
+
+def apply_synchronize(victim, inflictor, st):
+    """If `victim` has Synchronize, reflect a major status back onto the
+    `inflictor` (no-op for sleep/freeze, a blocked/already-statused inflictor,
+    or a victim without the ability)."""
+    if victim.ability != 'SYNCHRONIZE' or st not in SYNC_STATUSES:
+        return
+    if inflictor.status is not None or status_blocked(inflictor, st):
+        return
+    inflictor.status = st
+    if st == 'tox':
+        inflictor.tox = 0
 
 
 def eff_mult(move_type, defender, chart):
@@ -361,8 +393,12 @@ def choose_switch(side, foe, moves, chart, forced):
 def apply_switch(side, idx, foe_side, chart):
     old = side.mon
     old.reset_volatile()
-    if idx != side.active and old.ability == 'REGENERATOR' and not old.fainted:
-        old.hp = min(old.maxhp, old.hp + old.maxhp / 3)
+    if idx != side.active and not old.fainted:
+        if old.ability == 'REGENERATOR':
+            old.hp = min(old.maxhp, old.hp + old.maxhp / 3)
+        if old.ability == 'NATURAL_CURE':   # cures status on switch-out
+            old.status = None
+            old.sleep = old.tox = 0
     side.active = idx
     m = side.mon
     # entry hazards (grounded mons only -- Flying-type or Levitate skip these)
@@ -399,6 +435,9 @@ def end_of_turn(mon, foe_side):
     """Residual damage/heal. Returns False if mon faints."""
     if mon.fainted:
         return False
+    if mon.ability == 'SHED_SKIN' and mon.status is not None and random.random() < 0.3:
+        mon.status = None               # 30%/turn cure of any major status
+        mon.sleep = mon.tox = 0
     if mon.ability == 'POISON_HEAL' and mon.status in ('psn', 'tox'):
         mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8)
     elif mon.ability != 'MAGIC_GUARD':
@@ -492,19 +531,27 @@ def perform(att_side, dfn_side, moves, chart, rng):
             else:
                 dfn.fainted = True
             return
-        # on-hit secondaries
-        if e in ONHIT and dfn.status is None and rng.random() < m['chance'] / 100.0:
+        # on-hit secondaries (Serene Grace doubles the trigger chance)
+        chance = m['chance'] * 2 if att.ability == 'SERENE_GRACE' else m['chance']
+        if e in ONHIT and dfn.status is None and rng.random() < chance / 100.0:
             st = ONHIT[e]
             if st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
                 dfn.status = st
                 if st == 'tox':
                     dfn.tox = 0
-        if e == 'EFFECT_FLINCH_HIT' and rng.random() < m['chance'] / 100.0:
+                apply_synchronize(dfn, att, st)
+        if e == 'EFFECT_FLINCH_HIT' and rng.random() < chance / 100.0:
             pass                            # flinch handled by turn order in battle loop (approx: ignore)
         if e in RECOIL_EFFECTS and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD'):
             att.hp -= dmg / 3
             if att.hp <= 0:
                 att.fainted = True
+        # contact-status abilities on the (surviving) defender vs a physical hit
+        if m['cat'] == 'PHYSICAL' and not att.fainted and att.status is None:
+            cs = CONTACT_STATUS.get(dfn.ability)
+            if cs and not status_blocked(att, cs) and rng.random() < CONTACT_STATUS_CHANCE:
+                att.status = cs
+                apply_synchronize(att, dfn, cs)
         return
 
     # ---- status / utility moves ----
@@ -544,6 +591,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
             dfn.status = st
             if st == 'tox':
                 dfn.tox = 0
+            apply_synchronize(dfn, att, st)
         return
     if e in HEAL_EFFECTS:
         att.hp = min(att.maxhp, att.hp + att.maxhp / 2)
