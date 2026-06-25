@@ -183,7 +183,7 @@ class Pmon:
     """Battle-time wrapper around a pokemon.json entry + a chosen moveset."""
     __slots__ = ('id', 'types', 'base', 'moves', 'ability', 'item', 'maxhp',
                  'hp', 'status', 'sleep', 'tox', 'stage', 'seeded', 'confused',
-                 'fainted', 'locked_move', 'flash_fire')
+                 'fainted', 'locked_move', 'flash_fire', 'dmg_dealt', 'kos')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -203,6 +203,8 @@ class Pmon:
         self.fainted = False
         self.locked_move = None            # Choice-item move lock (index into self.moves)
         self.flash_fire = False            # Flash Fire: permanent 1.5x own Fire moves once triggered
+        self.dmg_dealt = 0.0                # sum of useful damage dealt, as a fraction of each target's max HP
+        self.kos = 0                        # faints this mon's own moves directly caused
 
     def stat(self, key, ignore_stage=False):
         stage = 0 if ignore_stage else self.stage.get(key, 0)
@@ -512,8 +514,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
     e = m['effect']
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng)
+        dmg *= 2
         sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
-        dfn.hp -= dmg * 2
+        att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
+        dfn.hp -= dmg
         att.hp = 0
         att.fainted = True
         if dfn.hp <= 0:
@@ -521,6 +525,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
                 dfn.hp = 1
             else:
                 dfn.fainted = True
+                att.kos += 1
         return
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
@@ -530,6 +535,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
         elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
             dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
         sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
+        att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
         dfn.hp -= dmg
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
@@ -540,6 +546,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
                 dfn.hp = 1
             else:
                 dfn.fainted = True
+                att.kos += 1
             return
         # on-hit secondaries: Serene Grace doubles the trigger chance;
         # Shield Dust on the defender suppresses secondaries entirely.
@@ -625,11 +632,22 @@ def perform(att_side, dfn_side, moves, chart, rng):
 
 
 def run_battle(team_a, team_b, moves, chart, seed=None):
-    """Run one 6v6. Returns 0 if side A wins, 1 if B, -1 on turn-limit draw."""
+    """Run one 6v6. Returns (result, contrib_a, contrib_b):
+      result    : 0 if side A wins, 1 if B, -1 on turn-limit draw.
+      contrib_* : list of (dmg_dealt, kos) per mon, same order as team_a/team_b.
+                  dmg_dealt is useful damage this mon dealt, summed as a fraction
+                  of each target's max HP (capped per-hit so overkill on an
+                  already-doomed mon doesn't inflate the score); kos is faints
+                  this mon's own moves directly caused. A per-mon signal, unlike
+                  the team-wide win/loss, so a mon's value isn't conflated with
+                  its teammates' (see sim6v6.py's role-team-builder note)."""
     rng = random.Random(seed)
     A, B = Side([Pmon(*t) for t in team_a]), Side([Pmon(*t) for t in team_b])
     apply_switch(A, 0, B, chart)
     apply_switch(B, 0, A, chart)
+
+    def contrib(side):
+        return [(m.dmg_dealt, m.kos) for m in side.team]
 
     for _ in range(MAX_TURNS):
         # ---- switching decisions (forced first if a side's active fainted) ----
@@ -639,9 +657,9 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
                 if nxt is not None:
                     apply_switch(s, nxt, foe, chart)
         if not A.alive_indices():
-            return 1
+            return 1, contrib(A), contrib(B)
         if not B.alive_indices():
-            return 0
+            return 0, contrib(A), contrib(B)
         for s, foe in ((A, B), (B, A)):
             if not s.mon.fainted:
                 nxt = choose_switch(s, foe, moves, chart, forced=False)
@@ -664,7 +682,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None):
         for s, foe in ((A, B), (B, A)):
             end_of_turn(s.mon, foe)
         if not A.alive_indices():
-            return 1
+            return 1, contrib(A), contrib(B)
         if not B.alive_indices():
-            return 0
-    return -1
+            return 0, contrib(A), contrib(B)
+    return -1, contrib(A), contrib(B)

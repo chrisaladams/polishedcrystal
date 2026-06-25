@@ -37,17 +37,24 @@ def load(name):
 
 
 def run_mode(builder, ids, pool, moves, chart, games, rng):
-    rec = {mid: dict(games=0, win=0.0) for mid in ids}
+    rec = {mid: dict(games=0, win=0.0, dmg=0.0, kos=0) for mid in ids}
     for g in range(games):
         ta = builder(ids, pool, moves, chart, rng)
         tb = builder(ids, pool, moves, chart, rng)
-        res = run_battle(ta, tb, moves, chart, seed=rng.randrange(1 << 30))
+        res, contrib_a, contrib_b = run_battle(ta, tb, moves, chart,
+                                                seed=rng.randrange(1 << 30))
         a_ids = [t[0] for t in ta]
         b_ids = [t[0] for t in tb]
         for mid in a_ids:
             rec[mid]['games'] += 1
         for mid in b_ids:
             rec[mid]['games'] += 1
+        for mid, (dmg, kos) in zip(a_ids, contrib_a):
+            rec[mid]['dmg'] += dmg
+            rec[mid]['kos'] += kos
+        for mid, (dmg, kos) in zip(b_ids, contrib_b):
+            rec[mid]['dmg'] += dmg
+            rec[mid]['kos'] += kos
         if res == 0:
             for mid in a_ids: rec[mid]['win'] += 1
         elif res == 1:
@@ -55,7 +62,9 @@ def run_mode(builder, ids, pool, moves, chart, games, rng):
         else:
             for mid in a_ids: rec[mid]['win'] += 0.5
             for mid in b_ids: rec[mid]['win'] += 0.5
-    return {mid: (r['win'] / r['games'] if r['games'] else 0.0, r['games'])
+    return {mid: (r['win'] / r['games'] if r['games'] else 0.0, r['games'],
+                  r['dmg'] / r['games'] if r['games'] else 0.0,
+                  r['kos'] / r['games'] if r['games'] else 0.0)
             for mid, r in rec.items()}
 
 
@@ -92,9 +101,11 @@ def main():
                    bst=pool[mid]['bst'], role=pool[mid]['_role'],
                    spe=pool[mid]['stats']['spe'])
         for mode in modes:
-            wr, gms = results[mode][mid]
+            wr, gms, dmg, kos = results[mode][mid]
             row[f'{mode}_win'] = round(wr, 4)
             row[f'{mode}_games'] = gms
+            row[f'{mode}_dmg'] = round(dmg, 3)
+            row[f'{mode}_kos'] = round(kos, 3)
         if len(modes) == 2:
             row['delta'] = round(row['role_win'] - row['random_win'], 4)
         rows.append(row)
