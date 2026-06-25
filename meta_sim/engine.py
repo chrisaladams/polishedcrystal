@@ -290,6 +290,8 @@ def _resolve_damage(att, dfn, move, chart, roll):
         return 0, 0.0
     base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
     hits = MULTI.get(move['effect'], 1)
+    if att.ability == 'SKILL_LINK' and move['effect'] == 'EFFECT_MULTI_HIT':
+        hits = 5                            # Skill Link always lands the max
     return int(base * stab * eff * dmg_mult * roll) * hits, eff
 
 
@@ -449,6 +451,14 @@ def end_of_turn(mon, foe_side):
         if mon.seeded:
             drain = min(mon.maxhp / 8, max(mon.hp, 0))
             mon.hp -= drain
+            seeder = foe_side.mon            # Leech Seed transfers the drained HP
+            if not seeder.fainted:
+                if seeder.ability == 'LIQUID_OOZE':
+                    seeder.hp -= drain       # Liquid Ooze: the drainer is hurt instead
+                    if seeder.hp <= 0:
+                        seeder.fainted = True
+                else:
+                    seeder.hp = min(seeder.maxhp, seeder.hp + drain)
     if mon.hp <= 0:
         mon.fainted = True
         return False
@@ -531,8 +541,14 @@ def perform(att_side, dfn_side, moves, chart, rng):
             else:
                 dfn.fainted = True
             return
-        # on-hit secondaries (Serene Grace doubles the trigger chance)
-        chance = m['chance'] * 2 if att.ability == 'SERENE_GRACE' else m['chance']
+        # on-hit secondaries: Serene Grace doubles the trigger chance;
+        # Shield Dust on the defender suppresses secondaries entirely.
+        if dfn.ability == 'SHIELD_DUST':
+            chance = 0
+        elif att.ability == 'SERENE_GRACE':
+            chance = m['chance'] * 2
+        else:
+            chance = m['chance']
         if e in ONHIT and dfn.status is None and rng.random() < chance / 100.0:
             st = ONHIT[e]
             if st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
