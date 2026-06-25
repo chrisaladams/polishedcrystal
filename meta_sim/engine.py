@@ -260,6 +260,8 @@ def move_damage(att, dfn, move, chart, rng, weather=None, moving_last=False):
     if eff == 0.0:
         return 0, 0.0
     hits = MULTI.get(move['effect'], 1)
+    if att.ability == 'SKILL_LINK' and move['effect'] == 'EFFECT_MULTI_HIT':
+        hits = 5
     fixed = _fixed_damage(move, att, dfn)
     if fixed is not None:
         return int(fixed) * hits, eff
@@ -278,6 +280,8 @@ def expected_damage(att, dfn, move, chart, weather=None):
     if eff == 0.0:
         return 0, 0.0
     hits = MULTI.get(move['effect'], 1)
+    if att.ability == 'SKILL_LINK' and move['effect'] == 'EFFECT_MULTI_HIT':
+        hits = 5
     acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
     fixed = _fixed_damage(move, att, dfn)
     if fixed is not None:
@@ -490,6 +494,14 @@ def end_of_turn(mon, foe_side, weather=None, rng=None):
     if mon.seeded and not mon.fainted and not guard:
         drain = min(mon.maxhp / 8, max(mon.hp, 0))
         mon.hp -= drain
+        seeder = foe_side.mon
+        if not seeder.fainted:
+            if seeder.ability == 'LIQUID_OOZE':
+                seeder.hp -= drain
+                if seeder.hp <= 0:
+                    seeder.fainted = True
+            else:
+                seeder.hp = min(seeder.maxhp, seeder.hp + drain)
     # weather residuals
     if weather == 'sand' and not guard and not (SAND_IMMUNE & set(mon.types)):
         mon.hp -= mon.maxhp / 16
