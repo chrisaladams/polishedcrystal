@@ -21,35 +21,52 @@ WEATHER_OWN_BOOST = {
 
 # Preference order when a mon must commit to one ability for a whole 6v6
 # battle (the 1v1 matrix instead tries all of a mon's abilities and keeps the
-# best per move, so it doesn't need this list). Roughly ordered by expected
-# battle impact: defensive nullification/immunity first, then status
-# immunity, then offensive multipliers, then switch-in/residual utility.
-# Anything not modeled at all falls back to whichever ability is listed
-# first on the species.
+# best per move, so it doesn't need this list). Ordered by expected battle
+# impact: defensive nullification/immunity first, then flat offensive
+# multipliers (a guaranteed 2x stat or 1.33x STAB outvalues a situational
+# partial resist for this heuristic AI), then partial-resist multipliers,
+# sustain, switch-in utility, status immunity, then conditional/on-hit
+# abilities. Anything not modeled at all falls back to whichever ability is
+# listed first on the species.
+#
+# This ordering is necessarily a single global ranking and can't capture
+# every mon-specific nuance (see HUSTLE's special-case handling in
+# pick_ability below for the one case -- a physical-only Atk boost -- that
+# does need per-mon stats to resolve correctly).
 MODELED_PRIORITY = [
-    'MAGIC_GUARD', 'UNAWARE', 'MULTISCALE', 'STURDY', 'LEVITATE',
-    'FLASH_FIRE', 'WATER_ABSORB', 'VOLT_ABSORB', 'SAP_SIPPER', 'DRY_SKIN',
-    'MOTOR_DRIVE', 'THICK_FAT', 'SOLID_ROCK', 'FILTER',
-    'NATURAL_CURE', 'SHED_SKIN',
+    'MAGIC_GUARD', 'UNAWARE', 'MULTISCALE', 'STURDY',
+    'ADAPTABILITY', 'HUGE_POWER', 'PURE_POWER',
+    'LEVITATE', 'FLASH_FIRE', 'WATER_ABSORB', 'VOLT_ABSORB', 'SAP_SIPPER',
+    'DRY_SKIN', 'MOTOR_DRIVE',
+    'REGENERATOR', 'NATURAL_CURE', 'SHED_SKIN',
+    'THICK_FAT', 'SOLID_ROCK', 'FILTER',
+    'INTIMIDATE',
     'INSOMNIA', 'VITAL_SPIRIT', 'OWN_TEMPO', 'LIMBER', 'WATER_VEIL',
     'IMMUNITY', 'MAGMA_ARMOR',
-    'ADAPTABILITY', 'HUGE_POWER', 'PURE_POWER', 'GUTS', 'HUSTLE',
-    'TINTED_LENS', 'TECHNICIAN', 'SHEER_FORCE', 'SERENE_GRACE', 'SHIELD_DUST',
-    'SKILL_LINK',
+    'GUTS', 'TINTED_LENS', 'TECHNICIAN', 'SHEER_FORCE', 'SERENE_GRACE',
+    'SHIELD_DUST', 'SKILL_LINK',
     'DROUGHT', 'DRIZZLE', 'SAND_STREAM', 'LIGHTNING_ROD',
     'STATIC', 'FLAME_BODY', 'POISON_POINT', 'SYNCHRONIZE', 'LIQUID_OOZE',
-    'INTIMIDATE', 'REGENERATOR', 'IMPOSTER', 'SPEED_BOOST', 'POISON_HEAL',
-    'ROCK_HEAD',
+    'IMPOSTER', 'SPEED_BOOST', 'POISON_HEAL', 'ROCK_HEAD', 'HUSTLE',
 ]
 
 
-def pick_ability(abilities):
+def pick_ability(abilities, stats=None):
     """Pick one ability for a mon to use for an entire 6v6 battle: prefer a
     modeled ability if the species has one, else its first (regular)
-    ability."""
+    ability.
+
+    HUSTLE only boosts physical Attack (see offense_multipliers), so it's a
+    poor pick -- accuracy drop, no upside -- for a mon whose real attacking
+    stat is Sp.Atk; demote it below every other modeled ability for those
+    mons rather than letting it shadow something universally useful (e.g.
+    Togekiss: SERENE_GRACE over a HUSTLE boost to a stat it doesn't use)."""
     if not abilities:
         return None
-    for pref in MODELED_PRIORITY:
+    priority = MODELED_PRIORITY
+    if stats and stats.get('spa', 0) > stats.get('atk', 0) and 'HUSTLE' in abilities:
+        priority = [p for p in MODELED_PRIORITY if p != 'HUSTLE'] + ['HUSTLE']
+    for pref in priority:
         if pref in abilities:
             return pref
     return abilities[0]

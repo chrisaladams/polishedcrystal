@@ -140,7 +140,7 @@ def build_pool(mons, learnsets, args):
 def make_mon(mid, pool, moves, chart):
     """Return (mid, mon, moveset, ability, item) tuple ready for engine.Pmon."""
     m = pool[mid]
-    ability = abilities.pick_ability(m.get('abilities'))
+    ability = abilities.pick_ability(m.get('abilities'), m['stats'])
     item = items.pick_item(mid, m, m['_role'])
     return (mid, m, pick_moveset(mid, m, moves, chart, m['_role']), ability, item)
 
