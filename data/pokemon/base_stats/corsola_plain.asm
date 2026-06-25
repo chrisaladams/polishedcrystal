@@ -1,5 +1,10 @@
+if DEF(FAITHFUL)
 	bst 440,  75,  55,  95,  75,  95,  45
 	;   bst   hp  atk  def  sat  sdf  spe
+else
+	bst 470,  95,  55,  95,  85,  95,  45
+	;   bst   hp  atk  def  sat  sdf  spe
+endc
 
 	db WATER, ROCK ; type
 	db 60 ; catch rate

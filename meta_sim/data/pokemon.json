@@ -972,14 +972,14 @@
 "cursola": {
 "id": "cursola",
 "stats": {
-"hp": 60,
+"hp": 70,
 "atk": 95,
-"defe": 50,
+"defe": 70,
 "spe": 30,
 "spa": 145,
 "spd": 130
 },
-"bst": 510,
+"bst": 540,
 "types": [
 "GHOST",
 "ROCK"
@@ -1491,14 +1491,14 @@
 "ledian": {
 "id": "ledian",
 "stats": {
-"hp": 65,
-"atk": 95,
-"defe": 50,
+"hp": 80,
+"atk": 105,
+"defe": 65,
 "spe": 85,
 "spa": 55,
 "spd": 110
 },
-"bst": 460,
+"bst": 500,
 "types": [
 "BUG",
 "FIGHTING"
@@ -2572,14 +2572,14 @@
 "golem_alolan": {
 "id": "golem_alolan",
 "stats": {
-"hp": 80,
+"hp": 90,
 "atk": 120,
 "defe": 130,
-"spe": 55,
+"spe": 70,
 "spa": 55,
 "spd": 80
 },
-"bst": 520,
+"bst": 545,
 "types": [
 "ROCK",
 "ELECTRIC"
@@ -2798,14 +2798,14 @@
 "overqwil": {
 "id": "overqwil",
 "stats": {
-"hp": 85,
+"hp": 95,
 "atk": 115,
 "defe": 95,
 "spe": 85,
 "spa": 65,
-"spd": 80
+"spd": 90
 },
-"bst": 525,
+"bst": 545,
 "types": [
 "DARK",
 "POISON"
@@ -3184,13 +3184,13 @@
 "id": "hitmonchan",
 "stats": {
 "hp": 70,
-"atk": 105,
+"atk": 115,
 "defe": 85,
-"spe": 76,
+"spe": 90,
 "spa": 35,
 "spd": 110
 },
-"bst": 481,
+"bst": 505,
 "types": [
 "FIGHTING"
 ],
@@ -3319,14 +3319,14 @@
 "delibird": {
 "id": "delibird",
 "stats": {
-"hp": 65,
+"hp": 75,
 "atk": 90,
-"defe": 55,
+"defe": 65,
 "spe": 95,
-"spa": 98,
+"spa": 110,
 "spd": 60
 },
-"bst": 463,
+"bst": 495,
 "types": [
 "ICE",
 "FLYING"
@@ -4221,14 +4221,14 @@
 "corsola_plain": {
 "id": "corsola_plain",
 "stats": {
-"hp": 75,
+"hp": 95,
 "atk": 55,
 "defe": 95,
 "spe": 45,
-"spa": 75,
+"spa": 85,
 "spd": 95
 },
-"bst": 440,
+"bst": 470,
 "types": [
 "WATER",
 "ROCK"
@@ -4427,13 +4427,13 @@
 "id": "muk_plain",
 "stats": {
 "hp": 105,
-"atk": 105,
-"defe": 75,
+"atk": 115,
+"defe": 90,
 "spe": 50,
 "spa": 65,
 "spd": 100
 },
-"bst": 500,
+"bst": 525,
 "types": [
 "POISON"
 ],
@@ -5239,13 +5239,13 @@
 "id": "lickilicky",
 "stats": {
 "hp": 110,
-"atk": 100,
+"atk": 115,
 "defe": 95,
-"spe": 50,
+"spe": 60,
 "spa": 90,
 "spd": 95
 },
-"bst": 540,
+"bst": 565,
 "types": [
 "NORMAL"
 ],
@@ -6663,14 +6663,14 @@
 "weezing_galarian": {
 "id": "weezing_galarian",
 "stats": {
-"hp": 65,
+"hp": 80,
 "atk": 90,
 "defe": 120,
 "spe": 60,
-"spa": 85,
+"spa": 95,
 "spd": 70
 },
-"bst": 490,
+"bst": 515,
 "types": [
 "POISON",
 "FAIRY"
