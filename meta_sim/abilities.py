@@ -38,6 +38,7 @@ ABILITY_PRIORITY = [
     'INTIMIDATE', 'MOXIE', 'BERSERK', 'DEFIANT', 'COMPETITIVE', 'DOWNLOAD',
     'CONTRARY', 'SIMPLE', 'JUSTIFIED', 'STAMINA', 'WEAK_ARMOR', 'RATTLED',
     'ROUGH_SKIN', 'IRON_BARBS', 'FLAME_BODY', 'STATIC', 'POISON_POINT',
+    'SERENE_GRACE', 'SHIELD_DUST',
     'EFFECT_SPORE', 'POISON_TOUCH', 'TANGLING_HAIR', 'CURSED_BODY', 'AFTERMATH',
     # status / utility
     'POISON_HEAL', 'MAGIC_GUARD', 'NATURAL_CURE', 'SHED_SKIN', 'HYDRATION',
@@ -251,6 +252,16 @@ def can_be_statused(ability, status, weather=None):
     return True
 
 
+def secondary_chance(att_ability, dfn_ability, base):
+    """On-hit secondary-effect chance after the attacker's Serene Grace (x2)
+    and the defender's Shield Dust (suppresses secondaries entirely)."""
+    if dfn_ability == 'SHIELD_DUST':
+        return 0
+    if att_ability == 'SERENE_GRACE':
+        return base * 2
+    return base
+
+
 # =============================================================== priority ===
 def priority_bonus(ability, move, hp_frac=1.0):
     if ability == 'PRANKSTER' and move['cat'] == 'STATUS':
@@ -307,7 +318,7 @@ NOOP_ABILITIES = {
     'STICKY_HOLD', 'SUCTION_CUPS', 'OBLIVIOUS', 'CUTE_CHARM', 'TANGLED_FEET',
     'RIVALRY', 'KLUTZ', 'STALL', 'FRISK', 'ANTICIPATION', 'FOREWARN', 'PICKPOCKET',
     'GLUTTONY', 'HARVEST', 'CHEEK_POUCH', 'BALL_FETCH', 'STENCH', 'SHELL_ARMOR',
-    'BATTLE_ARMOR', 'SUPER_LUCK', 'SNIPER', 'SERENE_GRACE', 'SHIELD_DUST',
+    'BATTLE_ARMOR', 'SUPER_LUCK', 'SNIPER',
     'INNER_FOCUS', 'STEADFAST', 'COMPOUND_EYES', 'NO_GUARD',
     'HYDRATION', 'LEAF_GUARD', 'EARLY_BIRD', 'WONDER_SKIN', 'SAND_VEIL',
     'SNOW_CLOAK', 'CLOUD_NINE', 'PRESSURE', 'UNNERVE', 'DAMP', 'AROMA_VEIL',

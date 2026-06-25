@@ -634,8 +634,10 @@ def perform(att_side, dfn_side, moves, chart, rng, weather=None, moving_last=Fal
             on_ko(att)
             on_hit(att, dfn, m, rng)       # Aftermath etc. on a contact KO
             return
-        # on-hit secondary status (gated by the target's ability)
-        if e in ONHIT and dfn.status is None and rng.random() < m['chance'] / 100.0:
+        # on-hit secondary status (Serene Grace x2 / Shield Dust off; gated by
+        # the target's status-immunity ability)
+        chance = abilities.secondary_chance(att.ability, dfn.ability, m['chance'])
+        if e in ONHIT and dfn.status is None and rng.random() < chance / 100.0:
             st = ONHIT[e]
             if st != 'slp' and abilities.can_be_statused(dfn.ability, st, weather):
                 dfn.status = st
