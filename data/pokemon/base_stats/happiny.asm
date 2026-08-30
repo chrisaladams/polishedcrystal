@@ -1,6 +1,6 @@
 	; If you change the BST, update data/pokemon/base_exp_exceptions.asm
 if DEF(FAITHFUL)
-	bst 250, 108,   9,  11,  19,  69,  34
+	bst 220, 100,  05,  05,  15,  65,  30
 else
 	bst 250, 108,   9,  11,  19,  69,  34
 endc
