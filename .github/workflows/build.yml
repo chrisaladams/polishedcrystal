@@ -8,8 +8,10 @@ on:
   workflow_call:
 
 env:
-  # PC_VERSION should match VERSION in Makefile
-  PC_VERSION: "3.2.3"
+  # PC_VERSION is read from the Makefile after checkout, so it cannot drift.
+  # RGBDS_VERSION has to be known before the repo is checked out (it selects the
+  # gbdev/rgbds ref), so it is pinned here and then checked against
+  # .rgbds-version once the repo is available.
   RGBDS_VERSION: "v1.0.1"
 
 jobs:
@@ -50,6 +52,31 @@ jobs:
       - id: checkout-polishedcrystal
         name: "Checkout Rangi42/polishedcrystal"
         uses: actions/checkout@v4
+
+      # RESOLVE VERSIONS FROM THE REPO
+      - id: resolve-versions
+        name: "Read PC_VERSION and check the pinned RGBDS version"
+        run: |
+          PC_VERSION=$(sed -n 's/^VERSION *:= *//p' Makefile | head -1)
+          if [ -z "$PC_VERSION" ]; then
+            echo "Could not read VERSION from Makefile" >&2
+            exit 1
+          fi
+          echo "PC_VERSION=$PC_VERSION" >> $GITHUB_ENV
+          echo "Building polishedcrystal $PC_VERSION"
+          PINNED="v$(cat .rgbds-version)"
+          if [ "$PINNED" != "${{ env.RGBDS_VERSION }}" ]; then
+            echo "RGBDS_VERSION in this workflow (${{ env.RGBDS_VERSION }}) does not match .rgbds-version ($PINNED)" >&2
+            exit 1
+          fi
+
+      # RUN TESTS
+      - id: test
+        name: "Run tests and static checks"
+        run: |
+          python3 -m pip install --quiet pyboy
+          make test -j$(nproc)
+          make tidy
 
       # BUILD ROMS
       - id: build-polishedcrystal
