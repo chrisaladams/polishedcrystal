@@ -2196,8 +2196,37 @@ AI_Opportunist:
 
 INCLUDE "data/battle/ai/stall_moves.asm"
 
+AIScaleDamageByAccuracy:
+; Scale wCurDamage down by the enemy move's accuracy, so callers rank moves by
+; expected damage rather than raw damage. Accuracy is stored as 0-100 here, or
+; 255 for moves that ignore accuracy checks; both mean "no reduction".
+	ld a, [wEnemyMoveStruct + MOVE_ACC]
+	cp 100
+	ret nc
+
+	ldh [hMultiplier], a
+	xor a
+	ldh [hMultiplicand + 0], a
+	ld a, [wCurDamage]
+	ldh [hMultiplicand + 1], a
+	ld a, [wCurDamage + 1]
+	ldh [hMultiplicand + 2], a
+	farcall Multiply
+
+	ld a, 100
+	ldh [hDivisor], a
+	ld b, 4
+	farcall Divide
+
+	ldh a, [hQuotient + 1]
+	ld hl, wCurDamage
+	ld [hli], a
+	ldh a, [hQuotient + 2]
+	ld [hl], a
+	ret
+
 AI_Aggressive:
-; Use whatever does the most damage.
+; Use whatever does the most damage, weighted by how likely it is to land.
 
 ; Discourage all damaging moves but the one that does the most damage.
 ; If no damaging move deals damage to the player (immune),
@@ -2231,6 +2260,7 @@ AI_Aggressive:
 	cp EFFECT_COUNTER
 	jr z, .nodamage
 	call AIDamageCalc
+	call AIScaleDamageByAccuracy
 	pop bc
 	pop de
 	pop hl
@@ -2661,6 +2691,12 @@ AI_Risky:
 	jr c, .nextmove
 
 .checkko
+; Read the accuracy before AIDamageCalc. It only rewrites MOVE_POWER itself, but
+; it also farcalls into the real battle commands, so don't rely on the rest of
+; wEnemyMoveStruct surviving.
+	ld a, [wEnemyMoveStruct + MOVE_ACC]
+	push af
+
 	call AIDamageCalc
 
 	ld a, [wCurDamage + 1]
@@ -2671,13 +2707,37 @@ AI_Risky:
 	cp e
 	ld a, [wBattleMonHP]
 	sbc d
-	jr nc, .nextmove
+	jr c, .willko
 
+	pop af
+	jr .nextmove
+
+.willko
+; A KO is only worth chasing if the move actually lands, so scale the bonus by
+; the move's accuracy instead of always giving the full 5. Otherwise a 70%
+; Focus Blast is encouraged exactly as hard as a guaranteed Aura Sphere.
+; Accuracy is 0-100 here, or 255 for moves that ignore accuracy checks, so
+; always-hit moves fall into the top tier.
+	pop af
+	ld b, 5
+	cp 90
+	jr nc, .gotbonus
+	dec b
+	cp 80
+	jr nc, .gotbonus
+	dec b
+	cp 70
+	jr nc, .gotbonus
+	dec b
+	dec b
+
+.gotbonus
 	pop hl
-rept 5
-	dec [hl]
-endr
 	push hl
+.encourage
+	dec [hl]
+	dec b
+	jr nz, .encourage
 
 .nextmove
 	pop hl
