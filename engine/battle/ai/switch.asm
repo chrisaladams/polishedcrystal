@@ -62,6 +62,11 @@ GetSwitchScores:
 	ld bc, wBaseType
 	call AICheckMatchupForEnemyMon
 
+	; Weigh how much of the candidate is actually left
+	pop hl
+	push hl
+	call AIApplyHPToSwitchScore
+
 .next
 	; Checks below are safe if we arrived due to 0HP -- score will be 0 which is never
 	; better, and we can use this to check for lack of switch choice ("best score" = 0)
@@ -103,6 +108,63 @@ GetSwitchScores:
 	ld [wEnemyAbility], a
 	pop af
 	ld [wEnemyMonItem], a
+	ret
+
+AIApplyHPToSwitchScore:
+; Reduce a candidate's switch-in score when it is low on HP: -1 below half,
+; -2 below a quarter. A mon that resists the active threat is still a poor
+; switch-in if it is about to faint, which type matchups alone cannot see.
+; Input is hl (candidate's party struct) and a (its matchup score).
+; Returns the adjusted score in a.
+	push hl
+	push de
+	push bc
+	ld e, a ; score
+
+	ld bc, MON_HP
+	add hl, bc
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld c, a ; bc = current HP
+	ld a, [hli]
+	ld d, a
+	ld a, [hl]
+	ld l, a
+	ld h, d ; hl = max HP
+
+	; Below half if 2 * HP < max HP
+	sla c
+	rl b
+	call .cp_bc_hl
+	jr nc, .done
+	dec e
+
+	; Below a quarter if 4 * HP < max HP
+	sla c
+	rl b
+	call .cp_bc_hl
+	jr nc, .done
+	dec e
+
+.done
+	ld a, e
+	pop bc
+	pop de
+	pop hl
+	ret
+
+.cp_bc_hl
+; Carry set if bc < hl.
+	ld a, b
+	cp h
+	ret c
+	jr nz, .not_less
+	ld a, c
+	cp l
+	ret
+.not_less
+	and a ; clear carry
 	ret
 
 CheckPlayerMoveTypeMatchups:

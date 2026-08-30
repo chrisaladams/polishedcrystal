@@ -43,6 +43,25 @@ DEF SERIAL_MAIL_PREAMBLE_LENGTH  EQU 5
 ; timeout duration after exchanging a byte
 DEF SERIAL_LINK_BYTE_TIMEOUT EQU $5000
 
+; How long Special_WaitForLinkedFriend waits for the other player to reach the
+; Cable Club receptionist. Its inner counter starts at $ff and both counters are
+; decremented once per frame, so the window is 255 + 256 * (N - 1) frames:
+; N = 2 is ~511 frames (~8.6s), N = 6 is ~1535 frames (~26s) at 59.7 fps.
+DEF LINK_WAIT_FOR_FRIEND_FRAMES EQU 6
+
+; How many frames Link_CheckCommunicationError.AcknowledgeSerial spends waiting
+; for the other player to acknowledge, once per handshake attempt. The Virtual
+; Console (wireless) path already uses a wider value for its slower transport.
+DEF LINK_ACKNOWLEDGE_FRAMES    EQU 20
+DEF LINK_ACKNOWLEDGE_FRAMES_VC EQU 26
+
+; High byte of the countdown budget CheckLinkTimeout_Gen2 hands to
+; Link_CheckCommunicationError for the post-save handshake (the low byte is $32).
+; Serial_ExchangeByte counts this down and gives up at zero, so a larger value is
+; more tolerant of the two players saving at different speeds.
+DEF LINK_HANDSHAKE_BUDGET_HI    EQU 2
+DEF LINK_HANDSHAKE_BUDGET_HI_VC EQU 3
+
 ; all unique game IDs for the Polished Crystal engine
 	const_def 1
 	const LINK_GAME_ID_PC_FAITHFUL     ; 1

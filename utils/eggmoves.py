@@ -52,9 +52,15 @@ def get_ordered_mons():
 			if line.startswith('NUM_SPECIES'):
 				break
 
-def get_egg_groups(mon):
-	# Read data/pokemon/base_stats/<mon>.asm
+def base_stats_filename(mon):
+	# Species with regional forms have their base form in <mon>_plain.asm
 	filename = 'data/pokemon/base_stats/%s.asm' % mon
+	if not os.path.exists(filename):
+		filename = 'data/pokemon/base_stats/%s_plain.asm' % mon
+	return filename
+
+def get_egg_groups(mon):
+	filename = base_stats_filename(mon)
 	with open(filename, 'r') as file:
 		for line in file:
 			line = line.rstrip()
@@ -69,39 +75,42 @@ def get_egg_groups(mon):
 				return
 	raise RuntimeError('no egg group data for %s' % mon)
 
+def resolve_evos_attacks_name(name):
+	# 'Bulbasaur' => 'bulbasaur', 'RattataPlain' => 'rattata'.
+	# Regional forms ('RattataAlolan', 'TaurosPaldeanFire') return None: egg
+	# moves are declared for PLAIN_FORM only, so a form's own learnset must not
+	# count towards what the base species can legally inherit.
+	simple_name = name.lower()
+	if simple_name in underscore_names:
+		return underscore_names[simple_name]
+	# Longest matching species prefix, so 'NidoranF' does not shadow 'Nidoran'
+	for length in range(len(simple_name) - 1, 0, -1):
+		base, suffix = simple_name[:length], simple_name[length:]
+		if base in underscore_names:
+			return underscore_names[base] if suffix == 'plain' else None
+	raise RuntimeError('bad evos_attacks name: %s' % name)
+
 def get_level_up_moves():
-	# Read data/evos_attacks.asm
+	# Read data/pokemon/evos_attacks.asm
 	with open('data/pokemon/evos_attacks.asm', 'r') as file:
 		current_mon = None
-		reading_moves = False
 		for line in file:
-			line = line.rstrip()
-			# Assume that evo/attack data is labeled consistently
-			if line.endswith('EvosAttacks:'):
-				# 'MrMimeEvosAttacks:' => 'mrmime'
-				simple_name = line[:-12].lower()
-				if simple_name not in underscore_names:
-					raise RuntimeError('bad EvosAttacks name: %s' % simple_name)
-				current_mon = underscore_names[simple_name]
+			line = line.split(';')[0].strip()
+			# '\tevos_attacks Bulbasaur' => 'bulbasaur'
+			if line.startswith('evos_attacks '):
+				current_mon = resolve_evos_attacks_name(line[13:].strip())
 				continue
-			# Assume that level-up moves are terminated consistently
-			if line.endswith('no more level-up moves'):
+			if line.startswith('end_evos_attacks'):
 				current_mon = None
-				reading_moves = False
 				continue
-			# Assume that evolutions are terminated consistently
-			if line.endswith('no more evolutions'):
-				reading_moves = True
+			if not current_mon:
 				continue
-			if not current_mon or not reading_moves:
-				continue
-			# 'db 1, TACKLE ; comment' => 'TACKLE'
-			move = line.split(';')[0].split(',')[-1].strip()
-			learnset_moves[current_mon].add(move)
+			# '\tlearnset 1, TACKLE' => 'TACKLE'
+			if line.startswith('learnset '):
+				learnset_moves[current_mon].add(line.split(',')[-1].strip())
 
 def get_tm_moves(mon):
-	# Read data/base_stats/<mon>.asm
-	filename = 'data/pokemon/base_stats/%s.asm' % mon
+	filename = base_stats_filename(mon)
 	with open(filename, 'r') as file:
 		for line in file:
 			line = line.rstrip()
@@ -119,30 +128,26 @@ def get_egg_moves():
 	with open('data/pokemon/egg_moves.asm', 'r') as file:
 		current_mon = None
 		for line in file:
-			line = line.rstrip()
-			# Skip the trivial case
-			if line.startswith('NoEggMoves'):
-				continue
-			# Assume that egg move data is labeled consistently
-			if line.endswith('EggMoves:'):
-				# 'MrMimeEggMoves:' => 'mrmime'
-				simple_name = line[:-9].lower()
+			line = line.split(';')[0].strip()
+			# '\tdp BULBASAUR, PLAIN_FORM' opens a species' egg move list. Use
+			# this rather than the label, so the form is explicit: egg moves are
+			# only declared for PLAIN_FORM.
+			if line.startswith('dp '):
+				species, _, form = line[3:].partition(',')
+				simple_name = species.strip().lower().replace('_', '')
 				if simple_name not in underscore_names:
-					raise RuntimeError('bad EggMoves name: %s' % simple_name)
-				current_mon = underscore_names[simple_name]
+					raise RuntimeError('bad egg move species: %s' % species.strip())
+				current_mon = (underscore_names[simple_name]
+					if form.strip() == 'PLAIN_FORM' else None)
 				continue
 			# Assume that egg moves are terminated consistently
-			if line.endswith('db $ff') or line.endswith('db -1'):
+			if line in ('db $ff', 'db -1'):
 				current_mon = None
 				continue
-			if not current_mon:
+			if not current_mon or not line.startswith('db '):
 				continue
-			# Assume that egg moves are defined consistently
-			if not line.startswith('\tdb '):
-				continue
-			# '\tdb LIGHT_SCREEN' => 'LIGHT_SCREEN'
-			move = line.split(';')[0].strip().split()[-1]
-			egg_moves[current_mon].add(move)
+			# 'db LIGHT_SCREEN' => 'LIGHT_SCREEN'
+			egg_moves[current_mon].add(line[3:].strip())
 
 def get_sketchable_groups():
 	# A Pokémon with Sketch can breed any move into its egg groups

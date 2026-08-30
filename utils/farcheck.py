@@ -30,6 +30,12 @@ sym_banks = {}
 rst_addrs = (0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38)
 rst_funcs = {}
 
+# Set when anything is reported, so this can gate a build instead of only
+# printing. A symbol missing from the .sym is also a failure: it means the
+# symbol file does not match the source it is being checked against (e.g. a
+# non-debug .sym against DEBUG-only labels).
+found = False
+
 with open(sys.argv[1], 'r') as f:
 	for line in f:
 		if (m := re.match(sym_rx, line)):
@@ -61,6 +67,7 @@ for filename in iglob('**/*.asm', recursive=True):
 				if bank is not None:
 					cur_bank = bank
 				else:
+					found = True
 					print(f"{filename}:{i}: cannot get bank of '{label}'", file=sys.stderr)
 				if ';' in line:
 					comment = line.split(';', 1)[1].strip()
@@ -73,15 +80,21 @@ for filename in iglob('**/*.asm', recursive=True):
 					code = code.strip()
 					comment = comment[0].strip() if comment else ''
 					if suppress not in comment and not suppressing:
+						found = True
 						print(f"{filename}:{i}: '{code}' in bank {cur_bank:02X} references '{label}' in bank {bank:02X}")
 				if label in rst_funcs and m.group(1) == 'call' and not m.group(2):
 					code, *comment = line.split(';', 1)
 					code = code.strip()
 					comment = comment[0].strip() if comment else ''
 					if suppress not in comment and not suppressing:
+						found = True
 						print(f"{filename}:{i}: '{code}' can use 'rst ${rst_funcs[label]:02x}'")
 			elif (m := re.match(far_rx, line)):
 				label, bank = get_label_bank(m)
 				if bank is not None and bank == cur_bank:
 					code = line.split(';', 1)[0].strip()
+					found = True
 					print(f"{filename}:{i}: '{code}' in bank {cur_bank:02X} references '{label}' already in bank {bank:02X}")
+
+if found:
+	exit(1)
