@@ -1,8 +1,10 @@
-# Pokémon Polished Crystal (balance fork)
+# Pokémon Polished Crystal: Link Edition
 
-This is a fork of [Rangi42's Polished Crystal](https://github.com/Rangi42/polishedcrystal), a custom Pokémon game built on [the Pokémon Crystal disassembly](https://github.com/pret/pokecrystal). All credit for the base game—the engine, mechanics overhaul, new maps, Pokédex, and everything else—goes to that project. This fork starts from their work and layers on a set of competitive balance tweaks for link play, plus a few quality-of-life fixes.
+**Polished Crystal: Link Edition** is a competitive take on Pokémon Crystal, built for balanced L50 link battles. It rebalances the roster, tightens the link-battle rules, makes Cable Club connections forgiving, and sharpens the trainer AI, with its own Python balance-simulation toolkit (`meta_sim/`) to back each change with data.
 
-It's kept in sync with upstream: the latest merge brings in Rangi42's `master` as of November 11, 2026, including the cable car cutscene, the link party corruption fix, and their battle and item fixes.
+It's built on [Rangi42's Polished Crystal](https://github.com/Rangi42/polishedcrystal), itself based on [the Pokémon Crystal disassembly](https://github.com/pret/pokecrystal). All credit for the base game—the engine, mechanics overhaul, new maps, Pokédex, and everything else—goes to that project and its contributors.
+
+It's kept in sync with Polished Crystal: the latest merge brings in Rangi42's `master` as of November 11, 2026, including the cable car cutscene, the link party corruption fix, and their battle and item fixes.
 
 ## What's different here
 
@@ -13,7 +15,7 @@ A pass at tightening up the meta for L50 link battles:
 - **Stat compression** — buffed a bunch of weak/early-game mons, trimmed a handful of top-tier ceilings, so the power band is tighter across the roster. Most recently, Aerodactyl's Attack went from 105 to 95 and Charizard's from 101 to 93, reining in their Tough Claws physical hits. These only apply to the normal build; `make faithful` keeps canon base stats.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes).
 - **Moody removed.**
-- **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as upstream ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
+- **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
 - **Link-battle healing/leveling** — mons get forced to L50 and topped off before a link battle, so games aren't decided by who happened to grind more.
 - A few mart/item tweaks to go with the above.
 
@@ -25,7 +27,7 @@ Linking up used to need both players to be almost perfectly in sync. Now:
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
 
-**Both players need the same build.** The link version is 8, so this fork can't link with its own older builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
+**Both players need the same build.** The link version is 8, so it can't link with older Link Edition builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
 
 ### Smarter trainer AI
 
@@ -36,7 +38,7 @@ These apply to every trainer battle, not just link play:
 
 ## Building and testing
 
-Build exactly as upstream does (see [INSTALL.md](INSTALL.md)); RGBDS 1.0.4 is required. On top of that:
+Build exactly as Polished Crystal does (see [INSTALL.md](INSTALL.md)); RGBDS 1.0.4 is required. On top of that:
 
 - `make test` builds the ROM and runs a small test suite against the real assembled code under the PyBoy emulator, plus a static check for cross-bank calls. CI runs it on every push. It needs `pip install pyboy`.
 
@@ -49,7 +51,7 @@ There's also a Python toolkit in `meta_sim/` for crunching the numbers on stat/m
 
 See [meta_sim/README.md](meta_sim/README.md).
 
-Everything else—features, install instructions, FAQ—still applies from upstream. See [FEATURES.md](FEATURES.md), [INSTALL.md](INSTALL.md), and [FAQ.md](FAQ.md).
+Everything else—features, install instructions, FAQ—still applies from Polished Crystal. See [FEATURES.md](FEATURES.md), [INSTALL.md](INSTALL.md), and [FAQ.md](FAQ.md).
 
 ## Credits
 
