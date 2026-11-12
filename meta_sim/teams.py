@@ -49,10 +49,19 @@ STATUS_PRIORITY = {'EFFECT_SLEEP': 5, 'EFFECT_PARALYZE': 4, 'EFFECT_TOXIC': 3,
                    'EFFECT_CONFUSE': 2, 'EFFECT_POISON': 1, 'EFFECT_BURN': 1}
 
 
-def _setup_score(effect):
+def _setup_score(effect, phys_bias):
+    """How much a setup move helps this mon sweep: boosts to the attacking stat
+    it actually uses and to Speed count fully, defensive boosts at half, and a
+    move that boosts neither its attacking stat nor Speed scores 0 (so a
+    special attacker never wastes a slot on Swords Dance, nor anyone on
+    Defense Curl)."""
     if effect == 'EFFECT_BELLY_DRUM':
-        return 6
-    return sum(abs(v) for v in BOOST.get(effect, {}).values())
+        return 6 if phys_bias else 0
+    boosts = BOOST.get(effect, {})
+    own = boosts.get('atk' if phys_bias else 'spa', 0)
+    if max(own, 0) + max(boosts.get('spe', 0), 0) <= 0:
+        return 0
+    return own + boosts.get('spe', 0) + 0.5 * (boosts.get('defe', 0) + boosts.get('spd', 0))
 
 
 def _damaging(mon, moves):
@@ -136,7 +145,9 @@ def pick_moveset(mid, mon, moves, chart, role):
         if not cands:
             return None
         if eff_set is SETUP:
-            return max(cands, key=lambda mv: _setup_score(moves[mv]['effect']))
+            scored = [(_setup_score(moves[mv]['effect'], phys_bias), mv) for mv in cands]
+            scored = [x for x in scored if x[0] > 0]
+            return max(scored)[1] if scored else None
         if eff_set is STATUS:
             return max(cands, key=lambda mv: (STATUS_PRIORITY.get(moves[mv]['effect'], 0),
                                               moves[mv]['acc']))
