@@ -112,13 +112,44 @@ def extract(root):
                       r'(-?\d+),\s*(\d+),\s*(\d+),\s*([A-Z]+)', s)
         if m:
             n, eff, pw, ty, acc, pp, ch, cat = m.groups()
-            moves[n] = dict(effect=eff, power=int(pw), type=ty, acc=int(acc), pp=int(pp),
-                             chance=int(ch), cat=cat, prio=0)
+            moves[n] = dict(id=n, effect=eff, power=int(pw), type=ty, acc=int(acc),
+                             pp=int(pp), chance=int(ch), cat=cat, prio=0)
 
     for s in open(os.path.join(root, 'data/moves/priorities.asm')).read().splitlines():
         m = re.match(r'\s*db\s+([A-Z_0-9]+),\s*(-?\d+)\s*$', s)
         if m and m.group(1) in moves:
             moves[m.group(1)]['prio'] = int(m.group(2))
+
+    # Contact: Physical moves make contact unless listed in AbnormalContactMoves,
+    # which flips the default either way (mirrors the ROM's CheckContactMove).
+    abnormal = set()
+    for s in open(os.path.join(root, 'data/moves/abnormal_contact_moves.asm')).read().splitlines():
+        m = re.match(r'\s*db\s+([A-Z_0-9]+)', s)
+        if m:
+            abnormal.add(m.group(1))
+    for n, mv in moves.items():
+        mv['contact'] = (mv['cat'] == 'PHYSICAL') != (n in abnormal)
+
+    # Move-list flags that abilities key off: Iron Fist (punch), Mega Launcher
+    # (pulse), Bulletproof (bullet), Sharpness (slice), Soundproof (sound),
+    # powder immunity, Wind Rider (wind). Each file is a plain `db MOVE` list.
+    flag_files = {'punch': 'punching_moves', 'pulse': 'launcher_moves',
+                  'bullet': 'bullet_moves', 'slice': 'slicing_moves',
+                  'sound': 'sound_moves', 'powder': 'powder_moves',
+                  'wind': 'wind_moves'}
+    for flag, fn in flag_files.items():
+        names = set()
+        path = os.path.join(root, f'data/moves/{fn}.asm')
+        if os.path.exists(path):
+            for s in open(path).read().splitlines():
+                m = re.match(r'\s*db\s+([A-Z_0-9]+)', s)
+                if m:
+                    names.add(m.group(1))
+        for n, mv in moves.items():
+            mv[flag] = n in names
+    # Reckless boosts recoil moves and (Hi) Jump Kick (RecklessAbility).
+    for mv in moves.values():
+        mv['recoil'] = mv['effect'] in ('EFFECT_RECOIL_HIT', 'EFFECT_JUMP_KICK')
 
     # ------------------------------------------------------ type chart
     eff_map = {'NO_EFFECT': 0.0, 'NOT_VERY_EFFECTIVE': 0.5, 'SUPER_EFFECTIVE': 2.0}

@@ -47,12 +47,19 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              paralysis/burn/poison/toxic it receives back onto the inflictor),
              Serene Grace (doubles on-hit secondary-effect chance), and the
              contact-status abilities Static/Flame Body/Poison Point (30%
-             chance to par/brn/psn a physical attacker -- "contact" is
-             approximated as "hit by a physical move", since the data carries
-             no contact flag).
+             chance to par/brn/psn an attacker whose move made contact, per
+             the ROM's contact rule). Move-flag abilities: Iron Fist, Tough
+             Claws, Mega Launcher, Sharpness, Reckless (damage boosts) and
+             Bulletproof/Soundproof (immunities), plus Overcoat/Grass-type
+             powder immunity and Quick Feet. Variable/fixed-power moves:
+             Seismic Toss/Night Shade, Super Fang, Gyro Ball, Reversal,
+             Return, Magnitude (average), Facade/Hex/Venoshock/Acrobatics.
+             Items include Focus Sash and the Toxic/Flame Orbs that switch on
+             Poison Heal/Guts/Quick Feet.
   approxd.  : confusion as a flat self-hit chance; multi-hit as its average
              hit count; two-turn moves resolve in one turn; Explosion = big
-             hit then user faints; Dry Skin modeled as Water Absorb only
+             hit then user faints; Low Kick is a flat 80 BP (no weights in
+             the extracted data); Avalanche never doubles; Dry Skin modeled as Water Absorb only
              (its Fire weakness/sun-and-rain HP drain are not modeled). Each
              mon commits to one (non-event) ability and one item for the
              whole battle (see abilities.py/items.py) instead of switching
@@ -122,9 +129,8 @@ STATUS_IMMUNE = {'INSOMNIA': 'slp', 'VITAL_SPIRIT': 'slp', 'OWN_TEMPO': 'cnf',
                   'MAGMA_ARMOR': 'frz'}
 
 # contact-status abilities: a defender's ability -> the status it may inflict on
-# a physical attacker. The data has no contact flag, so we approximate "on
-# contact" as "hit by a physical move" (true for the large majority of physical
-# moves). Fires at CONTACT_STATUS_CHANCE.
+# an attacker whose move made contact (moves.json 'contact', which mirrors the
+# ROM's CheckContactMove). Fires at CONTACT_STATUS_CHANCE.
 CONTACT_STATUS = {'STATIC': 'par', 'FLAME_BODY': 'brn', 'POISON_POINT': 'psn'}
 CONTACT_STATUS_CHANCE = 0.30
 
@@ -213,7 +219,9 @@ class Pmon:
         stage = 0 if ignore_stage else self.stage.get(key, 0)
         v = self.base[key] * stage_mult(stage)
         if key == 'spe':
-            if self.status == 'par':
+            if self.ability == 'QUICK_FEET' and self.status is not None:
+                v *= 1.5                   # Quick Feet also ignores the par drop
+            elif self.status == 'par':
                 v *= 0.25
             if self.item == 'CHOICE_SCARF':
                 v *= items.CHOICE_SCARF_SPEED_MULT
@@ -249,6 +257,8 @@ class Side:
 def _damage_terms(att, dfn, move, chart):
     """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
     eff = eff_mult(move['type'], dfn, chart)
+    if move.get(abilities.FLAG_IMMUNITIES.get(dfn.ability, '')):
+        eff = 0.0                          # Bulletproof / Soundproof
     is_stab = move['type'] in att.types
     atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
     # Unaware: ignore the *other* mon's relevant stat stage when computing damage
@@ -258,7 +268,7 @@ def _damage_terms(att, dfn, move, chart):
         d = dfn.stat('defe', ignore_stage=unaware_att)
         if att.ability == 'GUTS' and att.status is not None:
             a *= 1.5                       # Guts also ignores the burn Atk drop below
-        elif att.status == 'brn':
+        elif att.status == 'brn' and move.get('id') != 'FACADE':
             a *= 0.5
         if att.ability == 'HUSTLE':
             a *= 1.5
@@ -286,6 +296,63 @@ def _damage_terms(att, dfn, move, chart):
     return eff, a, d, stab, dmg_mult
 
 
+# ---- variable/fixed-power moves ---------------------------------------------
+# moves.json stores these with power=1 because the ROM works the real value out
+# in battle. Seismic Toss/Night Shade and Super Fang skip the stat formula;
+# the rest plug a computed power into it. Counter/Mirror Coat aren't modeled
+# (they deal 0 here and the moveset picker never chooses them).
+REVERSAL_POWER = [(1, 200), (4, 150), (9, 100), (16, 80), (32, 40)]  # px, BP
+
+
+def fixed_damage(move, dfn):
+    e = move['effect']
+    if e == 'EFFECT_LEVEL_DAMAGE':
+        return 50                           # the attacker's level
+    if e == 'EFFECT_SUPER_FANG':
+        return max(1, int(dfn.hp // 2))
+    if e == 'EFFECT_COUNTER':
+        return 0
+    return None
+
+
+def effective_power(move, att, dfn):
+    e = move['effect']
+    if e == 'EFFECT_GYRO_BALL':            # 25 * target speed / user speed
+        return max(1, min(150, int(25 * dfn.stat('spe') / max(att.stat('spe'), 1))))
+    if e == 'EFFECT_REVERSAL':             # by HP-bar pixels, out of 48
+        px = int(48 * max(att.hp, 0) / att.maxhp)
+        return next((bp for limit, bp in REVERSAL_POWER if px <= limit), 20)
+    if e == 'EFFECT_RETURN':
+        return 102                          # max happiness, like the max build
+    if e == 'EFFECT_MAGNITUDE':
+        return 71                           # average over the magnitude table
+    if e == 'EFFECT_LOW_KICK':
+        return 80                           # no species weights in the data
+    if e == 'EFFECT_CONDITIONAL_BOOST':
+        mid = move.get('id')
+        if mid == 'FACADE' and att.status not in (None, 'slp', 'frz'):
+            return move['power'] * 2
+        if mid == 'HEX' and dfn.status is not None:
+            return move['power'] * 2
+        if mid == 'VENOSHOCK' and dfn.status in ('psn', 'tox'):
+            return move['power'] * 2
+        if mid == 'ACROBATICS' and att.item is None:
+            return move['power'] * 2
+    return move['power']
+
+
+def survives_at_1hp(dfn):
+    """Sturdy / Focus Sash: a mon at full HP survives an otherwise-lethal hit
+    with 1 HP. Checked before the hit lands; see consume_sash."""
+    return dfn.hp >= dfn.maxhp and (dfn.ability == 'STURDY'
+                                    or dfn.item == 'FOCUS_SASH')
+
+
+def consume_sash(dfn):
+    if dfn.ability != 'STURDY' and dfn.item == 'FOCUS_SASH':
+        dfn.item = None                     # single use
+
+
 def _resolve_damage(att, dfn, move, chart, roll):
     """Shared finisher for move_damage/expected_damage: one eff_mult/_damage_terms
     pass, applied with whichever damage roll the caller wants (RNG or the flat
@@ -293,7 +360,11 @@ def _resolve_damage(att, dfn, move, chart, roll):
     eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
     if eff == 0.0:
         return 0, 0.0
-    base = ((((2 * 50) // 5 + 2) * move['power'] * a) // d) // 50 + 2
+    fixed = fixed_damage(move, dfn)
+    if fixed is not None:
+        return fixed, eff                   # ignores stats, STAB and the roll
+    power = effective_power(move, att, dfn)
+    base = ((((2 * 50) // 5 + 2) * power * a) // d) // 50 + 2
     hits = MULTI.get(move['effect'], 1)
     if att.ability == 'SKILL_LINK' and move['effect'] == 'EFFECT_MULTI_HIT':
         hits = 5                            # Skill Link always lands the max
@@ -438,6 +509,14 @@ def apply_switch(side, idx, foe_side, chart):
             m.moves = list(foe.moves)
 
 
+def orb_can_status(mon, st):
+    if status_blocked(mon, st):
+        return False
+    if st == 'tox':
+        return 'POISON' not in mon.types and 'STEEL' not in mon.types
+    return 'FIRE' not in mon.types
+
+
 def end_of_turn(mon, foe_side, rng=random):
     """Residual damage/heal. Returns False if mon faints."""
     if mon.fainted:
@@ -471,6 +550,13 @@ def end_of_turn(mon, foe_side, rng=random):
         return False
     if mon.item == 'LEFTOVERS' and mon.hp < mon.maxhp:
         mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * items.LEFTOVERS_HEAL_FRAC)
+    # self-status orbs fire at end of turn, so the status only starts ticking
+    # on the following end_of_turn
+    st = items.ORB_STATUS.get(mon.item)
+    if st and mon.status is None and orb_can_status(mon, st):
+        mon.status = st
+        if st == 'tox':
+            mon.tox = 0
     if mon.ability == 'SPEED_BOOST':
         mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
     return True
@@ -520,7 +606,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng)
         dmg *= 2
-        sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
+        sturdy = survives_at_1hp(dfn)
         att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
         dfn.hp -= dmg
         att.hp = 0
@@ -528,6 +614,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
         if dfn.hp <= 0:
             if sturdy:
                 dfn.hp = 1
+                consume_sash(dfn)
             else:
                 dfn.fainted = True
                 att.kos += 1
@@ -539,7 +626,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
             apply_absorb(dfn, m['type'])
         elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
             dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
-        sturdy = dfn.ability == 'STURDY' and dfn.hp >= dfn.maxhp
+        sturdy = survives_at_1hp(dfn)
         att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
         dfn.hp -= dmg
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
@@ -549,6 +636,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
         if dfn.hp <= 0:
             if sturdy:
                 dfn.hp = 1
+                consume_sash(dfn)
             else:
                 dfn.fainted = True
                 att.kos += 1
@@ -576,7 +664,7 @@ def perform(att_side, dfn_side, moves, chart, rng):
             if att.hp <= 0:
                 att.fainted = True
         # contact-status abilities on the (surviving) defender vs a physical hit
-        if m['cat'] == 'PHYSICAL' and not att.fainted and att.status is None:
+        if m.get('contact') and not att.fainted and att.status is None:
             cs = CONTACT_STATUS.get(dfn.ability)
             if cs and not status_blocked(att, cs) and rng.random() < CONTACT_STATUS_CHANCE:
                 att.status = cs
@@ -602,6 +690,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
             if k in dfn.stage:
                 dfn.stage[k] = max(-6, min(6, dfn.stage[k] + d))
         return
+    if e in INFLICT and (m.get('powder') and ('GRASS' in dfn.types
+                                               or dfn.ability == 'OVERCOAT')
+                         or m.get('sound') and dfn.ability == 'SOUNDPROOF'):
+        return                              # powder / sound immunity
     if e in INFLICT and dfn.status is None:
         st = INFLICT[e]
         if st == 'cnf':

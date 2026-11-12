@@ -14,6 +14,20 @@ would default to Cute Charm instead of Magic Guard).
 TECHNICIAN_THRESHOLD = 60
 ADAPTABILITY_STAB = 2.0
 ATK_DOUBLERS = {'HUGE_POWER', 'PURE_POWER'}
+
+# Move-flag damage boosts, mirroring engine/battle/abilities.asm (IronFist/
+# ToughClaws/MegaLauncher/Sharpness/Reckless): ability -> (move flag, mult).
+# The flags come from extract.py's move lists and contact rule.
+FLAG_BOOSTS = {
+    'IRON_FIST': ('punch', 1.2),
+    'TOUGH_CLAWS': ('contact', 1.3),
+    'MEGA_LAUNCHER': ('pulse', 1.5),
+    'SHARPNESS': ('slice', 1.5),
+    'RECKLESS': ('recoil', 1.2),
+}
+
+# Defender abilities that make a mon immune to a whole move class.
+FLAG_IMMUNITIES = {'BULLETPROOF': 'bullet', 'SOUNDPROOF': 'sound'}
 WEATHER_OWN_BOOST = {
     'DROUGHT': {'FIRE': 1.5, 'WATER': 0.5},
     'DRIZZLE': {'WATER': 1.5, 'FIRE': 0.5},
@@ -43,11 +57,14 @@ MODELED_PRIORITY = [
     'INTIMIDATE',
     'INSOMNIA', 'VITAL_SPIRIT', 'OWN_TEMPO', 'LIMBER', 'WATER_VEIL',
     'IMMUNITY', 'MAGMA_ARMOR',
-    'GUTS', 'TINTED_LENS', 'TECHNICIAN', 'SHEER_FORCE', 'SERENE_GRACE',
+    'GUTS', 'TINTED_LENS', 'TECHNICIAN', 'SHEER_FORCE',
+    'TOUGH_CLAWS', 'MEGA_LAUNCHER', 'SHARPNESS', 'IRON_FIST', 'RECKLESS',
+    'SERENE_GRACE',
     'SHIELD_DUST', 'SKILL_LINK',
     'DROUGHT', 'DRIZZLE', 'SAND_STREAM', 'LIGHTNING_ROD',
     'STATIC', 'FLAME_BODY', 'POISON_POINT', 'SYNCHRONIZE', 'LIQUID_OOZE',
-    'IMPOSTER', 'SPEED_BOOST', 'POISON_HEAL', 'ROCK_HEAD', 'HUSTLE',
+    'IMPOSTER', 'SPEED_BOOST', 'POISON_HEAL', 'QUICK_FEET', 'ROCK_HEAD',
+    'BULLETPROOF', 'SOUNDPROOF', 'HUSTLE',
 ]
 
 
@@ -83,6 +100,9 @@ def offense_multipliers(ability, move, is_stab):
         dmg_mult *= 1.5
     if ability == 'SHEER_FORCE' and move.get('chance', 0) > 0:
         dmg_mult *= 1.3
+    flag_boost = FLAG_BOOSTS.get(ability)
+    if flag_boost and move.get(flag_boost[0]):
+        dmg_mult *= flag_boost[1]
     boost = WEATHER_OWN_BOOST.get(ability, {}).get(move['type'])
     if boost:
         dmg_mult *= boost
