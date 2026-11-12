@@ -59,9 +59,7 @@ CheckBadge:
 .BadgeRequiredText:
 	; Sorry! A new BADGE
 	; is required.
-	text_far _BadgeRequiredText
-	text_end
-
+	text_farend _BadgeRequiredText
 CheckPartyMove:
 ; Check if a monster in your party has move d, or
 ; can have move d and you have TM/HM e.
@@ -176,9 +174,7 @@ FieldMoveFailed:
 
 .CantUseHere:
 	; Can't use that here.
-	text_far _CantUseItemText
-	text_end
-
+	text_farend _CantUseItemText
 CutFunction:
 	call FieldMoveJumptableReset
 .loop
@@ -226,9 +222,7 @@ CutFunction:
 
 Text_NothingToCut:
 	; There's nothing to CUT here.
-	text_far _CutNothingText
-	text_end
-
+	text_farend _CutNothingText
 CheckMapForSomethingToCut:
 	call GetFacingObject
 	jr c, .no_tree
@@ -305,6 +299,7 @@ CutDownGrass:
 	ld a, [wCutWhirlpoolReplacementBlock] ; ReplacementTile
 	ld [hl], a
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call LoadMapPart
 	call UpdateSprites
@@ -376,6 +371,7 @@ CutDownTree:
 	farcall CancelOWFadePalettes
 	farcall CopyBGGreenToOBPal7
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call LoadMapPart
 	call UpdateSprites
@@ -557,13 +553,9 @@ AutoSurfScript:
 	end
 
 CantSurfText:
-	text_far _CantSurfText
-	text_end
-
+	text_farend _CantSurfText
 AlreadySurfingText:
-	text_far _AlreadySurfingText
-	text_end
-
+	text_farend _AlreadySurfingText
 GetSurfType:
 ; Surfing on Pikachu uses an alternate sprite.
 ; This is done by using a separate movement type.
@@ -682,8 +674,8 @@ CheckFlyAllowedOnMap:
 	jr z, .no_fly
 .not_orange
 	call GetMapEnvironment
-	call CheckOutdoorMap
-	ret z
+	cp LAST_OUTDOOR_ENV + 1
+	jr c, .yes_fly
 	ld a, [wMapGroup]
 	ld d, a
 	ld a, [wMapNumber]
@@ -694,17 +686,15 @@ CheckFlyAllowedOnMap:
 	and a
 	jr z, .no_fly
 	cp d
-	jr nz, .skip
 	ld a, [hli]
+	jr nz, .loop
 	cp e
-	ret z
-	jr .loop
-.skip
-	inc hl
-	jr .loop
+	jr nz, .loop
+.yes_fly
+	xor a ; z
+	ret
 .no_fly
-	inc a
-	and a ; nz
+	inc a ; nz
 	ret
 
 INCLUDE "data/maps/indoor_fly_maps.asm"
@@ -777,7 +767,7 @@ FlyFunction:
 	refreshmap
 	callasm .StopPalFading
 	callasm ClearSavedObjPals
-	callasm CopyBGGreenToOBPal7
+	callasm CopyLeafGreenToOBPal7
 	callasm LoadWeatherPal
 	special UpdateTimePals
 	callasm PrepareOverworldMove
@@ -789,7 +779,7 @@ FlyFunction:
 	callasm SkipUpdateMapSprites
 	loadvar VAR_MOVEMENT, PLAYER_NORMAL
 	newloadmap MAPSETUP_FLY
-	callasm CopyBGGreenToOBPal7
+	callasm CopyLeafGreenToOBPal7
 	callasm FlyToAnim
 	callasm .ClearWeatherFlyFlag
 	special WaitSFX
@@ -963,15 +953,8 @@ EscapeRopeOrDig:
 
 .CheckCanDig:
 	call GetMapEnvironment
-	cp CAVE
-	jr z, .incave
-	cp DUNGEON
-	jr z, .incave
-.fail
-	ld a, $2
-	ret
-
-.incave
+	cp FIRST_DIGGABLE_ENV
+	jr c, .fail
 	ld hl, wDigWarpNumber
 	ld a, [hli]
 	and a
@@ -983,6 +966,10 @@ EscapeRopeOrDig:
 	and a
 	jr z, .fail
 	ld a, $1
+	ret
+
+.fail
+	ld a, $2
 	ret
 
 .DoDig:
@@ -1021,9 +1008,7 @@ EscapeRopeOrDig:
 
 .Text_CantUseHere:
 	; Can't use that here.
-	text_far _CantUseDigText
-	text_end
-
+	text_farend _CantUseDigText
 .UsedEscapeRopeScript:
 	refreshmap
 	special UpdateTimePals
@@ -1110,9 +1095,7 @@ TeleportFunction:
 
 .Text_CantUseHere:
 	; Can't use that here.
-	text_far _CantUseTeleportText
-	text_end
-
+	text_farend _CantUseTeleportText
 .TeleportScript:
 	refreshmap
 	special UpdateTimePals
@@ -1555,7 +1538,8 @@ AutoRockSmashScript:
 	callasm RockItemEncounter
 	iffalsefwd .no_item
 	opentext
-	verbosegiveitem ITEM_FROM_MEM
+	; This random item is forfeited if the Bag is full.
+	verbosegiveitem_unsafe ITEM_FROM_MEM
 	closetext
 .no_item
 	end
@@ -1718,7 +1702,8 @@ Script_GotAnItem:
 	callasm PutTheRodAway
 	callasm CurItemToScriptVar
 	opentext
-	verbosegiveitem ITEM_FROM_MEM
+	; This random item is forfeited if the Bag is full.
+	verbosegiveitem_unsafe ITEM_FROM_MEM
 	endtext
 
 Script_GotABite:
@@ -1778,7 +1763,7 @@ Fishing_CheckFacingUp:
 
 Script_FishCastRod:
 	refreshmap
-	loadmem hBGMapMode, $0
+	loadmem hBGMapMode, NO_BG_MAP_TRANSFER
 	special UpdateTimePals
 	callasm LoadFishingGFX
 	loademote EMOTE_SHOCK
@@ -1792,6 +1777,7 @@ MovementData_CastRod:
 
 PutTheRodAway:
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	ld a, $1
 	ld [wPlayerAction], a
@@ -1926,13 +1912,11 @@ BikeFunction:
 
 .CheckEnvironment:
 	call GetMapEnvironment
-	call CheckOutdoorMap
-	jr z, .ok
+	cp FIRST_INDOOR_ENV
+	jr c, .ok
 	cp CAVE
 	jr z, .ok
 	cp GATE
-	jr z, .ok
-	cp ISOLATED
 	jr nz, .nope
 
 .ok

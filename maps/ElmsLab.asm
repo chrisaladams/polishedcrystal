@@ -147,17 +147,7 @@ ProfElmScript:
 	iftrue ElmAskBattleScript
 	checkevent EVENT_TOLD_ELM_ABOUT_TOGEPI_OVER_THE_PHONE
 	iffalsefwd ElmCheckTogepiEgg
-	scall ElmEggHatchedScript
-	; need to reopen text boxes since ElmCheckGotEggAgain's
-	; jumpopenedtext will close them.
-	jumpthistext
-
-	text "<PLAYER>? I thought"
-	line "the Egg hatched."
-
-	para "Where is the"
-	line "#mon?"
-	done
+	; fallthrough
 
 ElmEggHatchedScript:
 	setmonval TOGEPI
@@ -169,7 +159,16 @@ ElmEggHatchedScript:
 	setmonval TOGEKISS
 	special Special_FindThatSpeciesYourTrainerID
 	iftrue ShowElmTogepiScript
-	sjumpfwd ElmCheckGotEggAgain
+	checkevent EVENT_TOLD_ELM_ABOUT_TOGEPI_OVER_THE_PHONE
+	iffalsefwd ElmCheckGotEggAgain
+	jumpthisopenedtext
+
+	text "<PLAYER>? I thought"
+	line "the Egg hatched."
+
+	para "Where is the"
+	line "#mon?"
+	done
 
 ElmCheckTogepiEgg:
 	checkevent EVENT_GOT_TOGEPI_EGG_FROM_ELMS_AIDE
@@ -409,8 +408,7 @@ ShowElmTogepiScript:
 ElmGiveOddSouvenirScript:
 	writetext ElmGiveOddSouvenirText1
 	promptbutton
-	verbosegiveitem ODD_SOUVENIR
-	iffalse_endtext
+	verbosegiveitem ODD_SOUVENIR, iffalse_endtext
 	setevent EVENT_GOT_ODD_SOUVENIR_FROM_ELM
 	writetext ElmGiveOddSouvenirText2
 	waitbutton
@@ -421,8 +419,7 @@ ElmGiveOddSouvenirScript:
 ElmGiveMasterBallScript:
 	writetext ElmGiveMasterBallText1
 	promptbutton
-	verbosegiveitem MASTER_BALL
-	iffalse_endtext
+	verbosegiveitem MASTER_BALL, iffalse_endtext
 	setevent EVENT_GOT_MASTER_BALL_FROM_ELM
 	writetext ElmGiveMasterBallText2
 	waitbutton
@@ -671,7 +668,8 @@ AideScript_GivePotions:
 	opentext
 	writetext AideText_GiveYouPotions
 	promptbutton
-	verbosegiveitem POTION
+	; Finish the introductory scene even if the Bag cannot fit the Potion.
+	verbosegiveitem_unsafe POTION
 	setscene SCENE_ELMSLAB_NOOP
 	jumpopenedtext AideText_AlwaysBusy
 
@@ -1785,4 +1783,3 @@ ElmsLabTrashcanText:
 	line "the snack Prof.Elm"
 	cont "ate is in there…"
 	done
-

@@ -274,14 +274,14 @@ DEF MALE   EQU %00000000
 DEF FEMALE EQU %10000000
 DEF GENDERLESS EQU MALE ; for trainer party parsing
 
-; caught data
+; caught data (high bit 7 is unused, formerly OT gender)
 DEF CAUGHT_TIME_MASK   EQU %01100000
 DEF CAUGHT_BALL_MASK   EQU %00011111
 
 ; hyper training (stored at end of OT name)
 DEF HYPER_TRAINING_MASK EQU %11111100
 
-DEF MON_CRY_LENGTH EQU 6
+DEF MON_CRY_LENGTH EQU 5
 
 ; maximum number of party pokemon
 DEF PARTY_LENGTH EQU 6
@@ -360,6 +360,8 @@ DEF NUM_WATERMON EQU 3 ; data/wild/*_water.asm table size
 DEF GRASS_WILDDATA_LENGTH EQU 2 + 1 + NUM_GRASSMON * 3 * 3
 DEF WATER_WILDDATA_LENGTH EQU 2 + 1 + NUM_WATERMON * 3
 DEF FISHGROUP_DATA_LENGTH EQU 2 + 2 * 3
+
+DEF LONG_GRASS_BIAS EQU 20 ; COLL_LONG_GRASS minimum roll for more rare encounters
 
 DEF NUM_ROAMMON_MAPS EQU 16 ; RoamMaps table size (see data/wild/roammon_maps.asm)
 

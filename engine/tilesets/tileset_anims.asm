@@ -64,19 +64,16 @@ ScrollFourTilesUpDownLeftRight:
 	add hl, bc
 	call _ScrollTileDown
 	call _ScrollTileLeft
-	jr _ScrollTileRight
-
-ScrollTileRightLeft:
-; Scroll right for 4 ticks, then left for 4 ticks.
-	ld h, d
-	ld l, e
-	ld a, [wTileAnimationTimer]
-	inc a
-	and %111
-	ld [wTileAnimationTimer], a
-	and %100
-	jr nz, _ScrollTileLeft
 	; fallthrough
+
+;ScrollTileRightLeft:
+;; Scroll right for 4 ticks, then left for 4 ticks.
+;	ld h, d
+;	ld l, e
+;	call StandingTileFrame8
+;	and %100
+;	jr nz, _ScrollTileLeft
+;	jr _ScrollTileRight
 
 ;ScrollTileRight:
 ;	ld h, d
@@ -231,7 +228,30 @@ AnimateWaterTile:
 .WaterTileFrames:
 INCBIN "gfx/tilesets/animations/water_johto.2bpp"
 
-AnimateBuoyTiles:
+AnimateCaveWaterTile:
+	ld hl, sp + 0
+	ld b, h
+	ld c, l
+
+	; period 4, every 2 frames, offset to 1 tile (16 bytes)
+	ld a, [wTileAnimationTimer]
+	maskbits 4, 1
+	add a
+	add a
+	add a
+
+	add LOW(.CaveWaterTileFrames)
+	ld l, a
+	adc HIGH(.CaveWaterTileFrames)
+	sub l
+	ld h, a
+
+	jmp WriteTileHLToDE
+
+.CaveWaterTileFrames:
+INCBIN "gfx/tilesets/animations/water_cave.2bpp"
+
+AnimateRockTiles:
 	ld hl, sp + 0
 	ld b, h
 	ld c, l
@@ -244,16 +264,65 @@ AnimateBuoyTiles:
 	rrca
 	add l
 
+	add LOW(.RockTileFrames)
+	ld l, a
+	adc HIGH(.RockTileFrames)
+	sub l
+	ld h, a
+
+	jmp WriteThreeTilesHLToDE
+
+.RockTileFrames:
+INCBIN "gfx/tilesets/animations/rocks.2bpp"
+
+AnimateBuoyTiles:
+	ld hl, sp + 0
+	ld b, h
+	ld c, l
+
+	; period 4, every 2 frames, offset to 4 tiles (64 bytes)
+	ld a, [wTileAnimationTimer]
+	maskbits 4, 1
+	swap a
+	add a
+
 	add LOW(.BuoyTileFrames)
 	ld l, a
 	adc HIGH(.BuoyTileFrames)
 	sub l
 	ld h, a
 
-	jmp WriteThreeTilesHLToDE
+	jmp WriteFourTilesHLToDE
 
 .BuoyTileFrames:
 INCBIN "gfx/tilesets/animations/buoy.2bpp"
+
+AnimateKantoBuoyTiles:
+	ld hl, sp + 0
+	ld b, h
+	ld c, l
+
+	; period 8, offset to 4 tiles (64 bytes)
+	; (the high bit ends up in the carry flag!)
+	ld a, [wTileAnimationTimer]
+	and %111
+	swap a
+	add a
+	add a
+
+	ld h, 0
+	rl h
+	add LOW(.KantoBuoyTileFrames)
+	ld l, a
+	adc HIGH(.KantoBuoyTileFrames)
+	sub l
+	add h
+	ld h, a
+
+	jmp WriteFourTilesHLToDE
+
+.KantoBuoyTileFrames:
+INCBIN "gfx/tilesets/animations/buoy_kanto.2bpp"
 
 AnimateRainTiles:
 	ld hl, sp + 0
@@ -573,6 +642,25 @@ AnimateDoubleStarTile:
 
 	jmp WriteTileHLToDE
 
+AnimateWaterBubbleTiles:
+	ld hl, sp + 0
+	ld b, h
+	ld c, l
+
+	; period 8, offset to 2 tiles (32 bytes)
+	ld a, [wTileAnimationTimer]
+	maskbits 8
+	swap a
+	add a
+
+	add LOW(vTiles4 tile $0b)
+	ld l, a
+	adc HIGH(vTiles4 tile $0b)
+	sub l
+	ld h, a
+
+	jmp WriteTwoTilesHLToDE
+
 AnimateTowerPillarTiles1:
 	ld hl, sp + 0
 	ld b, h
@@ -702,11 +790,10 @@ AnimateWhirlpoolTiles:
 	ld b, h
 	ld c, l
 
-	; period 4, offset to 4 tiles (64 bytes)
+	; period 4, every 2 frames, offset to 4 tiles (64 bytes)
 	ld a, [wTileAnimationTimer]
-	maskbits 4
+	maskbits 4, 1
 	swap a
-	add a
 	add a
 
 	add LOW(.WhirlpoolTileFrames)
@@ -739,7 +826,7 @@ AnimateTinyWaterTiles:
 
 	jmp WriteFourTilesHLToDE
 
-AnimateTinyBuoyTiles:
+AnimateTinyRockTiles:
 	; period 2, every 2 frames, offset to 4 tiles (64 bytes)
 	ld a, [wTileAnimationTimer]
 	maskbits 2, 1
@@ -856,6 +943,26 @@ AnimateTorchTile:
 	adc HIGH(vTiles5 tile $11)
 	sub l
 	ld h, a
+
+	jmp WriteTileHLToDE
+
+AnimateLampLightTiles:
+	ld a, [wTimeOfDayPal]
+	and 3
+	cp NITE
+	assert EVE > NITE
+	ret c
+
+	ld hl, sp + 0
+	ld b, h
+	ld c, l
+
+	ldh a, [hVBlankCounter]
+	and %10
+	ld hl, vTiles2 tile $66
+	jmp z, WriteTileHLToDE
+	assert HIGH(vTiles2 tile $66) == HIGH(vTiles2 tile $67)
+	ld l, LOW(vTiles2 tile $67)
 
 	jmp WriteTileHLToDE
 

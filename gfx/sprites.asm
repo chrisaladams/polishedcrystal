@@ -637,3 +637,18 @@ FloatingBallSpriteGFX:: INCBIN "gfx/sprites/floating_ball.2bpp.lzp"
 
 SECTION "SpinarakCartSpriteGFX", ROMX
 SpinarakCartSpriteGFX:: INCBIN "gfx/sprites/spinarak_cart.2bpp.lzp"
+
+SECTION "PearlSpriteGFX", ROMX
+PearlSpriteGFX:: INCBIN "gfx/sprites/pearl.2bpp.lzp"
+
+SECTION "PagodaSpriteGFX", ROMX
+PagodaSpriteGFX:: INCBIN "gfx/sprites/pagoda.2bpp.lzp"
+
+SECTION "CampfireSpriteGFX", ROMX
+CampfireSpriteGFX:: INCBIN "gfx/sprites/campfire.2bpp.lzp"
+
+SECTION "CableCarSpriteGFX", ROMX
+CableCarSpriteGFX:: INCBIN "gfx/sprites/cable_car.2bpp.lzp"
+
+SECTION "LilypadSpriteGFX", ROMX
+LilypadSpriteGFX:: INCBIN "gfx/sprites/lilypad.2bpp.lzp"

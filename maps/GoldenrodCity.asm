@@ -6,6 +6,7 @@ GoldenrodCity_MapScriptHeader:
 	def_callbacks
 	callback MAPCALLBACK_NEWMAP, GoldenrodCityFlyPoint
 	callback MAPCALLBACK_OBJECTS, GoldenrodCityMoveTutor
+	callback MAPCALLBACK_CMDQUEUE, GoldenrodCitySetUpPaletteSwap
 
 	def_warp_events
 	warp_event 28,  7, GOLDENROD_GYM, 1
@@ -38,10 +39,10 @@ GoldenrodCity_MapScriptHeader:
 	coord_event  9, 15, SCENE_GOLDENRODCITY_NOOP, GoldenrodCityPanUpScript
 
 	def_bg_events
-	bg_event 14, 14, BGEVENT_JUMPTEXT, GoldenrodCityStationSignText
+	bg_event 15, 14, BGEVENT_JUMPTEXT, GoldenrodCityStationSignText
 	bg_event  7, 15, BGEVENT_JUMPTEXT, GoldenrodCityRadioTowerSignText
 	bg_event 30, 27, BGEVENT_JUMPTEXT, GoldenrodDeptStoreSignText
-	bg_event 30,  9, BGEVENT_JUMPTEXT, GoldenrodGymSignText
+	bg_event 29,  7, BGEVENT_JUMPTEXT, GoldenrodGymSignText
 	bg_event 26, 18, BGEVENT_JUMPTEXT, GoldenrodCitySignText
 	bg_event 32, 30, BGEVENT_JUMPTEXT, GoldenrodCityBikeShopSignText
 	bg_event 20, 22, BGEVENT_JUMPTEXT, GoldenrodCityGameCornerSignText
@@ -50,7 +51,7 @@ GoldenrodCity_MapScriptHeader:
 	bg_event 14, 30, BGEVENT_JUMPTEXT, GoldenrodCityUndergroundSignText
 	bg_event 40, 28, BGEVENT_JUMPTEXT, GoldenrodCityUndergroundSignText
 	bg_event 20, 27, BGEVENT_JUMPTEXT, PokeComCenterSignText
-	bg_event 34,  6, BGEVENT_JUMPTEXT, GoldenrodCityFlowerShopSignText
+	bg_event 35,  6, BGEVENT_JUMPTEXT, GoldenrodCityFlowerShopSignText
 	bg_event 27, 15, BGEVENT_JUMPTEXT, GoldenrodMuseumSignText
 
 	def_object_events
@@ -90,6 +91,17 @@ GoldenrodCityMoveTutor:
 .MoveTutorDisappear
 	disappear GOLDENRODCITY_POKEFAN_M2
 	endcallback
+
+GoldenrodCitySetUpPaletteSwap:
+	usepaletteswap .PaletteSwap
+	endcallback
+
+.PaletteSwap:
+	paletteswap 22, 39, 7, 19, PAL_BG_WATER, OverworldWaterPalettes, GoldenrodMuseumRoofPalettes
+	; The unswapped NULL case will keep whichever palette was chosen by the previous case
+	paletteswap 26, 41, 21, 33, PAL_BG_WATER, NULL, GoldenrodBikeShopRoofPalettes
+	paletteswap 8, 27, 12, 28, PAL_BG_GREEN, OverworldGreenPalettes, GameCornerExteriorPalettes
+	db -1 ; end
 
 GoldenrodCityStepDownScene:
 	sdefer .Script
@@ -538,4 +550,3 @@ GoldenrodCityMoveTutorIfYouUnderstandYouveMadeItText:
 GoldenrodCityMoveTutorBButText:
 	text "B-but…"
 	done
-

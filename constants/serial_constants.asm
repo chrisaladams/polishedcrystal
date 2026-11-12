@@ -61,9 +61,13 @@ endc
 ; Bump whenever battle-affecting link logic changes (party normalization,
 ; healing, clauses, base stats, abilities) so mismatched builds can't connect
 ; and desync. v6: L50 full-heal + sleep/evasion clauses + balance changes.
-DEF LINK_VERSION EQU 6
+; v7: merged upstream's party patch-list fix (#1634), which changes the
+; serialized party layout, on top of this fork's v6 battle changes.
+DEF LINK_VERSION EQU 7
 ; This is the minimum link version allowed for trading
-DEF LINK_MIN_TRADE_VERSION EQU 3
+; Older versions use a different party patch-list origin (upstream v5+), and
+; this fork's v6 builds predate that fix, so only v7+ may trade.
+DEF LINK_MIN_TRADE_VERSION EQU 7
 
 ; PerformLinkChecks error codes
 	const_def

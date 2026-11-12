@@ -47,10 +47,10 @@
 	tilecoll WALL, WALL, WALL, DOOR ; 2e
 	tilecoll WALL, WALL, WALL, WALL ; 2f
 	tilecoll TOP_WALL, WALL, FLOOR, FLOOR ; 30
-	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; 31
+	tilecoll BUOY, BUOY, WATER, WATER ; 31
 	tilecoll TOP_WALL, FLOOR, FLOOR, FLOOR ; 32
 	tilecoll WALL, WALL, WALL, WALL ; 33
-	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; 34
+	tilecoll BUOY, WATER, BUOY, WATER ; 34
 	tilecoll WATER, WATER, WATER, WATER ; 35
 	tilecoll WATER, BUOY, WATER, BUOY ; 36
 	tilecoll WATERFALL, WATERFALL, WATER, WATER ; 37
@@ -118,7 +118,7 @@
 	tilecoll WATERFALL, WATERFALL, WATERFALL, WATERFALL ; 75
 	tilecoll WATER, WATER, WATER, WATER ; 76
 	tilecoll WATER, WATER, WATERFALL, WATERFALL ; 77
-	tilecoll FLOOR, FLOOR, WALL, WALL ; 78
+	tilecoll FLOOR, FLOOR, FLOOR, WALL ; 78
 	tilecoll WATER, WATER, WATER, WATER ; 79
 	tilecoll WATER, WATER, WATER, WATER ; 7a
 	tilecoll FLOOR, FLOOR, WALL, FLOOR ; 7b
@@ -178,7 +178,7 @@
 	tilecoll FLOOR, WALL, WALL, WALL ; b1
 	tilecoll FLOOR, FLOOR, WALL, FLOOR ; b2
 	tilecoll FLOOR, FLOOR, FLOOR, WALL ; b3
-	tilecoll TOP_WALL, TOP_WALL, FLOOR, FLOOR ; b4
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; b4
 	tilecoll FLOOR, FLOOR, WALL, WALL ; b5
 	tilecoll FLOOR, TOP_WALL, FLOOR, BOTTOM_WALL ; b6
 	tilecoll TOP_WALL, FLOOR, BOTTOM_WALL, FLOOR ; b7
@@ -198,7 +198,7 @@
 	tilecoll WALL, FLOOR, WALL, FLOOR ; c5
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; c6
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; c7
-	tilecoll FLOOR, FLOOR, FLOOR, WALL ; c8
+	tilecoll FLOOR, FLOOR, WALL, WALL ; c8
 	tilecoll FLOOR, WALL, WATER, WALL ; c9
 	tilecoll WATER, WATER, WATER, WATER ; ca
 	tilecoll WATER, WATER, WATER, WATER ; cb
@@ -230,3 +230,20 @@
 	tilecoll LEFT_WALL, FLOOR, LEFT_WALL, FLOOR ; e5
 	tilecoll TOP_WALL, FLOOR, TALL_GRASS, TALL_GRASS ; e6
 	tilecoll FLOOR, TOP_WALL, TALL_GRASS, TALL_GRASS ; e7
+	tilecoll BOTTOM_WALL, FLOOR, CAVE, WALL ; e8
+	tilecoll WALL, WALL, WALL, WALL ; e9
+	tilecoll WALL, WALL, WALL, WALL ; ea
+	tilecoll WALL, WALL, WALL, WALL ; eb
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; ec
+	tilecoll WALL, WALL, WALL, WALL ; ed
+	tilecoll WALL, WALL, WALL, WALL ; ee
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; ef
+	tilecoll FLOOR, FLOOR, CAMPFIRE_GLOW, CAMPFIRE_GLOW ; f0
+	tilecoll FLOOR, WALL, CAMPFIRE_GLOW, FLOOR ; f1
+	tilecoll CAMPFIRE_GLOW, WALL, CAMPFIRE_GLOW, CAMPFIRE_GLOW ; f2
+	tilecoll CAMPFIRE_GLOW, FLOOR, CAMPFIRE_GLOW, FLOOR ; f3
+	tilecoll FLOOR, FLOOR, WALL, FLOOR ; f4
+	tilecoll WALL, FLOOR, FLOOR, FLOOR ; f5
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; f6
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; f7
+	tilecoll FLOOR, FLOOR, FLOOR, FLOOR ; f8

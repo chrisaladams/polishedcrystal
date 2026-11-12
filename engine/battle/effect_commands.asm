@@ -274,17 +274,16 @@ BattleCommand_checkturn:
 
 .woke_up
 if !DEF(FAITHFUL)
-	; if user has Early Bird, display ability activation
+	; if user has Early Bird, display ability
 	; a is still (user's ability - EARLY_BIRD)
 	and a
 	jr nz, .woke_up_no_early_bird
-	farcall BeginAbility
-	farcall ShowAbilityActivation
+	farcall BeginAndShowUserAbility
 endc
 .woke_up_no_early_bird
 	ld hl, WokeUpText
 	call StdBattleTextbox
-	; does nothing in case we never showed an ability activation
+	; does nothing in case we never showed an ability
 	farcall EndAbility
 	ldh a, [hBattleTurn]
 	and a
@@ -297,7 +296,7 @@ endc
 	ld hl, UpdateEnemyHUD
 .ok1
 	call CallBattleCore
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	jr .not_asleep
 
@@ -336,9 +335,10 @@ endc
 	jr z, .thaw
 
 	; Check for defrosting
-	call BattleRandom
-	cp 1 + (20 percent)
-	jr c, .thaw
+	ld a, 5
+	call BattleRandomRange
+	and a
+	jr z, .thaw
 	ld hl, FrozenSolidText
 	call StdBattleTextbox
 	xor a
@@ -382,9 +382,10 @@ endc
 	call FarPlayBattleAnimation
 
 	; 33% chance of hitting itself (updated from 50% in Gen VII)
-	call BattleRandom
-	cp 1 + (33 percent)
-	jr nc, .not_confused
+	ld a, 3
+	call BattleRandomRange
+	and a
+	jr nz, .not_confused
 
 	; clear confusion-dependent substatus
 	ld a, BATTLE_VARS_SUBSTATUS3
@@ -412,7 +413,7 @@ endc
 
 	; 50% chance of infatuation
 	call BattleRandom
-	cp 1 + (50 percent)
+	add a
 	jr c, .not_infatuated
 
 	ld hl, InfatuationText
@@ -453,7 +454,7 @@ endc
 
 	; 25% chance to be fully paralyzed
 	call BattleRandom
-	cp 1 + (25 percent)
+	cp 64
 	ret nc
 
 	ld hl, FullyParalyzedText
@@ -583,8 +584,7 @@ CheckPowerHerb:
 	call GetSolarizedWeather
 	jr nz, .no_solar_beam
 
-	farcall BeginAbility
-	farcall ShowAbilityActivation
+	farcall BeginAndShowUserAbility
 	ld hl, BattleText_MegaSolCharged
 	call StdBattleTextbox
 	farcall EndAbility
@@ -746,7 +746,7 @@ HitConfusion:
 	and a
 	jr nz, .enemy
 	farcall UpdatePlayerHUD
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 .enemy
 	call TakeOpponentDamage
@@ -2750,9 +2750,6 @@ BattleCommand_applydamage:
 	and a
 	ret z
 
-	call CheckSubHit
-	ret nz
-
 	cp 5
 	ld hl, PlayerAffectionEndureText
 	ld de, EnemyAffectionEndureText
@@ -2766,8 +2763,7 @@ BattleCommand_applydamage:
 .not_enduring2
 	dec a
 	jr nz, .enduring_with_item
-	farcall BeginAbility
-	farcall ShowEnemyAbilityActivation
+	farcall BeginAndShowOpponentAbility
 	ld hl, EnduredText
 	call StdBattleTextbox
 	farjp EndAbility
@@ -3473,7 +3469,7 @@ BattleCommand_posthiteffects:
 	call c, FlinchTarget
 	ret
 
-CheckStatHerbsAfterIntimidate:
+CheckStatHerbsAfterAbility:
 	ld hl, wDeferredSwitch
 	ld a, [hl]
 	push af
@@ -3755,7 +3751,7 @@ EndMoveDamageChecks:
 	call SwitchTurn
 	call CanStealItem
 	jr nz, .no_pickpocket
-	farcall BeginAbility
+	farcall BeginUserAbility
 	call BattleCommand_thief
 	farcall EndAbility
 .no_pickpocket
@@ -4933,7 +4929,7 @@ BattleCommand_sleep:
 	ld [wNumHits], a
 	ld de, ANIM_SLP
 	call PlayOpponentBattleAnim
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ld a, BATTLE_VARS_STATUS_OPP
 	call GetBattleVarAddr
@@ -4962,8 +4958,7 @@ BattleCommand_sleep:
 	jmp StdBattleTextbox
 
 .ability_ok
-	farcall BeginAbility
-	farcall ShowEnemyAbilityActivation
+	farcall BeginAndShowOpponentAbility
 	call AnimateFailedMove
 	call PrintDoesntAffect
 	farjp EndAbility
@@ -5197,8 +5192,7 @@ SapHealth:
 
 .damage
 	pop hl
-	farcall BeginAbility
-	farcall ShowEnemyAbilityActivation
+	farcall BeginAndShowOpponentAbility
 	farcall SubtractHPFromUser_OverrideFaintOrder
 	ld hl, SuckedUpOozeText
 	call StdBattleTextbox
@@ -5425,7 +5419,7 @@ DisplayStatusProblem:
 	ret z ; Nothing happened?
 
 	ld e, a
-	farcall ShowPotentialAbilityActivation
+	farcall ShowPendingUserAbility
 	ld bc, 4
 	ld hl, StatusProblemTable - 4
 .loop
@@ -5513,8 +5507,7 @@ StatusTargetVerbose:
 	jr .done
 
 .ability_ok
-	farcall BeginAbility
-	farcall ShowEnemyAbilityActivation
+	farcall BeginAndShowOpponentAbility
 	ld hl, DoesntAffectText
 .failed
 	push hl
@@ -5536,6 +5529,7 @@ BattleCommand_raisesubnoanim:
 	ld hl, GetMonFrontpic
 .PlayerTurn:
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call CallBattleCore
 	jmp ApplyTilemapInVBlank
@@ -5548,6 +5542,7 @@ BattleCommand_lowersubnoanim:
 	ld hl, DropEnemySub
 .PlayerTurn:
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call CallBattleCore
 	jmp ApplyTilemapInVBlank
@@ -5885,19 +5880,13 @@ BattleCommand_charge:
 
 .SolarBeam:
 ; 'took in sunlight!'
-	text_far _BattleTookSunlightText
-	text_end
-
+	text_farend _BattleTookSunlightText
 .Fly:
 ; 'flew up high!'
-	text_far _BattleFlewText
-	text_end
-
+	text_farend _BattleFlewText
 .Dig:
 ; 'dug a hole!'
-	text_far _BattleDugText
-	text_end
-
+	text_farend _BattleDugText
 BattleCommand_traptarget:
 	call HasOpponentFainted
 	ret z
@@ -6061,8 +6050,7 @@ BattleCommand_confuse:
 	call GetOpponentIgnorableAbility
 	cp OWN_TEMPO
 	jr nz, .no_ability_protection
-	farcall BeginAbility
-	farcall ShowEnemyAbilityActivation
+	farcall BeginAndShowOpponentAbility
 	ld hl, DoesntAffectText
 	call StdBattleTextbox
 	farjp EndAbility
@@ -6206,8 +6194,7 @@ BattleCommand_heal:
 	jmp SwitchTurn
 
 .ability_prevents_rest
-	farcall BeginAbility
-	farcall ShowAbilityActivation
+	farcall BeginAndShowUserAbility
 	call AnimateFailedMove
 	farjp EndAbility
 

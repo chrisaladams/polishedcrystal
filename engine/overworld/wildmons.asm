@@ -1,30 +1,18 @@
 LoadWildMonData:
 	call _GrassWildmonLookup
-	jr c, .copy
-	ld hl, wMornEncounterRate
-	xor a
-	ld [hli], a ; morn rate
-	ld [hli], a ; day rate
-	ld [hli], a ; nite rate
-	ld [hl], a  ; eve rate
-	jr .done_copy
-
-.copy
-	inc hl
-	inc hl
-	ld de, wMornEncounterRate
-	ld bc, 3
-	rst CopyBytes
-	ld [de], a ; eve rate = nite rate
-.done_copy
+	call .get_rate
+	ld [wGrassEncounterRate], a
 	call _WaterWildmonLookup
+	call .get_rate
+	ld [wWaterEncounterRate], a
+	ret
+
+.get_rate:
 	ld a, 0 ; no-optimize a = 0
-	jr nc, .no_copy
+	ret nc
 	inc hl
 	inc hl
 	ld a, [hl]
-.no_copy
-	ld [wWaterEncounterRate], a
 	ret
 
 GetWildLocations:
@@ -175,16 +163,12 @@ TryWildEncounter::
 	ret
 
 GetMapEncounterRate:
-	ld hl, wMornEncounterRate
 	call CheckOnWater
-	ld a, wWaterEncounterRate - wMornEncounterRate
+	ld a, [wWaterEncounterRate]
 	jr z, .ok
-	ld a, [wTimeOfDay]
+	ld a, [wGrassEncounterRate]
 .ok
-	ld c, a
-	ld b, 0
-	add hl, bc
-	ld b, [hl]
+	ld b, a
 	ret
 
 ApplyMusicEffectOnEncounterRate::
@@ -314,8 +298,19 @@ _ChooseWildEncounter:
 .get_random_mon
 	dec c
 	push hl ; wild mon data pointer
-	ld a, 100
+
+; Roll [0, 100) normally, or [LONG_GRASS_BIAS, 100) in long grass for more rare encounters.
+	ld a, [wPlayerTileCollision]
+	cp COLL_LONG_GRASS
+	ld a, 100 - LONG_GRASS_BIAS
+	ld b, LONG_GRASS_BIAS
+	jr z, .got_prob_params
+	add b ; a = 100
+	ld b, 0
+.got_prob_params
 	call RandomRange
+	add b
+
 	ld b, -1
 	ld h, d
 	ld l, e
@@ -406,7 +401,7 @@ _ChooseWildEncounter:
 	cp c
 	jr z, .loadwildmon
 	inc c
-	jr nz, .get_random_mon
+	jmp nz, .get_random_mon
 
 .loadwildmon
 	ld a, [wCurForm]
@@ -512,12 +507,22 @@ ApplyAbilityEffectsOnEncounterMon:
 ; Vanilla 3gen+: 50% to force upper bound in a level range
 ; Since we don't have level ranges, 50% to increase level by 1/8 (min 1)
 	call Random
-	rrca
+	add a
 	ret c
 	ld a, c
+	rrca
+	rrca
+	inc a ; round x.5+ up
+	rrca
+	and %11111
+	jr nz, .increased
+	inc a
+.increased
 	cp MAX_LEVEL
-	ret nc
-	inc c
+	jr c, .got_increment
+	ld a, MAX_LEVEL
+.got_increment
+	ld c, a
 	ret
 
 .Intimidate:
@@ -1006,9 +1011,7 @@ RandomPhoneRareWildMon:
 
 .SawRareMonText:
 	; I just saw some rare @  in @ . I'll call you if I see another rare #MON, OK?
-	text_far _JustSawSomeRareMonText
-	text_end
-
+	text_farend _JustSawSomeRareMonText
 RandomPhoneWildMon:
 	farcall GetCallerLocation
 	ld d, b

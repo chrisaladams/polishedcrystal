@@ -263,7 +263,7 @@ endr
 
 	ld a, [wBattleType]
 	cp BATTLETYPE_NEVER_SHINY
-	jr z, .shiny
+	jr z, .not_shiny
 	cp BATTLETYPE_GROTTO
 	jr z, .not_shiny
 
@@ -1284,29 +1284,19 @@ GivePoke::
 
 GiftMonBoxFullText:
 	; @ was full.
-	text_far _CurBoxFullText
-	text_end
-
+	text_farend _CurBoxFullText
 ReceivedGiftMonText:
 	; <PLAYER> received @!
-	text_far _ReceivedGiftMonText
-	text_end
-
+	text_farend _ReceivedGiftMonText
 GiftMonSentToPCText:
 	; @ was sent to <BOX>.
-	text_far _MonSentToPCText
-	text_end
-
+	text_farend _MonSentToPCText
 ReceivedGiftEggText:
 	; <PLAYER> received an egg!
-	text_far _ReceivedEggText
-	text_end
-
+	text_farend _ReceivedEggText
 GiftEggSentToPCText:
 	; The Egg was sent to <BOX>.
-	text_far _EggSentToPCText
-	text_end
-
+	text_farend _EggSentToPCText
 String_Egg:
 	rawchar "Egg@"
 

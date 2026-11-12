@@ -34,7 +34,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; 21
 	tilecoll WALL, DOOR, FLOOR, FLOOR ; 22
 	tilecoll WALL, WALL, WALL, WALL ; 23
-	tilecoll COUNTER, COUNTER, FLOOR, FLOOR ; 24
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 24
 	tilecoll PC, WALL, FLOOR, WALL ; 25
 	tilecoll COUNTER, FLOOR, FLOOR, FLOOR ; 26
 	tilecoll WALL, WALL, FLOOR, WALL ; 27
@@ -50,7 +50,7 @@
 	tilecoll WALL, WALL, WALL, WALL ; 31
 	tilecoll WALL, DOOR, FLOOR, FLOOR ; 32
 	tilecoll WALL, WALL, WALL, WALL ; 33
-	tilecoll COUNTER, COUNTER, FLOOR, FLOOR ; 34
+	tilecoll WALL, WALL, FLOOR, FLOOR ; 34
 	tilecoll PC, WALL, FLOOR, WALL ; 35
 	tilecoll COUNTER, FLOOR, FLOOR, FLOOR ; 36
 	tilecoll WALL, WALL, FLOOR, WALL ; 37
@@ -71,3 +71,4 @@
 	tilecoll WALL, WALL, COUNTER, FLOOR ; 46
 	tilecoll COUNTER, FLOOR, COUNTER, FLOOR ; 47
 	tilecoll WALL, FLOOR, FLOOR, FLOOR ; 48
+	tilecoll WALL, FLOOR, WALL, FLOOR ; 49

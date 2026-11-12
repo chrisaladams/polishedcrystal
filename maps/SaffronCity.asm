@@ -3,10 +3,11 @@ SaffronCity_MapScriptHeader:
 
 	def_callbacks
 	callback MAPCALLBACK_NEWMAP, SaffronCityFlyPoint
+	callback MAPCALLBACK_CMDQUEUE, SaffronCitySetUpPaletteSwap
 
 	def_warp_events
-	warp_event 28,  3, FIGHTING_DOJO, 1
-	warp_event 34,  3, SAFFRON_GYM, 1
+	warp_event 26,  3, FIGHTING_DOJO, 1
+	warp_event 32,  3, SAFFRON_GYM, 1
 	warp_event 27, 11, SAFFRON_MART, 2
 	warp_event  9, 29, SAFFRON_POKECENTER_1F, 1
 	warp_event 29, 29, MR_PSYCHICS_HOUSE, 1
@@ -30,12 +31,12 @@ SaffronCity_MapScriptHeader:
 	def_coord_events
 
 	def_bg_events
-	bg_event 21,  5, BGEVENT_JUMPTEXT, SaffronCitySignText
-	bg_event 33,  5, BGEVENT_JUMPTEXT, SaffronGymSignText
-	bg_event 27,  5, BGEVENT_JUMPTEXT, FightingDojoSignText
+	bg_event 20,  5, BGEVENT_JUMPTEXT, SaffronCitySignText
+	bg_event 33,  3, BGEVENT_JUMPTEXT, SaffronGymSignText
+	bg_event 27,  3, BGEVENT_JUMPTEXT, FightingDojoSignText
 	bg_event 15, 21, BGEVENT_JUMPTEXT, SilphCoSignText
 	bg_event 27, 29, BGEVENT_JUMPTEXT, MrPsychicsHouseSignText
-	bg_event  9,  5, BGEVENT_JUMPTEXT, SaffronCityMagnetTrainStationSignText
+	bg_event  8,  5, BGEVENT_JUMPTEXT, SaffronCityMagnetTrainStationSignText
 	bg_event 31, 11, BGEVENT_JUMPTEXT, PokemonTrainerFanClubSignText
 	bg_event  5, 21, BGEVENT_JUMPTEXT, SaffronTrainerTips1Text
 	bg_event 35, 25, BGEVENT_JUMPTEXT, SaffronTrainerTips2Text
@@ -58,6 +59,15 @@ SaffronCity_MapScriptHeader:
 SaffronCityFlyPoint:
 	setflag ENGINE_FLYPOINT_SAFFRON
 	endcallback
+
+SaffronCitySetUpPaletteSwap:
+	usepaletteswap .PaletteSwap
+	endcallback
+
+.PaletteSwap:
+	paletteswap 0, 255, 20, 255, PAL_BG_WATER, OverworldWaterPalettes, MrPsychicsHouseRoofPalettes
+	paletteswap 10, 29, 5, 18, PAL_BG_GREEN, OverworldGreenPalettes, SilphCoRoofPalettes
+	db -1 ; end
 
 SaffronCityLass1Script:
 	checkevent EVENT_RESTORED_POWER_TO_KANTO

@@ -169,8 +169,7 @@ MysticWaterGuy:
 	opentext
 	writetext MysticWaterGuyTextBefore
 	promptbutton
-	verbosegiveitem MYSTIC_WATER
-	iffalse_endtext
+	verbosegiveitem MYSTIC_WATER, iffalse_endtext
 	setevent EVENT_GOT_MYSTIC_WATER_IN_CHERRYGROVE
 	jumpthisopenedtext
 
@@ -209,19 +208,13 @@ GuideGentMovement3_5:
 	step_end
 
 GuideGentMovement4:
-	step_left
-	step_left
-	step_left
+	step_down
 	step_down
 	step_down
 	turn_head_left
 	step_end
 
 GuideGentMovement5:
-	step_down
-	step_right
-	step_right
-	step_right
 	step_right
 	step_right
 	step_right

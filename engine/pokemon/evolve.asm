@@ -401,12 +401,13 @@ TryToEvolve:
 	call DelayFrames
 
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	hlcoord 0, 0
 	lb bc, 12, 20
 	call ClearBox
 
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	call ClearSprites
 
@@ -553,24 +554,16 @@ IsMonHoldingEverstone:
 
 Text_CongratulationsYourPokemon:
 	; Congratulations! Your @ @
-	text_far _CongratulationsYourPokemonText
-	text_end
-
+	text_farend _CongratulationsYourPokemonText
 Text_EvolvedIntoPKMN:
 	; evolved into @ !
-	text_far _EvolvedIntoText
-	text_end
-
+	text_farend _EvolvedIntoText
 Text_StoppedEvolving:
 	; Huh? @ stopped evolving!
-	text_far _StoppedEvolvingText
-	text_end
-
+	text_farend _StoppedEvolvingText
 Text_WhatEvolving:
 	; What? @ is evolving!
-	text_far _EvolvingText
-	text_end
-
+	text_farend _EvolvingText
 LearnEvolutionMove:
 	; c = species
 	ld a, [wTempSpecies]

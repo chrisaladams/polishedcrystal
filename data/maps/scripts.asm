@@ -32,7 +32,6 @@ SECTION "Pokemon Center Scripts 4", ROMX
 
 INCLUDE "maps/SilverCavePokeCenter1F.asm"
 INCLUDE "maps/ShamoutiPokeCenter1F.asm"
-INCLUDE "maps/Route3PokeCenter1F.asm"
 INCLUDE "maps/Route10PokeCenter1F.asm"
 INCLUDE "maps/Route32PokeCenter1F.asm"
 INCLUDE "maps/GoldenrodPokecomCenter1F.asm"
@@ -75,7 +74,6 @@ SECTION "New Bark Scripts", ROMX
 INCLUDE "maps/NewBarkTown.asm"
 INCLUDE "maps/ElmsHouse.asm"
 INCLUDE "maps/ElmsLab.asm"
-INCLUDE "maps/PlayersNeighborsHouse.asm"
 
 
 SECTION "New Bark Scripts 2", ROMX
@@ -83,7 +81,8 @@ SECTION "New Bark Scripts 2", ROMX
 INCLUDE "maps/PlayersHouse1F.asm"
 INCLUDE "maps/PlayersHouse2F.asm"
 INCLUDE "maps/LyrasHouse1F.asm"
-INCLUDE "maps/LyrasHouse2F.asm"
+INCLUDE "maps/LyrasHouse2F.asm" ; shares text with PlayersHouse2F.asm
+INCLUDE "maps/PlayersNeighborsHouse.asm" ; shares text with PlayersHouse2F.asm
 
 
 SECTION "Cherrygrove Scripts", ROMX
@@ -101,6 +100,7 @@ SECTION "Cherrygrove Bay Scripts", ROMX
 INCLUDE "maps/CherrygroveBay.asm"
 INCLUDE "maps/Route32Coast.asm"
 INCLUDE "maps/Route32CoastHouse.asm"
+INCLUDE "maps/CherrygroveTrainTrackDual.asm"
 
 
 SECTION "Dark Cave Scripts", ROMX
@@ -527,6 +527,7 @@ INCLUDE "maps/MountMoonB1F.asm"
 INCLUDE "maps/MountMoonB2F.asm"
 INCLUDE "maps/MountMoonGiftShop.asm"
 INCLUDE "maps/MountMoonSquare.asm"
+INCLUDE "maps/MountMoonSquareCableCarGate.asm"
 
 
 SECTION "Cerulean Scripts", ROMX
@@ -656,7 +657,7 @@ INCLUDE "maps/CeladonDeptStore2F.asm"
 INCLUDE "maps/CeladonDeptStore3F.asm"
 INCLUDE "maps/CeladonDeptStore4F.asm"
 INCLUDE "maps/CeladonDeptStore5F.asm"
-INCLUDE "maps/CeladonDeptStore6F.asm"
+INCLUDE "maps/CeladonDeptStoreRoof.asm"
 INCLUDE "maps/CeladonDeptStoreElevator.asm"
 
 
@@ -765,6 +766,8 @@ INCLUDE "maps/FuchsiaGym.asm"
 INCLUDE "maps/FuchsiaBillSpeechHouse.asm"
 INCLUDE "maps/FuchsiaSafariBallHouse.asm"
 INCLUDE "maps/SafariZoneWardensHome.asm"
+INCLUDE "maps/FuchsiaAquarium1F.asm"
+INCLUDE "maps/FuchsiaAquarium2F.asm"
 INCLUDE "maps/LuckyIsland.asm"
 
 
@@ -908,7 +911,8 @@ INCLUDE "maps/NavelRockRoof.asm"
 
 SECTION "Faraway Island Scripts", ROMX
 
-INCLUDE "maps/FarawayIsland.asm"
+INCLUDE "maps/FarawayIslandNorth.asm"
+INCLUDE "maps/FarawayIslandSouth.asm"
 INCLUDE "maps/FarawayJungle.asm"
 
 
@@ -921,6 +925,7 @@ INCLUDE "maps/Route2North.asm"
 INCLUDE "maps/Route2NuggetSpeechHouse.asm"
 INCLUDE "maps/Route2South.asm"
 INCLUDE "maps/Route3.asm"
+INCLUDE "maps/Route3CableCarGate.asm"
 INCLUDE "maps/Route4.asm"
 
 
@@ -930,12 +935,12 @@ INCLUDE "maps/Route5.asm"
 INCLUDE "maps/Route5CleanseTagSpeechHouse.asm"
 INCLUDE "maps/Route5SaffronCityGate.asm"
 INCLUDE "maps/Route5UndergroundPathEntrance.asm"
-INCLUDE "maps/Route6.asm"
+INCLUDE "maps/Route6.asm" ; shares text with Route5.asm
 INCLUDE "maps/Route6SaffronGate.asm"
 INCLUDE "maps/Route6UndergroundPathEntrance.asm"
 INCLUDE "maps/Route7.asm"
 INCLUDE "maps/Route7SaffronGate.asm"
-INCLUDE "maps/Route8.asm"
+INCLUDE "maps/Route8.asm" ; shares text with Route7.asm
 INCLUDE "maps/Route8SaffronGate.asm"
 
 

@@ -208,25 +208,6 @@ CopyWarpData::
 	scf
 	ret
 
-CheckOutdoorOrIsolatedMap::
-	cp ISOLATED
-	ret z
-CheckOutdoorMap::
-	cp ROUTE
-	ret z
-	cp TOWN
-	ret
-
-CheckIndoorMap::
-	cp INDOOR
-	ret z
-	cp CAVE
-	ret z
-	cp DUNGEON
-	ret z
-	cp GATE
-	ret
-
 LoadMapAttributes_Connection::
 	ld hl, wMapSetupFlags
 	set MAPSETUP_CONNECTION_F, [hl]
@@ -987,11 +968,23 @@ DeleteObjectStruct::
 	ld [hl], -1 ; , masked
 	ret
 
+_LoadCoastSandGFX:
+	assert COAST_SAND_TILE > $80 ; coast sand tiles are in vTiles4, 1:80-FF
+	ld a, 1
+	ldh [rVBK], a
+	ld hl, CoastSandTileGFX
+	ld de, vTiles4 tile (COAST_SAND_TILE - $80)
+	lb bc, BANK(CoastSandTileGFX), NUM_COAST_SAND_TILES
+	jmp DecompressRequest2bpp
+
 _LoadTilesetGFX:
-; Loads one of up to 3 tileset groups depending on a
+; Loads one of up to 4 tileset groups depending on flags from `dec a`
+	jr z, _LoadCoastSandGFX
+	dec a
 	jr z, _LoadTilesetGFX0
 	dec a
 	jr z, _LoadTilesetGFX1
+	; fallthrough
 _LoadTilesetGFX2:
 	ld a, 1
 	ldh [rVBK], a
@@ -1074,13 +1067,14 @@ LoadTilesetGFX::
 	ld [wPendingOverworldGraphics], a
 	call _LoadTilesetGFX1
 	call _LoadTilesetGFX2
+	call _LoadCoastSandGFX
 	call _LoadTilesetGFX0
 	xor a
 	ldh [hTileAnimFrame], a
 	ret
 
 BufferScreen::
-	ld hl, wOverworldMapAnchor
+	ld hl, hOverworldMapAnchor
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
@@ -1107,7 +1101,7 @@ BufferScreen::
 	ret
 
 SaveScreen::
-	ld hl, wOverworldMapAnchor
+	ld hl, hOverworldMapAnchor
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
@@ -1115,7 +1109,7 @@ SaveScreen::
 	ld a, [wMapWidth]
 	add 6
 	ldh [hMapObjectIndexBuffer], a
-	ld a, [wPlayerStepDirection]
+	ldh a, [hPlayerStepDirection]
 	and a
 	jr z, .down
 	cp UP
@@ -1152,7 +1146,7 @@ SaveScreen::
 	jr SaveScreen_LoadConnection
 
 LoadConnectionBlockData::
-	ld hl, wOverworldMapAnchor
+	ld hl, hOverworldMapAnchor
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
@@ -1557,7 +1551,8 @@ CheckCurrentMapCoordEvents::
 	ld a, [hli]
 	cp b
 	jr z, .got_id
-	cp -1
+	assert SCENE_ALWAYS == -1
+	inc a ; cp SCENE_ALWAYS
 	jr nz, .next
 
 .got_id

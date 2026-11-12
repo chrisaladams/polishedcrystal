@@ -514,7 +514,7 @@ ParsePlayerAction:
 	ld a, [wCurPlayerMove]
 	inc a ; cp STRUGGLE
 	call nz, PlayClickSFX
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	pop af
 	ret nz
@@ -877,8 +877,7 @@ ForceDeferredSwitch:
 	cp SUCTION_CUPS
 	jr nz, .items_done
 
-	farcall BeginAbility
-	farcall ShowAbilityActivation
+	farcall BeginAndShowUserAbility
 	ld hl, UnaffectedText
 	call StdBattleTextbox
 	farcall EndAbility
@@ -1663,7 +1662,7 @@ ReconsumeLeppaBerry:
 	call GetNonfullPPMove
 	ret z
 	push bc
-	farcall ShowAbilityActivation
+	farcall ShowPendingUserAbility
 	pop bc
 	jr LeppaRestorePP
 
@@ -2707,6 +2706,23 @@ LostBattle:
 	scf
 	ret
 
+PrintWinLossText:
+	ld a, [wBattleResult]
+	and $f
+	ld hl, wWinTextPointer
+	jr z, .got_pointer
+	assert wWinTextPointer + 2 == wLossTextPointer
+	inc hl
+	inc hl
+.got_pointer
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ld a, [wMapScriptsBank]
+	call FarPrintText
+	call ApplyTilemapInVBlank
+	jmp WaitPressAorB_BlinkCursor
+
 EnemyMonFaintedAnimation:
 	hlcoord 12, 5
 	decoord 12, 6
@@ -2998,7 +3014,7 @@ Function_SetEnemyPkmnAndSendOutAnimation:
 	farcall CheckFaintedFrzSlp
 	call nc, BattleAnimateFrontpic
 	call UpdateEnemyHUD
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ret
 
@@ -3167,6 +3183,7 @@ SendOutPlayerMon:
 	call ClearBox
 	call ApplyTilemapInVBlank
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call GetMonBackpic
 	xor a
@@ -3216,7 +3233,7 @@ SendOutPlayerMon:
 
 .statused
 	call UpdatePlayerHUD
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ret
 
@@ -3595,7 +3612,7 @@ _HeldStatBoostBerry:
 	set SUBSTATUS_FOCUS_ENERGY, [hl]
 	pop hl
 	ret nz
-	farcall ShowPotentialAbilityActivation
+	farcall ShowPendingUserAbility
 	call CurItemRecoveryAnim
 	call GetCurItemName
 	ld hl, BattleText_ItemRaisedCrit
@@ -3622,7 +3639,7 @@ _HeldStatBoostBerry:
 	ld a, [wFailedMessage]
 	and a
 	ret nz
-	farcall ShowPotentialAbilityActivation
+	farcall ShowPendingUserAbility
 	farcall UseStatItemText
 
 	; Don't call CheckMirrorHerb; Bug Bite/Pluck needs to proc the copy later.
@@ -3718,8 +3735,7 @@ _HeldHPHealingItem:
 .quarter_maxhp
 	call GetQuarterMaxHP
 .got_hp_to_restore
-	ld a, CUD_CHEW
-	farcall ShowPotentialSpecificAbilityActivation
+	farcall ShowPendingUserAbility
 	call CurItemRecoveryAnim
 	call RestoreHP
 	xor a
@@ -3843,7 +3859,7 @@ _HeldStatusHealingItem:
 	ld a, b
 	and a
 	ret z
-	farcall ShowPotentialAbilityActivation
+	farcall ShowPendingUserAbility
 	call CurItemRecoveryAnim
 	or 1
 	ret
@@ -3877,8 +3893,7 @@ _HeldConfusionHealingItem:
 	jr nz, .ret_z
 	call DoHeldConfusionHealingItem
 	ret z
-	ld a, CUD_CHEW
-	farcall ShowPotentialSpecificAbilityActivation
+	farcall ShowPendingUserAbility
 	call CurItemRecoveryAnim
 	or 1
 	ret
@@ -3900,10 +3915,12 @@ UpdateBattleHUDs:
 	push bc
 	call DrawPlayerHUD
 	ld hl, wPlayerHPPal
+	ld bc, wBattleMonHP
 	call SetHPPal
 	call CheckDanger
 	call DrawEnemyHUD
 	ld hl, wEnemyHPPal
+	ld bc, wEnemyMonHP
 	call SetHPPal
 	jmp PopBCDEHL
 
@@ -3922,6 +3939,7 @@ DrawPlayerHUD:
 	ret nz
 
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 
 	farcall ClearPlayerHUD
@@ -4076,6 +4094,7 @@ DrawEnemyHUD:
 	ret nz
 
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 
 	farcall ClearEnemyHUD
@@ -4226,22 +4245,26 @@ BattleAnimateHPBar:
 	ret
 
 UpdatePlayerHPPal:
+	ld bc, wBattleMonHP
 	ld hl, wPlayerHPPal
 	jr UpdateHPPal
 
 UpdateEnemyHPPal:
+	ld bc, wEnemyMonHP
 	ld hl, wEnemyHPPal
 	; fallthrough
 UpdateHPPal:
-	ld b, [hl]
-	call SetHPPal
 	ld a, [hl]
-	cp b
+	push af
+	call SetHPPal
+	pop af
+	cp [hl]
 	ret z
 	jmp FinishBattleAnim
 
 BattleMenu:
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call LoadTempTileMapToTileMap
 
@@ -4283,7 +4306,7 @@ BattleMenu:
 	farcall LoadBattleMenu
 
 .next
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ld a, [wBattleMenuCursorBuffer]
 	dec a
@@ -4483,6 +4506,7 @@ BattleMenu_SafariBall:
 	call ClearTileMap
 .ball
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call _LoadBattleFontsHPBar
 	call ClearSprites
@@ -4574,6 +4598,7 @@ BattleMenuPKMN_Loop:
 	ld hl, .MenuHeader
 	call CopyMenuHeader
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call MenuBox
 	call UpdateSprites
@@ -4630,11 +4655,9 @@ UserCanSwitch:
 	ld a, b
 	cp HELD_SHED_SHELL
 	ret z
-if !DEF(FAITHFUL)
 	call GetTrueUserIgnorableAbility
 	cp RUN_AWAY
 	ret z
-endc
 	call CheckIfUserIsGhostType
 	ret z
 	farcall CheckIfTrappedByAbility
@@ -4768,8 +4791,7 @@ CheckRunSpeed:
 	cp RUN_AWAY
 	jr nz, .no_flee_ability
 	call SetPlayerTurn
-	farcall BeginAbility
-	farcall ShowAbilityActivation
+	farcall BeginAndShowUserAbility
 	jmp .can_escape
 .no_flee_ability
 	push hl
@@ -5022,6 +5044,7 @@ MoveSelectionScreen:
 	ld bc, NUM_MOVES
 	rst CopyBytes
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 
 	hlcoord 4, 17 - NUM_MOVES - 1
@@ -5105,7 +5128,7 @@ MoveSelectionScreen:
 	ld [hl], '▷'
 
 .interpret_joypad
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	call DoMenuJoypadLoop
 	bit B_PAD_UP, a
@@ -5270,23 +5293,15 @@ MoveSelectionScreen:
 	ret
 
 .pressed_start
-	ld hl, wBattleMonMoves
+	call ClearSprites ; hide weather icon
 	ld a, [wMenuCursorY]
-	dec a
-	ld b, 0
-	ld c, a
-	add hl, bc
-	ld c, [hl]
-	dec c
-	ld hl, MoveDescriptions
-	add hl, bc
-	add hl, bc
-	ld a, BANK(MoveDescriptions)
-	call GetFarWord
-	push hl
-	call ClearSprites
-	pop hl
-	call BattleMoveDescTextbox
+	add LOW(wBattleMonMoves - 1)
+	ld l, a
+	adc HIGH(wBattleMonMoves - 1)
+	sub l
+	ld h, a
+	ld a, [hl]
+	farcall PrintMoveDescInBattle
 	ld a, [wOptions1]
 	and TEXT_DELAY_MASK
 	cp INST_TEXT
@@ -5468,6 +5483,7 @@ SwapBattleMoves:
 
 MoveInfoBox:
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 
 	hlcoord 0, 8
@@ -6009,36 +6025,25 @@ else
 endc
 
 .compound_eyes:
-	; 60% chance of getting Item1
-	call BattleRandom
-	cp 60 percent
-	ld a, [wBaseItems]
-	jr c, .UpdateItem
-
-	; 20% chance of getting Item2 (50% of (100% - 60%) = 20%)
-	call BattleRandom
-	cp 50 percent
-	ld a, [wBaseItems+1]
-	jr c, .UpdateItem
-
-	; 20% chance of not getting an item (100% - 60% - 20% = 20%)
-	ld a, NO_ITEM
-	jr .UpdateItem
-
+	ld a, 5
+	call BattleRandomRange
+	cp 3 ; c 60% of the time, z 20% of the time
+	jr .check_item
 .no_compound_eyes_or_amulet_coin:
-	; 50% chance of getting Item1
-	call BattleRandom
-	cp 50 percent
+	ld a, 20
+	call BattleRandomRange
+	cp 10 ; c 50% of the time, z 5% of the time
+
+.check_item:
+	; 60%/50% chance of getting Item1
 	ld a, [wBaseItems]
 	jr c, .UpdateItem
 
-	; 5% chance of getting Item2 (10% of (100% - 50%) = 5%)
-	call BattleRandom
-	cp 10 percent
+	; 20%/5% chance of getting Item2
 	ld a, [wBaseItems+1]
-	jr c, .UpdateItem
+	jr z, .UpdateItem
 
-	; 45% chance of not getting an item (100% - 50% - 5% = 45%)
+	; 20%/45% chance of not getting an item
 	xor a ; NO_ITEM
 .UpdateItem:
 	ld [wOTPartyMon1Item], a
@@ -6221,18 +6226,20 @@ CheckValidMagikarpLength:
 	jr nz, .CheckMagikarpArea
 
 ; 5% chance of skipping both size checks
-	call Random
-	cp 5 percent
-	jr c, .CheckMagikarpArea
+	ld a, 20
+	call RandomRange
+	and a
+	jr z, .CheckMagikarpArea
 ; Try again if length >= 1616 mm (i.e. if LOW(length) >= 4 inches)
 	ld a, [wMagikarpLengthMmLo]
 	cp LOW(1616)
 	jr nc, .redo
 
 ; 20% chance of skipping this check
-	call Random
-	cp 20 percent - 1
-	jr c, .CheckMagikarpArea
+	ld a, 5
+	call RandomRange
+	and a
+	jr z, .CheckMagikarpArea
 ; Try again if length >= 1600 mm (i.e. if LOW(length) >= 3 inches)
 	ld a, [wMagikarpLengthMmLo]
 	cp LOW(1600)
@@ -6247,8 +6254,9 @@ CheckValidMagikarpLength:
 	jr nz, .okay
 .LakeOfRageMagikarp
 ; 40% chance of not flooring
-	call Random
-	cp 40 percent - 2
+	ld a, 5
+	call RandomRange
+	cp 2
 	jr c, .okay
 ; Try again if length < 1024 mm (i.e. if HIGH(length) < 3 feet)
 	ld a, [wMagikarpLengthMmHi]
@@ -6275,6 +6283,7 @@ FinalPkmnSlideInEnemyMonFrontpic:
 	cp 9
 	ret z
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	ldh [hBGMapHalf], a
 	ld d, $0
@@ -6290,7 +6299,7 @@ FinalPkmnSlideInEnemyMonFrontpic:
 	dec c
 	jr nz, .inner_loop
 
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ld c, 4
 	call DelayFrames
@@ -6337,6 +6346,7 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	cp 7
 	ret z
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	ldh [hBGMapHalf], a
 	ld d, $0
@@ -6352,7 +6362,7 @@ BattleWinSlideInEnemyTrainerFrontpic:
 	dec c
 	jr nz, .inner_loop
 
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ld c, 4
 	call DelayFrames
@@ -6737,7 +6747,7 @@ GiveExperiencePoints:
 	call UpdatePlayerHUD
 	call EmptyBattleTextbox
 	call LoadTileMapToTempTileMap
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 
 .skip_animation
@@ -7167,13 +7177,9 @@ Text_PkmnGainedExpPoint:
 	ret
 
 TextJump_ABoostedStringBuffer2ExpPoints:
-	text_far Text_ABoostedStringBuffer2ExpPoints
-	text_end
-
+	text_farend Text_ABoostedStringBuffer2ExpPoints
 TextJump_StringBuffer2ExpPoints:
-	text_far Text_StringBuffer2ExpPoints
-	text_end
-
+	text_farend Text_StringBuffer2ExpPoints
 AnimateExpBar:
 	push bc
 
@@ -7351,7 +7357,7 @@ AnimateExpBar:
 	cp b
 	jr nz, .anim_loop
 .end_animation
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ret
 
@@ -7359,11 +7365,13 @@ AnimateExpBar:
 	xor a
 	ldh [hCGBPalUpdate], a
 	inc a
+	assert TRANSFER_TILEMAP == 1
 	ldh [hBGMapMode], a
 	ldh [hBGMapHalf], a
 	ld c, d
 	call DelayFrames
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	inc a
 	ldh [hCGBPalUpdate], a
@@ -7624,9 +7632,7 @@ Function_TextJump_BattleMonNick01:
 	ret
 
 TextJump_BattleMonNick01:
-	text_far Text_BattleMonNick01
-	text_end
-
+	text_farend Text_BattleMonNick01
 WithdrawPkmnText:
 	ld hl, .WithdrawPkmnText
 	jmp BattleTextbox
@@ -7683,21 +7689,13 @@ WithdrawPkmnText:
 	ret
 
 TextJump_ThatsEnoughComeBack:
-	text_far Text_ThatsEnoughComeBack
-	text_end
-
+	text_farend Text_ThatsEnoughComeBack
 TextJump_OKComeBack:
-	text_far Text_OKComeBack
-	text_end
-
+	text_farend Text_OKComeBack
 TextJump_GoodComeBack:
-	text_far Text_GoodComeBack
-	text_end
-
+	text_farend Text_GoodComeBack
 TextJump_ComeBack:
-	text_far Text_ComeBack
-	text_end
-
+	text_farend Text_ComeBack
 HandleSafariAngerEatingStatus:
 	ld hl, wSafariMonEating
 	ld a, [hl]
@@ -8018,6 +8016,7 @@ BattleIntro:
 	ld hl, rLCDC
 	set B_LCDC_WIN_MAP, [hl]
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call EmptyBattleTextbox
 	hlcoord 9, 7
@@ -8030,7 +8029,7 @@ BattleIntro:
 	ld a, [wBattleMode]
 	dec a
 	call z, UpdateEnemyHUD
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ret
 
@@ -8711,9 +8710,10 @@ InitBattleDisplay:
 	ldh [rWY], a
 	call ApplyTilemapInVBlank
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	farcall BattleIntroSlidingPics
-	ld a, $1
+	ld a, TRANSFER_TILEMAP
 	ldh [hBGMapMode], a
 	ld a, $31
 	ldh [hGraphicStartTile], a

@@ -355,6 +355,7 @@ BT_ConfirmPartySelection:
 BT_DisplayMenu:
 	call CopyMenuHeader
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call MenuBox
 	call UpdateSprites
@@ -523,6 +524,7 @@ WritePartyMenuTilemap:
 	set NO_TEXT_SCROLL, [hl]
 
 	xor a
+	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 
 	hlcoord 0, 0
@@ -622,12 +624,17 @@ PlacePartyHPBar:
 	pop hl
 	ld d, 6
 	call DrawBattleHPBar
-	ld hl, wHPPals
 	ld a, [wHPPalIndex]
-	ld c, a
-	ld b, 0
-	add hl, bc
-	call SetHPPal
+	ld hl, wPartyMon1HP
+	call GetPartyLocation
+	call GetHPPal
+	ld a, [wHPPalIndex]
+	add LOW(wHPPals)
+	ld l, a
+	adc HIGH(wHPPals)
+	sub l
+	ld h, a
+	ld [hl], d
 	farcall ApplyPartyMenuHPPals ; updates wHPPalIndex
 .skip
 	ld hl, wHPPalIndex
@@ -1353,50 +1360,31 @@ PrintPartyMenuActionText:
 
 .Text_RecoveredSomeHP:
 	; recovered @ HP!
-	text_far _RecoveredSomeHPText
-	text_end
-
+	text_farend _RecoveredSomeHPText
 .Text_CuredOfPoison:
 	; 's cured of poison.
-	text_far _CuredOfPoisonText
-	text_end
-
+	text_farend _CuredOfPoisonText
 .Text_RidOfParalysis:
 	; 's rid of paralysis.
-	text_far _RidOfParalysisText
-	text_end
-
+	text_farend _RidOfParalysisText
 .Text_BurnWasHealed:
 	; 's burn was healed.
-	text_far _BurnWasHealedText
-	text_end
-
+	text_farend _BurnWasHealedText
 .Text_Defrosted:
 	; was defrosted.
-	text_far _WasDefrostedText
-	text_end
-
+	text_farend _WasDefrostedText
 .Text_WokeUp:
 	; woke up.
-	text_far _WokeUpText
-	text_end
-
+	text_farend _WokeUpText
 .Text_HealthReturned:
 	; 's health returned.
-	text_far _HealthReturnedText
-	text_end
-
+	text_farend _HealthReturnedText
 .Text_Revitalized:
 	; is revitalized.
-	text_far _RevitalizedText
-	text_end
-
+	text_farend _RevitalizedText
 .Text_GrewToLevel:
 	; grew to level @ !@ @
-	text_far _GrewToLevelText
-	text_end
-
+	text_farend _GrewToLevelText
 .Text_CameToItsSenses:
 	; came to its senses.
-	text_far _CameToItsSensesText
-	text_end
+	text_farend _CameToItsSensesText
