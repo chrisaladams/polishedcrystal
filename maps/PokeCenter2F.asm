@@ -120,6 +120,8 @@ LinkReceptionistScript_DoTradeOrBattle:
 .FriendNotReady:
 	special WaitForOtherPlayerToExit
 	writetext Text_FriendNotReady
+	yesorno
+	iftrue LinkReceptionistScript_DoTradeOrBattle
 	endtext
 
 .LinkedToFirstGen:
@@ -158,8 +160,11 @@ LinkReceptionistScript_DoTradeOrBattle:
 	endtext
 
 .LinkTimedOut:
+	special WaitForOtherPlayerToExit
 	writetext Text_LinkTimedOut
-	sjumpfwd .AbortLink
+	yesorno
+	iftrue LinkReceptionistScript_DoTradeOrBattle
+	endtext
 
 .DidNotSave:
 	writetext Text_PleaseComeAgain
@@ -284,7 +289,10 @@ Text_TradeReceptionistIntro:
 Text_FriendNotReady:
 	text "Your friend is not"
 	line "ready."
-	prompt
+
+	para "Would you like to"
+	line "keep waiting?"
+	done
 
 Text_MustSaveGame:
 	text "Before opening the"
@@ -301,10 +309,9 @@ Text_LinkTimedOut:
 	line "closed because of"
 	cont "inactivity."
 
-	para "Please contact"
-	line "your friend and"
-	cont "come again."
-	prompt
+	para "Would you like to"
+	line "try again?"
+	done
 
 Text_PleaseComeAgain:
 	text "Please come again."

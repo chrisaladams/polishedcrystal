@@ -2011,7 +2011,7 @@ Special_WaitForLinkedFriend:
 	call DelayFrame
 
 .no_link_action
-	ld a, $2
+	ld a, LINK_WAIT_FOR_FRIEND_FRAMES
 	ld [wLinkTimeoutFrames + 1], a
 	ld a, SERIAL_PATCH_LIST_PART_TERMINATOR
 	ld [wLinkTimeoutFrames], a
@@ -2115,9 +2115,9 @@ CheckLinkTimeout_Gen2:
 	ld hl, wLinkTimeoutFrames
 	vc_patch Wireless_net_delay_7
 if DEF(VIRTUAL_CONSOLE)
-	ld a, $3
+	ld a, LINK_HANDSHAKE_BUDGET_HI_VC
 else
-	ld a, 1
+	ld a, LINK_HANDSHAKE_BUDGET_HI
 endc
 	vc_patch_end
 	ld [hli], a
@@ -2182,9 +2182,9 @@ Link_CheckCommunicationError:
 .AcknowledgeSerial:
 	vc_patch Wireless_net_delay_5
 if DEF(VIRTUAL_CONSOLE)
-	ld b, 26
+	ld b, LINK_ACKNOWLEDGE_FRAMES_VC
 else
-	ld b, 10
+	ld b, LINK_ACKNOWLEDGE_FRAMES
 endc
 	vc_patch_end
 .loop
