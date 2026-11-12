@@ -27,11 +27,13 @@ import items
 # Variable/fixed-power moves are stored with power=1 in moves.json (the ROM
 # works out the real power in battle). For moveset ranking only, use a
 # representative estimate; engine.py computes the real per-hit value. Counter/
-# Mirror Coat aren't modeled, so they rank as 0 and never get picked.
+# Mirror Coat aren't modeled, so they rank as 0 and never get picked; Hyper
+# Beam / Giga Impact rank at half power for their recharge turn.
 VARIABLE_POWER_EST = {
     'EFFECT_LEVEL_DAMAGE': 50, 'EFFECT_SUPER_FANG': 50, 'EFFECT_GYRO_BALL': 60,
     'EFFECT_REVERSAL': 60, 'EFFECT_RETURN': 102, 'EFFECT_MAGNITUDE': 71,
     'EFFECT_LOW_KICK': 80, 'EFFECT_COUNTER': 0,
+    'EFFECT_HYPER_BEAM': 75,   # 150 BP, but every hit costs a recharge turn
 }
 
 # role-relevant utility effect buckets

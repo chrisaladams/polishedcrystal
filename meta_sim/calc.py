@@ -22,6 +22,8 @@ On the defending side, only Sand Stream's self-sand Rock-type Sp.Def boost
 (Tyranitar) and doesn't require choosing among abilities.
 Not modeled: Guts/Quick Feet (need status), type-changing abilities
 (Aerilate/Pixilate/Refrigerate), held items, weather chip damage over time.
+Hyper Beam / Giga Impact are scored by turns to KO including their recharge
+turns, so they only win when the extra power actually saves a turn.
 This is still a first-order signal for raw stat/typing/movepool/ability
 tuning, NOT a full battle: it ignores switching, status over time, hazards,
 and most item effects. Documented in meta_sim/matrix.py output.
@@ -60,8 +62,9 @@ def best_move(attacker, defender, moves, learnset, chart):
     build philosophy) and applying the defender's own Sand Stream Sp.Def
     boost if applicable.
     Returns (move_name, damage, type_effectiveness) or (None, 0, 0)."""
-    best = (None, 0, 0.0)
+    best, best_key = (None, 0, 0.0), (float('inf'), 0)
     atk_abilities = attacker.get('abilities') or [None]
+    hp = defender['stats']['hp']
     for mv in learnset:
         m = moves[mv]
         sand = abilities.defending_sand_mult(defender.get('abilities'), defender['types'], m)
@@ -69,7 +72,11 @@ def best_move(attacker, defender, moves, learnset, chart):
             dmg = damage(attacker, defender, m, chart, atk_ability=ab)
             if sand != 1.0:
                 dmg = int(dmg / sand)
-            if dmg > best[1]:
+            # fewest turns to KO first (so a recharge move's lost turns count),
+            # then raw damage as the tie-break
+            key = (turns_to_ko(m, dmg, hp), -dmg)
+            if dmg > 0 and key < best_key:
+                best_key = key
                 best = (mv, dmg, type_mult(m['type'], defender['types'], chart))
     return best
 
@@ -78,3 +85,13 @@ def hits_to_ko(dmg, hp):
     if dmg <= 0:
         return float('inf')
     return -(-hp // dmg)  # ceil
+
+RECHARGE_EFFECTS = {'EFFECT_HYPER_BEAM'}
+
+def turns_to_ko(move, dmg, hp):
+    """Turns spent landing a KO with `move`: Hyper Beam / Giga Impact lose a
+    recharge turn after every hit but the last."""
+    h = hits_to_ko(dmg, hp)
+    if move is not None and move['effect'] in RECHARGE_EFFECTS and h != float('inf'):
+        return 2 * h - 1
+    return h

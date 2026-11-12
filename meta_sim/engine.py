@@ -109,8 +109,14 @@ INFLICT = {'EFFECT_SLEEP': 'slp', 'EFFECT_PARALYZE': 'par', 'EFFECT_TOXIC': 'tox
 ONHIT = {'EFFECT_BURN_HIT': 'brn', 'EFFECT_PARALYZE_HIT': 'par',
          'EFFECT_FREEZE_HIT': 'frz', 'EFFECT_POISON_HIT': 'psn'}
 HEAL_EFFECTS = {'EFFECT_HEAL', 'EFFECT_HEALING_LIGHT', 'EFFECT_ROOST'}
-RECOIL_EFFECTS = {'EFFECT_RECOIL_HIT', 'EFFECT_FLARE_BLITZ', 'EFFECT_CLOSE_COMBAT',
-                  'EFFECT_JUMP_KICK', 'EFFECT_BRICK_BREAK'}  # close combat = self def/spd drop, approx as none
+# Recoil, mirroring BattleCommand_recoil: Double-Edge and Flare Blitz take 1/3
+# of the damage dealt, every other recoil move 1/4; Rock Head / Magic Guard
+# block it. It applies even when the hit KOs (recoil runs before
+# postfainteffects in the move scripts).
+RECOIL_EFFECTS = {'EFFECT_RECOIL_HIT', 'EFFECT_FLARE_BLITZ'}
+RECOIL_THIRD = {'DOUBLE_EDGE', 'FLARE_BLITZ'}
+RECHARGE_EFFECTS = {'EFFECT_HYPER_BEAM'}   # Hyper Beam / Giga Impact
+RAMPAGE_EFFECTS = {'EFFECT_RAMPAGE'}       # Outrage / Thrash / Petal Dance
 MULTI = {'EFFECT_MULTI_HIT': 3, 'EFFECT_DOUBLE_HIT': 2}
 
 
@@ -190,7 +196,8 @@ class Pmon:
     __slots__ = ('id', 'types', 'base', 'moves', 'ability', 'item', 'maxhp',
                  'hp', 'status', 'sleep', 'tox', 'stage', 'seeded', 'confused',
                  'fainted', 'locked_move', 'flash_fire', 'dmg_dealt', 'kos',
-                 'status_infl', 'heal_done')
+                 'status_infl', 'heal_done', 'recharging', 'rampage',
+                 'rampage_move')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -209,6 +216,9 @@ class Pmon:
         self.confused = 0
         self.fainted = False
         self.locked_move = None            # Choice-item move lock (index into self.moves)
+        self.recharging = False            # must skip its next turn (Hyper Beam)
+        self.rampage = 0                   # extra forced rampage turns left
+        self.rampage_move = None
         self.flash_fire = False            # Flash Fire: permanent 1.5x own Fire moves once triggered
         self.dmg_dealt = 0.0                # sum of useful damage dealt, as a fraction of each target's max HP
         self.kos = 0                        # faints this mon's own moves directly caused
@@ -234,6 +244,9 @@ class Pmon:
         self.seeded = False
         self.confused = 0
         self.locked_move = None            # Choice lock releases on switch
+        self.recharging = False
+        self.rampage = 0
+        self.rampage_move = None
         self.flash_fire = False            # Flash Fire boost is lost on switch-out
 
 
@@ -409,6 +422,8 @@ def choose_move(side, foe, moves, chart, rng=random):
     whether the active will still be standing next turn, and only value
     setup/status/heal/hazards when it will."""
     att, dfn = side.mon, foe.mon
+    if att.rampage:
+        return att.rampage_move
     if att.locked_move is not None:
         return att.locked_move
 
@@ -418,6 +433,8 @@ def choose_move(side, foe, moves, chart, rng=random):
         if m['cat'] == 'STATUS' or m['power'] <= 0:
             continue
         dmg, _ = expected_damage(att, dfn, m, chart)
+        if m['effect'] in RECHARGE_EFFECTS and dmg < dfn.hp:
+            dmg *= 0.5                     # two turns per hit unless it KOs
         if dmg > best_dmg:
             best_dmg, best_dmg_i = dmg, i
 
@@ -488,6 +505,8 @@ def matchup_score(mon, foe, moves, chart):
 
 def choose_switch(side, foe, moves, chart, forced, rng=random):
     """Pick a teammate index to send in. Returns index, or None to stay."""
+    if not forced and (side.mon.recharging or side.mon.rampage):
+        return None                        # can't switch out mid-recharge/rampage
     alive = [i for i in side.alive_indices() if forced or i != side.active]
     if not alive:
         return None
@@ -604,6 +623,10 @@ def perform(att_side, dfn_side, moves, chart, rng):
     """Execute the active mon's chosen action for att_side against dfn_side."""
     att, dfn = att_side.mon, dfn_side.mon
 
+    if att.recharging:                     # Hyper Beam's lost turn
+        att.recharging = False
+        return
+
     # pre-move status gates
     if att.status == 'frz':
         if rng.random() < 0.2:
@@ -638,9 +661,19 @@ def perform(att_side, dfn_side, moves, chart, rng):
     if att.ability == 'HUSTLE' and m['cat'] != 'STATUS' and acc >= 0:
         acc *= 0.8
     if acc >= 0 and rng.random() > acc / 100.0:
+        att.rampage = 0                    # a miss ends a rampage, no confusion
         return
 
     e = m['effect']
+    if e in RAMPAGE_EFFECTS:
+        if att.rampage:
+            att.rampage -= 1
+            if att.rampage == 0 and not status_blocked(att, 'cnf'):
+                att.confused = rng.randint(2, 4)   # rampage over: user confused
+        else:
+            att.rampage = rng.randint(1, 2)        # 1-2 more forced turns
+            att.rampage_move = idx
+
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng)
         dmg *= 2
@@ -660,13 +693,22 @@ def perform(att_side, dfn_side, moves, chart, rng):
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng)
+        if e in RECHARGE_EFFECTS and eff > 0:
+            att.recharging = True          # recharges after any hit, even a KO
         if dmg == 0 and eff == 0.0:
             apply_absorb(dfn, m['type'])
         elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
             dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
         sturdy = survives_at_1hp(dfn)
-        att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
+        dealt = min(dmg, dfn.hp)
+        att.dmg_dealt += dealt / dfn.maxhp
         dfn.hp -= dmg
+        if (e in RECOIL_EFFECTS and dealt > 0
+                and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD')):
+            frac = 1 / 3 if m.get('id') in RECOIL_THIRD else 1 / 4
+            att.hp -= max(1, dealt * frac)
+            if att.hp <= 0:
+                att.fainted = True
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:
@@ -697,10 +739,6 @@ def perform(att_side, dfn_side, moves, chart, rng):
                 apply_synchronize(dfn, att, st)
         if e == 'EFFECT_FLINCH_HIT' and rng.random() < chance / 100.0:
             pass                            # flinch handled by turn order in battle loop (approx: ignore)
-        if e in RECOIL_EFFECTS and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD'):
-            att.hp -= dmg / 3
-            if att.hp <= 0:
-                att.fainted = True
         # contact-status abilities on the (surviving) defender vs a physical hit
         if m.get('contact') and not att.fainted and att.status is None:
             cs = CONTACT_STATUS.get(dfn.ability)

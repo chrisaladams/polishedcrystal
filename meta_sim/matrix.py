@@ -25,7 +25,7 @@ import os, sys, json, argparse, csv
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from stats import mon_stats          # noqa: E402
-from calc import best_move, hits_to_ko  # noqa: E402
+from calc import best_move, turns_to_ko  # noqa: E402
 from pool import eligible             # noqa: E402
 
 def load(name):
@@ -82,8 +82,8 @@ def main():
             B = pool[bi]
             mvA, dmgA, effA = best_move(A, B, moves, lsa, chart)
             mvB, dmgB, effB = best_move(B, A, moves, learnsets[bi], chart)
-            htkA = hits_to_ko(dmgA, B['stats']['hp'])
-            htkB = hits_to_ko(dmgB, A['stats']['hp'])
+            htkA = turns_to_ko(moves[mvA] if mvA else None, dmgA, B['stats']['hp'])
+            htkB = turns_to_ko(moves[mvB] if mvB else None, dmgB, A['stats']['hp'])
             prioA = moves[mvA]['prio'] if mvA else 0
             prioB = moves[mvB]['prio'] if mvB else 0
             order = first_mover((prioA, A['stats']['spe']), (prioB, B['stats']['spe']))
