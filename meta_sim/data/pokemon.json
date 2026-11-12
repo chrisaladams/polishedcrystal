@@ -275,13 +275,13 @@
 "id": "aerodactyl",
 "stats": {
 "hp": 80,
-"atk": 105,
+"atk": 95,
 "defe": 65,
 "spe": 130,
 "spa": 60,
 "spd": 75
 },
-"bst": 515,
+"bst": 505,
 "types": [
 "ROCK",
 "FLYING"
@@ -5034,13 +5034,13 @@
 "id": "charizard",
 "stats": {
 "hp": 75,
-"atk": 101,
+"atk": 93,
 "defe": 75,
 "spe": 100,
 "spa": 109,
 "spd": 75
 },
-"bst": 535,
+"bst": 527,
 "types": [
 "FIRE",
 "DRAGON"

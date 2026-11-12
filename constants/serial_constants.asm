@@ -82,7 +82,8 @@ endc
 ; and desync. v6: L50 full-heal + sleep/evasion clauses + balance changes.
 ; v7: merged upstream's party patch-list fix (#1634), which changes the
 ; serialized party layout, on top of this fork's v6 battle changes.
-DEF LINK_VERSION EQU 7
+; v8: Charizard/Aerodactyl Attack trims.
+DEF LINK_VERSION EQU 8
 ; This is the minimum link version allowed for trading
 ; Older versions use a different party patch-list origin (upstream v5+), and
 ; this fork's v6 builds predate that fix, so only v7+ may trade.

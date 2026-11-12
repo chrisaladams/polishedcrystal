@@ -10,7 +10,7 @@ It's kept in sync with upstream: the latest merge brings in Rangi42's `master` a
 
 A pass at tightening up the meta for L50 link battles:
 
-- **Stat compression** — buffed a bunch of weak/early-game mons, trimmed a handful of top-tier ceilings, so the power band is tighter across the roster. These only apply to the normal build; `make faithful` keeps canon base stats.
+- **Stat compression** — buffed a bunch of weak/early-game mons, trimmed a handful of top-tier ceilings, so the power band is tighter across the roster. Most recently, Aerodactyl's Attack went from 105 to 95 and Charizard's from 101 to 93, reining in their Tough Claws physical hits. These only apply to the normal build; `make faithful` keeps canon base stats.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes).
 - **Moody removed.**
 - **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as upstream ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
@@ -25,7 +25,7 @@ Linking up used to need both players to be almost perfectly in sync. Now:
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
 
-**Both players need the same build.** The link version is 7, so this fork can't link with its own older builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
+**Both players need the same build.** The link version is 8, so this fork can't link with its own older builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
 
 ### Smarter trainer AI
 
