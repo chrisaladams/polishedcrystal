@@ -19,6 +19,19 @@ exclude = {
 'ram/wramx.asm',
 }
 
+# Files that are only ever INCLUDEd from a commented-out line (e.g. unused
+# alternate cries kept in audio/siren-cries/) are not assembled, so their labels
+# are absent from the .sym or shadowed by a same-named label in the file that is
+# used. Checking them would only report false positives.
+include_rx = re.compile(r'^\s*(;)?\s*INCLUDE\s+"([^"]+\.asm)"', re.IGNORECASE)
+_active, _commented = set(), set()
+for _filename in iglob('**/*.asm', recursive=True):
+	with open(_filename, 'r') as _f:
+		for _line in _f:
+			if (_m := re.match(include_rx, _line)):
+				(_commented if _m.group(1) else _active).add(_m.group(2))
+exclude |= _commented - _active
+
 if len(sys.argv) != 2:
 	print(f'Usage: {sys.argv[0]} polishedcrystal.sym', file=sys.stderr)
 	exit(1)
@@ -26,6 +39,12 @@ if len(sys.argv) != 2:
 sym_banks = {}
 rst_addrs = (0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38)
 rst_funcs = {}
+
+# Set when anything is reported, so this can gate a build instead of only
+# printing. A symbol missing from the .sym is also a failure: it means the
+# symbol file does not match the source it is being checked against (e.g. a
+# non-debug .sym against DEBUG-only labels).
+found = False
 
 with open(sys.argv[1], 'r') as f:
 	for line in f:
@@ -58,6 +77,7 @@ for filename in iglob('**/*.asm', recursive=True):
 				if bank is not None:
 					cur_bank = bank
 				else:
+					found = True
 					print(f"{filename}:{i}: cannot get bank of '{label}'", file=sys.stderr)
 				if ';' in line:
 					comment = line.split(';', 1)[1].strip()
@@ -70,15 +90,21 @@ for filename in iglob('**/*.asm', recursive=True):
 					code = code.strip()
 					comment = comment[0].strip() if comment else ''
 					if suppress not in comment and not suppressing:
+						found = True
 						print(f"{filename}:{i}: '{code}' in bank {cur_bank:02X} references '{label}' in bank {bank:02X}")
 				if label in rst_funcs and m.group(1) == 'call' and not m.group(2):
 					code, *comment = line.split(';', 1)
 					code = code.strip()
 					comment = comment[0].strip() if comment else ''
 					if suppress not in comment and not suppressing:
+						found = True
 						print(f"{filename}:{i}: '{code}' can use 'rst ${rst_funcs[label]:02x}'")
 			elif (m := re.match(far_rx, line)):
 				label, bank = get_label_bank(m)
 				if bank is not None and bank == cur_bank:
 					code = line.split(';', 1)[0].strip()
+					found = True
 					print(f"{filename}:{i}: '{code}' in bank {cur_bank:02X} references '{label}' already in bank {bank:02X}")
+
+if found:
+	exit(1)

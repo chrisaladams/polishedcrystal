@@ -51,6 +51,14 @@ jobs:
         name: "Checkout Rangi42/polishedcrystal"
         uses: actions/checkout@v7
 
+      # RUN TESTS
+      - id: test
+        name: "Run tests and static checks"
+        run: |
+          python3 -m pip install --quiet pyboy
+          make test -j$(nproc)
+          make tidy
+
       # BUILD ROMS
       - name: "Build tools"
         run: |

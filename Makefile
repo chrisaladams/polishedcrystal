@@ -99,7 +99,7 @@ crystal_obj    := $(rom_obj:.o=.o)
 crystal_vc_obj := $(rom_obj:.o=_vc.o)
 
 .SUFFIXES:
-.PHONY: clean tidy crystal faithful pocket debug monochrome freespace tools bsp huffman vc
+.PHONY: clean tidy crystal faithful pocket debug monochrome freespace tools bsp huffman vc test
 .PRECIOUS: %.2bpp %.1bpp
 .SECONDARY:
 .DEFAULT_GOAL: crystal
@@ -128,6 +128,19 @@ clean: tidy
 tidy:
 	$(RM) $(crystal_obj) $(crystal_vc_obj) $(wildcard $(NAME)-*.gbc) $(wildcard $(NAME)-*.pocket) $(wildcard $(NAME)-*.bsp) \
 		$(wildcard $(NAME)-*.map) $(wildcard $(NAME)-*.sym) $(wildcard $(NAME)-*.patch) rgbdscheck.o $(wildcard gfx/title/version.2bpp*)
+
+# Runs the checks that can fail a build. farcheck wants the DEBUG symbols, since
+# DEBUG-only labels are missing from a normal build's .sym and it cannot resolve
+# their bank; test/ executes routines out of the normal ROM under an emulator.
+# The variants need a tidy between them, so the debug pass goes first and the
+# normal ROM is what is left behind.
+test:
+	$(MAKE) tidy
+	$(MAKE) debug
+	python3 utils/farcheck.py $(NAME)-debug-$(VERSION).sym
+	$(MAKE) tidy
+	$(MAKE) crystal
+	python3 test/test_ai_scoring.py
 
 freespace: crystal tools/bankends
 	tools/bankends $(ROM_NAME).map > bank_ends.txt
