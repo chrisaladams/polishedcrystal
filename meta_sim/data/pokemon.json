@@ -1724,8 +1724,7 @@
 },
 "bst": 500,
 "types": [
-"FIRE",
-"FAIRY"
+"FIRE"
 ],
 "abilities": [
 "RUN_AWAY",
@@ -3895,7 +3894,7 @@
 ],
 "abilities": [
 "SNOW_CLOAK",
-"SHARPNESS",
+"IRON_BARBS",
 "SLUSH_RUSH"
 ],
 "fully_evolved": true,
