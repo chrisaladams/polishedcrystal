@@ -62,8 +62,22 @@ def get_label_bank(m, n=1):
 	bank = sym_banks.get(label, None)
 	return (label, bank)
 
+def is_assembled(filename):
+	"""False for a file none of whose global labels made it into the .sym:
+	it isn't INCLUDEd by the build at all (e.g. a replaced music track that is
+	still in the tree), so checking it would only report false positives."""
+	labels = []
+	with open(filename, 'r') as f:
+		for line in f:
+			if (m := re.match(def_rx, line)) and not m.group(1).startswith('.'):
+				labels.append(m.group(1))
+	return not labels or any(label in sym_banks for label in labels)
+
+# Optimisation hints (a farcall that could be a call, a call that could be an
+# rst) are printed but don't fail the check: the code is correct either way,
+# and which bank a section lands in can change from one build to the next.
 for filename in iglob('**/*.asm', recursive=True):
-	if filename in exclude:
+	if filename in exclude or not is_assembled(filename):
 		continue
 	cur_label = None
 	cur_bank = None
@@ -97,14 +111,15 @@ for filename in iglob('**/*.asm', recursive=True):
 					code = code.strip()
 					comment = comment[0].strip() if comment else ''
 					if suppress not in comment and not suppressing:
-						found = True
-						print(f"{filename}:{i}: '{code}' can use 'rst ${rst_funcs[label]:02x}'")
+						print(f"{filename}:{i}: note: '{code}' can use 'rst ${rst_funcs[label]:02x}'")
 			elif (m := re.match(far_rx, line)):
 				label, bank = get_label_bank(m)
 				if bank is not None and bank == cur_bank:
-					code = line.split(';', 1)[0].strip()
-					found = True
-					print(f"{filename}:{i}: '{code}' in bank {cur_bank:02X} references '{label}' already in bank {bank:02X}")
+					code, *comment = line.split(';', 1)
+					code = code.strip()
+					comment = comment[0].strip() if comment else ''
+					if suppress not in comment and not suppressing:
+						print(f"{filename}:{i}: note: '{code}' in bank {cur_bank:02X} references '{label}' already in bank {bank:02X}")
 
 if found:
 	exit(1)
