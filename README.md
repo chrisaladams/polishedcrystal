@@ -4,7 +4,7 @@
 
 It's built on [Rangi42's Polished Crystal](https://github.com/Rangi42/polishedcrystal), itself based on [the Pokémon Crystal disassembly](https://github.com/pret/pokecrystal). All credit for the base game—the engine, mechanics overhaul, new maps, Pokédex, and everything else—goes to that project and its contributors.
 
-It's kept in sync with Polished Crystal: the latest merge brings in Rangi42's `master` as of November 11, 2026, including the cable car cutscene, the link party corruption fix, and their battle and item fixes.
+It's kept in sync with Polished Crystal: the latest merge brings in Rangi42's `master` as of November 14, 2026, including the cable car cutscene, the link party corruption fix, the Bad Dreams/Magic Guard fix, and their other battle and item fixes.
 
 ## What's different here
 
@@ -27,7 +27,7 @@ Linking up used to need both players to be almost perfectly in sync. Now:
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
 
-**Both players need the same build.** The link version is 8, so it can't link with older Link Edition builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
+**Both players need the same build.** The link version is 9, so it can't link with older Link Edition builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
 
 ### Smarter trainer AI
 
