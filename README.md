@@ -42,6 +42,10 @@ Build exactly as Polished Crystal does (see [INSTALL.md](INSTALL.md)); RGBDS 1.0
 
 - `make test` builds the ROM and runs a small test suite against the real assembled code under the PyBoy emulator, plus a static check for cross-bank calls. CI runs it on every push. It needs `pip install pyboy`.
 
+## Upgrading old saves
+
+If a new build says "Your save file does not match the game version of this ROM", run the save upgrader in `utils/save_upgrade/`. It converts saves from earlier builds, including the January 2026 family ROM. See [utils/save_upgrade/README.md](utils/save_upgrade/README.md).
+
 ## The `meta_sim/` balance tools
 
 There's also a Python toolkit in `meta_sim/` for crunching the numbers on stat/move balance. It's not part of the game, just a helper for testing changes before they land:
