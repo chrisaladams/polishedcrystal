@@ -136,7 +136,7 @@ def extract(root):
     flag_files = {'punch': 'punching_moves', 'pulse': 'launcher_moves',
                   'bullet': 'bullet_moves', 'slice': 'slicing_moves',
                   'sound': 'sound_moves', 'powder': 'powder_moves',
-                  'wind': 'wind_moves'}
+                  'wind': 'wind_moves', 'high_crit': 'critical_hit_moves'}
     for flag, fn in flag_files.items():
         names = set()
         path = os.path.join(root, f'data/moves/{fn}.asm')
@@ -147,6 +147,26 @@ def extract(root):
                     names.add(m.group(1))
         for n, mv in moves.items():
             mv[flag] = n in names
+    # Sheer Force applies when the move's script has an effectchance or
+    # selfeffectchance command (CheckSheerForceNegation), not just when the
+    # move has a nonzero chance byte.
+    effect_ids = re.findall(r'^\s*const (EFFECT_[A-Z_0-9]+)',
+                            open(os.path.join(root, 'constants/move_effect_constants.asm')).read(), re.M)
+    labels = re.findall(r'^\s*dw (\w+)',
+                        open(os.path.join(root, 'data/moves/effects_pointers.asm')).read(), re.M)
+    scripts, cur = {}, None
+    for s in open(os.path.join(root, 'data/moves/effects.asm')).read().splitlines():
+        m = re.match(r'^(\w+):', s)
+        if m:
+            cur = m.group(1)
+            scripts.setdefault(cur, [])
+        elif cur and s.strip():
+            scripts[cur].append(s.strip().split()[0])
+    secondary = {eff for eff, lab in zip(effect_ids, labels)
+                 if {'effectchance', 'selfeffectchance'} & set(scripts.get(lab, []))}
+    for mv in moves.values():
+        mv['secondary'] = mv['effect'] in secondary
+
     # Reckless boosts recoil moves and (Hi) Jump Kick (RecklessAbility).
     for mv in moves.values():
         mv['recoil'] = mv['effect'] in ('EFFECT_RECOIL_HIT', 'EFFECT_JUMP_KICK')

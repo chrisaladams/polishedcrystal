@@ -17,6 +17,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "KARATE_CHOP": {
@@ -37,6 +39,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "DOUBLE_SLAP": {
@@ -57,6 +61,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "AERIAL_ACE": {
@@ -77,6 +83,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAGON_CLAW": {
@@ -97,6 +105,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PAY_DAY": {
@@ -117,6 +127,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FIRE_PUNCH": {
@@ -137,6 +149,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "ICE_PUNCH": {
@@ -157,6 +171,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "THUNDERPUNCH": {
@@ -177,6 +193,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SCRATCH": {
@@ -197,6 +215,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "X_SCISSOR": {
@@ -217,6 +237,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "NIGHT_SLASH": {
@@ -237,6 +259,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "AIR_SLASH": {
@@ -257,6 +281,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SWORDS_DANCE": {
@@ -277,6 +303,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CUT": {
@@ -297,6 +325,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "GUST": {
@@ -317,6 +347,8 @@
 "sound": false,
 "powder": false,
 "wind": true,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "WING_ATTACK": {
@@ -337,6 +369,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SUCKER_PUNCH": {
@@ -357,6 +391,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FLY": {
@@ -377,6 +413,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DAZZLINGLEAM": {
@@ -397,6 +435,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "VOLT_SWITCH": {
@@ -417,6 +457,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "VINE_WHIP": {
@@ -437,6 +479,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "STOMP": {
@@ -457,6 +501,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "DOUBLE_KICK": {
@@ -477,6 +523,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FLARE_BLITZ": {
@@ -497,6 +545,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "STONE_EDGE": {
@@ -517,6 +567,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "FOCUS_BLAST": {
@@ -537,6 +589,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "TOXIC_SPIKES": {
@@ -557,6 +611,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HEADBUTT": {
@@ -577,6 +633,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "HORN_ATTACK": {
@@ -597,6 +655,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "TRICK": {
@@ -617,6 +677,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HEX": {
@@ -637,6 +699,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "TACKLE": {
@@ -657,6 +721,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BODY_SLAM": {
@@ -677,6 +743,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "WRAP": {
@@ -697,6 +765,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "TAKE_DOWN": {
@@ -717,6 +787,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": true
 },
 "THRASH": {
@@ -737,6 +809,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DOUBLE_EDGE": {
@@ -757,6 +831,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": true
 },
 "HAIL": {
@@ -777,6 +853,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "POISON_STING": {
@@ -797,6 +875,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "U_TURN": {
@@ -817,6 +897,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PIN_MISSILE": {
@@ -837,6 +919,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "LEER": {
@@ -857,6 +941,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BITE": {
@@ -877,6 +963,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "GROWL": {
@@ -897,6 +985,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ROAR": {
@@ -917,6 +1007,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SING": {
@@ -937,6 +1029,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SUPERSONIC": {
@@ -957,6 +1051,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SONIC_BOOM": {
@@ -977,6 +1073,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DISABLE": {
@@ -997,6 +1095,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ACID": {
@@ -1017,6 +1117,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "EMBER": {
@@ -1037,6 +1139,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "FLAMETHROWER": {
@@ -1057,6 +1161,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "CALM_MIND": {
@@ -1077,6 +1183,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "WATER_GUN": {
@@ -1097,6 +1205,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HYDRO_PUMP": {
@@ -1117,6 +1227,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SURF": {
@@ -1137,6 +1249,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ICE_BEAM": {
@@ -1157,6 +1271,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BLIZZARD": {
@@ -1177,6 +1293,8 @@
 "sound": false,
 "powder": false,
 "wind": true,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "PSYBEAM": {
@@ -1197,6 +1315,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BUBBLE_BEAM": {
@@ -1217,6 +1337,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "AURORA_BEAM": {
@@ -1237,6 +1359,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "HYPER_BEAM": {
@@ -1257,6 +1381,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PECK": {
@@ -1277,6 +1403,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRILL_PECK": {
@@ -1297,6 +1425,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CLOSE_COMBAT": {
@@ -1317,6 +1447,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "LOW_KICK": {
@@ -1337,6 +1469,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "COUNTER": {
@@ -1357,6 +1491,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SEISMIC_TOSS": {
@@ -1377,6 +1513,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "STRENGTH": {
@@ -1397,6 +1535,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ABSORB": {
@@ -1417,6 +1557,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "MEGA_DRAIN": {
@@ -1437,6 +1579,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "LEECH_SEED": {
@@ -1457,6 +1601,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "GROWTH": {
@@ -1477,6 +1623,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "RAZOR_LEAF": {
@@ -1497,6 +1645,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "SOLAR_BEAM": {
@@ -1517,6 +1667,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "POISONPOWDER": {
@@ -1537,6 +1689,8 @@
 "sound": false,
 "powder": true,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "STUN_SPORE": {
@@ -1557,6 +1711,8 @@
 "sound": false,
 "powder": true,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SLEEP_POWDER": {
@@ -1577,6 +1733,8 @@
 "sound": false,
 "powder": true,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PETAL_DANCE": {
@@ -1597,6 +1755,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "STRING_SHOT": {
@@ -1617,6 +1777,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAGON_RAGE": {
@@ -1637,6 +1799,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FIRE_SPIN": {
@@ -1657,6 +1821,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "THUNDERSHOCK": {
@@ -1677,6 +1843,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "THUNDERBOLT": {
@@ -1697,6 +1865,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "THUNDER_WAVE": {
@@ -1717,6 +1887,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "THUNDER": {
@@ -1737,6 +1909,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "ROCK_THROW": {
@@ -1757,6 +1931,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "EARTHQUAKE": {
@@ -1777,6 +1953,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "AVALANCHE": {
@@ -1797,6 +1975,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DIG": {
@@ -1817,6 +1997,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "TOXIC": {
@@ -1837,6 +2019,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CONFUSION": {
@@ -1857,6 +2041,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "PSYCHIC_M": {
@@ -1877,6 +2063,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "HYPNOSIS": {
@@ -1897,6 +2085,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HONE_CLAWS": {
@@ -1917,6 +2107,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "AGILITY": {
@@ -1937,6 +2129,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "QUICK_ATTACK": {
@@ -1957,6 +2151,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "RAGE": {
@@ -1977,6 +2173,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "TELEPORT": {
@@ -1997,6 +2195,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "NIGHT_SHADE": {
@@ -2017,6 +2217,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAGON_PULSE": {
@@ -2037,6 +2239,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SCREECH": {
@@ -2057,6 +2261,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DOUBLE_TEAM": {
@@ -2077,6 +2283,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "RECOVER": {
@@ -2097,6 +2305,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ROCK_BLAST": {
@@ -2117,6 +2327,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "MINIMIZE": {
@@ -2137,6 +2349,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SMOKESCREEN": {
@@ -2157,6 +2371,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CONFUSE_RAY": {
@@ -2177,6 +2393,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "AQUA_TAIL": {
@@ -2197,6 +2415,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DEFENSE_CURL": {
@@ -2217,6 +2437,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BARRIER": {
@@ -2237,6 +2459,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "LIGHT_SCREEN": {
@@ -2257,6 +2481,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HAZE": {
@@ -2277,6 +2503,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "REFLECT": {
@@ -2297,6 +2525,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FOCUS_ENERGY": {
@@ -2317,6 +2547,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FLASH_CANNON": {
@@ -2337,6 +2569,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "METRONOME": {
@@ -2357,6 +2591,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SCALD": {
@@ -2377,6 +2613,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "TRICK_ROOM": {
@@ -2397,6 +2635,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SKILL_SWAP": {
@@ -2417,6 +2657,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "LICK": {
@@ -2437,6 +2679,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "GUNK_SHOT": {
@@ -2457,6 +2701,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "VENOSHOCK": {
@@ -2477,6 +2723,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "EARTH_POWER": {
@@ -2497,6 +2745,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "FIRE_BLAST": {
@@ -2517,6 +2767,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "WATERFALL": {
@@ -2537,6 +2789,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "ICICLE_CRASH": {
@@ -2557,6 +2811,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SWIFT": {
@@ -2577,6 +2833,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "IRON_HEAD": {
@@ -2597,6 +2855,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "ICICLE_SPEAR": {
@@ -2617,6 +2877,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BULLDOZE": {
@@ -2637,6 +2899,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "AMNESIA": {
@@ -2657,6 +2921,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ROOST": {
@@ -2677,6 +2943,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FRESH_SNACK": {
@@ -2697,6 +2965,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HI_JUMP_KICK": {
@@ -2717,6 +2987,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": true
 },
 "GLARE": {
@@ -2737,6 +3009,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DREAM_EATER": {
@@ -2757,6 +3031,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "POISON_JAB": {
@@ -2777,6 +3053,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BULLET_PUNCH": {
@@ -2797,6 +3075,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "LEECH_LIFE": {
@@ -2817,6 +3097,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAINING_KISS": {
@@ -2837,6 +3119,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BRAVE_BIRD": {
@@ -2857,6 +3141,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": true
 },
 "TRANSFORM": {
@@ -2877,6 +3163,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "WATER_PULSE": {
@@ -2897,6 +3185,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "DIZZY_PUNCH": {
@@ -2917,6 +3207,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SPORE": {
@@ -2937,6 +3229,8 @@
 "sound": false,
 "powder": true,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FLASH": {
@@ -2957,6 +3251,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "EXTRASENSORY": {
@@ -2977,6 +3273,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SPLASH": {
@@ -2997,6 +3295,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAGON_DANCE": {
@@ -3017,6 +3317,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CRABHAMMER": {
@@ -3037,6 +3339,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "EXPLOSION": {
@@ -3057,6 +3361,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FURY_STRIKES": {
@@ -3077,6 +3383,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BONEMERANG": {
@@ -3097,6 +3405,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "REST": {
@@ -3117,6 +3427,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ROCK_SLIDE": {
@@ -3137,6 +3449,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "HYPER_FANG": {
@@ -3157,6 +3471,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BULK_UP": {
@@ -3177,6 +3493,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CONVERSION": {
@@ -3197,6 +3515,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "TRI_ATTACK": {
@@ -3217,6 +3537,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SUPER_FANG": {
@@ -3237,6 +3559,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SLASH": {
@@ -3257,6 +3581,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "SUBSTITUTE": {
@@ -3277,6 +3603,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "GIGA_IMPACT": {
@@ -3297,6 +3625,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SKETCH": {
@@ -3317,6 +3647,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAIN_PUNCH": {
@@ -3337,6 +3669,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "THIEF": {
@@ -3357,6 +3691,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "WILL_O_WISP": {
@@ -3377,6 +3713,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ZEN_HEADBUTT": {
@@ -3397,6 +3735,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "FACADE": {
@@ -3417,6 +3757,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FLAME_CHARGE": {
@@ -3437,6 +3779,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "HYPER_VOICE": {
@@ -3457,6 +3801,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CURSE": {
@@ -3477,6 +3823,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "GYRO_BALL": {
@@ -3497,6 +3845,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ENERGY_BALL": {
@@ -3517,6 +3867,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "AEROBLAST": {
@@ -3537,6 +3889,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "SEED_BOMB": {
@@ -3557,6 +3911,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "REVERSAL": {
@@ -3577,6 +3933,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ASTONISH": {
@@ -3597,6 +3955,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "ICE_SHARD": {
@@ -3617,6 +3977,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PROTECT": {
@@ -3637,6 +3999,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "MACH_PUNCH": {
@@ -3657,6 +4021,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SCARY_FACE": {
@@ -3677,6 +4043,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FEINT_ATTACK": {
@@ -3697,6 +4065,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SWEET_KISS": {
@@ -3717,6 +4087,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BELLY_DRUM": {
@@ -3737,6 +4109,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SLUDGE_BOMB": {
@@ -3757,6 +4131,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "MUD_SLAP": {
@@ -3777,6 +4153,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "OCTAZOOKA": {
@@ -3797,6 +4175,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SPIKES": {
@@ -3817,6 +4197,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ZAP_CANNON": {
@@ -3837,6 +4219,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "FORESIGHT": {
@@ -3857,6 +4241,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DESTINY_BOND": {
@@ -3877,6 +4263,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PERISH_SONG": {
@@ -3897,6 +4285,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ICY_WIND": {
@@ -3917,6 +4307,8 @@
 "sound": false,
 "powder": false,
 "wind": true,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "POWER_GEM": {
@@ -3937,6 +4329,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "WILD_CHARGE": {
@@ -3957,6 +4351,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": true
 },
 "POWER_WHIP": {
@@ -3977,6 +4373,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "OUTRAGE": {
@@ -3997,6 +4395,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SANDSTORM": {
@@ -4017,6 +4417,8 @@
 "sound": false,
 "powder": false,
 "wind": true,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "GIGA_DRAIN": {
@@ -4037,6 +4439,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ENDURE": {
@@ -4057,6 +4461,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CHARM": {
@@ -4077,6 +4483,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ROLLOUT": {
@@ -4097,6 +4505,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "FALSE_SWIPE": {
@@ -4117,6 +4527,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SWAGGER": {
@@ -4137,6 +4549,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SHELL_SMASH": {
@@ -4157,6 +4571,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SPARK": {
@@ -4177,6 +4593,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BUG_BITE": {
@@ -4197,6 +4615,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "STEEL_WING": {
@@ -4217,6 +4637,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "MEAN_LOOK": {
@@ -4237,6 +4659,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ATTRACT": {
@@ -4257,6 +4681,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SLEEP_TALK": {
@@ -4277,6 +4703,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HEAL_BELL": {
@@ -4297,6 +4725,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "RETURN": {
@@ -4317,6 +4747,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PSYSTRIKE": {
@@ -4337,6 +4769,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "BUG_BUZZ": {
@@ -4357,6 +4791,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SAFEGUARD": {
@@ -4377,6 +4813,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PAIN_SPLIT": {
@@ -4397,6 +4835,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SACRED_FIRE": {
@@ -4417,6 +4857,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "MAGNITUDE": {
@@ -4437,6 +4879,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DYNAMICPUNCH": {
@@ -4457,6 +4901,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "MEGAHORN": {
@@ -4477,6 +4923,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DRAGONBREATH": {
@@ -4497,6 +4945,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BATON_PASS": {
@@ -4517,6 +4967,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ENCORE": {
@@ -4537,6 +4989,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "PURSUIT": {
@@ -4557,6 +5011,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "RAPID_SPIN": {
@@ -4577,6 +5033,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SHADOW_CLAW": {
@@ -4597,6 +5055,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "IRON_TAIL": {
@@ -4617,6 +5077,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "METAL_CLAW": {
@@ -4637,6 +5099,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "AURA_SPHERE": {
@@ -4657,6 +5121,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HEALINGLIGHT": {
@@ -4677,6 +5143,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HURRICANE": {
@@ -4697,6 +5165,8 @@
 "sound": false,
 "powder": false,
 "wind": true,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "KNOCK_OFF": {
@@ -4717,6 +5187,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "HIDDEN_POWER": {
@@ -4737,6 +5209,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CROSS_CHOP": {
@@ -4757,6 +5231,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": true,
+"secondary": false,
 "recoil": false
 },
 "AQUA_JET": {
@@ -4777,6 +5253,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "RAIN_DANCE": {
@@ -4797,6 +5275,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "SUNNY_DAY": {
@@ -4817,6 +5297,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "CRUNCH": {
@@ -4837,6 +5319,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "MIRROR_COAT": {
@@ -4857,6 +5341,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "NASTY_PLOT": {
@@ -4877,6 +5363,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "EXTREMESPEED": {
@@ -4897,6 +5385,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ANCIENTPOWER": {
@@ -4917,6 +5407,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "SHADOW_BALL": {
@@ -4937,6 +5429,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "FUTURE_SIGHT": {
@@ -4957,6 +5451,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "ROCK_SMASH": {
@@ -4977,6 +5473,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "BRICK_BREAK": {
@@ -4997,6 +5495,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "WHIRLPOOL": {
@@ -5017,6 +5517,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "DARK_PULSE": {
@@ -5037,6 +5539,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "MOONBLAST": {
@@ -5057,6 +5561,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "PLAY_ROUGH": {
@@ -5077,6 +5583,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": true,
 "recoil": false
 },
 "DISARM_VOICE": {
@@ -5097,6 +5605,8 @@
 "sound": true,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": false
 },
 "STRUGGLE": {
@@ -5117,6 +5627,8 @@
 "sound": false,
 "powder": false,
 "wind": false,
+"high_crit": false,
+"secondary": false,
 "recoil": true
 }
 }

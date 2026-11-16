@@ -14,6 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
 import engine  # noqa: E402
+import rom_damage  # noqa: E402
 from engine import Pmon, Side, perform, end_of_turn  # noqa: E402
 
 MOVES = json.load(open(os.path.join(HERE, 'data', 'moves.json')))
@@ -348,7 +349,7 @@ def test_pursuit_double_power():
     perform(A, B, MOVES, CHART, random.Random(1), idx=0)
     single = b1.maxhp - b1.hp
     A, B = duel(a, b2)
-    perform(A, B, MOVES, CHART, random.Random(1), idx=0, power_mult=2.0)
+    perform(A, B, MOVES, CHART, random.Random(1), idx=0, pursuit_switch=True)
     assert abs((b2.maxhp - b2.hp) - 2 * single) <= 1
 
 
@@ -422,6 +423,90 @@ def test_static_damage_and_jump_kick_crash():
         if k.hp < k.maxhp:
             break
     assert k.hp == k.maxhp / 2 or k.hp == k.maxhp
+
+
+class Seq(random.Random):
+    """A Random whose randrange/random return scripted values first."""
+    def __init__(self, ranges=(), floats=()):
+        super().__init__(0)
+        self.ranges, self.floats = list(ranges), list(floats)
+
+    def randrange(self, *a):
+        return self.ranges.pop(0) if self.ranges else super().randrange(*a)
+
+    def random(self):
+        return self.floats.pop(0) if self.floats else super().random()
+
+
+def test_damage_matches_rom_formula():
+    # 150 Atk vs 150 Def, 40-power Tackle, L50, no STAB, neutral, top roll:
+    # ((2*50/5+2) * 40 * 150 / 150) / 50 + 2 = 19
+    a, b = mon(types=('FIRE',)), mon(stats={'hp': 999})
+    dmg, eff, _ = engine.move_damage(a, b, MOVES['TACKLE'], CHART, Seq(ranges=[1, 15]))
+    assert (dmg, eff) == (19, 1.0), (dmg, eff)
+    dmg, _, _ = engine.move_damage(a, b, MOVES['TACKLE'], CHART, Seq(ranges=[1, 0]))
+    assert dmg == 19 * 85 // 100            # bottom roll
+
+
+def test_crits_ignore_screens_and_boost():
+    a, b = mon(types=('FIRE',)), mon(stats={'hp': 999})
+    A, B = duel(a, b)
+    B.reflect = 5
+    crit, _, n = engine.move_damage(a, b, MOVES['TACKLE'], CHART, Seq(ranges=[0, 15]))
+    plain, _, _ = engine.move_damage(a, b, MOVES['TACKLE'], CHART, Seq(ranges=[1, 15]))
+    assert n == 1 and crit > 2 * plain      # 1.5x and Reflect skipped
+    # crit stage 3+ always crits; Battle Armor never does
+    a.focus_energy, a.item = True, 'SCOPE_LENS'
+    assert rom_damage.crit_stage(a, MOVES['TACKLE']) == 3
+    assert rom_damage.roll_crit(a, b, MOVES['TACKLE'], random.Random(0))
+    b.ability = 'BATTLE_ARMOR'
+    assert not rom_damage.roll_crit(a, b, MOVES['TACKLE'], random.Random(0))
+
+
+def test_confusion_self_hit():
+    a, b = mon(moves=('TACKLE',)), mon(stats={'hp': 999})
+    A, B = duel(a, b)
+    a.confused = 3
+    act(A, B, 'TACKLE', Seq(ranges=[0]))    # 1/3 roll hits itself
+    assert a.maxhp - a.hp == rom_damage.confusion_damage(a) and b.hp == b.maxhp
+    assert a.confused == 2
+    a.confused = 1
+    hp = a.hp
+    act(A, B, 'TACKLE', Seq(ranges=[0]))    # count runs out: snaps out and attacks
+    assert a.confused == 0 and a.hp == hp and b.hp < b.maxhp
+
+
+def test_flinch_only_when_moving_first():
+    a = mon(types=('DARK',), moves=('BITE',))
+    b = mon(stats={'hp': 999}, moves=('TACKLE',))
+    A, B = duel(a, b)
+    act(A, B, 'BITE', Seq(floats=[0.0] * 5))
+    assert b.flinched and a.flinches == 1
+    act(B, A, 'TACKLE')
+    assert a.hp == a.maxhp and not b.flinched
+    b.flinched = False
+    act(A, B, 'BITE', Seq(floats=[0.0] * 5), foe_moved=True)
+    assert not b.flinched                   # target already moved
+    b.ability = 'INNER_FOCUS'
+    act(A, B, 'BITE', Seq(floats=[0.0] * 5))
+    act(B, A, 'TACKLE')
+    assert a.hp < a.maxhp                   # Inner Focus ignores the flinch
+
+
+def test_explosion_not_doubled_and_solar_beam_not_halved():
+    a = mon(moves=('EXPLOSION',))
+    b = mon(stats={'hp': 9999})
+    A, B = duel(a, b)
+    act(A, B, 'EXPLOSION', Seq(ranges=[1, 15]))
+    want, _ = rom_damage.damage(a, b, MOVES['EXPLOSION'], CHART, power=250, roll=15)
+    assert b.maxhp - b.hp == want
+    g = mon(types=('GRASS',))
+    A, B = duel(g, mon())
+    A.field.weather, A.field.weather_turns = 'rain', 5
+    rain, _ = engine.expected_damage(g, B.mon, MOVES['SOLAR_BEAM'], CHART)
+    A.field.weather = None
+    clear, _ = engine.expected_damage(g, B.mon, MOVES['SOLAR_BEAM'], CHART)
+    assert rain == clear
 
 
 if __name__ == '__main__':

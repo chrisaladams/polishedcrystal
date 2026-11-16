@@ -56,11 +56,17 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              Return, Magnitude (average), Facade/Hex/Venoshock/Acrobatics.
              Items include Focus Sash and the Toxic/Flame Orbs that switch on
              Poison Heal/Guts/Quick Feet.
-  approxd.  : confusion as a flat self-hit chance; multi-hit as its average
-             hit count; two-turn moves resolve in one turn; Explosion = big
-             hit then user faints; Low Kick is a flat 80 BP (no weights in
-             the extracted data); Avalanche never doubles; Dry Skin modeled as Water Absorb only
-             (its Fire weakness/sun-and-rain HP drain are not modeled). Each
+  damage    : every hit goes through rom_damage.damage, a step-for-step
+             port of the ROM's damage commands with its integer arithmetic
+             (verified against the ROM by oracle_pipeline.py), including
+             crits (ROM stages and odds, Focus Energy), the 85-100% roll,
+             per-hit crits/rolls on multi-hit moves (2-5 hits, ROM odds) and
+             the post-roll Facade/Hex/Venoshock/Acrobatics/Avalanche/Pursuit/
+             Knock Off boosts. Confusion: 2-5 count, 1/3 self-hit with the
+             ROM's 40-power typeless formula. Flinch: Flinch-hit moves,
+             Stench, King's Rock; Inner Focus, Steadfast.
+  approxd.  : Explosion = big hit then user faints; Low Kick is a flat 80 BP
+             (no weights in the extracted data). Each
              mon commits to one (non-event) ability and one item for the
              whole battle (see abilities.py/items.py) instead of switching
              among abilities per move like the 1v1 matrix does.
@@ -77,7 +83,8 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              Fire / Water x1.5 / x0.5, Rock Sp.Def x1.5 in sand, Ice Def x1.5
              in hail, 1/16 sand / hail chip, Thunder / Hurricane never miss in
              rain (50% in sun), Blizzard never misses in hail, Solar Beam
-             halved outside sun, Swift Swim / Chlorophyll / Sand Rush / Slush
+             skips its charge turn in sun (no power cut in other weather, as
+             in the ROM), Swift Swim / Chlorophyll / Sand Rush / Slush
              Rush double Speed, Sand Force, Solar Power, Rain Dish, Dry Skin,
              Ice Body, Hydration, Sand Veil / Snow Cloak, sun-boosted Growth
              and Synthesis-style healing, sun prevents freezing, Cloud Nine.
@@ -97,13 +104,15 @@ and absorbed, KOs, turns on the field, statuses, healing, hazards, screens,
 cures, pivots, phazes, hazard clears, foe stat drops); run_battle(...,
 detail=True) returns them per mon. See STAT_KEYS.
 
-Damage uses a random roll (0.85-1.00) since this is Monte Carlo; crits off.
+Damage uses the ROM's random roll (85..100 / 100) and crits; the AI's
+expected_damage uses the unrolled damage x 0.925 and ignores crits.
 """
 import random
 
 from typechart import STAB, type_mult
 import abilities
 import items
+import rom_damage
 
 CHOICE_ITEMS = {'CHOICE_BAND', 'CHOICE_SPECS', 'CHOICE_SCARF'}
 SLEEP_CLAUSE = False         # shipped game dropped the Sleep Clause (sleep is unrestricted, 1-3 turns); mirror that here
@@ -161,7 +170,7 @@ SELF_UP_HIT = {'EFFECT_DEFENSE_UP_HIT': {'defe': 1}, 'EFFECT_ATTACK_UP_HIT': {'a
                'EFFECT_ALL_UP_HIT': {'atk': 1, 'defe': 1, 'spa': 1, 'spd': 1, 'spe': 1}}
 DRAIN_EFFECTS = {'EFFECT_LEECH_HIT'}       # heal half the damage dealt
 PIVOT_EFFECTS = {'EFFECT_SWITCH_HIT'}      # U-turn / Volt Switch
-KNOCK_OFF_MULT = 1.5
+FLINCH_EFFECTS = {'EFFECT_FLINCH_HIT', 'EFFECT_STOMP'}   # scripts with flinchtarget
 
 # ---- weather (engine/battle/move_effects/weather.asm, abilities.asm, endturn.asm)
 WEATHER_TURNS = 5                          # moves and abilities alike (Gen VI rule)
@@ -327,7 +336,8 @@ class Pmon:
                  'sub_hp', 'bound', 'bound_by', 'mean_looked', 'perish',
                  'hit_phys', 'hit_spec', 'weather_set', 'subs_made', 'passes',
                  'tricks', 'trick_rooms', 'traps', 'perish_kos', 'perish_by',
-                 'charging', 'semi_inv')
+                 'charging', 'semi_inv', 'crits', 'flinches', 'flinched',
+                 'focus_energy', 'eviolite_ok')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -350,6 +360,12 @@ class Pmon:
         self.rampage = 0                   # extra forced rampage turns left
         self.rampage_move = None
         self.flash_fire = False            # Flash Fire: permanent 1.5x own Fire moves once triggered
+        self.crits = 0                     # critical hits landed
+        self.flinches = 0                  # times this mon's hits made the foe flinch
+        self.flinched = False              # SUBSTATUS_FLINCHED: loses its move this turn
+        self.focus_energy = False          # SUBSTATUS_FOCUS_ENERGY: +2 crit stage
+        # UnevolvedEviolite: can evolve and isn't on EvioliteExcludedSpecies
+        self.eviolite_ok = items.eviolite_eligible(mid, mon)
         self.dmg_dealt = 0.0                # sum of useful damage dealt, as a fraction of each target's max HP
         self.kos = 0                        # faints this mon's own moves directly caused
         self.status_infl = 0                # major statuses/confusion this mon's own moves landed on a foe
@@ -429,6 +445,8 @@ class Pmon:
         self.charging = None
         self.semi_inv = False
         self.flash_fire = False            # Flash Fire boost is lost on switch-out
+        self.flinched = False
+        self.focus_energy = False
 
 
 class Side:
@@ -456,66 +474,16 @@ class Side:
 
 
 # ---- damage ------------------------------------------------------------------
-def _damage_terms(att, dfn, move, chart):
-    """Shared atk/def/STAB/multiplier setup for move_damage/expected_damage."""
-    eff = eff_mult(move['type'], dfn, chart)
-    if move.get(abilities.FLAG_IMMUNITIES.get(dfn.ability, '')):
-        eff = 0.0                          # Bulletproof / Soundproof
-    is_stab = move['type'] in att.types
-    atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab,
-                                                       static_weather=False)
-    w = weather_of(att)
-    # Unaware: ignore the *other* mon's relevant stat stage when computing damage
-    unaware_att, unaware_dfn = att.ability == 'UNAWARE', dfn.ability == 'UNAWARE'
-    if move['cat'] == 'PHYSICAL':
-        a = att.stat('atk', ignore_stage=unaware_dfn) * atk_mult
-        d = dfn.stat('defe', ignore_stage=unaware_att)
-        if att.ability == 'GUTS' and att.status is not None:
-            a *= 1.5                       # Guts also ignores the burn Atk drop below
-        elif att.status == 'brn' and move.get('id') != 'FACADE':
-            a *= 0.5
-        if att.ability == 'HUSTLE':
-            a *= 1.5
-        if att.item == 'CHOICE_BAND':
-            a *= items.CHOICE_STAT_MULT
-    else:
-        a = att.stat('spa', ignore_stage=unaware_dfn) * atk_mult
-        d = dfn.stat('spd', ignore_stage=unaware_att)
-        if att.item == 'CHOICE_SPECS':
-            a *= items.CHOICE_STAT_MULT
-    if w == 'sand' and move['cat'] == 'SPECIAL' and 'ROCK' in dfn.types:
-        d *= 1.5                           # SandstormSpDefBoost
-    if w == 'hail' and move['cat'] == 'PHYSICAL' and 'ICE' in dfn.types:
-        d *= 1.5                           # HailDefenseBoost
-    if w == 'sun' and att.ability == 'SOLAR_POWER' and move['cat'] == 'SPECIAL':
-        a *= 1.5
-    stab = abilities.stab_mult(att.ability, is_stab)
-    if w == 'sun':
-        dmg_mult *= {'FIRE': 1.5, 'WATER': 0.5}.get(move['type'], 1.0)
-    elif w == 'rain':
-        dmg_mult *= {'WATER': 1.5, 'FIRE': 0.5}.get(move['type'], 1.0)
-    if w == 'sand' and att.ability == 'SAND_FORCE' and move['type'] in ('ROCK', 'GROUND', 'STEEL'):
-        dmg_mult *= 1.3
-    if move['effect'] == 'EFFECT_SOLAR_BEAM' and w in ('rain', 'sand', 'hail'):
-        dmg_mult *= 0.5
-    if dfn.side is not None:
-        if move['cat'] == 'PHYSICAL' and dfn.side.reflect:
-            dmg_mult *= SCREEN_DAMAGE_MULT
-        elif move['cat'] == 'SPECIAL' and dfn.side.light_screen:
-            dmg_mult *= SCREEN_DAMAGE_MULT
-    if att.item == 'LIFE_ORB':
-        dmg_mult *= items.LIFE_ORB_DMG_MULT
-    if att.ability == 'FLASH_FIRE' and att.flash_fire and move['type'] == 'FIRE':
-        dmg_mult *= 1.5
-    if dfn.ability == 'THICK_FAT' and move['type'] in ('FIRE', 'ICE'):
-        dmg_mult *= 0.5
-    if dfn.ability in ('SOLID_ROCK', 'FILTER') and eff > 1.0:
-        dmg_mult *= 0.75
-    if dfn.ability == 'MULTISCALE' and dfn.hp >= dfn.maxhp:
-        dmg_mult *= 0.5
-    if att.ability == 'TINTED_LENS' and 0 < eff < 1.0:
-        dmg_mult *= 2.0
-    return eff, a, d, stab, dmg_mult
+# All damage goes through rom_damage.damage, a step-for-step port of the ROM's
+# critical/damagestats/damagecalc/stab/damagevariation/conditionalboost commands
+# with the same integer arithmetic (checked against the ROM by
+# oracle_pipeline.py). This module only works out the battle context it needs.
+def hit_context(att, dfn, move, moved_second=False, pursuit_switch=False):
+    """Keyword arguments for rom_damage.damage from the live battle state."""
+    return dict(weather=weather_of(att), moved_second=moved_second,
+                damaged_this_turn=(att.hit_phys + att.hit_spec) > 0,
+                pursuit_switch=pursuit_switch,
+                flag_immune=bool(move.get(abilities.FLAG_IMMUNITIES.get(dfn.ability, ''))))
 
 
 # ---- variable/fixed-power moves ---------------------------------------------
@@ -552,18 +520,9 @@ def effective_power(move, att, dfn):
         return 71                           # average over the magnitude table
     if e == 'EFFECT_LOW_KICK':
         return 80                           # no species weights in the data
-    if e == 'EFFECT_KNOCK_OFF' and dfn.item:
-        return int(move['power'] * KNOCK_OFF_MULT)
-    if e == 'EFFECT_CONDITIONAL_BOOST':
-        mid = move.get('id')
-        if mid == 'FACADE' and att.status not in (None, 'slp', 'frz'):
-            return move['power'] * 2
-        if mid == 'HEX' and dfn.status is not None:
-            return move['power'] * 2
-        if mid == 'VENOSHOCK' and dfn.status in ('psn', 'tox'):
-            return move['power'] * 2
-        if mid == 'ACROBATICS' and att.item is None:
-            return move['power'] * 2
+    # Facade / Hex / Venoshock / Acrobatics / Avalanche / Pursuit doubling and
+    # Knock Off's 1.5x are applied after the random roll (conditionalboost),
+    # inside rom_damage.damage.
     return move['power']
 
 
@@ -579,38 +538,64 @@ def consume_sash(dfn):
         dfn.item = None                     # single use
 
 
-def _resolve_damage(att, dfn, move, chart, roll):
-    """Shared finisher for move_damage/expected_damage: one eff_mult/_damage_terms
-    pass, applied with whichever damage roll the caller wants (RNG or the flat
-    average). Returns (damage, type_effectiveness)."""
-    eff, a, d, stab, dmg_mult = _damage_terms(att, dfn, move, chart)
-    if eff == 0.0:
-        return 0, 0.0
-    fixed = fixed_damage(move, dfn)
-    if fixed is not None:
-        return fixed, eff                   # ignores stats, STAB and the roll
-    power = effective_power(move, att, dfn)
-    base = ((((2 * 50) // 5 + 2) * power * a) // d) // 50 + 2
-    hits = MULTI.get(move['effect'], 1)
-    if att.ability == 'SKILL_LINK' and move['effect'] == 'EFFECT_MULTI_HIT':
-        hits = 5                            # Skill Link always lands the max
-    return int(base * stab * eff * dmg_mult * roll) * hits, eff
+def hit_count(att, move, rng):
+    """BattleCommand_startloop: Double Kick 2; Skill Link 5; otherwise 2-5 with
+    2 and 3 twice as likely as 4 and 5."""
+    e = move['effect']
+    if e == 'EFFECT_DOUBLE_HIT':
+        return 2
+    if e != 'EFFECT_MULTI_HIT':
+        return 1
+    if att.ability == 'SKILL_LINK':
+        return 5
+    r = rng.randrange(6)
+    return (r - 4 if r >= 4 else r) + 2
 
 
-def move_damage(att, dfn, move, chart, rng):
-    """Rolled damage for a damaging move att->dfn (0 if non-damaging/immune)."""
+def move_damage(att, dfn, move, chart, rng, moved_second=False, pursuit_switch=False,
+                can_crit=True):
+    """Rolled damage for a damaging move att->dfn, as (damage, effectiveness,
+    crits). Effectiveness is the ROM's matchup byte / 16 (0 = immune). Each hit
+    of a multi-hit move rolls its own crit and damage roll, as in the ROM."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
-        return 0, 1.0
-    return _resolve_damage(att, dfn, move, chart, rng.uniform(0.85, 1.0))
+        return 0, 1.0, 0
+    ctx = hit_context(att, dfn, move, moved_second, pursuit_switch)
+    fixed = fixed_damage(move, dfn)
+    power = effective_power(move, att, dfn)
+    total = crits = 0
+    raw = 0x10
+    for _ in range(hit_count(att, move, rng)):
+        crit = can_crit and rom_damage.roll_crit(att, dfn, move, rng)
+        dmg, raw = rom_damage.damage(att, dfn, move, chart, power=power, crit=crit,
+                                     roll=rng.randrange(16), **ctx)
+        if raw == 0:
+            return 0, 0.0, 0
+        if fixed is not None:
+            dmg = fixed                     # ignores stats, STAB and the roll
+        total += dmg
+        crits += crit
+    return total, raw / 0x10, crits
+
+
+AVG_ROLL = 0.925                            # mean of (85..100) / 100
 
 
 def expected_damage(att, dfn, move, chart):
-    """Deterministic average damage, for AI scoring (no RNG)."""
+    """Deterministic average damage, for AI scoring (no RNG, no crits)."""
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0, eff_mult(move['type'], dfn, chart) if move['power'] else 1.0
-    dmg, eff = _resolve_damage(att, dfn, move, chart, 0.925)
+    ctx = hit_context(att, dfn, move)
+    dmg, raw = rom_damage.damage(att, dfn, move, chart, power=effective_power(move, att, dfn),
+                                 **ctx)
+    if raw == 0:
+        return 0, 0.0
+    fixed = fixed_damage(move, dfn)
+    dmg = fixed if fixed is not None else dmg * AVG_ROLL
+    hits = MULTI.get(move['effect'], 1)
+    if att.ability == 'SKILL_LINK' and move['effect'] == 'EFFECT_MULTI_HIT':
+        hits = 5
     acc = 1.0 if move['acc'] < 0 else move['acc'] / 100.0
-    return dmg * acc, eff
+    return dmg * hits * acc, raw / 0x10
 
 
 # ---- heuristic AI ------------------------------------------------------------
@@ -1049,7 +1034,7 @@ def _pivot(att_side, dfn_side, moves, chart):
 
 
 def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_moved=False,
-            power_mult=1.0):
+            pursuit_switch=False):
     """Execute the active mon's chosen action for att_side against dfn_side.
     `idx` is the move chosen at the start of the turn (the one turn order was
     decided by); `foe_move`/`foe_moved` describe the opponent's choice, which
@@ -1059,6 +1044,12 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if att.recharging:                     # Hyper Beam's lost turn
         att.recharging = False
         return
+    if att.flinched:                       # checked right after recharge, as in the ROM
+        att.flinched = False
+        if att.ability != 'INNER_FOCUS':
+            if att.ability == 'STEADFAST':
+                att.stage['spe'] = min(6, att.stage['spe'] + 1)
+            return
 
     # pre-move status gates
     if att.status == 'frz':
@@ -1080,16 +1071,17 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             if not usable:
                 return
             sleep_talk = rng.choice(usable)
+    if att.confused > 0:
+        # The count (2-5) drops before the check, so it lasts 1-4 turns; on
+        # each of them a 1/3 chance of a typeless 40-power hit on itself.
+        att.confused -= 1
+        if att.confused > 0 and rng.randrange(3) == 0:
+            att.hp -= rom_damage.confusion_damage(att)
+            if att.hp <= 0:
+                att.fainted = True
+            return
     if att.status == 'par' and rng.random() < 0.25:
         return
-    if att.confused > 0:
-        att.confused -= 1
-        if rng.random() < 0.5:             # hurt self in confusion (approx)
-            if att.ability != 'MAGIC_GUARD':
-                att.hp -= att.maxhp / 8
-                if att.hp <= 0:
-                    att.fainted = True
-            return
 
     if idx is None:
         idx = choose_move(att_side, dfn_side, moves, chart, rng)
@@ -1120,7 +1112,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if e == 'EFFECT_SUCKER_PUNCH' and (foe_moved or foe_move is None
                                        or moves[foe_move]['cat'] == 'STATUS'):
         return
-    if att.item in CHOICE_ITEMS:
+    if att.item in CHOICE_ITEMS or att.ability == 'GORILLA_TACTICS':
         att.locked_move = idx     # locks in on use, regardless of hit/miss
 
     # two-turn moves: charge now, strike next turn (Fly / Dig are untouchable meanwhile)
@@ -1165,7 +1157,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         if att.rampage:
             att.rampage -= 1
             if att.rampage == 0 and not status_blocked(att, 'cnf'):
-                att.confused = rng.randint(2, 4)   # rampage over: user confused
+                att.confused = rng.randint(2, 5)   # rampage over: user confused
         else:
             att.rampage = rng.randint(1, 2)        # 1-2 more forced turns
             att.rampage_move = idx
@@ -1188,8 +1180,9 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         return
 
     if e == 'EFFECT_EXPLOSION':
-        dmg, _ = move_damage(att, dfn, m, chart, rng)
-        dmg *= 2
+        # no Defense halving or damage doubling in this ROM (Gen V+ rules)
+        dmg, _, crits = move_damage(att, dfn, m, chart, rng, moved_second=foe_moved)
+        att.crits += crits
         sturdy = survives_at_1hp(dfn)
         att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
         dfn.dmg_taken += min(dmg, dfn.hp) / dfn.maxhp
@@ -1206,8 +1199,9 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         return
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
-        dmg, eff = move_damage(att, dfn, m, chart, rng)
-        dmg = int(dmg * power_mult)
+        dmg, eff, crits = move_damage(att, dfn, m, chart, rng, moved_second=foe_moved,
+                                      pursuit_switch=pursuit_switch)
+        att.crits += crits
         if e in RECHARGE_EFFECTS and eff > 0:
             att.recharging = True          # recharges after any hit, even a KO
         if dfn.sub_hp > 0 and dmg > 0 and not m.get('sound') and att.ability != 'INFILTRATOR':
@@ -1281,7 +1275,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             return
         # on-hit secondaries: Serene Grace doubles the trigger chance;
         # Shield Dust on the defender suppresses secondaries entirely.
-        if dfn.ability == 'SHIELD_DUST':
+        if dfn.ability == 'SHIELD_DUST' or (att.ability == 'SHEER_FORCE' and m.get('secondary')):
             chance = 0
         elif att.ability == 'SERENE_GRACE':
             chance = m['chance'] * 2
@@ -1297,8 +1291,19 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
                 if st == 'tox':
                     dfn.tox = 0
                 apply_synchronize(dfn, att, st)
-        if e == 'EFFECT_FLINCH_HIT' and rng.random() < chance / 100.0:
-            pass                            # flinch handled by turn order in battle loop (approx: ignore)
+        # Flinch (BattleCommand_flinchtarget): only if the target hasn't moved
+        # yet, isn't asleep/frozen and wasn't behind a Substitute. Stench and
+        # King's Rock give other moves a 10% flinch (doubled by Serene Grace).
+        if not foe_moved and dfn.status not in ('slp', 'frz'):
+            if e in FLINCH_EFFECTS:
+                if rng.random() < chance / 100.0:
+                    dfn.flinched = True
+                    att.flinches += 1
+            elif (att.ability == 'STENCH' or att.item == 'KINGS_ROCK') \
+                    and dfn.ability != 'SHIELD_DUST':
+                if rng.randrange(100) < (20 if att.ability == 'SERENE_GRACE' else 10):
+                    dfn.flinched = True
+                    att.flinches += 1
         if e in STAT_DROP_HIT and rng.random() < chance / 100.0 \
                 and dfn.ability not in ('CLEAR_BODY', 'WHITE_SMOKE'):
             k = STAT_DROP_HIT[e]
@@ -1355,7 +1360,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         st = INFLICT[e]
         if st == 'cnf':
             if not status_blocked(dfn, st):
-                dfn.confused = rng.randint(2, 4)
+                dfn.confused = rng.randint(2, 5)
                 att.status_infl += 1
             return
         if status_blocked(dfn, st):
@@ -1483,10 +1488,13 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
                 field.trick_room = TRICK_ROOM_TURNS
                 att.trick_rooms += 1
         return
+    if e == 'EFFECT_FOCUS_ENERGY':
+        att.focus_energy = True
+        return
     if e == 'EFFECT_SWAGGER':
         dfn.stage['atk'] = min(6, dfn.stage['atk'] + 2)
         if not dfn.confused and not status_blocked(dfn, 'cnf'):
-            dfn.confused = rng.randint(2, 4)
+            dfn.confused = rng.randint(2, 5)
             att.status_infl += 1
         return
     if e == 'EFFECT_MEAN_LOOK':
@@ -1519,7 +1527,7 @@ def land_future_sight(side, moves, chart, rng):
     target = side.mon
     if target.fainted:
         return
-    dmg, _ = move_damage(user, target, move, chart, rng)
+    dmg, _, _ = move_damage(user, target, move, chart, rng)
     dealt = min(dmg, target.hp)
     user.dmg_dealt += dealt / target.maxhp
     target.dmg_taken += dealt / target.maxhp
@@ -1532,7 +1540,7 @@ def land_future_sight(side, moves, chart, rng):
 STAT_KEYS = ('dmg_dealt', 'kos', 'status_infl', 'heal_done', 'dmg_taken', 'turns_active',
              'hazards_set', 'screens_set', 'cures', 'pivots', 'phazes',
              'hazards_cleared', 'stat_drops', 'weather_set', 'subs_made', 'passes',
-             'tricks', 'trick_rooms', 'traps', 'perish_kos')
+             'tricks', 'trick_rooms', 'traps', 'perish_kos', 'crits', 'flinches')
 
 
 def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
@@ -1587,7 +1595,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
                                if moves[mv]['effect'] == 'EFFECT_PURSUIT'), None)
                     if (pi is not None and not foe.mon.fainted and id(foe) not in acted
                             and rng.random() < 0.5):
-                        perform(foe, s, moves, chart, rng, idx=pi, power_mult=2.0)
+                        perform(foe, s, moves, chart, rng, idx=pi, pursuit_switch=True)
                         acted.add(id(foe))
                     if not s.mon.fainted:
                         apply_switch(s, nxt, foe, chart)
@@ -1630,6 +1638,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
             moved.add(id(s))
         for s in (A, B):
             s.mon.protected = False
+            s.mon.flinched = False          # cleared at end of turn (endturn.asm)
             s.reflect = max(0, s.reflect - 1)
             s.light_screen = max(0, s.light_screen - 1)
         # ---- residuals ----

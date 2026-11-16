@@ -22,6 +22,8 @@ reproducible statistical signal that stays in sync with the source.
 | `sim6v6.py`  | 6v6 Monte Carlo runner → per-mon team win rate, builders compared. |
 | `oracle.py`  | Ground truth: runs the ROM's real `CalcPkmnStats` under PyBoy and diffs it against `stats.py`. |
 | `oracle_damage.py` | Ground truth: runs the ROM's real `damagecalc` + `stab` under PyBoy and diffs them against `calc.py`'s formula. |
+| `rom_damage.py` | The ROM's damage pipeline (crit, stats, stat stages, abilities, items, STAB, weather, roll, conditional boosts) ported step for step with the same integer arithmetic. `engine.py` uses it for every hit. |
+| `oracle_pipeline.py` | Ground truth for `rom_damage.py`: runs the ROM's `damagestats` → `damagecalc` → `stab` → `conditionalboost` under PyBoy on random scenarios and diffs them. |
 
 Three complementary tools:
 
@@ -112,7 +114,23 @@ Rapid Spin, Substitute, Baton Pass, Trick, Trick Room, Protect, Encore, Roar,
 Haze, Pain Split, Heal Bell, Curse, U-turn/Volt Switch, Knock Off, Pursuit,
 trapping, Perish Song, Counter/Mirror Coat, Rest/Sleep Talk, two-turn moves
 (Solar Beam outside sun, Fly/Dig), Dream Eater, Future Sight and more.
-`test_engine.py` checks each one. The AI avoids feeding Counter/Mirror Coat a
+`test_engine.py` checks each one.
+
+**Damage is the ROM's own math.** Every hit goes through `rom_damage.py`, a
+step-for-step port of the move script's damage commands with the same integer
+arithmetic and order of operations, so stat stages, screens, Eviolite, abilities
+(including Mold Breaker, Pixilate/Galvanize, pinch abilities, Analytic, Fluffy,
+Fur Coat, Marvel Scale), items, STAB, weather, the 85-100% roll and the
+post-roll boosts (Facade, Hex, Venoshock, Acrobatics, Avalanche, Pursuit, Knock
+Off) round exactly as on the cartridge. `oracle_pipeline.py` checks it against
+the real routines: 20,000 of 20,000 random scenarios match exactly. Critical
+hits use the ROM's stages and odds (1/24, 1/8, 1/2, always; Focus Energy,
+high-crit moves, Scope Lens/Razor Claw, Leek/Lucky Punch, Super Luck, Sniper,
+Battle/Shell Armor), and multi-hit moves roll their hit count (2-5, with 2
+and 3 twice as likely) and each hit's crit and roll separately. Confusion lasts
+1-4 turns with a 1/3 chance per turn of a 40-power typeless self-hit; flinching
+needs the attacker to move first and the target to be awake, unfrozen and not
+behind a Substitute (Inner Focus, Steadfast, Stench and King's Rock included). The AI avoids feeding Counter/Mirror Coat a
 hit it can't KO with.
 
 **Not modelled.** Smeargle (Sketch) and Ditto without Imposter are listed but not
@@ -155,6 +173,7 @@ from the `.sym` beside the ROM, so they keep working after rebuilds.
 ```sh
 python3 meta_sim/oracle.py          # all species: ROM stats vs stats.py
 python3 meta_sim/oracle_damage.py   # 7-case self-test + calc.py fidelity sweep
+python3 meta_sim/oracle_pipeline.py 20000   # engine damage (rom_damage.py) vs the ROM
 ```
 
 On the current build `oracle.py` matches 333/333 species, and
@@ -230,12 +249,11 @@ listed") so it doesn't default to a no-op ability over a modeled one.
 **Sleep Clause is mirrored** from the shipped game (toggle `SLEEP_CLAUSE` in
 `engine.py`).
 
-Approximated / ignored (so don't over-read these): confusion as a flat
-self-hit chance; multi-hit as average hit count; two-turn moves resolve in one
-turn; Low Kick is a flat 80 BP and Avalanche never doubles; Counter/Mirror Coat
-are not modelled; **no weather, screens, trapping, Perish Song**, or abilities/items
-beyond the modeled subset above (see `engine.py`'s module docstring for the
-full list). Consequently Ditto / Wobbuffet / Smeargle (Transform/Counter/
+Approximated / ignored (so don't over-read these): Low Kick is a flat 80 BP;
+abilities/items beyond the modeled subset above (see `engine.py`'s module
+docstring for the full list). Weather, screens, trapping, Perish Song,
+Counter/Mirror Coat, crits, confusion and flinching are now simulated (see
+"Damage is the ROM's own math" above). Consequently Ditto / Wobbuffet / Smeargle (Transform/Counter/
 mechanic mons) and weather/screen teams are understated by design — that's a
 known blind spot, not a balance verdict. The 6v6 numbers are *sampled*, so
 deltas within ~±5% (more for rare roles with fewer games) are noise; raise
