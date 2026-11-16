@@ -66,31 +66,28 @@ DEF LINK_HANDSHAKE_BUDGET_HI_VC EQU 3
 	const_def 1
 	const LINK_GAME_ID_PC_FAITHFUL     ; 1
 	const LINK_GAME_ID_PC_NON_FAITHFUL ; 2
+	; Link Edition has its own IDs, so it never links with stock Polished
+	; Crystal or with the pre-release Link Edition builds (link versions 6-10),
+	; whatever their link version. That lets Link Edition restart at version 1.
+	const LINK_GAME_ID_LE_FAITHFUL     ; 3
+	const LINK_GAME_ID_LE_NON_FAITHFUL ; 4
 
 ; this game's ID, and the other ID that it can still trade with
 if DEF(FAITHFUL)
-	DEF LINK_GAME_ID EQU LINK_GAME_ID_PC_FAITHFUL
-	DEF OTHER_GAME_ID EQU LINK_GAME_ID_PC_NON_FAITHFUL
+	DEF LINK_GAME_ID EQU LINK_GAME_ID_LE_FAITHFUL
+	DEF OTHER_GAME_ID EQU LINK_GAME_ID_LE_NON_FAITHFUL
 else
-	DEF LINK_GAME_ID EQU LINK_GAME_ID_PC_NON_FAITHFUL
-	DEF OTHER_GAME_ID EQU LINK_GAME_ID_PC_FAITHFUL
+	DEF LINK_GAME_ID EQU LINK_GAME_ID_LE_NON_FAITHFUL
+	DEF OTHER_GAME_ID EQU LINK_GAME_ID_LE_FAITHFUL
 endc
 
 ; this game's link version
 ; Bump whenever battle-affecting link logic changes (party normalization,
-; healing, clauses, base stats, abilities) so mismatched builds can't connect
-; and desync. v6: L50 full-heal + sleep/evasion clauses + balance changes.
-; v7: merged upstream's party patch-list fix (#1634), which changes the
-; serialized party layout, on top of this fork's v6 battle changes.
-; v8: Charizard/Aerodactyl Attack trims.
-; v9: upstream's Bad Dreams vs Magic Guard battle fix (#1687).
-; v10: Eviolite no longer drops the move's power (every hit on a holder did 1).
-;      Older builds compute different damage, so battles must not mix them.
-DEF LINK_VERSION EQU 10
+; healing, clauses, base stats, abilities, damage) so mismatched builds can't
+; connect and desync. Link Edition 1.0 (first family release) is version 1.
+DEF LINK_VERSION EQU 1
 ; This is the minimum link version allowed for trading
-; Older versions use a different party patch-list origin (upstream v5+), and
-; this fork's v6 builds predate that fix, so only v7+ may trade.
-DEF LINK_MIN_TRADE_VERSION EQU 7
+DEF LINK_MIN_TRADE_VERSION EQU 1
 
 ; PerformLinkChecks error codes
 	const_def

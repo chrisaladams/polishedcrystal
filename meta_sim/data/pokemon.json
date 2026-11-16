@@ -27,12 +27,12 @@
 "stats": {
 "hp": 92,
 "atk": 73,
-"defe": 70,
+"defe": 80,
 "spe": 62,
-"spa": 73,
+"spa": 83,
 "spd": 115
 },
-"bst": 485,
+"bst": 505,
 "types": [
 "PSYCHIC"
 ],
@@ -1065,12 +1065,12 @@
 "stats": {
 "hp": 145,
 "atk": 60,
-"defe": 55,
+"defe": 65,
 "spe": 45,
 "spa": 95,
-"spd": 65
+"spd": 75
 },
-"bst": 465,
+"bst": 485,
 "types": [
 "NORMAL",
 "FAIRY"
@@ -1671,13 +1671,13 @@
 "id": "gliscor",
 "stats": {
 "hp": 75,
-"atk": 95,
-"defe": 120,
+"atk": 85,
+"defe": 110,
 "spe": 90,
 "spa": 45,
 "spd": 75
 },
-"bst": 500,
+"bst": 480,
 "types": [
 "GROUND",
 "FLYING"
@@ -2802,9 +2802,9 @@
 "defe": 95,
 "spe": 85,
 "spa": 65,
-"spd": 90
+"spd": 75
 },
-"bst": 545,
+"bst": 530,
 "types": [
 "DARK",
 "POISON"
@@ -4245,12 +4245,12 @@
 "stats": {
 "hp": 95,
 "atk": 70,
-"defe": 73,
+"defe": 80,
 "spe": 60,
-"spa": 85,
+"spa": 95,
 "spd": 90
 },
-"bst": 473,
+"bst": 490,
 "types": [
 "FAIRY"
 ],
@@ -5417,13 +5417,13 @@
 "id": "annihilape",
 "stats": {
 "hp": 100,
-"atk": 100,
+"atk": 95,
 "defe": 80,
 "spe": 75,
 "spa": 50,
 "spd": 90
 },
-"bst": 495,
+"bst": 490,
 "types": [
 "FIGHTING",
 "GHOST"
@@ -6276,13 +6276,13 @@
 "id": "beedrill",
 "stats": {
 "hp": 70,
-"atk": 100,
+"atk": 90,
 "defe": 55,
-"spe": 115,
+"spe": 100,
 "spa": 45,
 "spd": 90
 },
-"bst": 475,
+"bst": 450,
 "types": [
 "BUG",
 "POISON"
@@ -7435,10 +7435,10 @@
 "atk": 70,
 "defe": 115,
 "spe": 60,
-"spa": 130,
+"spa": 120,
 "spd": 90
 },
-"bst": 535,
+"bst": 525,
 "types": [
 "ELECTRIC",
 "STEEL"

@@ -12,7 +12,11 @@ It's kept in sync with Polished Crystal: the latest merge brings in Rangi42's `m
 
 A pass at tightening up the meta for L50 link battles:
 
-- **Stat compression** — buffed a bunch of weak/early-game mons, trimmed a handful of top-tier ceilings, so the power band is tighter across the roster. Most recently, Aerodactyl's Attack went from 105 to 95 and Charizard's from 101 to 93, reining in their Tough Claws physical hits. These only apply to the normal build; `make faithful` keeps canon base stats.
+- **Stat compression** — buffed a bunch of weak/early-game mons, trimmed a handful of top-tier ceilings, so the power band is tighter across the roster. Most recently, Aerodactyl's Attack went from 105 to 95 and Charizard's from 101 to 93, reining in their Tough Claws physical hits. For the 1.0 release, the meta test (`meta_sim/metatest.py`) flagged a few builds that were clearly over or under an average teammate across two independent runs, so:
+  - **Trimmed:** Beedrill (Atk 100→90, Spe 115→100), Gliscor (Atk 95→85, Def 120→110), Magnezone (Sp. Atk 130→120), Overqwil (Sp. Def 90→75), Annihilape (Atk 100→95).
+  - **Buffed:** Clefable (Def 73→80, Sp. Atk 85→95), Wigglytuff (Def 55→65, Sp. Def 65→75), Hypno (Def 70→80, Sp. Atk 73→83).
+
+  These only apply to the normal build; `make faithful` keeps canon base stats.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes). The restriction check used to wipe the attacking move's power, so every hit on an Eviolite holder did 1 damage; that's fixed.
 - **Moody removed.**
 - **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
@@ -27,7 +31,7 @@ Linking up used to need both players to be almost perfectly in sync. Now:
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
 
-**Both players need the same build.** The link version is 10, so it can't link with older Link Edition builds or with stock Polished Crystal. That's deliberate, since mismatched battle rules or party layouts would desync.
+**Both players need the same build.** This is Link Edition 1.0, link version 1. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync. A later release that changes battles will raise the link version, and everyone will need to update together.
 
 ### Smarter trainer AI
 
