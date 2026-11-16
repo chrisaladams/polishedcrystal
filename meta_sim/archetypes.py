@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 import abilities
 import items
 from engine import BOOST, HEAL_EFFECTS, INFLICT, RECHARGE_EFFECTS
-from teams import _setup_score, est_power, STATUS_PRIORITY
+from teams import _setup_score, est_power, pick_moveset, STATUS_PRIORITY
 
 # ---- playstyles ----------------------------------------------------------------
 PHYSICAL = 'physical attacker'
@@ -269,7 +269,8 @@ def builds_for(mid, mon, moves, P):
 
     builds = []
     for style, moveset in out:
-        moveset = [m for m in moveset if m][:4] or _attacks(mon, moves)
+        moveset = ([m for m in moveset if m][:4] or _attacks(mon, moves)
+                   or pick_moveset(mid, mon, moves, None, mon['_role']))
         ability = abilities.pick_ability(mon.get('abilities'), s)
         if style == PIVOT and 'REGENERATOR' in (mon.get('abilities') or []):
             ability = 'REGENERATOR'

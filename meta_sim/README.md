@@ -14,20 +14,88 @@ reproducible statistical signal that stays in sync with the source.
 | `stats.py`   | L50 stat calc, reproducing `CalcPkmnStatC` (`engine/pokemon/mon_stats.asm`). |
 | `calc.py`    | Gen damage formula + STAB + type effectiveness; best-move selection. |
 | `matrix.py`  | All-vs-all 1v1 best-move threat matrix → CSV + ranked leaderboard. |
-| `engine.py`  | Pragmatic 6v6 turn engine + heuristic move/switch AI (status, stat stages, hazards, recovery, priority). |
+| `engine.py`  | Pragmatic 6v6 turn engine + heuristic move/switch AI (status, stat stages, hazards, recovery, priority, screens, pivoting, phazing and other support moves). |
+| `archetypes.py` | The 12 playstyles, who qualifies for each, and a set + item built for each playstyle. |
+| `metatest.py` | **The meta test**: every mon at every playstyle it can play, scored by a swap-test impact number and by job metrics. |
+| `test_engine.py` | Scripted checks for the engine's move mechanics. |
 | `teams.py`   | Role-aware moveset picker + three team builders (random, role-based, synergy). |
 | `sim6v6.py`  | 6v6 Monte Carlo runner → per-mon team win rate, builders compared. |
 | `oracle.py`  | Ground truth: runs the ROM's real `CalcPkmnStats` under PyBoy and diffs it against `stats.py`. |
 | `oracle_damage.py` | Ground truth: runs the ROM's real `damagecalc` + `stab` under PyBoy and diffs them against `calc.py`'s formula. |
 
-Two complementary tools:
+Three complementary tools:
 
+- **`metatest.py` (playstyles)**: the one to start with. It answers "how good is
+  this mon at the job it's doing?" for attackers, walls, supports and pivots
+  alike. See [The meta test](#the-meta-test-metatestpy) below.
 - **`matrix.py` (1v1)** — fast, fully deterministic check of *raw* stat / typing /
   movepool tuning. Trustworthy but blind to team context (walls/support mons
   look bad).
 - **`sim6v6.py` (6v6)** — Monte Carlo battles with a heuristic AI; surfaces the
   support / stall / synergy mons the 1v1 matrix structurally can't see. Noisier
   (it's sampled), and *not* a port of the ROM trainer AI — a uniform yardstick.
+
+## The meta test (`metatest.py`)
+
+```sh
+python3 meta_sim/metatest.py              # ~3 min on 4 cores
+python3 meta_sim/metatest.py --battles 8000   # quicker, noisier
+python3 meta_sim/test_engine.py           # check the engine's move mechanics
+```
+
+It writes `meta_sim/out/metatest.md` (the report) and `meta_sim/out/metatest.csv`
+(one row per build, with every metric).
+
+**Playstyles.** `archetypes.py` decides which of 12 playstyles each mon can
+really play, from its L50 stats (against the pool's own percentiles) and what it
+can learn: physical, special or mixed attacker, setup sweeper, revenge killer,
+physical or special wall, bulky tank, support, hazard setter, cleric, pivot. Each
+gets a set and item for that job: walls carry recovery and status, supports their
+screens/Encore/Haze/Pain Split, hazard setters Spikes, pivots U-turn/Volt Switch
+or Regenerator, revenge killers Choice Scarf and priority. A mon is entered once
+per playstyle (about 3 each).
+
+**Teams.** Every battle uses two balanced drafts (two offense slots, a speed slot,
+a defense slot, a utility slot and a flex slot, no three members sharing a
+weakness).
+
+**Impact (the headline number).** After each battle, every slot is replayed with
+a random other build of the same family (offense / speed / defense / utility),
+using the same random seed. The average change in the result is how many
+points of team win rate the build adds over a typical teammate doing the same
+kind of job. It is the one number that compares a wall with an attacker fairly,
+because it measures what the team gains, not what the mon did. By construction
+the average is about 0 in each family. The report prints each build's standard
+error (about ±2 points at the default size), so differences under about 4
+points are noise.
+
+**Job score.** Each build's average percentile, within its own playstyle, on the
+metrics that show whether it is doing that job:
+
+| playstyle | job metrics |
+|---|---|
+| attackers, setup sweepers | damage dealt, KOs |
+| revenge killer | KOs, damage dealt |
+| walls | damage absorbed, turns on the field, HP healed |
+| bulky tank | damage absorbed, damage dealt, turns on the field |
+| support | statuses inflicted, screens set, foe stat drops, phazes |
+| hazard setter | hazard layers, statuses |
+| cleric | team statuses cured, HP healed |
+| pivot | pivot switches, damage dealt |
+
+Damage absorbed is counted as a fraction of the mon's own max HP, so a wall that
+heals and keeps tanking scores above 1.0.
+
+**Reading it.** A high job score with average impact means the mon does its job
+well but the job isn't worth much in this meta (or other mons do it as well). A
+mon that is clearly negative in *every* playstyle it qualifies for is a real buff
+candidate; one in the top 10% and clearly positive is a nerf candidate. The
+report lists both, plus a top/bottom table for every playstyle.
+
+**Not modelled.** Mons whose whole kit is moves the engine doesn't simulate
+(Wobbuffet's Counter/Mirror Coat, Smeargle's Sketch) are listed but not
+ranked. Weather setting, Substitute, Baton Pass, Trick, Trick Room and trapping
+are also not simulated, so weather and Baton Pass teams are understated.
 
 ## Usage (run from the repo root)
 
