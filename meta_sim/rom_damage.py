@@ -270,8 +270,8 @@ def damage(att, dfn, move, chart, *, power, weather=None, crit=False, roll=None,
         trace.update(matchup=m, raw=raw, after_stab=dmg)
 
     # ---- damagevariation
-    if roll is not None and dmg >= 2:
-        dmg = dmg * (85 + roll) // 100
+    if roll is not None:
+        dmg = vary(dmg, roll)
 
     # ---- conditionalboost
     mid = move.get('id')
@@ -286,6 +286,14 @@ def damage(att, dfn, move, chart, *, power, weather=None, crit=False, roll=None,
     if mid == 'KNOCK_OFF' and dfn.item and dfn.ability != 'STICKY_HOLD':
         dmg = (dmg + (dmg >> 1)) & 0xFFFF
     return dmg, raw
+
+
+def vary(dmg, roll):
+    """BattleCommand_damagevariation: damage * (85 + roll) / 100 for roll
+    0..15 (BattleRandomRange 16), leaving 0 and 1 alone."""
+    if dmg < 2:
+        return dmg
+    return (dmg * (85 + roll) // 100) & 0xFFFF
 
 
 def confusion_damage(mon):

@@ -176,11 +176,12 @@ python3 meta_sim/oracle_damage.py   # 7-case self-test + calc.py fidelity sweep
 python3 meta_sim/oracle_pipeline.py 20000   # engine damage (rom_damage.py) vs the ROM
 ```
 
-On the current build `oracle.py` matches 333/333 species, and
-`oracle_damage.py` finds calc.py's formula differs from the ROM on 15 of
-30,276 fully-evolved pairs (the ROM truncates Atk/Def to 8 bits), never by
-more than 1 HP. So the formula is faithful; calc.py's simplifications (flat
-roll, ability/item/status modelling) are where its numbers lose fidelity.
+On the current build `oracle.py` matches 333/333 species, `oracle_damage.py`
+finds calc.py's core formula matches the ROM on all 30,276 fully-evolved pairs
+(including the ROM's 8-bit Atk/Def truncation), and `oracle_pipeline.py`
+matches 20,000/20,000 random full-pipeline scenarios per seed plus every
+85-100% damage roll. calc.py (the 1v1 matrix) still uses a flat average roll
+and a simpler ability model; the 6v6 engine uses the exact pipeline.
 
 ## The model
 

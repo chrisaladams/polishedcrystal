@@ -31,8 +31,16 @@ and most item effects. Documented in meta_sim/matrix.py output.
 from stats import LEVEL
 from typechart import STAB, type_mult
 import abilities
+from rom_damage import truncate
 
 ROLL = 0.925  # average damage roll
+
+def base_damage(attack, defense, power):
+    """The ROM's core formula, including TruncateHL_BC: Attack and Defense are
+    halved together until both fit in a byte before they're used."""
+    a, d = truncate(int(attack), int(defense))
+    return (((2 * LEVEL) // 5 + 2) * power * a) // max(d, 1) // 50 + 2
+
 
 def damage(attacker, defender, move, chart, atk_ability=None):
     """Return average damage (int) move does from attacker to defender.
@@ -51,7 +59,7 @@ def damage(attacker, defender, move, chart, atk_ability=None):
         a, d = attacker['stats']['atk'] * atk_mult, defender['stats']['defe']
     else:
         a, d = attacker['stats']['spa'] * atk_mult, defender['stats']['spd']
-    base = ((( (2 * LEVEL) // 5 + 2) * move['power'] * a) // d) // 50 + 2
+    base = base_damage(a, d, move['power'])
     stab = abilities.stab_mult(atk_ability, is_stab)
     dmg = base * stab * eff * dmg_mult * ROLL
     return int(dmg)

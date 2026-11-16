@@ -145,17 +145,13 @@ def self_test(oracle):
     return ok
 
 
-def _formula_no_truncate(attack, defense, power, level=50):
-    """calc.py's raw damage formula, which skips the ROM's 8-bit truncation."""
-    return (((2 * level) // 5 + 2) * power * attack) // defense // 50 + 2
-
-
 def validate_against_calc(oracle, power=100,
                           pokemon_json=os.path.join(HERE, 'data',
                                                     'pokemon.json')):
     """Sweep a neutral 100-BP physical move across every fully-evolved
     attacker/defender pair and count where calc.py's formula differs from the
-    ROM. The only difference left in play is the 8-bit Atk/Def truncation."""
+    ROM."""
+    import calc
     from stats import mon_stats
 
     pokemon = json.load(open(pokemon_json))
@@ -169,7 +165,7 @@ def validate_against_calc(oracle, power=100,
             key = (at['atk'], de['defe'])
             if key not in seen:
                 seen[key] = (oracle.damage(key[0], key[1], power, 0, 0),
-                             _formula_no_truncate(key[0], key[1], power))
+                             calc.base_damage(key[0], key[1], power))
             got, want = seen[key]
             pairs += 1
             if got != want:
@@ -191,8 +187,7 @@ def main():
         print('\nfidelity check vs calc.py (100-BP neutral move, all FE pairs):')
         pairs, diffs, worst = validate_against_calc(oracle)
         pct = 100.0 * diffs / pairs if pairs else 0
-        print(f'  {diffs}/{pairs} pairs ({pct:.2f}%) where calc.py != ROM '
-              f'(cause: 8-bit Atk/Def truncation)')
+        print(f'  {diffs}/{pairs} pairs ({pct:.2f}%) where calc.py != ROM')
         if worst[1]:
             an, dn, got, want = worst[1]
             print(f'  worst gap: {an} vs {dn} -> ROM {got}, calc.py {want} '

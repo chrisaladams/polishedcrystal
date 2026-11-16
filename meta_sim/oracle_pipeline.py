@@ -189,6 +189,29 @@ class PipelineOracle(StatOracle):
         return h.read16(h.addr('wCurDamage'))
 
 
+def check_variation(o, rng, n):
+    """Run the ROM's damagevariation n times on random damage values. The ROM
+    picks its own roll, so each result must be rom_damage.vary(dmg, r) for some
+    r in 0..15, and over many runs every roll should turn up."""
+    h = o.h
+    bad, seen = 0, [0] * 16
+    for i in range(n):
+        dmg = rng.choice([0, 1, 2, 3, 99, 100, 101, 999, 65535]) if i % 4 == 0 \
+            else rng.randint(0, 2000)
+        h.prepare()
+        h.write16(h.addr('wCurDamage'), dmg)
+        o._run('BattleCommand_damagevariation', max_frames=10)
+        got = h.read16(h.addr('wCurDamage'))
+        rolls = [r for r in range(16) if rom_damage.vary(dmg, r) == got]
+        if not rolls:
+            bad += 1
+            print(f'  VARIATION MISMATCH: {dmg} -> rom {got}, port '
+                  f'{sorted({rom_damage.vary(dmg, r) for r in range(16)})}')
+        elif dmg >= 100 and len(rolls) == 1:
+            seen[rolls[0]] += 1
+    return bad, seen
+
+
 def scenario(rng, pool, species_ids, moves, chart_types):
     def pick():
         while True:
@@ -223,8 +246,14 @@ def main():
     ap.add_argument('n', type=int, nargs='?', default=3000)
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--show', type=int, default=10, help='mismatches to print')
+    ap.add_argument('--variation', type=int, default=2000,
+                    help='damagevariation runs to check (0 to skip)')
     args = ap.parse_args()
     o = PipelineOracle()
+    if args.variation:
+        vbad, seen = check_variation(o, random.Random(args.seed), args.variation)
+        print(f'damagevariation: {args.variation - vbad}/{args.variation} results are a '
+              f'valid 85-100% roll; rolls seen (0..15): {seen}')
     mons = json.load(open(os.path.join(HERE, 'data', 'pokemon.json')))
     chart = json.load(open(os.path.join(HERE, 'data', 'typechart.json')))
     pool = [(k, v) for k, v in mons.items() if 'stats' in v and v.get('abilities')]
@@ -254,7 +283,7 @@ def main():
                       f"weather {sc['weather']}, crit {sc['crit']}, moved_second {sc['moved_second']}")
     o.h.stop()
     print(f'{ok}/{ok + bad} scenarios match the ROM exactly ({100 * ok / (ok + bad):.2f}%)')
-    return 0 if bad == 0 else 1
+    return 0 if bad == 0 and not (args.variation and vbad) else 1
 
 
 if __name__ == '__main__':
