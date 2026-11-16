@@ -72,6 +72,16 @@ def draft(rng):
     for slot in TEMPLATE:
         fam = slot or rng.choice(FAMILIES)
         cands = by_family[fam]
+        if slot is None:
+            # Weather teams: pair a setter with a sweeper that uses its weather
+            # (and vice versa) most of the time, as a real team would.
+            setters = {b.weather for b in team if b.style == A.WEATHER_SETTER}
+            sweepers = {b.weather for b in team if b.style == A.WEATHER_SWEEPER}
+            want = ([b for b in _G['builds'] if b.style == A.WEATHER_SWEEPER and b.weather in setters]
+                    or [b for b in _G['builds'] if b.style == A.WEATHER_SETTER and b.weather in sweepers])
+            want = [b for b in want if all(t.mid != b.mid for t in team)]
+            if want and rng.random() < 0.7:
+                cands = want
         pick = None
         for _ in range(40):
             b = rng.choice(cands)
@@ -179,7 +189,8 @@ def analyse(builds, agg, min_samples):
         var = max(0.0, r['swap_sq'] / n - mean * mean) if n else 0.0
         se = math.sqrt(var / n) if n > 1 else float('nan')
         attacks = [m for m in b.moves if _G['moves'][m]['cat'] != 'STATUS'
-                   and _G['moves'][m]['power'] > 0 and _G['moves'][m]['effect'] not in A.NEVER]
+                   and _G['moves'][m]['power'] > 0 and (_G['moves'][m]['effect'] not in A.NEVER
+                                                        or _G['moves'][m]['effect'] == 'EFFECT_COUNTER')]
         row = {'mon': b.mid, 'playstyle': b.style, 'family': A.FAMILY[b.style],
                'modelled': bool(attacks) or b.ability == 'IMPOSTER',
                'games': int(g), 'win_rate': round(100 * r['score'] / g, 1),
@@ -252,8 +263,8 @@ def report(rows, args, n_builds, n_mons, secs):
     unmod = sorted({r['mon'] for r in rows if not r['modelled']})
     if unmod:
         L += ['## Not modelled', '',
-              'These mons rely on moves the engine does not simulate (Counter / Mirror Coat, '
-              'Sketch, Hidden Power typing...), so they are left out of the rankings: '
+              'These mons rely on moves the engine does not simulate (Sketch, Transform '
+              'outside Imposter), so they are left out of the rankings: '
               + ', '.join(unmod) + '.', '']
     for style in A.PLAYSTYLES:
         group = sorted((r for r in ok if r['playstyle'] == style),
@@ -272,7 +283,7 @@ def report(rows, args, n_builds, n_mons, secs):
 
 def main():
     ap = argparse.ArgumentParser(description='Per-playstyle meta test with a swap-test impact score.')
-    ap.add_argument('--battles', type=int, default=24000)
+    ap.add_argument('--battles', type=int, default=30000)
     ap.add_argument('--swaps', type=int, default=6, choices=range(1, 7),
                     help='slots per side replayed with a stand-in after each battle')
     ap.add_argument('--workers', type=int, default=os.cpu_count() or 2)

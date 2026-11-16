@@ -184,6 +184,9 @@ TRICK_ROOM_TURNS = 5
 PERISH_COUNT = 4                           # faints when the count runs out (3 turn ends)
 BIND_TURNS = (4, 5)                        # Wrap / Fire Spin / Whirlpool
 TRAP_ABILITIES = {'SHADOW_TAG', 'ARENA_TRAP', 'MAGNET_PULL'}
+CHARGE_EFFECTS = {'EFFECT_FLY', 'EFFECT_SOLAR_BEAM'}   # Fly / Dig / Solar Beam: charge turn
+FUTURE_SIGHT_TICKS = 3                     # lands at the end of the turn after next
+STATIC_DAMAGE = {'SONIC_BOOM': 20, 'DRAGON_RAGE': 40}
 
 
 class Field:
@@ -323,7 +326,8 @@ class Pmon:
                  'cures', 'pivots', 'phazes', 'hazards_cleared', 'stat_drops',
                  'sub_hp', 'bound', 'bound_by', 'mean_looked', 'perish',
                  'hit_phys', 'hit_spec', 'weather_set', 'subs_made', 'passes',
-                 'tricks', 'trick_rooms', 'traps', 'perish_kos', 'perish_by')
+                 'tricks', 'trick_rooms', 'traps', 'perish_kos', 'perish_by',
+                 'charging', 'semi_inv')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -382,6 +386,8 @@ class Pmon:
         self.traps = 0                     # foes trapped (Mean Look / binding)
         self.perish_kos = 0                # foes fainted by this mon's Perish Song
         self.perish_by = None
+        self.charging = None               # move index being charged (two-turn moves)
+        self.semi_inv = False              # in the air / underground (Fly / Dig)
 
     def stat(self, key, ignore_stage=False):
         stage = 0 if ignore_stage else self.stage.get(key, 0)
@@ -420,6 +426,8 @@ class Pmon:
         self.mean_looked = False
         self.perish = 0
         self.perish_by = None
+        self.charging = None
+        self.semi_inv = False
         self.flash_fire = False            # Flash Fire boost is lost on switch-out
 
 
@@ -435,6 +443,7 @@ class Side:
         self.reflect = 0                   # turns left
         self.light_screen = 0
         self.switched = False              # active changed after moves were chosen
+        self.future = None                 # incoming Future Sight: [ticks, user, move]
         for m in team:
             m.side = self
 
@@ -525,6 +534,8 @@ def fixed_damage(move, dfn):
         return max(1, int(dfn.hp // 2))
     if e == 'EFFECT_COUNTER':
         return 0
+    if e == 'EFFECT_STATIC_DAMAGE':
+        return STATIC_DAMAGE.get(move.get('id'), move['power'])
     return None
 
 
@@ -624,6 +635,8 @@ def choose_move(side, foe, moves, chart, rng=random):
     whether the active will still be standing next turn, and only value
     setup/status/heal/hazards when it will."""
     att, dfn = side.mon, foe.mon
+    if att.charging is not None:
+        return att.charging
     if att.rampage:
         return att.rampage_move
     if att.encore and att.encore_move is not None:
@@ -643,6 +656,14 @@ def choose_move(side, foe, moves, chart, rng=random):
         dmg, _ = expected_damage(att, dfn, m, chart)
         if m['effect'] in RECHARGE_EFFECTS and dmg < dfn.hp:
             dmg *= 0.5                     # two turns per hit unless it KOs
+        if needs_charge(att, m):
+            dmg *= 0.5                     # spends a turn charging
+        if m['effect'] == 'EFFECT_DREAM_EATER' and dfn.status != 'slp':
+            dmg = 0
+        if m['effect'] == 'EFFECT_FUTURE_SIGHT':
+            dmg = 0 if foe.future else dmg * 0.6   # delayed; only one at a time
+        if dmg < dfn.hp and counters(dfn, m, moves):
+            dmg *= 0.25                    # don't feed Counter / Mirror Coat a non-KO hit
         if dmg > best_dmg:
             best_dmg, best_dmg_i = dmg, i
 
@@ -782,6 +803,19 @@ def choose_move(side, foe, moves, chart, rng=random):
             if rng.random() < 0.85:        # a little noise so it isn't robotic
                 return idx
     return best_dmg_i
+
+
+def counters(mon, move, moves):
+    """Does `mon` carry Counter / Mirror Coat for this attack's category?"""
+    want = 'COUNTER' if move['cat'] == 'PHYSICAL' else 'MIRROR_COAT'
+    return any(moves[mv].get('id') == want for mv in mon.moves)
+
+
+def needs_charge(mon, move):
+    e = move['effect']
+    if e == 'EFFECT_SOLAR_BEAM':
+        return weather_of(mon) != 'sun'
+    return e in CHARGE_EFFECTS
 
 
 def team_speed(side):
@@ -1089,6 +1123,23 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if att.item in CHOICE_ITEMS:
         att.locked_move = idx     # locks in on use, regardless of hit/miss
 
+    # two-turn moves: charge now, strike next turn (Fly / Dig are untouchable meanwhile)
+    if att.charging is None and needs_charge(att, m):
+        att.charging = idx
+        att.semi_inv = e == 'EFFECT_FLY'
+        return
+    att.charging = None
+    att.semi_inv = False
+    if dfn.semi_inv and m['cat'] != 'STATUS' and m.get('id') not in (
+            'EARTHQUAKE', 'GUST', 'THUNDER', 'HURRICANE'):
+        return                              # target is in the air / underground
+    if e == 'EFFECT_DREAM_EATER' and dfn.status != 'slp':
+        return
+    if e == 'EFFECT_FUTURE_SIGHT':
+        if dfn_side.future is None:
+            dfn_side.future = [FUTURE_SIGHT_TICKS, att, m]
+        return
+
     # accuracy
     acc = m['acc']
     w = weather_of(att)
@@ -1104,6 +1155,10 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         acc *= 0.8
     if acc >= 0 and rng.random() > acc / 100.0:
         att.rampage = 0                    # a miss ends a rampage, no confusion
+        if e == 'EFFECT_JUMP_KICK' and att.ability != 'MAGIC_GUARD':
+            att.hp -= att.maxhp / 2        # crash damage
+            if att.hp <= 0:
+                att.fainted = True
         return
 
     if e in RAMPAGE_EFFECTS:
@@ -1187,7 +1242,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             dfn.bound = rng.choice(BIND_TURNS) + (2 if att.item == 'GRIP_CLAW' else 0)
             dfn.bound_by = att
             att.traps += 1
-        if e in DRAIN_EFFECTS and dealt > 0:
+        if (e in DRAIN_EFFECTS or e == 'EFFECT_DREAM_EATER') and dealt > 0:
             if dfn.ability == 'LIQUID_OOZE':
                 att.hp -= dealt / 2
             else:
@@ -1453,6 +1508,27 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     # unmodelled status move: no-op
 
 
+def land_future_sight(side, moves, chart, rng):
+    if side.future is None:
+        return
+    side.future[0] -= 1
+    if side.future[0] > 0:
+        return
+    _, user, move = side.future
+    side.future = None
+    target = side.mon
+    if target.fainted:
+        return
+    dmg, _ = move_damage(user, target, move, chart, rng)
+    dealt = min(dmg, target.hp)
+    user.dmg_dealt += dealt / target.maxhp
+    target.dmg_taken += dealt / target.maxhp
+    target.hp -= dmg
+    if target.hp <= 0:
+        target.fainted = True
+        user.kos += 1
+
+
 STAT_KEYS = ('dmg_dealt', 'kos', 'status_infl', 'heal_done', 'dmg_taken', 'turns_active',
              'hazards_set', 'screens_set', 'cures', 'pivots', 'phazes',
              'hazards_cleared', 'stat_drops', 'weather_set', 'subs_made', 'passes',
@@ -1559,6 +1635,12 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
         # ---- residuals ----
         for s, foe in ((A, B), (B, A)):
             end_of_turn(s.mon, foe, rng)
+        for s in (A, B):
+            land_future_sight(s, moves, chart, rng)
+        if not A.alive_indices():
+            return 1, contrib(A), contrib(B)
+        if not B.alive_indices():
+            return 0, contrib(A), contrib(B)
         field.trick_room = max(0, field.trick_room - 1)
         if field.weather:
             field.weather_turns -= 1

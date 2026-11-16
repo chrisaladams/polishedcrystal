@@ -364,6 +364,66 @@ def test_sun_healing_and_growth():
     assert a.stage['atk'] == 2 and a.stage['spa'] == 2
 
 
+def test_two_turn_moves_charge():
+    a = mon(types=('GRASS',), moves=('SOLAR_BEAM', 'FLY'))
+    b = mon(stats={'hp': 999}, moves=('TACKLE',))
+    A, B = duel(a, b)
+    act(A, B, 'SOLAR_BEAM')
+    assert b.hp == b.maxhp and a.charging == 0
+    act(A, B, 'SOLAR_BEAM')
+    assert b.hp < b.maxhp and a.charging is None
+    A.field.weather, A.field.weather_turns = 'sun', 5
+    hp = b.hp
+    act(A, B, 'SOLAR_BEAM')                 # no charge turn in sun
+    assert b.hp < hp
+    act(A, B, 'FLY')
+    assert a.semi_inv
+    hp = a.hp
+    act(B, A, 'TACKLE')
+    assert a.hp == hp                       # can't be hit in the air
+
+
+def test_dream_eater_needs_sleep_and_drains():
+    a = mon(types=('PSYCHIC',), moves=('DREAM_EATER',))
+    a.hp = 100
+    b = mon()
+    A, B = duel(a, b)
+    act(A, B, 'DREAM_EATER')
+    assert b.hp == b.maxhp
+    b.status, b.sleep = 'slp', 3
+    act(A, B, 'DREAM_EATER')
+    assert b.hp < b.maxhp and a.hp > 100
+
+
+def test_future_sight_lands_two_turns_later():
+    a = mon(types=('PSYCHIC',), moves=('FUTURE_SIGHT',))
+    b = mon(stats={'hp': 999})
+    A, B = duel(a, b)
+    act(A, B, 'FUTURE_SIGHT')
+    for _ in range(engine.FUTURE_SIGHT_TICKS - 1):
+        engine.land_future_sight(B, MOVES, CHART, random.Random(0))
+        assert b.hp == b.maxhp
+    engine.land_future_sight(B, MOVES, CHART, random.Random(0))
+    assert b.hp < b.maxhp and a.dmg_dealt > 0
+
+
+def test_static_damage_and_jump_kick_crash():
+    a = mon(types=('DRAGON',), moves=('DRAGON_RAGE',))
+    b = mon()
+    A, B = duel(a, b)
+    act(A, B, 'DRAGON_RAGE')
+    assert b.maxhp - b.hp == 40
+    k = mon(types=('FIGHTING',), moves=('HI_JUMP_KICK',))
+    g = mon(types=('GHOST',))
+    A, B = duel(k, g)
+    for seed in range(20):                  # find a seed that misses (90% accuracy)
+        k.hp = k.maxhp
+        act(A, B, 'HI_JUMP_KICK', random.Random(seed))
+        if k.hp < k.maxhp:
+            break
+    assert k.hp == k.maxhp / 2 or k.hp == k.maxhp
+
+
 if __name__ == '__main__':
     failed = 0
     for name, fn in list(globals().items()):

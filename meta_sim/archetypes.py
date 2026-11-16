@@ -31,15 +31,23 @@ SUPPORT = 'support'
 HAZARDS = 'hazard setter'
 CLERIC = 'cleric'
 PIVOT = 'pivot'
+WEATHER_SETTER = 'weather setter'
+WEATHER_SWEEPER = 'weather sweeper'
+BATON = 'baton passer'
+TRICK_ROOM = 'trick room setter'
+TRAPPER = 'trapper'
 
-PLAYSTYLES = [PHYSICAL, SPECIAL, MIXED, SETUP, REVENGE, PHYS_WALL, SPEC_WALL, TANK,
-              SUPPORT, HAZARDS, CLERIC, PIVOT]
+PLAYSTYLES = [PHYSICAL, SPECIAL, MIXED, SETUP, REVENGE, WEATHER_SWEEPER, BATON,
+              PHYS_WALL, SPEC_WALL, TANK, SUPPORT, HAZARDS, CLERIC, PIVOT,
+              WEATHER_SETTER, TRICK_ROOM, TRAPPER]
 
 # Team-slot families used by the balanced team builder and the swap test.
 FAMILY = {PHYSICAL: 'offense', SPECIAL: 'offense', MIXED: 'offense',
           SETUP: 'speed', REVENGE: 'speed',
           PHYS_WALL: 'defense', SPEC_WALL: 'defense', TANK: 'defense',
-          SUPPORT: 'utility', HAZARDS: 'utility', CLERIC: 'utility', PIVOT: 'utility'}
+          SUPPORT: 'utility', HAZARDS: 'utility', CLERIC: 'utility', PIVOT: 'utility',
+          WEATHER_SWEEPER: 'offense', BATON: 'speed', WEATHER_SETTER: 'utility',
+          TRICK_ROOM: 'utility', TRAPPER: 'utility'}
 
 # Metrics that show whether a mon is doing its job, per playstyle.
 JOB_METRICS = {
@@ -52,7 +60,26 @@ JOB_METRICS = {
     HAZARDS: ['hazards_set', 'status_infl'],
     CLERIC: ['cures', 'heal_done'],
     PIVOT: ['pivots', 'dmg_dealt'],
+    WEATHER_SETTER: ['weather_set', 'dmg_dealt'],
+    WEATHER_SWEEPER: ['dmg_dealt', 'kos'],
+    BATON: ['passes', 'subs_made'],
+    TRICK_ROOM: ['trick_rooms', 'dmg_dealt'],
+    TRAPPER: ['traps', 'perish_kos', 'kos'],
 }
+
+# Weather: the moves and abilities that set it, and what each weather boosts.
+WEATHER_MOVE = {'sun': 'EFFECT_SUNNY_DAY', 'rain': 'EFFECT_RAIN_DANCE',
+                'sand': 'EFFECT_SANDSTORM', 'hail': 'EFFECT_HAIL'}
+WEATHER_SETTING = {'DROUGHT': 'sun', 'DRIZZLE': 'rain', 'SAND_STREAM': 'sand',
+                   'SNOW_WARNING': 'hail'}
+WEATHER_ABUSE = {'SWIFT_SWIM': 'rain', 'CHLOROPHYLL': 'sun', 'SAND_RUSH': 'sand',
+                 'SLUSH_RUSH': 'hail', 'SOLAR_POWER': 'sun', 'SAND_FORCE': 'sand'}
+WEATHER_TYPES = {'sun': {'FIRE'}, 'rain': {'WATER'}, 'sand': {'ROCK', 'GROUND', 'STEEL'},
+                 'hail': {'ICE'}}
+WEATHER_SURE_HIT = {'rain': {'THUNDER', 'HURRICANE'}, 'hail': {'BLIZZARD'},
+                    'sun': {'SOLAR_BEAM'}}
+WEATHER_ROCK = {'sun': 'HEAT_ROCK', 'rain': 'DAMP_ROCK', 'sand': 'SMOOTH_ROCK',
+                'hail': 'ICY_ROCK'}
 
 STATUS_MOVES = set(INFLICT) - {'EFFECT_CONFUSE'}
 RECOVERY = HEAL_EFFECTS
@@ -76,6 +103,7 @@ class Build:
     ability: str
     item: str
     mon: dict = field(repr=False)
+    weather: str = None                    # weather this build sets or relies on
 
     @property
     def key(self):
@@ -110,7 +138,9 @@ def _attacks(mon, moves, cat=None, n=4, exclude=(), prefer_priority=False):
         stab = 1.5 if m['type'] in mon['types'] else 1.0
         acc = 1.0 if m['acc'] < 0 else m['acc'] / 100
         pri = 1.4 if prefer_priority and m['prio'] > 0 else 1.0
-        return est_power(m) * stab * acc * stat * pri
+        slow = 0.5 if m['effect'] in ('EFFECT_FLY', 'EFFECT_SOLAR_BEAM', 'EFFECT_FUTURE_SIGHT',
+                                      'EFFECT_DREAM_EATER') else 1.0
+        return est_power(m) * stab * acc * stat * pri * slow
     cands = [mv for mv in mon['_pool'] if moves[mv]['cat'] != 'STATUS'
              and est_power(moves[mv]) > 0 and moves[mv]['effect'] not in NEVER
              and mv not in exclude and (cat is None or moves[mv]['cat'] == cat)]
@@ -168,7 +198,20 @@ def _fill(moveset, mon, moves, cat=None):
             break
         if mv not in moveset:
             moveset.append(mv)
+    if len(moveset) < 4:                   # no real attacks: Counter / Mirror Coat
+        for mv in ('COUNTER', 'MIRROR_COAT'):
+            if mv in mon['_pool'] and mv not in moveset and len(moveset) < 4:
+                moveset.append(mv)
     return moveset[:4]
+
+
+def _weather_attacks(mon, moves, w, n=4, cat=None):
+    """Attacks for a weather team: weather-boosted and sure-hit moves first."""
+    boosted = WEATHER_TYPES[w]
+    sure = WEATHER_SURE_HIT.get(w, set())
+    pool = [mv for mv in _attacks(mon, moves, cat, n=12)]
+    first = [mv for mv in pool if mv in sure or moves[mv]['type'] in boosted][:2]
+    return _fill(first, mon, moves, cat)[:n]
 
 
 def _item(style, mid, mon, ability):
@@ -177,6 +220,8 @@ def _item(style, mid, mon, ability):
     if ability in items.ORB_FOR_ABILITY:
         return items.ORB_FOR_ABILITY[ability]
     s = mon['stats']
+    if style == WEATHER_SWEEPER:
+        return 'LIFE_ORB'
     if style == PHYSICAL:
         return 'CHOICE_BAND'
     if style == SPECIAL:
@@ -226,8 +271,11 @@ def builds_for(mid, mon, moves, P):
 
     recovery = _best_of(mon, moves, RECOVERY)
     status = _status_move(mon, moves)
+    sleep_talk = _best_of(mon, moves, {'EFFECT_SLEEP_TALK'})
     def wall_set(cat=None):
         ms = [m for m in (recovery, status) if m]
+        if recovery == 'REST' and sleep_talk:
+            ms.insert(1, sleep_talk)       # RestTalk
         return _fill(ms, mon, moves) if len(ms) else None
     pb, sb = s['hp'] * s['defe'] / P['pbulk75'], s['hp'] * s['spd'] / P['sbulk75']
     if max(pb, sb) >= 1 and (recovery or status):  # one wall build, on its stronger side
@@ -263,6 +311,57 @@ def builds_for(mid, mon, moves, P):
                and 'REGENERATOR' in (mon.get('abilities') or [])):
         out.append((PIVOT, _fill([piv] if piv else [], mon, moves)))
 
+    abil = mon.get('abilities') or []
+    forced = {}                            # style -> (ability, weather)
+    # weather setter: a weather ability, or a weather move it benefits from
+    setters = [WEATHER_SETTING[a] for a in abil if a in WEATHER_SETTING]
+    for w in ('rain', 'sun', 'sand', 'hail'):
+        if setters:
+            break
+        if WEATHER_MOVE[w] in effects and (set(mon['types']) & WEATHER_TYPES[w]) and (
+                s['hp'] * min(s['defe'], s['spd']) >= P['pbulk50'] or s['spe'] >= P['spe60']):
+            setters = [w]
+    if setters:
+        w = setters[0]
+        ms = [] if any(WEATHER_SETTING.get(a) == w for a in abil) else \
+            [_best_of(mon, moves, {WEATHER_MOVE[w]})]
+        ms += [m for m in ((recovery if recovery != 'REST' else None) or status,) if m]
+        out.append((WEATHER_SETTER, ms + [m for m in _weather_attacks(mon, moves, w)
+                                          if m not in ms]))
+        forced[WEATHER_SETTER] = (next((a for a in abil if WEATHER_SETTING.get(a) == w), None), w)
+    # weather sweeper: an ability that only pays off in weather
+    abusers = [a for a in abil if a in WEATHER_ABUSE]
+    if abusers and off >= P['atk50' if phys else 'spa50']:
+        a = abusers[0]
+        w = WEATHER_ABUSE[a]
+        out.append((WEATHER_SWEEPER, _weather_attacks(mon, moves, w,
+                                                      cat='PHYSICAL' if phys else 'SPECIAL')))
+        forced[WEATHER_SWEEPER] = (a, w)
+    # Baton Passer: set up (behind a Substitute) and pass it on
+    bp = _best_of(mon, moves, {'EFFECT_BATON_PASS'})
+    any_setup = _setup_move(mon, moves, phys) or _setup_move(mon, moves, not phys) or \
+        _best_of(mon, moves, {'EFFECT_SPEED_UP_2'})
+    if bp and any_setup and (s['spe'] >= P['spe50'] or s['hp'] * min(s['defe'], s['spd']) >= P['pbulk50']):
+        sub = _best_of(mon, moves, {'EFFECT_SUBSTITUTE'})
+        out.append((BATON, _fill([m for m in (any_setup, sub, bp) if m], mon, moves)))
+    # Trick Room setter: slow, and can survive to set it
+    tr = _best_of(mon, moves, {'EFFECT_TRICK_ROOM'})
+    if tr and s['spe'] <= P['spe50']:
+        out.append((TRICK_ROOM, _fill([tr] + ([recovery] if recovery else []), mon, moves)))
+    # trapper: a trapping ability or Mean Look, with something to do to the trapped foe
+    trap_ab = next((a for a in abil if a in ('SHADOW_TAG', 'ARENA_TRAP', 'MAGNET_PULL')), None)
+    mean_look = _best_of(mon, moves, {'EFFECT_MEAN_LOOK'})
+    if trap_ab or mean_look:
+        perish = _best_of(mon, moves, {'EFFECT_PERISH_SONG'})
+        protect = _best_of(mon, moves, {'EFFECT_PROTECT'})
+        ms = [] if trap_ab else [mean_look]
+        if perish and (trap_ab or mean_look):
+            ms += [perish, protect]
+        elif status:
+            ms += [status]
+        out.append((TRAPPER, _fill([m for m in ms if m], mon, moves)))
+        forced[TRAPPER] = (trap_ab, None)
+
     if not out:                            # every mon gets at least one build
         out.append((PHYSICAL if phys else SPECIAL,
                     _attacks(mon, moves, 'PHYSICAL' if phys else 'SPECIAL') or _attacks(mon, moves)))
@@ -274,11 +373,21 @@ def builds_for(mid, mon, moves, P):
         ability = abilities.pick_ability(mon.get('abilities'), s)
         if style == PIVOT and 'REGENERATOR' in (mon.get('abilities') or []):
             ability = 'REGENERATOR'
+        weather = None
+        if style in forced:
+            fa, weather = forced[style]
+            ability = fa or ability
         item = _item(style, mid, mon, ability)
+        if style == WEATHER_SETTER and item == 'LEFTOVERS':
+            item = WEATHER_ROCK[weather]   # 8 turns of weather
+        if item in ('CHOICE_BAND', 'CHOICE_SPECS', 'CHOICE_SCARF') and len(moveset) == 4:
+            trick = _best_of(mon, moves, {'EFFECT_TRICK'})
+            if trick and trick not in moveset:
+                moveset = moveset[:3] + [trick]   # Trick the choice item onto a wall
         if style == SUPPORT and item == 'LEFTOVERS' and sum(
                 moves[m]['effect'] in SCREENS for m in moveset) == 2:
             item = 'LIGHT_CLAY'            # dual screens: 8 turns each
-        builds.append(Build(mid, style, moveset, ability, item, mon))
+        builds.append(Build(mid, style, moveset, ability, item, mon, weather))
     return builds
 
 

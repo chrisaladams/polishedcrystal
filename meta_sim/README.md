@@ -15,7 +15,7 @@ reproducible statistical signal that stays in sync with the source.
 | `calc.py`    | Gen damage formula + STAB + type effectiveness; best-move selection. |
 | `matrix.py`  | All-vs-all 1v1 best-move threat matrix → CSV + ranked leaderboard. |
 | `engine.py`  | Pragmatic 6v6 turn engine + heuristic move/switch AI (status, stat stages, hazards, recovery, priority, screens, pivoting, phazing and other support moves). |
-| `archetypes.py` | The 12 playstyles, who qualifies for each, and a set + item built for each playstyle. |
+| `archetypes.py` | The 17 playstyles, who qualifies for each, and a set + item built for each playstyle. |
 | `metatest.py` | **The meta test**: every mon at every playstyle it can play, scored by a swap-test impact number and by job metrics. |
 | `test_engine.py` | Scripted checks for the engine's move mechanics. |
 | `teams.py`   | Role-aware moveset picker + three team builders (random, role-based, synergy). |
@@ -38,7 +38,7 @@ Three complementary tools:
 ## The meta test (`metatest.py`)
 
 ```sh
-python3 meta_sim/metatest.py              # ~3 min on 4 cores
+python3 meta_sim/metatest.py              # ~4 min on 4 cores
 python3 meta_sim/metatest.py --battles 8000   # quicker, noisier
 python3 meta_sim/test_engine.py           # check the engine's move mechanics
 ```
@@ -46,18 +46,26 @@ python3 meta_sim/test_engine.py           # check the engine's move mechanics
 It writes `meta_sim/out/metatest.md` (the report) and `meta_sim/out/metatest.csv`
 (one row per build, with every metric).
 
-**Playstyles.** `archetypes.py` decides which of 12 playstyles each mon can
+**Playstyles.** `archetypes.py` decides which of 17 playstyles each mon can
 really play, from its L50 stats (against the pool's own percentiles) and what it
 can learn: physical, special or mixed attacker, setup sweeper, revenge killer,
-physical or special wall, bulky tank, support, hazard setter, cleric, pivot. Each
-gets a set and item for that job: walls carry recovery and status, supports their
-screens/Encore/Haze/Pain Split, hazard setters Spikes, pivots U-turn/Volt Switch
-or Regenerator, revenge killers Choice Scarf and priority. A mon is entered once
-per playstyle (about 3 each).
+weather sweeper, Baton Passer, physical or special wall, bulky tank, support,
+hazard setter, cleric, pivot, weather setter, Trick Room setter, trapper. Each
+gets a set and item for that job: walls carry recovery and status (RestTalk when
+their recovery is Rest), supports their screens/Encore/Haze/Pain Split, hazard
+setters Spikes, pivots U-turn/Volt Switch or Regenerator, revenge killers Choice
+Scarf and priority (and Trick, if they learn it), weather setters their weather
+move or ability and the matching rock, weather sweepers the ability that needs
+it, Baton Passers a setup move, Substitute and Baton Pass, trappers Shadow
+Tag/Arena Trap/Magnet Pull or Mean Look (with Perish Song where available), and
+Wobbuffet Counter and Mirror Coat. A mon is entered once per playstyle (about 4
+each).
 
 **Teams.** Every battle uses two balanced drafts (two offense slots, a speed slot,
 a defense slot, a utility slot and a flex slot, no three members sharing a
-weakness).
+weakness). When a team has a weather setter, its flex slot takes a sweeper that
+uses that weather 70% of the time (and vice versa), as a real weather team
+would.
 
 **Impact (the headline number).** After each battle, every slot is replayed with
 a random other build of the same family (offense / speed / defense / utility),
@@ -82,6 +90,11 @@ metrics that show whether it is doing that job:
 | hazard setter | hazard layers, statuses |
 | cleric | team statuses cured, HP healed |
 | pivot | pivot switches, damage dealt |
+| weather setter | times weather was set, damage dealt |
+| weather sweeper | damage dealt, KOs |
+| Baton Passer | Baton Passes, Substitutes made |
+| Trick Room setter | Trick Rooms set, damage dealt |
+| trapper | foes trapped, Perish Song KOs, KOs |
 
 Damage absorbed is counted as a fraction of the mon's own max HP, so a wall that
 heals and keeps tanking scores above 1.0.
@@ -92,10 +105,20 @@ mon that is clearly negative in *every* playstyle it qualifies for is a real buf
 candidate; one in the top 10% and clearly positive is a nerf candidate. The
 report lists both, plus a top/bottom table for every playstyle.
 
-**Not modelled.** Mons whose whole kit is moves the engine doesn't simulate
-(Wobbuffet's Counter/Mirror Coat, Smeargle's Sketch) are listed but not
-ranked. Weather setting, Substitute, Baton Pass, Trick, Trick Room and trapping
-are also not simulated, so weather and Baton Pass teams are understated.
+**What the engine simulates** is listed at the top of `engine.py`: on top of
+damage, status and stat stages it covers weather (moves, abilities, rocks,
+speed and recovery abilities, accuracy and damage effects), screens, hazards and
+Rapid Spin, Substitute, Baton Pass, Trick, Trick Room, Protect, Encore, Roar,
+Haze, Pain Split, Heal Bell, Curse, U-turn/Volt Switch, Knock Off, Pursuit,
+trapping, Perish Song, Counter/Mirror Coat, Rest/Sleep Talk, two-turn moves
+(Solar Beam outside sun, Fly/Dig), Dream Eater, Future Sight and more.
+`test_engine.py` checks each one. The AI avoids feeding Counter/Mirror Coat a
+hit it can't KO with.
+
+**Not modelled.** Smeargle (Sketch) and Ditto without Imposter are listed but not
+ranked. The heuristic AI plays every team the same way, so strategies that need
+long-term planning (Baton Pass chains, weather turn management) are probably
+understated.
 
 ## Usage (run from the repo root)
 
