@@ -3922,12 +3922,16 @@ UnevolvedEviolite:
 	; Strong cross-gen pre-evolutions (Scyther, Rhydon, Porygon2, etc.) are
 	; near-final-stage in power, so they're excluded to stop them stacking
 	; 1.5x defenses on top of ~500 BST. Curate EvioliteExcludedSpecies below.
+	; Preserve de: damagestats keeps the move's power in d, and losing it here
+	; made every hit on an Eviolite holder deal 1 damage.
 	push bc
+	push de
 	ld a, MON_SPECIES
 	call OpponentPartyAttr
 	ld hl, EvioliteExcludedSpecies
 	ld de, 1
 	call IsInArray ; carry set if excluded
+	pop de
 	pop bc
 	ret c
 	; fallthrough

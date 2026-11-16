@@ -84,7 +84,9 @@ endc
 ; serialized party layout, on top of this fork's v6 battle changes.
 ; v8: Charizard/Aerodactyl Attack trims.
 ; v9: upstream's Bad Dreams vs Magic Guard battle fix (#1687).
-DEF LINK_VERSION EQU 9
+; v10: Eviolite no longer drops the move's power (every hit on a holder did 1).
+;      Older builds compute different damage, so battles must not mix them.
+DEF LINK_VERSION EQU 10
 ; This is the minimum link version allowed for trading
 ; Older versions use a different party patch-list origin (upstream v5+), and
 ; this fork's v6 builds predate that fix, so only v7+ may trade.
