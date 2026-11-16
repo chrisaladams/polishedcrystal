@@ -89,7 +89,7 @@ def pick_ability(abilities, stats=None):
     return abilities[0]
 
 
-def offense_multipliers(ability, move, is_stab):
+def offense_multipliers(ability, move, is_stab, static_weather=True):
     """Return (atk_mult, dmg_mult) for an attacker's `ability` using `move`.
     atk_mult applies to the raw Attack/Sp.Atk stat; dmg_mult applies to the
     final damage number (STAB override is folded into dmg_mult by the
@@ -103,7 +103,7 @@ def offense_multipliers(ability, move, is_stab):
     flag_boost = FLAG_BOOSTS.get(ability)
     if flag_boost and move.get(flag_boost[0]):
         dmg_mult *= flag_boost[1]
-    boost = WEATHER_OWN_BOOST.get(ability, {}).get(move['type'])
+    boost = WEATHER_OWN_BOOST.get(ability, {}).get(move['type']) if static_weather else None
     if boost:
         dmg_mult *= boost
     return atk_mult, dmg_mult

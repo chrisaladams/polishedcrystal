@@ -27,8 +27,10 @@ def mon(types=('NORMAL',), stats=None, moves=('TACKLE',), ability=None, item=Non
 
 
 def duel(a, b, a2=None, b2=None):
-    A = Side([a] + ([a2] if a2 else []))
-    B = Side([b] + ([b2] if b2 else []))
+    field = engine.Field()
+    A = Side([a] + ([a2] if a2 else []), field)
+    B = Side([b] + ([b2] if b2 else []), field)
+    A.foe, B.foe = B, A
     return A, B
 
 
@@ -181,6 +183,185 @@ def test_battle_reports_detail():
     res, ca, cb = engine.run_battle(team, team, MOVES, CHART, seed=1, detail=True)
     assert res in (0, 1, -1) and set(engine.STAT_KEYS) <= set(ca[0])
     assert ca[0]['turns_active'] > 0 and ca[0]['dmg_taken'] > 0
+
+
+def test_weather_moves_and_damage():
+    a = mon(types=('WATER',), moves=('RAIN_DANCE', 'SURF', 'THUNDER'), item='DAMP_ROCK')
+    b = mon(stats={'hp': 999})
+    A, B = duel(a, b)
+    act(A, B, 'SURF', random.Random(4))
+    dry = b.maxhp - b.hp
+    b.hp = b.maxhp
+    act(A, B, 'RAIN_DANCE')
+    assert A.field.weather == 'rain' and A.field.weather_turns == engine.WEATHER_ROCK_TURNS
+    act(A, B, 'SURF', random.Random(4))
+    assert abs((b.maxhp - b.hp) / dry - 1.5) < 0.05
+    hits = 0
+    for seed in range(200):                 # Thunder never misses in rain
+        b.hp = b.maxhp
+        act(A, B, 'THUNDER', random.Random(seed))
+        hits += b.hp < b.maxhp
+    assert hits == 200
+
+
+def test_weather_ability_speed_and_chip():
+    t = mon(types=('ROCK',), ability='SAND_STREAM', moves=('TACKLE',))
+    k = mon(ability='SWIFT_SWIM', mid='k')
+    A, B = duel(t, k)
+    engine.apply_switch(A, 0, B, CHART)
+    assert A.field.weather == 'sand'
+    k.hp = k.maxhp
+    end_of_turn(k, A)
+    assert k.hp == k.maxhp * 15 / 16
+    t.hp = t.maxhp
+    end_of_turn(t, B)
+    assert t.hp == t.maxhp                  # Rock types don't take sand damage
+    base = k.stat('spe')
+    A.field.weather = 'rain'
+    assert k.stat('spe') == base * 2
+
+
+def test_cloud_nine_suppresses_weather():
+    a = mon(types=('FIRE',), moves=('FLAMETHROWER',))
+    b = mon(ability='CLOUD_NINE', stats={'hp': 999})
+    A, B = duel(a, b)
+    A.field.weather, A.field.weather_turns = 'sun', 5
+    assert engine.weather_of(a) is None
+
+
+def test_substitute_absorbs_and_blocks_status():
+    a = mon(moves=('SUBSTITUTE',))
+    b = mon(moves=('TACKLE', 'TOXIC'))
+    A, B = duel(a, b)
+    act(A, B, 'SUBSTITUTE')
+    assert a.hp == a.maxhp * 3 / 4 and a.sub_hp == a.maxhp / 4
+    act(B, A, 'TOXIC')
+    assert a.status is None
+    hp = a.hp
+    act(B, A, 'TACKLE')
+    assert a.hp == hp and a.sub_hp < a.maxhp / 4
+
+
+def test_baton_pass_passes_boosts():
+    a = mon(moves=('BATON_PASS',))
+    a2 = mon(mid='a2')
+    b = mon()
+    A, B = duel(a, b, a2=a2)
+    a.stage['atk'], a.sub_hp = 2, 40
+    act(A, B, 'BATON_PASS')
+    assert A.mon is a2 and a2.stage['atk'] == 2 and a2.sub_hp == 40 and a.passes == 1
+
+
+def test_trick_swaps_items_and_locks():
+    a = mon(types=('PSYCHIC',), moves=('TRICK',), item='CHOICE_SCARF')
+    b = mon(moves=('TOXIC', 'TACKLE'), item='LEFTOVERS')
+    A, B = duel(a, b)
+    act(A, B, 'TRICK')
+    assert (a.item, b.item) == ('LEFTOVERS', 'CHOICE_SCARF')
+    act(B, A, 'TOXIC')
+    assert b.locked_move == 0               # now stuck using Toxic
+
+
+def test_trick_room_and_turn_order():
+    a = mon(moves=('TRICK_ROOM',))
+    b = mon()
+    A, B = duel(a, b)
+    act(A, B, 'TRICK_ROOM')
+    assert A.field.trick_room == engine.TRICK_ROOM_TURNS and a.trick_rooms == 1
+    act(A, B, 'TRICK_ROOM')
+    assert A.field.trick_room == 0          # using it again ends it
+
+
+def test_rest_and_sleep_talk():
+    a = mon(moves=('REST', 'SLEEP_TALK', 'TACKLE'))
+    a.hp = 10
+    b = mon()
+    A, B = duel(a, b)
+    act(A, B, 'REST')
+    assert a.hp == a.maxhp and a.status == 'slp' and a.sleep == 2
+    assert engine.choose_move(A, B, MOVES, CHART) == 1
+    act(A, B, 'SLEEP_TALK', random.Random(0))
+    assert b.hp < b.maxhp                   # Sleep Talk called Tackle
+
+
+def test_mean_look_traps_but_not_ghosts():
+    a = mon(moves=('MEAN_LOOK',))
+    b, b2 = mon(mid='b'), mon(mid='b2')
+    A, B = duel(a, b, b2=b2)
+    act(A, B, 'MEAN_LOOK')
+    assert engine.is_trapped(B, A)
+    g = mon(types=('GHOST',), mid='g')
+    A, B = duel(a, g, b2=b2)
+    act(A, B, 'MEAN_LOOK')
+    assert not engine.is_trapped(B, A)
+
+
+def test_shadow_tag_and_arena_trap():
+    t = mon(ability='SHADOW_TAG')
+    b = mon()
+    A, B = duel(t, b)
+    assert engine.is_trapped(B, A)
+    d = mon(types=('GROUND',), ability='ARENA_TRAP')
+    f = mon(types=('FLYING',))
+    A, B = duel(d, f)
+    assert not engine.is_trapped(B, A)      # airborne mons escape Arena Trap
+
+
+def test_binding_chips_and_expires():
+    a = mon(types=('FIRE',), moves=('FIRE_SPIN',), item='BINDING_BAND')
+    b = mon(stats={'hp': 999})
+    A, B = duel(a, b)
+    act(A, B, 'FIRE_SPIN', random.Random(0))   # seed 0 hits (Fire Spin is 90%)
+    assert b.bound in engine.BIND_TURNS and engine.is_trapped(B, A)
+    hp = b.hp
+    end_of_turn(b, A)
+    assert abs((hp - b.hp) - b.maxhp / 6) < 1e-6
+
+
+def test_perish_song_faints():
+    a = mon(moves=('PERISH_SONG',))
+    b = mon()
+    A, B = duel(a, b)
+    act(A, B, 'PERISH_SONG')
+    for _ in range(engine.PERISH_COUNT):
+        end_of_turn(b, A)
+    assert b.hp <= 0 and a.perish_kos == 1
+
+
+def test_counter_returns_double():
+    w = mon(types=('PSYCHIC',), moves=('COUNTER', 'MIRROR_COAT'), stats={'hp': 999})
+    b = mon(moves=('TACKLE',))
+    A, B = duel(w, b)
+    act(B, A, 'TACKLE')
+    taken = w.maxhp - w.hp
+    act(A, B, 'COUNTER')
+    assert b.maxhp - b.hp == 2 * taken
+    hp = b.hp
+    act(A, B, 'MIRROR_COAT')                # took no special damage: fails
+    assert b.hp == hp
+
+
+def test_pursuit_double_power():
+    a = mon(types=('DARK',), moves=('PURSUIT',))
+    b1, b2 = mon(stats={'hp': 999}, mid='b1'), mon(stats={'hp': 999}, mid='b2')
+    A, B = duel(a, b1)
+    perform(A, B, MOVES, CHART, random.Random(1), idx=0)
+    single = b1.maxhp - b1.hp
+    A, B = duel(a, b2)
+    perform(A, B, MOVES, CHART, random.Random(1), idx=0, power_mult=2.0)
+    assert abs((b2.maxhp - b2.hp) - 2 * single) <= 1
+
+
+def test_sun_healing_and_growth():
+    a = mon(types=('GRASS',), moves=('HEALINGLIGHT', 'GROWTH'))
+    b = mon()
+    A, B = duel(a, b)
+    A.field.weather, A.field.weather_turns = 'sun', 5
+    a.hp = 1
+    act(A, B, 'HEALINGLIGHT')
+    assert abs(a.hp - (1 + a.maxhp * 2 / 3)) < 1e-6
+    act(A, B, 'GROWTH')
+    assert a.stage['atk'] == 2 and a.stage['spa'] == 2
 
 
 if __name__ == '__main__':

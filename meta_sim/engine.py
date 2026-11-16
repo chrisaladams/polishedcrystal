@@ -72,11 +72,25 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              the best matchup after the hit), Knock Off (1.5x and removes the
              item), drain moves, Close Combat's defence drops, and on-hit
              stat changes (Icy Wind, Psychic, Crunch, Ancient Power...).
-  ignored   : weather setting, Substitute, Baton Pass, Trick, Trick Room,
-             Swagger, Sleep Talk, Pursuit's switch bonus, trapping, Perish
-             Song, Sketch/Metronome, and abilities/items beyond the modeled
-             subset above and in abilities.py/items.py. (So Wobbuffet/
-             Smeargle and weather teams are still understated -- documented.)
+  weather   : Sun / Rain / Sand / Hail from moves or Drought / Drizzle /
+             Sand Stream / Snow Warning, 5 turns (8 with the matching rock):
+             Fire / Water x1.5 / x0.5, Rock Sp.Def x1.5 in sand, Ice Def x1.5
+             in hail, 1/16 sand / hail chip, Thunder / Hurricane never miss in
+             rain (50% in sun), Blizzard never misses in hail, Solar Beam
+             halved outside sun, Swift Swim / Chlorophyll / Sand Rush / Slush
+             Rush double Speed, Sand Force, Solar Power, Rain Dish, Dry Skin,
+             Ice Body, Hydration, Sand Veil / Snow Cloak, sun-boosted Growth
+             and Synthesis-style healing, sun prevents freezing, Cloud Nine.
+  more      : Substitute, Baton Pass (passes boosts, Substitute, Leech Seed),
+             Trick (choice-locks the target into its next move), Trick Room,
+             Swagger, Rest (full heal + 2 turns asleep) and Sleep Talk,
+             Pursuit (double power on a switching target), trapping (Mean
+             Look, Wrap / Fire Spin / Whirlpool with Binding Band / Grip
+             Claw, Shadow Tag, Arena Trap, Magnet Pull; Ghost types, Run Away
+             and Shed Shell escape), Perish Song, Counter / Mirror Coat.
+  ignored   : Sketch / Metronome, Transform outside Imposter, and abilities /
+             items beyond the modeled subset above and in abilities.py /
+             items.py.
 
 Playstyle metrics: every Pmon counts what it did in the battle (damage dealt
 and absorbed, KOs, turns on the field, statuses, healing, hazards, screens,
@@ -148,6 +162,82 @@ SELF_UP_HIT = {'EFFECT_DEFENSE_UP_HIT': {'defe': 1}, 'EFFECT_ATTACK_UP_HIT': {'a
 DRAIN_EFFECTS = {'EFFECT_LEECH_HIT'}       # heal half the damage dealt
 PIVOT_EFFECTS = {'EFFECT_SWITCH_HIT'}      # U-turn / Volt Switch
 KNOCK_OFF_MULT = 1.5
+
+# ---- weather (engine/battle/move_effects/weather.asm, abilities.asm, endturn.asm)
+WEATHER_TURNS = 5                          # moves and abilities alike (Gen VI rule)
+WEATHER_ROCK_TURNS = 8                     # with the matching rock held
+WEATHER_MOVES = {'EFFECT_SUNNY_DAY': 'sun', 'EFFECT_RAIN_DANCE': 'rain',
+                 'EFFECT_SANDSTORM': 'sand', 'EFFECT_HAIL': 'hail'}
+WEATHER_ABILITIES = {'DROUGHT': 'sun', 'DRIZZLE': 'rain', 'SAND_STREAM': 'sand',
+                     'SNOW_WARNING': 'hail'}
+WEATHER_ROCKS = {'sun': 'HEAT_ROCK', 'rain': 'DAMP_ROCK', 'sand': 'SMOOTH_ROCK',
+                 'hail': 'ICY_ROCK'}
+WEATHER_SPEED = {'SWIFT_SWIM': 'rain', 'CHLOROPHYLL': 'sun', 'SAND_RUSH': 'sand',
+                 'SLUSH_RUSH': 'hail'}
+WEATHER_NEGATORS = {'CLOUD_NINE', 'AIR_LOCK'}
+SAND_IMMUNE_TYPES, HAIL_IMMUNE_TYPES = {'ROCK', 'GROUND', 'STEEL'}, {'ICE'}
+SAND_IMMUNE_ABILITIES = {'SAND_VEIL', 'SAND_RUSH', 'SAND_FORCE', 'OVERCOAT', 'MAGIC_GUARD'}
+HAIL_IMMUNE_ABILITIES = {'ICE_BODY', 'SNOW_CLOAK', 'SLUSH_RUSH', 'OVERCOAT', 'MAGIC_GUARD'}
+
+# ---- other battlefield and volatile mechanics
+TRICK_ROOM_TURNS = 5
+PERISH_COUNT = 4                           # faints when the count runs out (3 turn ends)
+BIND_TURNS = (4, 5)                        # Wrap / Fire Spin / Whirlpool
+TRAP_ABILITIES = {'SHADOW_TAG', 'ARENA_TRAP', 'MAGNET_PULL'}
+
+
+class Field:
+    """State shared by both sides: weather and Trick Room."""
+    def __init__(self):
+        self.weather = None                # None / 'sun' / 'rain' / 'sand' / 'hail'
+        self.weather_turns = 0
+        self.trick_room = 0                # turns left
+
+
+def weather_of(mon):
+    """The weather as it affects `mon`'s battle (Cloud Nine on either active
+    mon suppresses it)."""
+    side = mon.side
+    if side is None or side.field is None or side.field.weather is None:
+        return None
+    for s in (side, side.foe):
+        if s is not None and s.mon.ability in WEATHER_NEGATORS and not s.mon.fainted:
+            return None
+    return side.field.weather
+
+
+def set_weather(field, weather, holder):
+    if field is None or field.weather == weather:
+        return False
+    field.weather = weather
+    field.weather_turns = (WEATHER_ROCK_TURNS if holder.item == WEATHER_ROCKS[weather]
+                           else WEATHER_TURNS)
+    holder.weather_set += 1
+    return True
+
+
+def can_escape(mon):
+    """Shed Shell, Run Away and Ghost types escape all trapping (UserCanSwitch)."""
+    return mon.item == 'SHED_SHELL' or mon.ability == 'RUN_AWAY' or 'GHOST' in mon.types
+
+
+def is_trapped(side, foe_side):
+    """Can side's active mon switch out voluntarily?"""
+    m = side.mon
+    if can_escape(m):
+        return False
+    if m.bound or m.mean_looked:
+        return True
+    f = foe_side.mon if foe_side else None
+    if f is None or f.fainted:
+        return False
+    if f.ability == 'SHADOW_TAG' and m.ability != 'SHADOW_TAG':
+        return True
+    if f.ability == 'ARENA_TRAP' and is_grounded(m):
+        return True
+    if f.ability == 'MAGNET_PULL' and 'STEEL' in m.types:
+        return True
+    return False
 
 
 def is_grounded(mon):
@@ -230,7 +320,10 @@ class Pmon:
                  'rampage_move', 'side', 'last_move', 'encore', 'encore_move',
                  'protect_count', 'protected', 'cursed',
                  'dmg_taken', 'turns_active', 'hazards_set', 'screens_set',
-                 'cures', 'pivots', 'phazes', 'hazards_cleared', 'stat_drops')
+                 'cures', 'pivots', 'phazes', 'hazards_cleared', 'stat_drops',
+                 'sub_hp', 'bound', 'bound_by', 'mean_looked', 'perish',
+                 'hit_phys', 'hit_spec', 'weather_set', 'subs_made', 'passes',
+                 'tricks', 'trick_rooms', 'traps', 'perish_kos', 'perish_by')
 
     def __init__(self, mid, mon, moveset, ability=None, item=None):
         self.id = mid
@@ -274,6 +367,21 @@ class Pmon:
         self.phazes = 0                    # foes forced out (Roar)
         self.hazards_cleared = 0           # Rapid Spin clears
         self.stat_drops = 0                # foe stat stages lowered (moves + secondaries + Haze)
+        self.sub_hp = 0.0                  # Substitute's remaining HP (0 = none)
+        self.bound = 0                     # turns left in Wrap / Fire Spin / Whirlpool
+        self.bound_by = None               # the Pmon binding it
+        self.mean_looked = False           # Mean Look / Block (until the trapper leaves)
+        self.perish = 0                    # Perish Song count (0 = none)
+        self.hit_phys = 0.0                # damage taken this turn, for Counter
+        self.hit_spec = 0.0                # ... and for Mirror Coat
+        self.weather_set = 0               # weather started (move or ability)
+        self.subs_made = 0                 # Substitutes put up
+        self.passes = 0                    # Baton Passes made
+        self.tricks = 0                    # items swapped onto the foe
+        self.trick_rooms = 0               # Trick Rooms started
+        self.traps = 0                     # foes trapped (Mean Look / binding)
+        self.perish_kos = 0                # foes fainted by this mon's Perish Song
+        self.perish_by = None
 
     def stat(self, key, ignore_stage=False):
         stage = 0 if ignore_stage else self.stage.get(key, 0)
@@ -285,6 +393,9 @@ class Pmon:
                 v *= 0.25
             if self.item == 'CHOICE_SCARF':
                 v *= items.CHOICE_SCARF_SPEED_MULT
+            w = WEATHER_SPEED.get(self.ability)
+            if w and w == weather_of(self):
+                v *= 2
         if key in ('defe', 'spd') and self.item == 'EVIOLITE':
             v *= items.EVIOLITE_DEF_MULT
         return v
@@ -303,12 +414,20 @@ class Pmon:
         self.protect_count = 0
         self.protected = False
         self.cursed = False
+        self.sub_hp = 0.0
+        self.bound = 0
+        self.bound_by = None
+        self.mean_looked = False
+        self.perish = 0
+        self.perish_by = None
         self.flash_fire = False            # Flash Fire boost is lost on switch-out
 
 
 class Side:
-    def __init__(self, team):
+    def __init__(self, team, field=None):
         self.team = team                   # list[Pmon]
+        self.field = field                 # shared Field (weather, Trick Room)
+        self.foe = None                    # the opposing Side, set by run_battle
         self.active = 0
         self.spikes = 0                    # 0..3 layers
         self.tspikes = 0                   # 0..2 layers
@@ -334,7 +453,9 @@ def _damage_terms(att, dfn, move, chart):
     if move.get(abilities.FLAG_IMMUNITIES.get(dfn.ability, '')):
         eff = 0.0                          # Bulletproof / Soundproof
     is_stab = move['type'] in att.types
-    atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab)
+    atk_mult, dmg_mult = abilities.offense_multipliers(att.ability, move, is_stab,
+                                                       static_weather=False)
+    w = weather_of(att)
     # Unaware: ignore the *other* mon's relevant stat stage when computing damage
     unaware_att, unaware_dfn = att.ability == 'UNAWARE', dfn.ability == 'UNAWARE'
     if move['cat'] == 'PHYSICAL':
@@ -353,8 +474,21 @@ def _damage_terms(att, dfn, move, chart):
         d = dfn.stat('spd', ignore_stage=unaware_att)
         if att.item == 'CHOICE_SPECS':
             a *= items.CHOICE_STAT_MULT
-    d *= abilities.defending_sand_mult([dfn.ability] if dfn.ability else [], dfn.types, move)
+    if w == 'sand' and move['cat'] == 'SPECIAL' and 'ROCK' in dfn.types:
+        d *= 1.5                           # SandstormSpDefBoost
+    if w == 'hail' and move['cat'] == 'PHYSICAL' and 'ICE' in dfn.types:
+        d *= 1.5                           # HailDefenseBoost
+    if w == 'sun' and att.ability == 'SOLAR_POWER' and move['cat'] == 'SPECIAL':
+        a *= 1.5
     stab = abilities.stab_mult(att.ability, is_stab)
+    if w == 'sun':
+        dmg_mult *= {'FIRE': 1.5, 'WATER': 0.5}.get(move['type'], 1.0)
+    elif w == 'rain':
+        dmg_mult *= {'WATER': 1.5, 'FIRE': 0.5}.get(move['type'], 1.0)
+    if w == 'sand' and att.ability == 'SAND_FORCE' and move['type'] in ('ROCK', 'GROUND', 'STEEL'):
+        dmg_mult *= 1.3
+    if move['effect'] == 'EFFECT_SOLAR_BEAM' and w in ('rain', 'sand', 'hail'):
+        dmg_mult *= 0.5
     if dfn.side is not None:
         if move['cat'] == 'PHYSICAL' and dfn.side.reflect:
             dmg_mult *= SCREEN_DAMAGE_MULT
@@ -494,6 +628,10 @@ def choose_move(side, foe, moves, chart, rng=random):
         return att.rampage_move
     if att.encore and att.encore_move is not None:
         return att.encore_move
+    if att.status == 'slp' and att.sleep > 0:
+        for i, mv in enumerate(att.moves):
+            if moves[mv]['effect'] == 'EFFECT_SLEEP_TALK':
+                return i
     if att.locked_move is not None:
         return att.locked_move
 
@@ -582,8 +720,52 @@ def choose_move(side, foe, moves, chart, rng=random):
                                           or dfn.cursed) and not i_ko:
                 util.append((1.3, i))
         elif e == 'EFFECT_RAPID_SPIN':
-            if side.spikes or side.tspikes or att.seeded:
+            if side.spikes or side.tspikes or att.seeded or att.bound:
                 util.append((2.2, i))
+        elif e == 'EFFECT_COUNTER':
+            want = 'PHYSICAL' if moves[att.moves[i]].get('id') == 'COUNTER' else 'SPECIAL'
+            if best_category(dfn, moves) == want and att.hp > att.maxhp * 0.35:
+                util.append((2.6, i))
+        elif e in WEATHER_MOVES and not doomed:
+            w = WEATHER_MOVES[e]
+            field = side.field
+            if field is not None and (field.weather != w or field.weather_turns <= 1):
+                gain = weather_gain(side, w, moves)
+                if gain > 0:
+                    util.append((1.6 + 0.4 * min(gain, 3), i))
+        elif e == 'EFFECT_SUBSTITUTE' and not doomed:
+            if att.sub_hp <= 0 and att.hp > att.maxhp * 0.5:
+                plan = any(moves[mv]['effect'] in BOOST or moves[mv]['effect']
+                           in ('EFFECT_BATON_PASS',) for mv in att.moves)
+                util.append((2.2 if plan else 1.4, i))
+        elif e == 'EFFECT_BATON_PASS':
+            boosts = sum(max(0, v) for v in att.stage.values())
+            others = [j for j in side.alive_indices() if j != side.active]
+            if others and (boosts >= 2 or att.sub_hp > 0) and (doomed or boosts >= 4):
+                util.append((2.8, i))
+        elif e == 'EFFECT_TRICK':
+            if att.item in CHOICE_ITEMS and dfn.item not in CHOICE_ITEMS and sum(
+                    moves[mv]['cat'] == 'STATUS' for mv in dfn.moves) >= 1:
+                util.append((2.4, i))
+        elif e == 'EFFECT_TRICK_ROOM' and not doomed and side.field is not None:
+            if not side.field.trick_room and team_speed(side) < team_speed(foe):
+                util.append((2.3, i))
+        elif e == 'EFFECT_SWAGGER':
+            if not dfn.confused and best_category(dfn, moves) == 'SPECIAL' and not doomed:
+                util.append((1.3, i))
+        elif e == 'EFFECT_MEAN_LOOK':
+            if not dfn.mean_looked and not can_escape(dfn) and any(
+                    moves[mv]['effect'] in ('EFFECT_PERISH_SONG', 'EFFECT_TOXIC')
+                    for mv in att.moves):
+                util.append((2.0, i))
+        elif e == 'EFFECT_PERISH_SONG':
+            if not dfn.perish and dfn.ability != 'SOUNDPROOF':
+                foe_stuck = is_trapped(foe, side) or len(foe.alive_indices()) == 1
+                i_can_leave = not is_trapped(side, foe) and len(side.alive_indices()) > 1
+                if foe_stuck and i_can_leave:
+                    util.append((2.6, i))
+                elif sum(max(0, v) for v in dfn.stage.values()) >= 3 and i_can_leave:
+                    util.append((2.0, i))
         elif e in PIVOT_EFFECTS:
             here = matchup_score(att, dfn, moves, chart)
             others = [j for j in side.alive_indices() if j != side.active]
@@ -600,6 +782,31 @@ def choose_move(side, foe, moves, chart, rng=random):
             if rng.random() < 0.85:        # a little noise so it isn't robotic
                 return idx
     return best_dmg_i
+
+
+def team_speed(side):
+    alive = [side.team[i] for i in side.alive_indices()]
+    return sum(m.stat('spe') for m in alive) / max(1, len(alive))
+
+
+def weather_gain(side, w, moves):
+    """How much side's living team would gain from weather `w`."""
+    gain = 0.0
+    for i in side.alive_indices():
+        m = side.team[i]
+        if WEATHER_SPEED.get(m.ability) == w:
+            gain += 1.5
+        if (m.ability, w) in (('SOLAR_POWER', 'sun'), ('SAND_FORCE', 'sand'),
+                              ('RAIN_DISH', 'rain'), ('DRY_SKIN', 'rain'),
+                              ('ICE_BODY', 'hail'), ('HYDRATION', 'rain')):
+            gain += 0.7
+        boosted = {'sun': 'FIRE', 'rain': 'WATER'}.get(w)
+        if boosted and boosted in m.types and any(moves[mv]['type'] == boosted for mv in m.moves):
+            gain += 0.6
+        if any(moves[mv].get('id') in {'rain': ('THUNDER', 'HURRICANE'), 'hail': ('BLIZZARD',),
+                                       'sun': ('SOLAR_BEAM',)}.get(w, ()) for mv in m.moves):
+            gain += 0.4
+    return gain
 
 
 def side_layers_left(side, kind):
@@ -636,6 +843,12 @@ def choose_switch(side, foe, moves, chart, forced, rng=random):
     """Pick a teammate index to send in. Returns index, or None to stay."""
     if not forced and (side.mon.recharging or side.mon.rampage):
         return None                        # can't switch out mid-recharge/rampage
+    if not forced and is_trapped(side, foe):
+        return None
+    if not forced and side.mon.perish and side.mon.perish <= 2:
+        others = [i for i in side.alive_indices() if i != side.active]
+        if others:                         # escape Perish Song while we still can
+            return max(others, key=lambda i: matchup_score(side.team[i], foe.mon, moves, chart))
     alive = [i for i in side.alive_indices() if forced or i != side.active]
     if not alive:
         return None
@@ -679,6 +892,8 @@ def apply_switch(side, idx, foe_side, chart):
         return
 
     # switch-in ability events (need to see the foe's already-active mon)
+    if m.ability in WEATHER_ABILITIES:
+        set_weather(side.field, WEATHER_ABILITIES[m.ability], m)
     foe = foe_side.mon if foe_side else None
     if foe and not foe.fainted:
         if m.ability == 'INTIMIDATE':
@@ -733,6 +948,40 @@ def end_of_turn(mon, foe_side, rng=random):
                     seeder.heal_done += healed / seeder.maxhp
     if mon.cursed and mon.ability != 'MAGIC_GUARD':
         mon.hp -= mon.maxhp / 4
+    def on_field(p):
+        return p is not None and not p.fainted and p.side is not None and p.side.mon is p
+    if mon.bound:
+        if not on_field(mon.bound_by):
+            mon.bound, mon.bound_by = 0, None
+        else:
+            if mon.ability != 'MAGIC_GUARD':
+                mon.hp -= mon.maxhp * (1 / 6 if mon.bound_by.item == 'BINDING_BAND' else 1 / 8)
+            mon.bound -= 1
+            if not mon.bound:
+                mon.bound_by = None
+    if mon.mean_looked and not on_field(mon.mean_looked):
+        mon.mean_looked = False
+    w = weather_of(mon)
+    if w == 'sand' and not (set(mon.types) & SAND_IMMUNE_TYPES) \
+            and mon.ability not in SAND_IMMUNE_ABILITIES:
+        mon.hp -= mon.maxhp / 16
+    elif w == 'hail' and not (set(mon.types) & HAIL_IMMUNE_TYPES) \
+            and mon.ability not in HAIL_IMMUNE_ABILITIES:
+        mon.hp -= mon.maxhp / 16
+    if mon.ability in ('SOLAR_POWER', 'DRY_SKIN') and w == 'sun':
+        mon.hp -= mon.maxhp / 8
+    heal = {('RAIN_DISH', 'rain'): 1 / 16, ('DRY_SKIN', 'rain'): 1 / 8,
+            ('ICE_BODY', 'hail'): 1 / 16}.get((mon.ability, w), 0)
+    if heal and mon.hp > 0:
+        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * heal)
+    if mon.ability == 'HYDRATION' and w == 'rain' and mon.status is not None:
+        mon.status, mon.sleep, mon.tox = None, 0, 0
+    if mon.perish and mon.hp > 0:
+        mon.perish -= 1
+        if mon.perish == 0:
+            mon.hp = 0
+            if mon.perish_by is not None and mon.perish_by.side is not mon.side:
+                mon.perish_by.perish_kos += 1
     if mon.hp <= 0:
         mon.fainted = True
         return False
@@ -765,7 +1014,8 @@ def _pivot(att_side, dfn_side, moves, chart):
     att_side.switched = True
 
 
-def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_moved=False):
+def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_moved=False,
+            power_mult=1.0):
     """Execute the active mon's chosen action for att_side against dfn_side.
     `idx` is the move chosen at the start of the turn (the one turn order was
     decided by); `foe_move`/`foe_moved` describe the opponent's choice, which
@@ -782,12 +1032,20 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             att.status = None
         else:
             return
+    sleep_talk = None
     if att.status == 'slp':
         att.sleep -= 1
         if att.sleep <= 0:
             att.status = None
         else:
-            return
+            if idx is None or moves[att.moves[idx]]['effect'] != 'EFFECT_SLEEP_TALK':
+                return
+            usable = [i for i, mv in enumerate(att.moves)
+                      if moves[mv]['effect'] not in ('EFFECT_SLEEP_TALK', 'EFFECT_HEAL')
+                      and moves[mv]['effect'] not in ('EFFECT_BIDE', 'EFFECT_SKY_ATTACK')]
+            if not usable:
+                return
+            sleep_talk = rng.choice(usable)
     if att.status == 'par' and rng.random() < 0.25:
         return
     if att.confused > 0:
@@ -801,6 +1059,8 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
 
     if idx is None:
         idx = choose_move(att_side, dfn_side, moves, chart, rng)
+    if sleep_talk is not None:
+        idx = sleep_talk                   # Sleep Talk calls a random other move
     if att.encore:
         att.encore -= 1
     mv = att.moves[idx]
@@ -826,12 +1086,21 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if e == 'EFFECT_SUCKER_PUNCH' and (foe_moved or foe_move is None
                                        or moves[foe_move]['cat'] == 'STATUS'):
         return
-    if att.item in CHOICE_ITEMS and m['cat'] != 'STATUS' and m['power'] > 0:
+    if att.item in CHOICE_ITEMS:
         att.locked_move = idx     # locks in on use, regardless of hit/miss
 
     # accuracy
     acc = m['acc']
+    w = weather_of(att)
+    if m.get('id') in ('THUNDER', 'HURRICANE'):
+        acc = -1 if w == 'rain' else (50 if w == 'sun' else acc)
+    elif m.get('id') == 'BLIZZARD' and w == 'hail':
+        acc = -1
     if att.ability == 'HUSTLE' and m['cat'] != 'STATUS' and acc >= 0:
+        acc *= 0.8
+    if acc >= 0 and m['cat'] != 'STATUS' and (
+            (dfn.ability == 'SAND_VEIL' and w == 'sand')
+            or (dfn.ability == 'SNOW_CLOAK' and w == 'hail')):
         acc *= 0.8
     if acc >= 0 and rng.random() > acc / 100.0:
         att.rampage = 0                    # a miss ends a rampage, no confusion
@@ -845,6 +1114,23 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         else:
             att.rampage = rng.randint(1, 2)        # 1-2 more forced turns
             att.rampage_move = idx
+
+    if e == 'EFFECT_COUNTER':
+        taken = att.hit_phys if m.get('id') == 'COUNTER' else att.hit_spec
+        if taken <= 0 or eff_mult(m['type'], dfn, chart) == 0:
+            return
+        dmg = 2 * taken
+        if dfn.sub_hp > 0:
+            dfn.sub_hp = max(0.0, dfn.sub_hp - dmg)
+            return
+        dealt = min(dmg, dfn.hp)
+        att.dmg_dealt += dealt / dfn.maxhp
+        dfn.dmg_taken += dealt / dfn.maxhp
+        dfn.hp -= dmg
+        if dfn.hp <= 0:
+            dfn.fainted = True
+            att.kos += 1
+        return
 
     if e == 'EFFECT_EXPLOSION':
         dmg, _ = move_damage(att, dfn, m, chart, rng)
@@ -866,8 +1152,24 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
 
     if m['cat'] != 'STATUS' and m['power'] > 0:
         dmg, eff = move_damage(att, dfn, m, chart, rng)
+        dmg = int(dmg * power_mult)
         if e in RECHARGE_EFFECTS and eff > 0:
             att.recharging = True          # recharges after any hit, even a KO
+        if dfn.sub_hp > 0 and dmg > 0 and not m.get('sound') and att.ability != 'INFILTRATOR':
+            hit = min(dmg, dfn.sub_hp)
+            dfn.sub_hp -= hit
+            if dfn.sub_hp <= 0:
+                dfn.sub_hp = 0.0
+            att.dmg_dealt += hit / dfn.maxhp
+            if e in RECOIL_EFFECTS and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD'):
+                att.hp -= max(1, hit * (1 / 3 if m.get('id') in RECOIL_THIRD else 1 / 4))
+            if att.item == 'LIFE_ORB' and att.ability != 'MAGIC_GUARD':
+                att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
+            if att.hp <= 0:
+                att.fainted = True
+            if e in PIVOT_EFFECTS:
+                _pivot(att_side, dfn_side, moves, chart)
+            return
         if dmg == 0 and eff == 0.0:
             apply_absorb(dfn, m['type'])
         elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
@@ -877,6 +1179,14 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         att.dmg_dealt += dealt / dfn.maxhp
         dfn.dmg_taken += dealt / dfn.maxhp
         dfn.hp -= dmg
+        if m['cat'] == 'PHYSICAL':
+            dfn.hit_phys += dealt
+        else:
+            dfn.hit_spec += dealt
+        if e == 'EFFECT_TRAP' and dfn.hp > 0 and not dfn.bound and not can_escape(dfn):
+            dfn.bound = rng.choice(BIND_TURNS) + (2 if att.item == 'GRIP_CLAW' else 0)
+            dfn.bound_by = att
+            att.traps += 1
         if e in DRAIN_EFFECTS and dealt > 0:
             if dfn.ability == 'LIQUID_OOZE':
                 att.hp -= dealt / 2
@@ -924,7 +1234,9 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             chance = m['chance']
         if e in ONHIT and dfn.status is None and rng.random() < chance / 100.0:
             st = ONHIT[e]
-            if st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
+            if st == 'frz' and weather_of(att) == 'sun':
+                pass                        # harsh sunlight prevents freezing
+            elif st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
                 dfn.status = st
                 att.status_infl += 1
                 if st == 'tox':
@@ -952,6 +1264,15 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         return
 
     # ---- status / utility moves ----
+    if (dfn.sub_hp > 0 and not m.get('sound') and att.ability != 'INFILTRATOR'
+            and (e in INFLICT or e in DROP or e in ('EFFECT_LEECH_SEED', 'EFFECT_SWAGGER',
+                                                    'EFFECT_TRICK', 'EFFECT_MEAN_LOOK',
+                                                    'EFFECT_PAIN_SPLIT', 'EFFECT_ENCORE'))):
+        return                              # blocked by the target's Substitute
+    if e == 'EFFECT_GROWTH' and weather_of(att) == 'sun':
+        att.stage['atk'] = min(6, att.stage['atk'] + 2)
+        att.stage['spa'] = min(6, att.stage['spa'] + 2)
+        return
     if e in BOOST:
         for k, d in BOOST[e].items():
             att.stage[k] = max(-6, min(6, att.stage.get(k, 0) + d))
@@ -997,8 +1318,18 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             apply_synchronize(dfn, att, st)
         att.status_infl += 1
         return
+    if m.get('id') == 'REST':
+        if att.hp < att.maxhp and att.status != 'slp':
+            att.heal_done += (att.maxhp - att.hp) / att.maxhp
+            att.hp = att.maxhp
+            att.status, att.tox, att.sleep = 'slp', 0, 2
+        return
     if e in HEAL_EFFECTS:
-        healed = min(att.maxhp - att.hp, att.maxhp / 2)
+        frac = 0.5
+        if e == 'EFFECT_HEALING_LIGHT':    # Synthesis-style: 2/3 in sun, 1/4 in other weather
+            w = weather_of(att)
+            frac = 2 / 3 if w == 'sun' else (0.25 if w else 0.5)
+        healed = min(att.maxhp - att.hp, att.maxhp * frac)
         att.hp += healed
         att.heal_done += healed / att.maxhp
         return
@@ -1062,6 +1393,58 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             att.stage['defe'] = min(6, att.stage['defe'] + 1)
             att.stage['spe'] = max(-6, att.stage['spe'] - 1)
         return
+    if e in WEATHER_MOVES:
+        set_weather(att_side.field, WEATHER_MOVES[e], att)
+        return
+    if e == 'EFFECT_SUBSTITUTE':
+        if att.sub_hp <= 0 and att.hp > att.maxhp / 4:
+            att.hp -= att.maxhp / 4
+            att.sub_hp = att.maxhp / 4
+            att.subs_made += 1
+        return
+    if e == 'EFFECT_BATON_PASS':
+        others = [i for i in att_side.alive_indices() if i != att_side.active]
+        if others:
+            stage, sub, seeded = dict(att.stage), att.sub_hp, att.seeded
+            best = max(others, key=lambda i: matchup_score(att_side.team[i], dfn, moves, chart))
+            apply_switch(att_side, best, dfn_side, chart)
+            new = att_side.mon
+            new.stage, new.sub_hp, new.seeded = stage, sub, seeded
+            att.passes += 1
+            att_side.switched = True
+        return
+    if e == 'EFFECT_TRICK':
+        if (att.item or dfn.item) and 'STICKY_HOLD' not in (att.ability, dfn.ability):
+            att.item, dfn.item = dfn.item, att.item
+            att.locked_move = dfn.locked_move = None
+            att.tricks += 1
+        return
+    if e == 'EFFECT_TRICK_ROOM':
+        field = att_side.field
+        if field is not None:
+            if field.trick_room:
+                field.trick_room = 0
+            else:
+                field.trick_room = TRICK_ROOM_TURNS
+                att.trick_rooms += 1
+        return
+    if e == 'EFFECT_SWAGGER':
+        dfn.stage['atk'] = min(6, dfn.stage['atk'] + 2)
+        if not dfn.confused and not status_blocked(dfn, 'cnf'):
+            dfn.confused = rng.randint(2, 4)
+            att.status_infl += 1
+        return
+    if e == 'EFFECT_MEAN_LOOK':
+        if not dfn.mean_looked and not can_escape(dfn):
+            dfn.mean_looked = att           # trapped until this mon leaves the field
+            att.traps += 1
+        return
+    if e == 'EFFECT_PERISH_SONG':
+        for mon in (att, dfn):
+            if not mon.perish and mon.ability != 'SOUNDPROOF':
+                mon.perish = PERISH_COUNT
+                mon.perish_by = att
+        return
     if e == 'EFFECT_ENCORE':
         if dfn.last_move is not None and not dfn.encore:
             dfn.encore = ENCORE_TURNS
@@ -1072,7 +1455,8 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
 
 STAT_KEYS = ('dmg_dealt', 'kos', 'status_infl', 'heal_done', 'dmg_taken', 'turns_active',
              'hazards_set', 'screens_set', 'cures', 'pivots', 'phazes',
-             'hazards_cleared', 'stat_drops')
+             'hazards_cleared', 'stat_drops', 'weather_set', 'subs_made', 'passes',
+             'tricks', 'trick_rooms', 'traps', 'perish_kos')
 
 
 def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
@@ -1094,7 +1478,9 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
                   value isn't conflated with its teammates' (see sim6v6.py's
                   role-team-builder note)."""
     rng = random.Random(seed)
-    A, B = Side([Pmon(*t) for t in team_a]), Side([Pmon(*t) for t in team_b])
+    field = Field()
+    A, B = Side([Pmon(*t) for t in team_a], field), Side([Pmon(*t) for t in team_b], field)
+    A.foe, B.foe = B, A
     apply_switch(A, 0, B, chart)
     apply_switch(B, 0, A, chart)
 
@@ -1115,11 +1501,30 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
             return 1, contrib(A), contrib(B)
         if not B.alive_indices():
             return 0, contrib(A), contrib(B)
+        acted = set()                      # sides whose turn was spent before moves
         for s, foe in ((A, B), (B, A)):
             if not s.mon.fainted:
                 nxt = choose_switch(s, foe, moves, chart, forced=False, rng=rng)
                 if nxt is not None:
-                    apply_switch(s, nxt, foe, chart)
+                    # Pursuit: a foe holding it may hit the fleeing mon at double power
+                    pi = next((i for i, mv in enumerate(foe.mon.moves)
+                               if moves[mv]['effect'] == 'EFFECT_PURSUIT'), None)
+                    if (pi is not None and not foe.mon.fainted and id(foe) not in acted
+                            and rng.random() < 0.5):
+                        perform(foe, s, moves, chart, rng, idx=pi, power_mult=2.0)
+                        acted.add(id(foe))
+                    if not s.mon.fainted:
+                        apply_switch(s, nxt, foe, chart)
+                    else:
+                        nxt = choose_switch(s, foe, moves, chart, forced=True, rng=rng)
+                        if nxt is not None:
+                            apply_switch(s, nxt, foe, chart)
+        if not A.alive_indices():
+            return 1, contrib(A), contrib(B)
+        if not B.alive_indices():
+            return 0, contrib(A), contrib(B)
+        for s in (A, B):
+            s.mon.hit_phys = s.mon.hit_spec = 0.0
 
         # ---- order by (priority of chosen move, speed) ----
         # Each side's move is chosen once, here, and that same move is the one
@@ -1132,13 +1537,15 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
         chosen = {id(A): ia, id(B): ib}
         pa, pb = moves[A.mon.moves[ia]]['prio'], moves[B.mon.moves[ib]]['prio']
         sa, sb = A.mon.stat('spe'), B.mon.stat('spe')
+        if field.trick_room:               # slower mons move first within a priority
+            sa, sb = -sa, -sb
         a_first = (pa, sa) > (pb, sb) or ((pa, sa) == (pb, sb) and rng.random() < 0.5)
         order = (A, B) if a_first else (B, A)
         A.switched = B.switched = False
 
         moved = set()
         for s, foe in (order, order[::-1]):
-            if s.mon.fainted or foe.mon.fainted or s.switched:
+            if s.mon.fainted or foe.mon.fainted or s.switched or id(s) in acted:
                 continue                   # a mon dragged in this turn doesn't act
             foe_idx = chosen[id(foe)] if not foe.switched else None
             perform(s, foe, moves, chart, rng, idx=chosen[id(s)],
@@ -1152,6 +1559,11 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
         # ---- residuals ----
         for s, foe in ((A, B), (B, A)):
             end_of_turn(s.mon, foe, rng)
+        field.trick_room = max(0, field.trick_room - 1)
+        if field.weather:
+            field.weather_turns -= 1
+            if field.weather_turns <= 0:
+                field.weather = None
         if not A.alive_indices():
             return 1, contrib(A), contrib(B)
         if not B.alive_indices():
