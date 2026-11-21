@@ -28,6 +28,7 @@ A pass at tightening up the meta for L50 link battles:
 
 Linking up used to need both players to be almost perfectly in sync. Now:
 
+- The Cable Club desks open as soon as you have your first Pokémon, instead of after delivering the Mystery Egg to Professor Elm, so a fresh save can link right away.
 - The receptionist waits about 26 seconds for your friend instead of about 8.
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
