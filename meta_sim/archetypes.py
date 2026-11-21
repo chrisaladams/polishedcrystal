@@ -13,6 +13,8 @@ returns every build for the pool.
 """
 from dataclasses import dataclass, field
 
+import os
+import json
 import abilities
 import items
 from engine import BOOST, HEAL_EFFECTS, INFLICT, RECHARGE_EFFECTS
@@ -104,6 +106,7 @@ class Build:
     item: str
     mon: dict = field(repr=False)
     weather: str = None                    # weather this build sets or relies on
+    hp_type: str = None                    # Hidden Power type (DV-based), if it runs it
 
     @property
     def key(self):
@@ -111,7 +114,7 @@ class Build:
 
     def as_team_entry(self):
         """The tuple engine.Pmon expects."""
-        return (self.mid, self.mon, list(self.moves), self.ability, self.item)
+        return (self.mid, self.mon, list(self.moves), self.ability, self.item, self.hp_type)
 
 
 def percentiles(pool):
@@ -391,9 +394,23 @@ def builds_for(mid, mon, moves, P):
     return builds
 
 
-def build_pool_builds(pool, moves):
+BEST_SETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'best_sets.json')
+
+
+def build_pool_builds(pool, moves, sets_path='default'):
+    """Every build in the pool. Sets found by optimize.py (data/best_sets.json)
+    replace the heuristic moves / item / ability / Hidden Power type."""
     P = percentiles(pool)
     out = []
     for mid in sorted(pool):
         out.extend(builds_for(mid, pool[mid], moves, P))
+    if sets_path == 'default':
+        sets_path = BEST_SETS              # read at call time, so optimize.py can turn it off
+    if sets_path and os.path.exists(sets_path):
+        best = json.load(open(sets_path))
+        for b in out:
+            o = best.get(b.key)
+            if o and all(mv in moves for mv in o['moves']):
+                b.moves, b.item, b.ability = list(o['moves']), o['item'], o['ability']
+                b.hp_type = o.get('hp_type')
     return out

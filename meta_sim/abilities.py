@@ -27,7 +27,7 @@ FLAG_BOOSTS = {
 }
 
 # Defender abilities that make a mon immune to a whole move class.
-FLAG_IMMUNITIES = {'BULLETPROOF': 'bullet', 'SOUNDPROOF': 'sound'}
+FLAG_IMMUNITIES = {'BULLETPROOF': 'bullet', 'SOUNDPROOF': 'sound', 'WIND_RIDER': 'wind'}
 WEATHER_OWN_BOOST = {
     'DROUGHT': {'FIRE': 1.5, 'WATER': 0.5},
     'DRIZZLE': {'WATER': 1.5, 'FIRE': 0.5},

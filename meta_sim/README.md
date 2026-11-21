@@ -23,7 +23,10 @@ reproducible statistical signal that stays in sync with the source.
 | `oracle.py`  | Ground truth: runs the ROM's real `CalcPkmnStats` under PyBoy and diffs it against `stats.py`. |
 | `oracle_damage.py` | Ground truth: runs the ROM's real `damagecalc` + `stab` under PyBoy and diffs them against `calc.py`'s formula. |
 | `rom_damage.py` | The ROM's damage pipeline (crit, stats, stat stages, abilities, items, STAB, weather, roll, conditional boosts) ported step for step with the same integer arithmetic. `engine.py` uses it for every hit. |
-| `oracle_pipeline.py` | Ground truth for `rom_damage.py`: runs the ROM's `damagestats` → `damagecalc` → `stab` → `conditionalboost` under PyBoy on random scenarios and diffs them. |
+| `oracle_pipeline.py` | Ground truth for `rom_damage.py`: runs the ROM's `damagestats` → `damagecalc` → `stab` → `conditionalboost` (and `damagevariation`) under PyBoy on random scenarios and diffs them. |
+| `mechanics.py` | Non-damage rules ported from the ROM: accuracy/evasion (`checkhit`), status immunities (`CanStatusTarget`), stat-stage changes (`FarChangeStat`, Defiant/Competitive/Contrary/Clear Body...), Speed (`GetSpeed`), turn order (priority, Prankster, Quick Claw, Quick Draw, Custap, Lagging Tail), Hidden Power typing. |
+| `oracle_accuracy.py`, `oracle_status.py`, `oracle_speed.py` | Ground truth for `mechanics.py`: run `checkhit` (with the link RNG pinned), `CanXTarget` and `GetSpeed` under PyBoy and diff them. |
+| `optimize.py` | Finds each build's best set (moves, item, ability, Hidden Power type) with paired battles, and writes `data/best_sets.json`, which the meta test then uses. |
 
 Three complementary tools:
 
@@ -116,6 +119,18 @@ trapping, Perish Song, Counter/Mirror Coat, Rest/Sleep Talk, two-turn moves
 (Solar Beam outside sun, Fly/Dig), Dream Eater, Future Sight and more.
 `test_engine.py` checks each one.
 
+**Rules from the ROM, not from memory.** Accuracy and evasion stages, status
+immunities, stat changes, Speed and turn order come from `mechanics.py`, which
+is ported from the assembly and checked against it (see the oracles below). The
+engine also follows each move's battle script from `data/moves/effects.asm`
+(whether it rolls accuracy, its secondary effect, damage doublings), tracks PP
+(with PP Max) and Pressure, falls back to Struggle, and models genders
+(Attract, Rivalry, Cute Charm), weights (Low Kick), berries and most competitive
+held items. A few things it found the simulator had wrong: paralysis halves
+Speed (it was quartering it), sleep from a move lasts 1-3 turns and Rest 2 (both
+were a turn short), and Toxic / Will-O-Wisp / Thunder Wave respect type
+immunities.
+
 **Damage is the ROM's own math.** Every hit goes through `rom_damage.py`, a
 step-for-step port of the move script's damage commands with the same integer
 arithmetic and order of operations, so stat stages, screens, Eviolite, abilities
@@ -174,7 +189,17 @@ from the `.sym` beside the ROM, so they keep working after rebuilds.
 python3 meta_sim/oracle.py          # all species: ROM stats vs stats.py
 python3 meta_sim/oracle_damage.py   # 7-case self-test + calc.py fidelity sweep
 python3 meta_sim/oracle_pipeline.py 20000   # engine damage (rom_damage.py) vs the ROM
+python3 meta_sim/oracle_accuracy.py 3000     # accuracy / evasion vs checkhit
+python3 meta_sim/oracle_status.py 4000       # status immunities vs CanStatusTarget
+python3 meta_sim/oracle_speed.py 4000        # Speed vs GetSpeed
 ```
+
+`oracle_accuracy.py` matches 6,000/6,000 scenarios (two seeds), `oracle_status.py`
+12,000/12,000 and `oracle_speed.py` 4,000/4,000. Hidden Power typing matched
+`GetHiddenPowerType` on 2,000/2,000 DV sets and Low Kick power `BattleCommand_lowkick`
+on all species. Building these found three upstream ROM bugs, now fixed: Thunder
+never missed in sun, sun let a freeze chance skip every check, and Low Kick's
+weight table mixed units.
 
 On the current build `oracle.py` matches 333/333 species, `oracle_damage.py`
 finds calc.py's core formula matches the ROM on all 30,276 fully-evolved pairs

@@ -65,8 +65,17 @@ Models the high-impact ~80% of mechanics and approximates the long tail:
              Knock Off boosts. Confusion: 2-5 count, 1/3 self-hit with the
              ROM's 40-power typeless formula. Flinch: Flinch-hit moves,
              Stench, King's Rock; Inner Focus, Steadfast.
-  approxd.  : Explosion = big hit then user faints; Low Kick is a flat 80 BP
-             (no weights in the extracted data). Each
+  rules     : accuracy/evasion, status immunities, stat changes, Speed and
+             turn order from mechanics.py (ported from the ROM and checked
+             against it); each move's battle script (moves.json 'script');
+             PP with PP Max, Pressure, Struggle; genders; weights (Low Kick);
+             berries; Endure, Attract, Disable, Destiny Bond, Safeguard,
+             Foresight, Skill Swap, Double Team, Minimize, Rollout, False
+             Swipe, Thief, Bug Bite, Hidden Power typing, Magic Bounce,
+             Neutralizing Gas, Trace, Download and ~40 more abilities.
+  approxd.  : HP is kept as a float and end-of-turn effects run in a fixed
+             order rather than the ROM's exact one (see oracle work, step 2).
+             Each
              mon commits to one (non-event) ability and one item for the
              whole battle (see abilities.py/items.py) instead of switching
              among abilities per move like the 1v1 matrix does.
@@ -351,6 +360,9 @@ def nullified_status_move(att, dfn, move):
     if ab == 'LIGHTNING_ROD' and move['type'] == 'ELECTRIC':
         mechanics.raise_stat(dfn, 'spa', 1)
         return True
+    if ab == 'WIND_RIDER' and move.get('wind'):      # checked before the status filter
+        mechanics.raise_stat(dfn, 'atk', 1)
+        return True
     return False
 
 
@@ -568,7 +580,8 @@ def hit_context(att, dfn, move, moved_second=False, pursuit_switch=False):
                 damaged_this_turn=(att.hit_phys + att.hit_spec) > 0,
                 pursuit_switch=pursuit_switch,
                 ground_immune=(move['type'] == 'GROUND' and mechanics.held(dfn) == 'HELD_AIR_BALLOON'),
-                flag_immune=bool(move.get(abilities.FLAG_IMMUNITIES.get(dfn.ability, ''))))
+                flag_immune=bool(move.get(abilities.FLAG_IMMUNITIES.get(
+                    mechanics.seen_ability(att, dfn) or '', ''))))
 
 
 # ---- variable/fixed-power moves ---------------------------------------------
@@ -675,8 +688,21 @@ def move_damage(att, dfn, move, chart, rng, moved_second=False, pursuit_switch=F
 AVG_ROLL = 0.925                            # mean of (85..100) / 100
 
 
+_ED_CACHE = None     # set to a dict while both sides decide; nothing changes meanwhile
+
+
 def expected_damage(att, dfn, move, chart):
     """Deterministic average damage, for AI scoring (no RNG, no crits)."""
+    if _ED_CACHE is not None:
+        key = (id(att), id(dfn), move.get('id'))
+        hit = _ED_CACHE.get(key)
+        if hit is None:
+            hit = _ED_CACHE[key] = _expected_damage(att, dfn, move, chart)
+        return hit
+    return _expected_damage(att, dfn, move, chart)
+
+
+def _expected_damage(att, dfn, move, chart):
     if move['cat'] == 'STATUS' or move['power'] <= 0:
         return 0, eff_mult(move['type'], dfn, chart) if move['power'] else 1.0
     ctx = hit_context(att, dfn, move)
@@ -1064,6 +1090,7 @@ def entry_abilities(side, foe_side):
             m.stage = dict(foe.stage)
             m.ability = foe.ability
             m.moves = list(foe.moves)
+            m.pp = [5] * len(m.moves)      # Transform: 5 PP for each copied move
 
 
 def orb_can_status(mon, st):
@@ -1684,6 +1711,8 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             return
         if dmg == 0 and eff == 0.0:
             apply_absorb(dfn, m['type'])
+            if m.get('wind') and mechanics.seen_ability(att, dfn) == 'WIND_RIDER':
+                mechanics.raise_stat(dfn, 'atk', 1)
             if explode:
                 return
         elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
@@ -2126,8 +2155,11 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
         # made with a second, independently randomised one).
         A.mon.turns_active += 1
         B.mon.turns_active += 1
+        global _ED_CACHE
+        _ED_CACHE = {}
         ia = choose_move(A, B, moves, chart, rng)
         ib = choose_move(B, A, moves, chart, rng)
+        _ED_CACHE = None
         chosen = {id(A): ia, id(B): ib}
         ma = moves[A.mon.moves[ia]] if ia is not None and ia >= 0 else moves['STRUGGLE']
         mb = moves[B.mon.moves[ib]] if ib is not None and ib >= 0 else moves['STRUGGLE']
