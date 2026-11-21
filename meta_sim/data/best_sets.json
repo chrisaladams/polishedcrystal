@@ -3746,5 +3746,38 @@
   "item": "CHOICE_SPECS",
   "ability": "SNOW_WARNING",
   "hp_type": null
+ },
+ "ninetales_alolan|baton passer": {
+  "moves": [
+   "NASTY_PLOT",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "ICE_BEAM"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "SNOW_WARNING",
+  "hp_type": null
+ },
+ "ninetales_plain|special attacker": {
+  "moves": [
+   "FIRE_BLAST",
+   "SHADOW_BALL",
+   "ENERGY_BALL",
+   "DARK_PULSE"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "FLASH_FIRE",
+  "hp_type": null
+ },
+ "ninetales_plain|setup sweeper": {
+  "moves": [
+   "NASTY_PLOT",
+   "FIRE_BLAST",
+   "SHADOW_BALL",
+   "ENERGY_BALL"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "FLASH_FIRE",
+  "hp_type": null
  }
 }
