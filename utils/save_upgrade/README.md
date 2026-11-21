@@ -60,3 +60,19 @@ Party and box Pokémon keep the stats stored in the save. The game recalculates 
 ## Renames
 
 Fields and maps that were renamed without changing meaning are listed in `FIELD_RENAMES` and `MAP_RENAMES` at the top of `upgrade_save.py`. If an upgrade stops with "has no equivalent", add the rename there.
+
+
+## If the area around the player looks wrong after upgrading
+
+A save also keeps a snapshot of the blocks that were on screen. When a newer
+build renumbers a tileset's blocks (the November 2026 upstream merge did for
+the Johto tilesets), that snapshot draws the wrong tiles around the player on
+Continue, for example rooftops on Route 41's sea. Rebuild it from the current
+ROM's own map data (needs PyBoy):
+
+```sh
+python3 utils/save_upgrade/refresh_screen.py game_upgraded.sav game_fixed.sav
+```
+
+It only changes those 30 blocks and the checksums. Running it on a save that
+doesn't need it leaves the file unchanged.

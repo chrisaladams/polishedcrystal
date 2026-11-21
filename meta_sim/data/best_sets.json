@@ -2690,5 +2690,1061 @@
   "item": "CHOICE_SPECS",
   "ability": "FILTER",
   "hp_type": null
+ },
+ "jynx|setup sweeper": {
+  "moves": [
+   "NASTY_PLOT",
+   "ICE_BEAM",
+   "PSYBEAM",
+   "PETAL_DANCE"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "DRY_SKIN",
+  "hp_type": null
+ },
+ "jynx|weather setter": {
+  "moves": [
+   "HAIL",
+   "SING",
+   "ICE_BEAM",
+   "FOCUS_BLAST"
+  ],
+  "item": "ICY_ROCK",
+  "ability": "DRY_SKIN",
+  "hp_type": null
+ },
+ "jynx|trapper": {
+  "moves": [
+   "MEAN_LOOK",
+   "SING",
+   "ICE_BEAM",
+   "PSYBEAM"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "DRY_SKIN",
+  "hp_type": null
+ },
+ "kabutops|physical attacker": {
+  "moves": [
+   "AQUA_TAIL",
+   "STONE_EDGE",
+   "DOUBLE_EDGE",
+   "IRON_HEAD"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "BATTLE_ARMOR",
+  "hp_type": null
+ },
+ "kabutops|setup sweeper": {
+  "moves": [
+   "SWORDS_DANCE",
+   "AQUA_TAIL",
+   "STONE_EDGE",
+   "DOUBLE_EDGE"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "BATTLE_ARMOR",
+  "hp_type": null
+ },
+ "kabutops|revenge killer": {
+  "moves": [
+   "AQUA_JET",
+   "STONE_EDGE",
+   "DOUBLE_EDGE",
+   "IRON_HEAD"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "BATTLE_ARMOR",
+  "hp_type": null
+ },
+ "kabutops|weather sweeper": {
+  "moves": [
+   "AQUA_TAIL",
+   "WATERFALL",
+   "STONE_EDGE",
+   "AQUA_JET"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "SWIFT_SWIM",
+  "hp_type": null
+ },
+ "kangaskhan|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "DOUBLE_EDGE",
+   "OUTRAGE",
+   "EARTHQUAKE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "SCRAPPY",
+  "hp_type": null
+ },
+ "kangaskhan|bulky tank": {
+  "moves": [
+   "REST",
+   "DOUBLE_EDGE",
+   "OUTRAGE",
+   "EARTHQUAKE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "PARENTAL_BOND",
+  "hp_type": null
+ },
+ "kingdra|setup sweeper": {
+  "moves": [
+   "AGILITY",
+   "OUTRAGE",
+   "WATERFALL",
+   "DOUBLE_EDGE"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "SNIPER",
+  "hp_type": null
+ },
+ "kingdra|weather setter": {
+  "moves": [
+   "RAIN_DANCE",
+   "TOXIC",
+   "SURF",
+   "WATERFALL"
+  ],
+  "item": "DAMP_ROCK",
+  "ability": "SNIPER",
+  "hp_type": null
+ },
+ "kingdra|weather sweeper": {
+  "moves": [
+   "WATERFALL",
+   "AQUA_JET",
+   "OUTRAGE",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "SWIFT_SWIM",
+  "hp_type": null
+ },
+ "kingler|physical attacker": {
+  "moves": [
+   "AQUA_JET",
+   "CLOSE_COMBAT",
+   "DOUBLE_EDGE",
+   "X_SCISSOR"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "kingler|revenge killer": {
+  "moves": [
+   "AQUA_JET",
+   "CLOSE_COMBAT",
+   "DOUBLE_EDGE",
+   "X_SCISSOR"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "kleavor|physical attacker": {
+  "moves": [
+   "STONE_EDGE",
+   "X_SCISSOR",
+   "CLOSE_COMBAT",
+   "DOUBLE_EDGE"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "kleavor|setup sweeper": {
+  "moves": [
+   "SWORDS_DANCE",
+   "STONE_EDGE",
+   "X_SCISSOR",
+   "CLOSE_COMBAT"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "SHARPNESS",
+  "hp_type": null
+ },
+ "kleavor|revenge killer": {
+  "moves": [
+   "QUICK_ATTACK",
+   "STONE_EDGE",
+   "X_SCISSOR",
+   "CLOSE_COMBAT"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "kleavor|pivot": {
+  "moves": [
+   "U_TURN",
+   "STONE_EDGE",
+   "X_SCISSOR",
+   "CLOSE_COMBAT"
+  ],
+  "item": "ASSAULT_VEST",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "lanturn|special attacker": {
+  "moves": [
+   "SURF",
+   "THUNDERBOLT",
+   "ICE_BEAM",
+   "DAZZLINGLEAM"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "lanturn|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "SURF",
+   "THUNDERBOLT",
+   "DOUBLE_EDGE"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "lanturn|special wall": {
+  "moves": [
+   "RECOVER",
+   "THUNDER_WAVE",
+   "SURF",
+   "THUNDERBOLT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "lanturn|pivot": {
+  "moves": [
+   "VOLT_SWITCH",
+   "SURF",
+   "THUNDERBOLT",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "lapras|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "SING",
+   "ICE_BEAM"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "lapras|cleric": {
+  "moves": [
+   "HEAL_BELL",
+   "REST",
+   "ICE_BEAM",
+   "SURF"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "lapras|weather setter": {
+  "moves": [
+   "RAIN_DANCE",
+   "SING",
+   "SURF",
+   "ICE_BEAM"
+  ],
+  "item": "DAMP_ROCK",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "leafeon|physical attacker": {
+  "moves": [
+   "SEED_BOMB",
+   "DOUBLE_EDGE",
+   "IRON_TAIL",
+   "STRENGTH"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "leafeon|setup sweeper": {
+  "moves": [
+   "SWORDS_DANCE",
+   "SEED_BOMB",
+   "DOUBLE_EDGE",
+   "IRON_TAIL"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "leafeon|revenge killer": {
+  "moves": [
+   "QUICK_ATTACK",
+   "SEED_BOMB",
+   "IRON_TAIL",
+   "STRENGTH"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "leafeon|physical wall": {
+  "moves": [
+   "HEALINGLIGHT",
+   "TOXIC",
+   "SEED_BOMB",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "leafeon|weather sweeper": {
+  "moves": [
+   "SEED_BOMB",
+   "DOUBLE_EDGE",
+   "IRON_TAIL",
+   "STRENGTH"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "CHLOROPHYLL",
+  "hp_type": null
+ },
+ "leafeon|baton passer": {
+  "moves": [
+   "SWORDS_DANCE",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "SEED_BOMB"
+  ],
+  "item": "MIRACLE_SEED",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "ledian|physical attacker": {
+  "moves": [
+   "STRENGTH",
+   "U_TURN",
+   "DOUBLE_EDGE",
+   "ICE_PUNCH"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "ledian|setup sweeper": {
+  "moves": [
+   "SWORDS_DANCE",
+   "STRENGTH",
+   "U_TURN",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "ledian|revenge killer": {
+  "moves": [
+   "STRENGTH",
+   "U_TURN",
+   "DOUBLE_EDGE",
+   "ICE_PUNCH"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "ledian|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "ledian|pivot": {
+  "moves": [
+   "U_TURN",
+   "STRENGTH",
+   "BUG_BUZZ",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "ledian|baton passer": {
+  "moves": [
+   "SWORDS_DANCE",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "lickilicky|physical attacker": {
+  "moves": [
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "IRON_TAIL",
+   "STRENGTH"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "lickilicky|setup sweeper": {
+  "moves": [
+   "SWORDS_DANCE",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "IRON_TAIL"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "lickilicky|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "lickilicky|bulky tank": {
+  "moves": [
+   "REST",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "IRON_TAIL"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "machamp|physical attacker": {
+  "moves": [
+   "CLOSE_COMBAT",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "POISON_JAB"
+  ],
+  "item": "FLAME_ORB",
+  "ability": "GUTS",
+  "hp_type": null
+ },
+ "machamp|revenge killer": {
+  "moves": [
+   "MACH_PUNCH",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "POISON_JAB"
+  ],
+  "item": "FLAME_ORB",
+  "ability": "GUTS",
+  "hp_type": null
+ },
+ "magcargo|special attacker": {
+  "moves": [
+   "FIRE_BLAST",
+   "ANCIENTPOWER",
+   "EARTH_POWER",
+   "HIDDEN_POWER"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "WEAK_ARMOR",
+  "hp_type": null
+ },
+ "magcargo|setup sweeper": {
+  "moves": [
+   "SHELL_SMASH",
+   "FIRE_BLAST",
+   "ANCIENTPOWER",
+   "EARTH_POWER"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "WEAK_ARMOR",
+  "hp_type": null
+ },
+ "magcargo|physical wall": {
+  "moves": [
+   "RECOVER",
+   "TOXIC",
+   "FIRE_BLAST",
+   "ANCIENTPOWER"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "MAGMA_ARMOR",
+  "hp_type": null
+ },
+ "magcargo|bulky tank": {
+  "moves": [
+   "RECOVER",
+   "FIRE_BLAST",
+   "ANCIENTPOWER",
+   "EARTH_POWER"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "MAGMA_ARMOR",
+  "hp_type": null
+ },
+ "magcargo|support": {
+  "moves": [
+   "TOXIC",
+   "REFLECT",
+   "LIGHT_SCREEN",
+   "FIRE_BLAST"
+  ],
+  "item": "LIGHT_CLAY",
+  "ability": "MAGMA_ARMOR",
+  "hp_type": null
+ },
+ "magcargo|weather setter": {
+  "moves": [
+   "SUNNY_DAY",
+   "RECOVER",
+   "FIRE_BLAST",
+   "SOLAR_BEAM"
+  ],
+  "item": "HEAT_ROCK",
+  "ability": "MAGMA_ARMOR",
+  "hp_type": null
+ },
+ "magmortar|special attacker": {
+  "moves": [
+   "FIRE_BLAST",
+   "FOCUS_BLAST",
+   "THUNDERBOLT",
+   "FLASH_CANNON"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "VITAL_SPIRIT",
+  "hp_type": null
+ },
+ "magmortar|weather setter": {
+  "moves": [
+   "SUNNY_DAY",
+   "TOXIC",
+   "FIRE_BLAST",
+   "FOCUS_BLAST"
+  ],
+  "item": "CHARCOAL",
+  "ability": "VITAL_SPIRIT",
+  "hp_type": null
+ },
+ "magnezone|special attacker": {
+  "moves": [
+   "THUNDERBOLT",
+   "FLASH_CANNON",
+   "TRI_ATTACK",
+   "HIDDEN_POWER"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "magnezone|revenge killer": {
+  "moves": [
+   "QUICK_ATTACK",
+   "THUNDERBOLT",
+   "FLASH_CANNON",
+   "DOUBLE_EDGE"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "magnezone|physical wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "THUNDER_WAVE",
+   "THUNDERBOLT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "magnezone|pivot": {
+  "moves": [
+   "VOLT_SWITCH",
+   "THUNDERBOLT",
+   "FLASH_CANNON",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "magnezone|trapper": {
+  "moves": [
+   "THUNDER_WAVE",
+   "VOLT_SWITCH",
+   "FLASH_CANNON",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "mamoswine|physical attacker": {
+  "moves": [
+   "EARTHQUAKE",
+   "AVALANCHE",
+   "DOUBLE_EDGE",
+   "IRON_HEAD"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "mamoswine|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "EARTHQUAKE",
+   "AVALANCHE",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "mamoswine|revenge killer": {
+  "moves": [
+   "ICE_SHARD",
+   "EARTHQUAKE",
+   "DOUBLE_EDGE",
+   "IRON_HEAD"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "mantine|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "SURF"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "WATER_ABSORB",
+  "hp_type": null
+ },
+ "mantine|weather sweeper": {
+  "moves": [
+   "SURF",
+   "HYDRO_PUMP",
+   "AIR_SLASH",
+   "SCALD"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "SWIFT_SWIM",
+  "hp_type": null
+ },
+ "marowak_alolan|physical attacker": {
+  "moves": [
+   "FIRE_PUNCH",
+   "SHADOW_CLAW",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "THICK_CLUB",
+  "ability": "LIGHTNING_ROD",
+  "hp_type": null
+ },
+ "marowak_plain|physical attacker": {
+  "moves": [
+   "EARTHQUAKE",
+   "DOUBLE_EDGE",
+   "IRON_HEAD",
+   "LOW_KICK"
+  ],
+  "item": "THICK_CLUB",
+  "ability": "BATTLE_ARMOR",
+  "hp_type": null
+ },
+ "meganium|special attacker": {
+  "moves": [
+   "PETAL_DANCE",
+   "DAZZLINGLEAM",
+   "EARTH_POWER",
+   "HIDDEN_POWER"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "OVERGROW",
+  "hp_type": null
+ },
+ "meganium|setup sweeper": {
+  "moves": [
+   "CALM_MIND",
+   "PETAL_DANCE",
+   "DAZZLINGLEAM",
+   "EARTH_POWER"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "meganium|bulky tank": {
+  "moves": [
+   "HEALINGLIGHT",
+   "PETAL_DANCE",
+   "DAZZLINGLEAM",
+   "EARTH_POWER"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "meganium|support": {
+  "moves": [
+   "TOXIC",
+   "REFLECT",
+   "LIGHT_SCREEN",
+   "PETAL_DANCE"
+  ],
+  "item": "LIGHT_CLAY",
+  "ability": "NATURAL_CURE",
+  "hp_type": null
+ },
+ "miltank|physical wall": {
+  "moves": [
+   "FRESH_SNACK",
+   "THUNDER_WAVE",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "SAP_SIPPER",
+  "hp_type": null
+ },
+ "miltank|cleric": {
+  "moves": [
+   "HEAL_BELL",
+   "FRESH_SNACK",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "SAP_SIPPER",
+  "hp_type": null
+ },
+ "mismagius|special attacker": {
+  "moves": [
+   "DAZZLINGLEAM",
+   "SHADOW_BALL",
+   "ENERGY_BALL",
+   "TRICK"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "mismagius|setup sweeper": {
+  "moves": [
+   "CALM_MIND",
+   "DAZZLINGLEAM",
+   "SHADOW_BALL",
+   "ENERGY_BALL"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "mismagius|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "DAZZLINGLEAM",
+   "SHADOW_BALL",
+   "TRICK"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "LEVITATE",
+  "hp_type": null
+ },
+ "mr__mime_plain|special attacker": {
+  "moves": [
+   "PSYCHIC_M",
+   "DAZZLINGLEAM",
+   "ENERGY_BALL",
+   "TRICK"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "FILTER",
+  "hp_type": null
+ },
+ "mr__mime_plain|setup sweeper": {
+  "moves": [
+   "CALM_MIND",
+   "PSYCHIC_M",
+   "DAZZLINGLEAM",
+   "ENERGY_BALL"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "FILTER",
+  "hp_type": null
+ },
+ "mr__mime_plain|baton passer": {
+  "moves": [
+   "CALM_MIND",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "PSYCHIC_M"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "FILTER",
+  "hp_type": null
+ },
+ "mr__rime|special attacker": {
+  "moves": [
+   "ICE_BEAM",
+   "DREAM_EATER",
+   "ENERGY_BALL",
+   "TRICK"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "TANGLED_FEET",
+  "hp_type": null
+ },
+ "mr__rime|trick room setter": {
+  "moves": [
+   "TRICK_ROOM",
+   "REST",
+   "ICE_BEAM",
+   "ZEN_HEADBUTT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "TANGLED_FEET",
+  "hp_type": null
+ },
+ "muk_alolan|physical attacker": {
+  "moves": [
+   "GUNK_SHOT",
+   "CRUNCH",
+   "RETURN",
+   "STONE_EDGE"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "POISON_TOUCH",
+  "hp_type": null
+ },
+ "muk_alolan|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "GUNK_SHOT",
+   "CRUNCH",
+   "RETURN"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "POISON_TOUCH",
+  "hp_type": null
+ },
+ "muk_alolan|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "GUNK_SHOT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "POISON_TOUCH",
+  "hp_type": null
+ },
+ "muk_alolan|bulky tank": {
+  "moves": [
+   "REST",
+   "GUNK_SHOT",
+   "CRUNCH",
+   "RETURN"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "POISON_TOUCH",
+  "hp_type": null
+ },
+ "muk_alolan|support": {
+  "moves": [
+   "TOXIC",
+   "HAZE",
+   "PAIN_SPLIT",
+   "GUNK_SHOT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "CORROSION",
+  "hp_type": null
+ },
+ "muk_plain|physical attacker": {
+  "moves": [
+   "GUNK_SHOT",
+   "RETURN",
+   "STRENGTH",
+   "FIRE_PUNCH"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "STENCH",
+  "hp_type": null
+ },
+ "muk_plain|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "GUNK_SHOT",
+   "RETURN",
+   "STRENGTH"
+  ],
+  "item": "ASSAULT_VEST",
+  "ability": "STENCH",
+  "hp_type": null
+ },
+ "muk_plain|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "GUNK_SHOT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "STENCH",
+  "hp_type": null
+ },
+ "muk_plain|bulky tank": {
+  "moves": [
+   "REST",
+   "GUNK_SHOT",
+   "RETURN",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "STENCH",
+  "hp_type": null
+ },
+ "muk_plain|support": {
+  "moves": [
+   "TOXIC",
+   "HAZE",
+   "PAIN_SPLIT",
+   "GUNK_SHOT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "STENCH",
+  "hp_type": null
+ },
+ "nidoking|physical attacker": {
+  "moves": [
+   "EARTHQUAKE",
+   "POISON_JAB",
+   "DOUBLE_EDGE",
+   "OUTRAGE"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoking|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "EARTHQUAKE",
+   "POISON_JAB",
+   "DOUBLE_EDGE"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoking|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "EARTHQUAKE",
+   "POISON_JAB",
+   "DOUBLE_EDGE"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoking|weather setter": {
+  "moves": [
+   "SANDSTORM",
+   "TOXIC",
+   "EARTHQUAKE",
+   "IRON_TAIL"
+  ],
+  "item": "SMOOTH_ROCK",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoqueen|special attacker": {
+  "moves": [
+   "EARTH_POWER",
+   "SLUDGE_BOMB",
+   "FIRE_BLAST",
+   "ICE_BEAM"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoqueen|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "EARTHQUAKE",
+   "SLUDGE_BOMB",
+   "CLOSE_COMBAT"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoqueen|bulky tank": {
+  "moves": [
+   "REST",
+   "EARTH_POWER",
+   "SLUDGE_BOMB",
+   "FIRE_BLAST"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "nidoqueen|weather setter": {
+  "moves": [
+   "SANDSTORM",
+   "TOXIC",
+   "EARTHQUAKE",
+   "THUNDERBOLT"
+  ],
+  "item": "SMOOTH_ROCK",
+  "ability": "SHEER_FORCE",
+  "hp_type": null
+ },
+ "ninetales_alolan|weather setter": {
+  "moves": [
+   "TOXIC",
+   "ICE_BEAM",
+   "BLIZZARD",
+   "DAZZLINGLEAM"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "SNOW_WARNING",
+  "hp_type": null
  }
 }
