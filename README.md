@@ -19,6 +19,7 @@ A pass at tightening up the meta for L50 link battles:
   These only apply to the normal build; `make faithful` keeps canon base stats.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes). The restriction check used to wipe the attacking move's power, so every hit on an Eviolite holder did 1 damage; that's fixed.
 - **Moody removed.**
+- **Upstream battle bugs fixed:** Thunder never missed in harsh sunlight (it's 50% now), harsh sunlight didn't stop freezing (it let a freeze chance skip every check instead), and Low Kick gave 80 power to anything between 5 kg and 100 kg (it now follows the weight table: 40 power above 10 kg, 60 above 25 kg, 80 above 50 kg).
 - **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
 - **Link-battle healing/leveling** — mons get forced to L50 and topped off before a link battle, so games aren't decided by who happened to grind more.
 - A few mart/item tweaks to go with the above.

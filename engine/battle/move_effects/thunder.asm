@@ -8,9 +8,12 @@ BattleCommand_thunderaccuracy:
 	jr z, .rain
 	cp WEATHER_SUN
 	ret nz
-	ld [hl], 50 percent + 1
+	; Move accuracy is a plain percentage here (see data/moves/moves.asm), not
+	; the 0-255 scale the `percent` macro produces: "50 percent + 1" was 128,
+	; which made Thunder never miss in sun.
+	ld [hl], 50
 	ret
 
 .rain
-	ld [hl], 100 percent
+	ld [hl], 100
 	ret

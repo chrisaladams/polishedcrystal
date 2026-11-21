@@ -4992,10 +4992,15 @@ CanSleepTarget:
 	ld h, SLP_MASK
 	jr CanStatusTarget
 CanFreezeTarget:
-	; Harsh sunlight prevents freeze.
+	; Harsh sunlight prevents freeze. This used to `ret z`, which is this
+	; routine's "can freeze" result, so in sun a freeze chance skipped every
+	; check (Ice type, Magma Armor, an existing status, Safeguard).
 	call GetWeatherAfterOpponentUmbrella
 	cp WEATHER_SUN
-	ret z
+	jr nz, .not_sunny
+	or 1 ; nz: can't
+	ret
+.not_sunny
 	ld a, b
 	lb bc, ICE, ICE
 	lb de, MAGMA_ARMOR, HELD_PREVENT_FREEZE
