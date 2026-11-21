@@ -2316,5 +2316,379 @@
   "item": "FLAME_ORB",
   "ability": "GUTS",
   "hp_type": null
+ },
+ "hitmonchan|physical attacker": {
+  "moves": [
+   "STRENGTH",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "POISON_JAB"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "hitmonchan|setup sweeper": {
+  "moves": [
+   "AGILITY",
+   "STRENGTH",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "hitmonchan|revenge killer": {
+  "moves": [
+   "MACH_PUNCH",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "POISON_JAB"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "hitmonchan|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "IRON_FIST",
+  "hp_type": null
+ },
+ "hitmonlee|physical attacker": {
+  "moves": [
+   "HI_JUMP_KICK",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "POISON_JAB"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "LIMBER",
+  "hp_type": null
+ },
+ "hitmonlee|setup sweeper": {
+  "moves": [
+   "AGILITY",
+   "HI_JUMP_KICK",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "LIMBER",
+  "hp_type": null
+ },
+ "hitmonlee|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "HI_JUMP_KICK",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "RECKLESS",
+  "hp_type": null
+ },
+ "hitmontop|physical attacker": {
+  "moves": [
+   "LOW_KICK",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE",
+   "STONE_EDGE"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
+ "hitmontop|setup sweeper": {
+  "moves": [
+   "AGILITY",
+   "LOW_KICK",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
+ "hitmontop|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "LOW_KICK",
+   "STRENGTH",
+   "EARTHQUAKE"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
+ "hitmontop|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "LOW_KICK"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
+ "honchkrow|physical attacker": {
+  "moves": [
+   "NIGHT_SLASH",
+   "AERIAL_ACE",
+   "DOUBLE_EDGE",
+   "STEEL_WING"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "INSOMNIA",
+  "hp_type": null
+ },
+ "honchkrow|special attacker": {
+  "moves": [
+   "DARK_PULSE",
+   "SHADOW_BALL",
+   "HIDDEN_POWER",
+   "SWIFT"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "INSOMNIA",
+  "hp_type": null
+ },
+ "honchkrow|mixed attacker": {
+  "moves": [
+   "NIGHT_SLASH",
+   "AERIAL_ACE",
+   "DARK_PULSE",
+   "SHADOW_BALL"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "INSOMNIA",
+  "hp_type": null
+ },
+ "honchkrow|revenge killer": {
+  "moves": [
+   "DARK_PULSE",
+   "AERIAL_ACE",
+   "DOUBLE_EDGE",
+   "SHADOW_BALL"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "INSOMNIA",
+  "hp_type": null
+ },
+ "houndoom|special attacker": {
+  "moves": [
+   "FIRE_BLAST",
+   "DARK_PULSE",
+   "HYPER_VOICE",
+   "SLUDGE_BOMB"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "FLASH_FIRE",
+  "hp_type": null
+ },
+ "houndoom|revenge killer": {
+  "moves": [
+   "SUCKER_PUNCH",
+   "FIRE_BLAST",
+   "DARK_PULSE",
+   "SLUDGE_BOMB"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "FLASH_FIRE",
+  "hp_type": null
+ },
+ "houndoom|weather setter": {
+  "moves": [
+   "SUNNY_DAY",
+   "TOXIC",
+   "FIRE_BLAST",
+   "DARK_PULSE"
+  ],
+  "item": "AIR_BALLOON",
+  "ability": "FLASH_FIRE",
+  "hp_type": null
+ },
+ "houndoom|weather sweeper": {
+  "moves": [
+   "FIRE_BLAST",
+   "SOLAR_BEAM",
+   "FLAMETHROWER",
+   "DARK_PULSE"
+  ],
+  "item": "LIFE_ORB",
+  "ability": "SOLAR_POWER",
+  "hp_type": null
+ },
+ "hypno|setup sweeper": {
+  "moves": [
+   "CALM_MIND",
+   "PSYCHIC_M",
+   "FOCUS_BLAST",
+   "DAZZLINGLEAM"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "INSOMNIA",
+  "hp_type": null
+ },
+ "hypno|special wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "HYPNOSIS",
+   "PSYCHIC_M"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "BAD_DREAMS",
+  "hp_type": null
+ },
+ "hypno|support": {
+  "moves": [
+   "HYPNOSIS",
+   "REFLECT",
+   "LIGHT_SCREEN",
+   "PSYCHIC_M"
+  ],
+  "item": "LIGHT_CLAY",
+  "ability": "BAD_DREAMS",
+  "hp_type": null
+ },
+ "hypno|baton passer": {
+  "moves": [
+   "CALM_MIND",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "PSYCHIC_M"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "INSOMNIA",
+  "hp_type": null
+ },
+ "hypno|trick room setter": {
+  "moves": [
+   "TRICK_ROOM",
+   "REST",
+   "PSYCHIC_M",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "INNER_FOCUS",
+  "hp_type": null
+ },
+ "jolteon|special attacker": {
+  "moves": [
+   "THUNDERBOLT",
+   "HYPER_VOICE",
+   "VOLT_SWITCH",
+   "HIDDEN_POWER"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "VOLT_ABSORB",
+  "hp_type": null
+ },
+ "jolteon|setup sweeper": {
+  "moves": [
+   "AGILITY",
+   "THUNDERBOLT",
+   "HYPER_VOICE",
+   "SHADOW_BALL"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "VOLT_ABSORB",
+  "hp_type": null
+ },
+ "jolteon|revenge killer": {
+  "moves": [
+   "QUICK_ATTACK",
+   "THUNDERBOLT",
+   "SHADOW_BALL",
+   "HIDDEN_POWER"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "VOLT_ABSORB",
+  "hp_type": null
+ },
+ "jolteon|support": {
+  "moves": [
+   "THUNDER_WAVE",
+   "LIGHT_SCREEN",
+   "ROAR",
+   "THUNDERBOLT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "VOLT_ABSORB",
+  "hp_type": null
+ },
+ "jolteon|pivot": {
+  "moves": [
+   "VOLT_SWITCH",
+   "THUNDERBOLT",
+   "IRON_TAIL",
+   "SHADOW_BALL"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "VOLT_ABSORB",
+  "hp_type": null
+ },
+ "jolteon|baton passer": {
+  "moves": [
+   "AGILITY",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "THUNDERBOLT"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "VOLT_ABSORB",
+  "hp_type": null
+ },
+ "jumpluff|support": {
+  "moves": [
+   "SLEEP_POWDER",
+   "REFLECT",
+   "ENCORE",
+   "ENERGY_BALL"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "CHLOROPHYLL",
+  "hp_type": null
+ },
+ "jumpluff|pivot": {
+  "moves": [
+   "U_TURN",
+   "ENERGY_BALL",
+   "AERIAL_ACE",
+   "DOUBLE_EDGE"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "CHLOROPHYLL",
+  "hp_type": null
+ },
+ "jumpluff|baton passer": {
+  "moves": [
+   "AGILITY",
+   "SUBSTITUTE",
+   "BATON_PASS",
+   "ENERGY_BALL"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "CHLOROPHYLL",
+  "hp_type": null
+ },
+ "jynx|special attacker": {
+  "moves": [
+   "ICE_BEAM",
+   "PSYBEAM",
+   "PETAL_DANCE",
+   "TRICK"
+  ],
+  "item": "CHOICE_SPECS",
+  "ability": "FILTER",
+  "hp_type": null
  }
 }
