@@ -113,8 +113,15 @@ from typechart import STAB, type_mult
 import abilities
 import items
 import rom_damage
+import mechanics
+import json as _json
+import os as _os
+
+MOVE_PP = {k: v['pp'] for k, v in _json.load(open(_os.path.join(
+    _os.path.dirname(_os.path.abspath(__file__)), 'data', 'moves.json'))).items()}
 
 CHOICE_ITEMS = {'CHOICE_BAND', 'CHOICE_SPECS', 'CHOICE_SCARF'}
+REST_SLEEP_TURNS = 2         # constants/battle_constants.asm
 SLEEP_CLAUSE = False         # shipped game dropped the Sleep Clause (sleep is unrestricted, 1-3 turns); mirror that here
 MAX_TURNS = 300              # battle longer than this -> draw (anti-stall guard)
 
@@ -137,9 +144,11 @@ BOOST = {
 }
 # opponent stat-drop status moves
 DROP = {'EFFECT_SPEED_DOWN_2': {'spe': -2}, 'EFFECT_ATTACK_DOWN_2': {'atk': -2},
-        'EFFECT_DEFENSE_DOWN_2': {'defe': -2}, 'EFFECT_ACCURACY_DOWN': {'acc': -1}}
+        'EFFECT_DEFENSE_DOWN_2': {'defe': -2}, 'EFFECT_ACCURACY_DOWN': {'acc': -1},
+        'EFFECT_ATTACK_DOWN': {'atk': -1}, 'EFFECT_DEFENSE_DOWN': {'defe': -1}}
 
 # status-inflicting status moves: effect -> status key
+SELF_STAGE = {'EFFECT_EVASION_UP': {'eva': 1}, 'EFFECT_MINIMIZE': {'eva': 2}}
 INFLICT = {'EFFECT_SLEEP': 'slp', 'EFFECT_PARALYZE': 'par', 'EFFECT_TOXIC': 'tox',
            'EFFECT_POISON': 'psn', 'EFFECT_BURN': 'brn', 'EFFECT_CONFUSE': 'cnf'}
 # on-hit secondary status: effect -> status key (applied at `chance`%)
@@ -163,7 +172,7 @@ ENCORE_TURNS = 3
 # on-hit stat drops on the target, applied at the move's `chance`%
 STAT_DROP_HIT = {'EFFECT_SP_DEF_DOWN_HIT': 'spd', 'EFFECT_DEFENSE_DOWN_HIT': 'defe',
                  'EFFECT_SPEED_DOWN_HIT': 'spe', 'EFFECT_ATTACK_DOWN_HIT': 'atk',
-                 'EFFECT_SP_ATK_DOWN_HIT': 'spa'}
+                 'EFFECT_SP_ATK_DOWN_HIT': 'spa', 'EFFECT_ACCURACY_DOWN_HIT': 'acc'}
 # on-hit self boosts, applied at the move's `chance`%
 SELF_UP_HIT = {'EFFECT_DEFENSE_UP_HIT': {'defe': 1}, 'EFFECT_ATTACK_UP_HIT': {'atk': 1},
                'EFFECT_SPEED_UP_HIT': {'spe': 1},
@@ -253,7 +262,12 @@ def is_trapped(side, foe_side):
 
 
 def is_grounded(mon):
-    return 'FLYING' not in mon.types and mon.ability != 'LEVITATE'
+    """CheckAirborne: Flying types, Levitate and Air Balloon float; Iron Ball
+    grounds."""
+    h = mechanics.held(mon)
+    if h == 'HELD_IRON_BALL':
+        return True
+    return 'FLYING' not in mon.types and mon.ability != 'LEVITATE' and h != 'HELD_AIR_BALLOON'
 
 
 # type-absorb abilities: ability -> the type it's immune to (and triggers on)
@@ -277,7 +291,7 @@ CONTACT_STATUS_CHANCE = 0.30
 SYNC_STATUSES = {'par', 'brn', 'psn', 'tox'}
 
 
-def status_blocked(mon, st):
+def _status_blocked_unused(mon, st):
     block = STATUS_IMMUNE.get(mon.ability)
     if block is None:
         return False
@@ -292,7 +306,9 @@ def apply_synchronize(victim, inflictor, st):
     or a victim without the ability)."""
     if victim.ability != 'SYNCHRONIZE' or st not in SYNC_STATUSES:
         return
-    if inflictor.status is not None or status_blocked(inflictor, st):
+    if not mechanics.can_status(inflictor, st, user=victim, source='move',
+                                weather=weather_of(victim),
+                                sub_blocked=inflictor.sub_hp > 0):
         return
     inflictor.status = st
     if st == 'tox':
@@ -306,6 +322,36 @@ def eff_mult(move_type, defender, chart):
     if ABSORB_TYPES.get(defender.ability) == move_type:
         return 0.0
     return type_mult(move_type, defender.types, chart)
+
+
+def status_move_lands(att, dfn, move, chart):
+    """Would this status move stick? (what a player knows before using it)"""
+    st = INFLICT[move['effect']]
+    if mechanics.status_move_immune(att, dfn, move, chart, eff_mult):
+        return False
+    ab = mechanics.seen_ability(att, dfn)
+    if (ab == 'FLASH_FIRE' and move['effect'] == 'EFFECT_BURN') or \
+            (ab == 'LIGHTNING_ROD' and move['type'] == 'ELECTRIC'):
+        return False
+    sub = mechanics.sub_blocks(att, dfn, move)
+    if st == 'cnf':
+        return mechanics.can_confuse(dfn, user=att, sub_blocked=sub)
+    return mechanics.can_status(dfn, st, user=att, move=move, weather=weather_of(att),
+                                sub_blocked=sub)
+
+
+def nullified_status_move(att, dfn, move):
+    """CheckNullificationAbilities as checkpowder runs it for status moves:
+    only Flash Fire (vs Will-O-Wisp-style burns) and Lightning Rod (vs Electric
+    status moves, +1 Sp. Atk) nullify them; Volt Absorb and friends don't."""
+    ab = mechanics.seen_ability(att, dfn)
+    if ab == 'FLASH_FIRE' and move['effect'] == 'EFFECT_BURN':
+        dfn.flash_fire = True
+        return True
+    if ab == 'LIGHTNING_ROD' and move['type'] == 'ELECTRIC':
+        mechanics.raise_stat(dfn, 'spa', 1)
+        return True
+    return False
 
 
 def apply_absorb(mon, move_type):
@@ -337,12 +383,26 @@ class Pmon:
                  'hit_phys', 'hit_spec', 'weather_set', 'subs_made', 'passes',
                  'tricks', 'trick_rooms', 'traps', 'perish_kos', 'perish_by',
                  'charging', 'semi_inv', 'crits', 'flinches', 'flinched',
-                 'focus_energy', 'eviolite_ok')
+                 'focus_energy', 'eviolite_ok', 'minimized', 'identified', 'gender',
+                 'female', 'infatuated', 'disabled', 'disable_turns', 'destiny_bond',
+                 'enduring', 'rollout', 'curled', 'hp_type', 'pp', 'unburden',
+                 'berry_eaten', 'metronome_count', 'metronome_move', 'cud_chew',
+                 'base_ability', 'pp_stalls', 'ng_saved', 'weight')
 
-    def __init__(self, mid, mon, moveset, ability=None, item=None):
+    def __init__(self, mid, mon, moveset, ability=None, item=None, hp_type=None):
         self.id = mid
         self.types = mon['types']
-        self.base = mon['stats']           # already L50 stats dict
+        self.base = dict(mon['stats'])     # already L50 stats dict
+        # Hidden Power: its type comes from the DVs; an even DV costs 1 point
+        # of that stat at L50 (stats.py assumes DV 15 everywhere)
+        self.hp_type = hp_type or 'FAIRY'
+        if 'HIDDEN_POWER' in moveset and self.hp_type != 'FAIRY':
+            for k, dv in mechanics.dvs_for_hidden_power(self.hp_type).items():
+                if dv < 15:
+                    self.base[k] -= 1
+        self.female = mon.get('female')    # chance of female; None = genderless
+        self.weight = mon.get('weight', 500)   # hectograms (body_data.asm), for Low Kick
+        self.gender = None                 # 'M' / 'F' / None, rolled per battle
         self.moves = moveset               # list of move-name strings
         self.ability = ability             # one ability for the whole battle
         self.item = item                   # one held item for the whole battle
@@ -351,7 +411,7 @@ class Pmon:
         self.status = None                 # None/'par'/'brn'/'psn'/'tox'/'slp'/'frz'
         self.sleep = 0                     # remaining sleep turns
         self.tox = 0                       # toxic counter
-        self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0)
+        self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0, acc=0, eva=0)
         self.seeded = False
         self.confused = 0
         self.fainted = False
@@ -404,8 +464,23 @@ class Pmon:
         self.perish_by = None
         self.charging = None               # move index being charged (two-turn moves)
         self.semi_inv = False              # in the air / underground (Fly / Dig)
+        self.base_ability = ability        # Skill Swap / Trace change .ability
+        # PP: every set runs PP Maxes (8/5 of base PP), like a competitive build
+        self.pp = [max(1, MOVE_PP.get(mv, 10) * 8 // 5) for mv in moveset]
+        self.pp_stalls = 0                 # turns forced into Struggle
+        self.berry_eaten = None            # last berry eaten (Harvest / Cud Chew)
+        self.unburden = False
+        self.minimized = self.identified = self.destiny_bond = self.enduring = False
+        self.infatuated = None             # the foe it's infatuated with
+        self.disabled, self.disable_turns = None, 0
+        self.rollout, self.curled = 0, False
+        self.metronome_count, self.metronome_move = 0, None
+        self.cud_chew = None
+        self.ng_saved = None               # ability suppressed by a foe's Neutralizing Gas
 
     def stat(self, key, ignore_stage=False):
+        if key == 'spe' and not ignore_stage:
+            return mechanics.speed(self, weather_of(self))   # GetSpeed, integer
         stage = 0 if ignore_stage else self.stage.get(key, 0)
         v = self.base[key] * stage_mult(stage)
         if key == 'spe':
@@ -423,7 +498,14 @@ class Pmon:
         return v
 
     def reset_volatile(self):              # cleared on switch out
-        self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0)
+        self.minimized = self.identified = self.destiny_bond = self.enduring = False
+        self.infatuated = None
+        self.disabled, self.disable_turns = None, 0
+        self.rollout, self.curled = 0, False
+        self.metronome_count, self.metronome_move = 0, None
+        self.ability = self.base_ability   # Skill Swap / Trace wear off on switching
+        self.unburden = False
+        self.stage = dict(atk=0, defe=0, spa=0, spd=0, spe=0, acc=0, eva=0)
         self.seeded = False
         self.confused = 0
         self.locked_move = None            # Choice lock releases on switch
@@ -462,6 +544,7 @@ class Side:
         self.light_screen = 0
         self.switched = False              # active changed after moves were chosen
         self.future = None                 # incoming Future Sight: [ticks, user, move]
+        self.safeguard = 0                 # turns left
         for m in team:
             m.side = self
 
@@ -480,9 +563,11 @@ class Side:
 # oracle_pipeline.py). This module only works out the battle context it needs.
 def hit_context(att, dfn, move, moved_second=False, pursuit_switch=False):
     """Keyword arguments for rom_damage.damage from the live battle state."""
-    return dict(weather=weather_of(att), moved_second=moved_second,
+    w = 'sun' if att.ability == 'MEGA_SOL' else weather_of(att)   # GetSolarizedWeather
+    return dict(weather=w, moved_second=moved_second,
                 damaged_this_turn=(att.hit_phys + att.hit_spec) > 0,
                 pursuit_switch=pursuit_switch,
+                ground_immune=(move['type'] == 'GROUND' and mechanics.held(dfn) == 'HELD_AIR_BALLOON'),
                 flag_immune=bool(move.get(abilities.FLAG_IMMUNITIES.get(dfn.ability, ''))))
 
 
@@ -491,6 +576,7 @@ def hit_context(att, dfn, move, moved_second=False, pursuit_switch=False):
 # in battle. Seismic Toss/Night Shade and Super Fang skip the stat formula;
 # the rest plug a computed power into it. Counter/Mirror Coat aren't modeled
 # (they deal 0 here and the moveset picker never chooses them).
+LOW_KICK_POWER = [(120, 2000), (100, 1000), (80, 500), (60, 250), (40, 100), (20, 0)]
 REVERSAL_POWER = [(1, 200), (4, 150), (9, 100), (16, 80), (32, 40)]  # px, BP
 
 
@@ -519,7 +605,9 @@ def effective_power(move, att, dfn):
     if e == 'EFFECT_MAGNITUDE':
         return 71                           # average over the magnitude table
     if e == 'EFFECT_LOW_KICK':
-        return 80                           # no species weights in the data
+        # BattleCommand_lowkick: power by the target's weight (Light Metal halves it)
+        w = dfn.weight // 2 if mechanics.seen_ability(att, dfn) == 'LIGHT_METAL' else dfn.weight
+        return next((bp for bp, limit in LOW_KICK_POWER if w > limit), 20)
     # Facade / Hex / Venoshock / Acrobatics / Avalanche / Pursuit doubling and
     # Knock Off's 1.5x are applied after the random roll (conditionalboost),
     # inside rom_damage.damage.
@@ -548,12 +636,14 @@ def hit_count(att, move, rng):
         return 1
     if att.ability == 'SKILL_LINK':
         return 5
+    if mechanics.held(att) == 'HELD_LOADED_DICE':
+        return 4 + rng.randrange(2)
     r = rng.randrange(6)
     return (r - 4 if r >= 4 else r) + 2
 
 
 def move_damage(att, dfn, move, chart, rng, moved_second=False, pursuit_switch=False,
-                can_crit=True):
+                can_crit=True, move_type=None, rollout_doublings=0, post_doublings=0):
     """Rolled damage for a damaging move att->dfn, as (damage, effectiveness,
     crits). Effectiveness is the ROM's matchup byte / 16 (0 = immune). Each hit
     of a multi-hit move rolls its own crit and damage roll, as in the ROM."""
@@ -564,10 +654,15 @@ def move_damage(att, dfn, move, chart, rng, moved_second=False, pursuit_switch=F
     power = effective_power(move, att, dfn)
     total = crits = 0
     raw = 0x10
-    for _ in range(hit_count(att, move, rng)):
+    n = hit_count(att, move, rng)
+    parental = n == 1 and att.ability == 'PARENTAL_BOND' and fixed is None
+    for k in range(2 if parental else n):
         crit = can_crit and rom_damage.roll_crit(att, dfn, move, rng)
         dmg, raw = rom_damage.damage(att, dfn, move, chart, power=power, crit=crit,
-                                     roll=rng.randrange(16), **ctx)
+                                     roll=rng.randrange(16), move_type=move_type,
+                                     rollout_doublings=rollout_doublings,
+                                     post_doublings=post_doublings,
+                                     parental_second=parental and k == 1, **ctx)
         if raw == 0:
             return 0, 0.0, 0
         if fixed is not None:
@@ -624,19 +719,24 @@ def choose_move(side, foe, moves, chart, rng=random):
         return att.charging
     if att.rampage:
         return att.rampage_move
+    if 0 < att.rollout < 5 and 'ROLLOUT' in att.moves:
+        return att.moves.index('ROLLOUT')  # locked into Rollout
+    usable = [i for i in range(len(att.moves)) if att.pp[i] > 0 and i != att.disabled]
+    if not usable:
+        return -1                          # Struggle
     if att.encore and att.encore_move is not None:
-        return att.encore_move
+        return att.encore_move if att.encore_move in usable else -1
     if att.status == 'slp' and att.sleep > 0:
         for i, mv in enumerate(att.moves):
-            if moves[mv]['effect'] == 'EFFECT_SLEEP_TALK':
+            if moves[mv]['effect'] == 'EFFECT_SLEEP_TALK' and i in usable:
                 return i
     if att.locked_move is not None:
-        return att.locked_move
+        return att.locked_move if att.locked_move in usable else -1
 
-    best_dmg_i, best_dmg = 0, 0.0
+    best_dmg_i, best_dmg = usable[0], 0.0
     for i, mv in enumerate(att.moves):
         m = moves[mv]
-        if m['cat'] == 'STATUS' or m['power'] <= 0:
+        if i not in usable or m['cat'] == 'STATUS' or m['power'] <= 0:
             continue
         dmg, _ = expected_damage(att, dfn, m, chart)
         if m['effect'] in RECHARGE_EFFECTS and dmg < dfn.hp:
@@ -667,6 +767,8 @@ def choose_move(side, foe, moves, chart, rng=random):
 
     util = []                              # (priority_score, index)
     for i, mv in enumerate(att.moves):
+        if i not in usable:
+            continue
         e = moves[mv]['effect']
         if e in HEAL_EFFECTS and att.hp < att.maxhp * 0.6 and not doomed:
             # heal more eagerly the lower I am, but only if it isn't futile
@@ -674,7 +776,7 @@ def choose_move(side, foe, moves, chart, rng=random):
         elif e in BOOST and not doomed and foe_dmg < att.hp * 0.5:
             # set up only when I clearly survive; better still if I'm faster
             util.append((2.0 + (0.6 if i_outspeed else 0.0), i))
-        elif e in INFLICT and dfn.status is None and not doomed:
+        elif e in INFLICT and not doomed and status_move_lands(att, dfn, moves[mv], chart):
             st = INFLICT[e]
             if st == 'slp' and SLEEP_CLAUSE and foe.slept_by_foe:
                 continue
@@ -895,6 +997,9 @@ def apply_switch(side, idx, foe_side, chart):
         if old.ability == 'NATURAL_CURE':   # cures status on switch-out
             old.status = None
             old.sleep = old.tox = 0
+    foe = foe_side.mon if foe_side else None
+    if old.ability == 'NEUTRALIZING_GAS' and foe is not None and foe.ng_saved is not None:
+        foe.ability, foe.ng_saved = foe.ng_saved, None   # the gas clears
     side.active = idx
     m = side.mon
     # entry hazards (grounded mons only -- Flying-type or Levitate skip these)
@@ -904,19 +1009,51 @@ def apply_switch(side, idx, foe_side, chart):
     if side.tspikes and grounded:
         if 'POISON' in m.types:
             side.tspikes = 0               # absorbed
-        elif 'STEEL' not in m.types and m.status is None:
-            m.status = 'tox' if side.tspikes >= 2 else 'psn'
+        else:
+            st = 'tox' if side.tspikes >= 2 else 'psn'
+            if mechanics.can_status(m, st, source='nosub', weather=weather_of(m)):
+                inflict(m, st, random)
     if m.hp <= 0:
         m.fainted = True
         return
+    entry_abilities(side, foe_side)
 
-    # switch-in ability events (need to see the foe's already-active mon)
+
+def _suppressible(ability):
+    return ability and 'NO_SUPPRESS' not in mechanics.ABILITY_FLAGS.get(ability, [])
+
+
+def entry_abilities(side, foe_side):
+    """Switch-in abilities (RunEntryAbilities), from side's active mon."""
+    m = side.mon
+    foe = foe_side.mon if foe_side else None
+    # Neutralizing Gas, both ways
+    if foe is not None and not foe.fainted:
+        if m.ability == 'NEUTRALIZING_GAS' and _suppressible(foe.ability) and foe.ng_saved is None:
+            foe.ng_saved, foe.ability = foe.ability, None
+        elif foe.ability == 'NEUTRALIZING_GAS' and _suppressible(m.ability):
+            m.ng_saved, m.ability = m.ability, None
+            return
+    if m.ability == 'TRACE' and foe is not None and not foe.fainted and foe.ability \
+            and 'NO_TRACE' not in mechanics.ABILITY_FLAGS.get(foe.ability, []):
+        m.ability = foe.ability            # then the traced ability's own entry runs
     if m.ability in WEATHER_ABILITIES:
         set_weather(side.field, WEATHER_ABILITIES[m.ability], m)
-    foe = foe_side.mon if foe_side else None
+    if m.ability == 'SCREEN_CLEANER':
+        for sd in (side, foe_side):
+            if sd is not None:
+                sd.reflect = sd.light_screen = 0
     if foe and not foe.fainted:
         if m.ability == 'INTIMIDATE':
-            foe.stage['atk'] = max(-6, foe.stage['atk'] - 1)
+            # IntimidateAbility: NO_INTIMIDATE abilities (Inner Focus, Own Tempo,
+            # Oblivious, Scrappy) resist; a drop that lands sets off Rattled
+            if 'NO_INTIMIDATE' not in mechanics.ABILITY_FLAGS.get(
+                    mechanics.seen_ability(m, foe) or '', []):
+                if mechanics.change_opp_stat(foe, 'atk', -1, user=m) and foe.ability == 'RATTLED':
+                    mechanics.raise_stat(foe, 'spe', 1)
+                white_herb(foe)
+        if m.ability == 'DOWNLOAD':
+            mechanics.raise_stat(m, 'atk' if foe.base['defe'] < foe.base['spd'] else 'spa', 1)
         if m.ability == 'IMPOSTER':
             # Transform onto the foe: types/stats/stages/ability/moves copy,
             # HP stays the user's own. Self-disarming -- once 'ability' is
@@ -930,11 +1067,9 @@ def apply_switch(side, idx, foe_side, chart):
 
 
 def orb_can_status(mon, st):
-    if status_blocked(mon, st):
-        return False
-    if st == 'tox':
-        return 'POISON' not in mon.types and 'STEEL' not in mon.types
-    return 'FIRE' not in mon.types
+    """HandleStatusOrbs: CanStatusTarget ignoring Substitute and Safeguard,
+    with the holder's own Corrosion."""
+    return mechanics.can_status(mon, st, source='orb', weather=weather_of(mon))
 
 
 def end_of_turn(mon, foe_side, rng=random):
@@ -1004,8 +1139,36 @@ def end_of_turn(mon, foe_side, rng=random):
     if mon.hp <= 0:
         mon.fainted = True
         return False
-    if mon.item == 'LEFTOVERS' and mon.hp < mon.maxhp:
-        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * items.LEFTOVERS_HEAL_FRAC)
+    h = mechanics.held(mon)
+    if h == 'HELD_LEFTOVERS' or (h == 'HELD_BLACK_SLUDGE' and 'POISON' in mon.types):
+        if mon.hp < mon.maxhp:
+            mon.hp = min(mon.maxhp, mon.hp + mon.maxhp // 16)
+    elif h == 'HELD_BLACK_SLUDGE' and mon.ability != 'MAGIC_GUARD':
+        mon.hp -= mon.maxhp // 8                # HandleLeftovers: hurts non-Poison holders
+        if mon.hp <= 0:
+            mon.fainted = True
+            return False
+    # Bad Dreams: a sleeping foe loses 1/8
+    foe = foe_side.mon if foe_side else None
+    if mon.ability == 'BAD_DREAMS' and foe is not None and not foe.fainted \
+            and foe.status == 'slp' and foe.ability != 'MAGIC_GUARD':
+        foe.hp -= foe.maxhp // 8
+        if foe.hp <= 0:
+            foe.fainted = True
+    # Harvest (50%, always in sun) and Cud Chew bring a berry back
+    if mon.ability == 'HARVEST' and mon.item is None and mon.berry_eaten \
+            and (w == 'sun' or rng.randrange(256) < 128):
+        mon.item = mon.berry_eaten
+    if mon.cud_chew:
+        mon.cud_chew[1] -= 1
+        if mon.cud_chew[1] <= 0:
+            berry, mon.cud_chew = mon.cud_chew[0], None
+            eat_berry(mon, berry, forced=True, rng=rng)
+    check_hp_berry(mon)                         # HandleHealingItems
+    if mon.disable_turns:
+        mon.disable_turns -= 1
+        if mon.disable_turns <= 0:
+            mon.disabled = None
     # self-status orbs fire at end of turn, so the status only starts ticking
     # on the following end_of_turn
     st = items.ORB_STATUS.get(mon.item)
@@ -1013,6 +1176,8 @@ def end_of_turn(mon, foe_side, rng=random):
         mon.status = st
         if st == 'tox':
             mon.tox = 0
+    if mon.ability == 'SPEED_BOOST' and False:
+        pass
     if mon.ability == 'SPEED_BOOST':
         mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
     return True
@@ -1031,6 +1196,262 @@ def _pivot(att_side, dfn_side, moves, chart):
     att.pivots += 1
     apply_switch(att_side, best, dfn_side, chart)
     att_side.switched = True
+
+
+# ---- items, berries and on-hit abilities (ROM-ported helpers) ------------------
+def is_berry(item):
+    return bool(item) and (item.endswith('BERRY') or item in ('BERRY_JUICE', 'MARANGABERRY'))
+
+
+def foe_of(mon):
+    side = mon.side
+    return side.foe.mon if side is not None and side.foe is not None else None
+
+
+def can_eat(mon):
+    """GetUserItemAfterUnnerve: the foe's Unnerve stops berries."""
+    foe = foe_of(mon)
+    return not (foe is not None and not foe.fainted and foe.ability == 'UNNERVE')
+
+
+def lose_item(mon):
+    """The item is gone (consumed, knocked off, stolen): Unburden doubles Speed."""
+    mon.item = None
+    if mon.ability == 'UNBURDEN':
+        mon.unburden = True
+
+
+def _pinch(mon):
+    """QuarterPinchOrGluttony: HP <= 1/4 (1/2 with Gluttony)."""
+    return mon.hp <= mon.maxhp // (2 if mon.ability == 'GLUTTONY' else 4)
+
+
+def eat_berry(mon, berry, forced=False, rng=random):
+    """Apply a berry's effect. forced (Bug Bite / Cud Chew) skips the HP
+    thresholds. Returns True if it did something."""
+    d = mechanics.ITEM_DATA.get(berry) or {}
+    h, param = d.get('held'), d.get('param')
+    done = False
+    if h == 'HELD_BERRY' or h == 'HELD_ENIGMA_BERRY':      # HP berries
+        if mon.hp < mon.maxhp:
+            if berry in ('SITRUS_BERRY', 'ENIGMA_BERRY'):
+                heal = mon.maxhp // 4
+            elif berry == 'FIGY_BERRY':
+                heal = mon.maxhp // 3
+            else:
+                heal = int(param or 0)
+            before = mon.hp
+            mon.hp = min(mon.maxhp, mon.hp + heal)
+            mon.heal_done += (mon.hp - before) / mon.maxhp
+            done = True
+    elif h == 'HELD_HEAL_STATUS':
+        if berry == 'LUM_BERRY' and mon.confused:
+            mon.confused, done = 0, True
+        want = {'CHERI_BERRY': ('par',), 'CHESTO_BERRY': ('slp',), 'PECHA_BERRY': ('psn', 'tox'),
+                'RAWST_BERRY': ('brn',), 'ASPEAR_BERRY': ('frz',)}.get(berry)
+        if mon.status is not None and (berry == 'LUM_BERRY' or mon.status in (want or ())):
+            mon.status, mon.sleep, mon.tox, done = None, 0, 0, True
+    elif h == 'HELD_HEAL_CONFUSE':
+        if mon.confused:
+            mon.confused, done = 0, True
+    elif h == 'HELD_RAISE_STAT':
+        stat = {'ATTACK': 'atk', 'DEFENSE': 'defe', 'SPEED': 'spe', 'SP_ATTACK': 'spa',
+                'SP_DEFENSE': 'spd'}.get(param)
+        if stat:
+            done = mechanics.raise_stat(mon, stat, 1)
+        else:                                                  # Starf: +2 random stat
+            opts = [k for k in ('atk', 'defe', 'spa', 'spd', 'spe') if mon.stage[k] < 6]
+            if opts:
+                done = mechanics.raise_stat(mon, rng.choice(opts), 2)
+    elif h == 'HELD_RAISE_CRIT':
+        if not mon.focus_energy:
+            mon.focus_energy, done = True, True
+    if done or forced:
+        mon.berry_eaten = berry
+        if mon.ability == 'CUD_CHEW':
+            mon.cud_chew = [berry, 2]                          # eaten again next turn
+    return done
+
+
+def check_hp_berry(mon):
+    """HandleHPHealingItem / HandleStatBoostBerry after a hit or at turn end."""
+    if mon.fainted or not is_berry(mon.item) or not can_eat(mon):
+        return
+    d = mechanics.ITEM_DATA.get(mon.item) or {}
+    h = d.get('held')
+    if h == 'HELD_BERRY':
+        if mon.hp > mon.maxhp // 2:
+            return
+        if mon.item == 'FIGY_BERRY' and not _pinch(mon):
+            return
+    elif h in ('HELD_RAISE_STAT', 'HELD_RAISE_CRIT'):
+        if not _pinch(mon):
+            return
+    elif h not in ('HELD_HEAL_STATUS', 'HELD_HEAL_CONFUSE'):
+        return
+    berry = mon.item
+    if eat_berry(mon, berry):
+        lose_item(mon)
+
+
+def inflict(target, st, rng, inflictor=None):
+    """Set a major status (already checked with can_status), then
+    Synchronize and a status-curing berry (PostStatusWithSynchronize)."""
+    target.status = st
+    if st == 'slp':
+        target.sleep = rng.randint(2, 4)
+    if st == 'tox':
+        target.tox = 0
+    if inflictor is not None:
+        apply_synchronize(target, inflictor, st)
+    check_hp_berry(target)
+
+
+def _recoil(att, m, dealt):
+    """BattleCommand_recoil: Struggle costs 1/4 max HP whatever happens; other
+    recoil moves 1/3 (Double-Edge, Flare Blitz) or 1/4 of the damage, at least
+    1, and Rock Head / Magic Guard block it."""
+    if m.get('id') == 'STRUGGLE':
+        att.hp -= max(1, att.maxhp // 4)
+    elif att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD'):
+        frac = 3 if m.get('id') in RECOIL_THIRD else 4
+        att.hp -= max(1, int(dealt) // frac)
+    if att.hp <= 0:
+        att.fainted = True
+
+
+def _self_destruct(att):
+    """BattleCommand_selfdestruct: the user faints."""
+    att.hp = 0
+    att.fainted = True
+
+
+SECONDARY_STATUS = {'EFFECT_BURN_HIT': 'brn', 'EFFECT_PARALYZE_HIT': 'par',
+                    'EFFECT_FREEZE_HIT': 'frz', 'EFFECT_POISON_HIT': 'psn',
+                    'EFFECT_BODY_SLAM': 'par', 'EFFECT_THUNDER': 'par',
+                    'EFFECT_SACRED_FIRE': 'brn', 'EFFECT_FLARE_BLITZ': 'brn'}
+
+
+def secondary_effects(att, dfn, m, e, rng, foe_moved, dfn_side):
+    """effectchance + the secondary command in the move's script, on a target
+    that survived and wasn't behind a Substitute."""
+    if (mechanics.seen_ability(att, dfn) == 'SHIELD_DUST' or mechanics.held(dfn) == 'HELD_COVERT_CLOAK'
+            or (att.ability == 'SHEER_FORCE' and m.get('secondary'))):
+        chance = 0
+    else:
+        chance = m['chance'] * (2 if att.ability == 'SERENE_GRACE' else 1)
+    hit = chance >= 256 or rng.randrange(100) < chance
+    w = weather_of(att)
+    if e in SECONDARY_STATUS and SECONDARY_STATUS[e] == 'brn' and dfn.status == 'frz' \
+            and att.ability != 'SHEER_FORCE':
+        dfn.status = None                       # burntarget defrosts (Scald)
+    if hit:
+        st = SECONDARY_STATUS.get(e)
+        if e == 'EFFECT_TRI_ATTACK':
+            st = ('par', 'frz', 'brn')[rng.randrange(3)]
+        if st and mechanics.can_status(dfn, st, user=att, weather=w):
+            inflict(dfn, st, rng, att)
+            att.status_infl += 1
+        if e == 'EFFECT_CONFUSE_HIT' and mechanics.can_confuse(dfn, user=att):
+            dfn.confused = rng.randint(2, 5)
+            att.status_infl += 1
+        if e in STAT_DROP_HIT and mechanics.lower_stat(dfn, STAT_DROP_HIT[e], 1, user=att):
+            att.stat_drops += 1
+        if e in SELF_UP_HIT:
+            for k, d in SELF_UP_HIT[e].items():
+                mechanics.raise_stat(att, k, d)
+    # Flinch (BattleCommand_flinchtarget): only if the target hasn't moved
+    # yet and isn't asleep/frozen. Stench and King's Rock give other moves a
+    # 10% flinch (doubled by Serene Grace).
+    if not foe_moved and dfn.status not in ('slp', 'frz'):
+        if e in FLINCH_EFFECTS:
+            if hit:
+                dfn.flinched = True
+                att.flinches += 1
+        elif (att.ability == 'STENCH' or mechanics.held(att) == 'HELD_FLINCH_UP') \
+                and mechanics.seen_ability(att, dfn) != 'SHIELD_DUST':
+            if rng.randrange(100) < (20 if att.ability == 'SERENE_GRACE' else 10):
+                dfn.flinched = True
+                att.flinches += 1
+
+
+def hit_abilities(att, dfn, m, rng, target_fainted, dfn_side):
+    """RunHitAbilities: contact abilities on both sides, then the target's
+    on-hit abilities; Aftermath and Pickpocket."""
+    contact = rom_damage.makes_contact(att, m)
+    w = weather_of(att)
+    if contact:
+        # the attacker's Poison Touch (30%)
+        if att.ability == 'POISON_TOUCH' and not target_fainted and rng.randrange(10) < 3 \
+                and mechanics.can_status(dfn, 'psn', user=att, source='nosub', weather=w):
+            inflict(dfn, 'psn', rng, att)
+        ab = dfn.ability
+        if ab == 'IRON_BARBS' and not att.fainted and att.ability != 'MAGIC_GUARD':
+            att.hp -= att.maxhp // 8
+        elif ab == 'EFFECT_SPORE':
+            if ('GRASS' not in att.types and att.ability != 'OVERCOAT'
+                    and mechanics.held(att) != 'HELD_SAFETY_GOGGLES'):
+                st = ('psn', 'par', 'slp')[rng.randrange(3)]
+                if rng.randrange(10) < 3 and not att.fainted and \
+                        mechanics.can_status(att, st, source='nosub', weather=w):
+                    inflict(att, st, rng, dfn)
+        elif ab in CONTACT_STATUS:
+            st = CONTACT_STATUS[ab]
+            if rng.randrange(10) < 3 and not att.fainted and \
+                    mechanics.can_status(att, st, source='nosub', weather=w):
+                inflict(att, st, rng, dfn)
+        elif ab == 'CUTE_CHARM' and not dfn.fainted and rng.randrange(10) < 3:
+            try_attract(dfn, att)
+        elif ab == 'TANGLING_HAIR' and not att.fainted:
+            mechanics.lower_stat(att, 'spe', 1)
+        elif ab == 'PERISH_BODY' and not att.perish:
+            att.perish = PERISH_COUNT
+            if not dfn.perish:
+                dfn.perish = PERISH_COUNT
+        if att.hp <= 0 and not att.fainted:
+            att.fainted = True
+    if not target_fainted:
+        ab = dfn.ability
+        mtype = m['type']
+        if ab == 'JUSTIFIED' and mtype == 'DARK':
+            mechanics.raise_stat(dfn, 'atk', 1)
+        elif ab == 'RATTLED' and mtype in ('BUG', 'DARK', 'GHOST'):
+            mechanics.raise_stat(dfn, 'spe', 1)
+        elif ab == 'WEAK_ARMOR' and m['cat'] == 'PHYSICAL':
+            mechanics.raise_stat(dfn, 'defe', -1)
+            mechanics.raise_stat(dfn, 'spe', 2)
+    if dfn.ability == 'CURSED_BODY' and rng.randrange(10) < 3 and att.disabled is None \
+            and att.last_move is not None and not att.fainted:
+        att.disabled, att.disable_turns = att.last_move, 5
+    if target_fainted and contact and dfn.ability == 'AFTERMATH' and not att.fainted \
+            and att.ability != 'DAMP':
+        att.hp -= att.maxhp // 4
+        if att.hp <= 0:
+            att.fainted = True
+    if (not target_fainted and contact and dfn.ability == 'PICKPOCKET' and dfn.item is None
+            and att.item and att.ability != 'STICKY_HOLD'):
+        dfn.item = att.item
+        lose_item(att)
+
+
+def white_herb(mon):
+    """White Herb: once, restore any lowered stats."""
+    if mechanics.held(mon) == 'HELD_WHITE_HERB' and not mon.fainted and \
+            any(v < 0 for v in mon.stage.values()):
+        for k, v in mon.stage.items():
+            if v < 0:
+                mon.stage[k] = 0
+        lose_item(mon)
+
+
+def try_attract(user, target):
+    """BattleCommand_attract: opposite genders, not already in love, Oblivious."""
+    if (user.gender is None or target.gender is None or user.gender == target.gender
+            or target.infatuated is not None or target.semi_inv
+            or mechanics.seen_ability(user, target) == 'OBLIVIOUS'):
+        return False
+    target.infatuated = user
+    return True
 
 
 def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_moved=False,
@@ -1053,13 +1474,14 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
 
     # pre-move status gates
     if att.status == 'frz':
-        if rng.random() < 0.2:
+        thaw_move = idx is not None and att.moves[idx] in ('SACRED_FIRE', 'SCALD', 'FLARE_BLITZ')
+        if thaw_move or rng.randrange(5) == 0:
             att.status = None
         else:
             return
     sleep_talk = None
     if att.status == 'slp':
-        att.sleep -= 1
+        att.sleep -= 2 if att.ability == 'EARLY_BIRD' else 1   # Early Bird: twice as fast
         if att.sleep <= 0:
             att.status = None
         else:
@@ -1083,48 +1505,101 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if att.status == 'par' and rng.random() < 0.25:
         return
 
+    if att.infatuated is not None:
+        if att.infatuated is not dfn or dfn.fainted:
+            att.infatuated = None          # infatuation ends when either leaves
+        elif rng.randrange(256) < 128:     # 50%: immobilised by love
+            return
+
     if idx is None:
         idx = choose_move(att_side, dfn_side, moves, chart, rng)
     if sleep_talk is not None:
         idx = sleep_talk                   # Sleep Talk calls a random other move
+    # Disable (checked before paralysis): the chosen move can't be used
+    if idx is not None and idx >= 0 and att.disabled == idx and sleep_talk is None:
+        return
+    if att.status == 'par' and rng.randrange(256) < 64:     # 25% fully paralysed
+        return
+
     if att.encore:
         att.encore -= 1
-    mv = att.moves[idx]
+    if idx is None or idx < 0 or (att.pp[idx] <= 0 and sleep_talk is None
+                                  and not att.rampage and att.charging is None):
+        idx, mv = -1, 'STRUGGLE'           # no usable move left
+        att.pp_stalls += 1
+    else:
+        mv = att.moves[idx]
     m = moves[mv]
     e = m['effect']
-    att.last_move = idx
+    if idx >= 0:
+        att.last_move = idx
+    # PP (doturn): Pressure on the target makes it cost 2. Continuing a
+    # rampage or a charged move doesn't cost PP again; Sleep Talk only costs
+    # its own PP.
+    if idx >= 0 and not (att.rampage and att.rampage_move == idx) and att.charging != idx:
+        spent_idx = att.moves.index('SLEEP_TALK') if sleep_talk is not None else idx
+        cost = 2 if mechanics.seen_ability(att, dfn) == 'PRESSURE' else 1
+        att.pp[spent_idx] = max(0, att.pp[spent_idx] - cost)
+    # Metronome (item): consecutive uses of the same move
+    if att.metronome_move == mv:
+        att.metronome_count = min(5, att.metronome_count + 1)
+    else:
+        att.metronome_move, att.metronome_count = mv, 0
+    if e != 'EFFECT_DESTINY_BOND':
+        att.destiny_bond = False           # cleared by using any other move
 
-    # Protect: cumulative 1/3 success chance per consecutive use
-    if e == 'EFFECT_PROTECT':
+    # Protect / Endure: cumulative 1/3 success chance per consecutive use
+    if e in ('EFFECT_PROTECT', 'EFFECT_ENDURE'):
         if rng.random() < 1 / (3 ** att.protect_count):
-            att.protected = True
+            if e == 'EFFECT_PROTECT':
+                att.protected = True
+            else:
+                att.enduring = True
             att.protect_count += 1
         else:
             att.protect_count = 0
         return
     att.protect_count = 0
+    explode = e == 'EFFECT_EXPLOSION'
+    damp = explode and mechanics.seen_ability(att, dfn) == 'DAMP'
+    if damp:
+        return                             # Damp: Explosion fails, the user stays in
     if dfn.protected and e != 'EFFECT_ROAR' and (
             m['cat'] != 'STATUS' or e in INFLICT or e in DROP
-            or e in ('EFFECT_LEECH_SEED', 'EFFECT_ENCORE', 'EFFECT_PAIN_SPLIT')):
+            or e in ('EFFECT_LEECH_SEED', 'EFFECT_ENCORE', 'EFFECT_PAIN_SPLIT',
+                     'EFFECT_ATTRACT', 'EFFECT_DISABLE', 'EFFECT_FORESIGHT')):
         att.rampage = 0
+        att.rollout = 0
+        if explode:
+            _self_destruct(att)
         return
+    # checkpriority: Armor Tail blocks the foe's priority moves; Dark types
+    # ignore Prankster status moves; Soundproof blocks sound status moves
+    if not dfn.fainted and 'checkpriority' in m.get('script', ()):
+        tab = mechanics.seen_ability(att, dfn)
+        if mechanics.move_priority(att, m) > 0 and tab == 'ARMOR_TAIL':
+            return
+        if att.ability == 'PRANKSTER' and m['cat'] == 'STATUS' and 'DARK' in dfn.types:
+            return
+        if tab == 'SOUNDPROOF' and m.get('sound'):
+            return
     # Sucker Punch fails unless the target is about to use an attack
     if e == 'EFFECT_SUCKER_PUNCH' and (foe_moved or foe_move is None
                                        or moves[foe_move]['cat'] == 'STATUS'):
         return
-    if att.item in CHOICE_ITEMS or att.ability == 'GORILLA_TACTICS':
+    if idx >= 0 and (att.item in CHOICE_ITEMS or att.ability == 'GORILLA_TACTICS'):
         att.locked_move = idx     # locks in on use, regardless of hit/miss
 
     # two-turn moves: charge now, strike next turn (Fly / Dig are untouchable meanwhile)
-    if att.charging is None and needs_charge(att, m):
+    if att.charging is None and needs_charge(att, m) and mechanics.held(att) == 'HELD_POWER_HERB':
+        lose_item(att)                      # Power Herb: strike at once
+    elif att.charging is None and needs_charge(att, m):
         att.charging = idx
-        att.semi_inv = e == 'EFFECT_FLY'
+        if e == 'EFFECT_FLY':
+            att.semi_inv = 'dig' if m.get('id') == 'DIG' else 'fly'
         return
     att.charging = None
-    att.semi_inv = False
-    if dfn.semi_inv and m['cat'] != 'STATUS' and m.get('id') not in (
-            'EARTHQUAKE', 'GUST', 'THUNDER', 'HURRICANE'):
-        return                              # target is in the air / underground
+    att.semi_inv = None
     if e == 'EFFECT_DREAM_EATER' and dfn.status != 'slp':
         return
     if e == 'EFFECT_FUTURE_SIGHT':
@@ -1132,31 +1607,24 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             dfn_side.future = [FUTURE_SIGHT_TICKS, att, m]
         return
 
-    # accuracy
-    acc = m['acc']
-    w = weather_of(att)
-    if m.get('id') in ('THUNDER', 'HURRICANE'):
-        acc = -1 if w == 'rain' else (50 if w == 'sun' else acc)
-    elif m.get('id') == 'BLIZZARD' and w == 'hail':
-        acc = -1
-    if att.ability == 'HUSTLE' and m['cat'] != 'STATUS' and acc >= 0:
-        acc *= 0.8
-    if acc >= 0 and m['cat'] != 'STATUS' and (
-            (dfn.ability == 'SAND_VEIL' and w == 'sand')
-            or (dfn.ability == 'SNOW_CLOAK' and w == 'hail')):
-        acc *= 0.8
-    if acc >= 0 and rng.random() > acc / 100.0:
+    # accuracy (BattleCommand_checkhit), for moves whose script checks it
+    if 'checkhit' in m.get('script', ('checkhit',)) and not mechanics.accuracy_hits(
+            att, dfn, m, rng, weather=weather_of(att), target_moved_first=foe_moved,
+            pursuit_switch=pursuit_switch):
         att.rampage = 0                    # a miss ends a rampage, no confusion
+        att.rollout = 0
         if e == 'EFFECT_JUMP_KICK' and att.ability != 'MAGIC_GUARD':
             att.hp -= att.maxhp / 2        # crash damage
             if att.hp <= 0:
                 att.fainted = True
+        if explode:
+            _self_destruct(att)            # selfdestruct runs even on a miss
         return
 
     if e in RAMPAGE_EFFECTS:
         if att.rampage:
             att.rampage -= 1
-            if att.rampage == 0 and not status_blocked(att, 'cnf'):
+            if att.rampage == 0 and not att.confused and att.ability != 'OWN_TEMPO':
                 att.confused = rng.randint(2, 5)   # rampage over: user confused
         else:
             att.rampage = rng.randint(1, 2)        # 1-2 more forced turns
@@ -1179,39 +1647,34 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             att.kos += 1
         return
 
-    if e == 'EFFECT_EXPLOSION':
-        # no Defense halving or damage doubling in this ROM (Gen V+ rules)
-        dmg, _, crits = move_damage(att, dfn, m, chart, rng, moved_second=foe_moved)
-        att.crits += crits
-        sturdy = survives_at_1hp(dfn)
-        att.dmg_dealt += min(dmg, dfn.hp) / dfn.maxhp
-        dfn.dmg_taken += min(dmg, dfn.hp) / dfn.maxhp
-        dfn.hp -= dmg
-        att.hp = 0
-        att.fainted = True
-        if dfn.hp <= 0:
-            if sturdy:
-                dfn.hp = 1
-                consume_sash(dfn)
-            else:
-                dfn.fainted = True
-                att.kos += 1
-        return
-
     if m['cat'] != 'STATUS' and m['power'] > 0:
-        dmg, eff, crits = move_damage(att, dfn, m, chart, rng, moved_second=foe_moved,
-                                      pursuit_switch=pursuit_switch)
+        script = m.get('script', ())
+        if e == 'EFFECT_ROLLOUT':
+            att.rollout = att.rollout + 1 if att.rollout < 5 else 1
+        doublings = sum((dfn.minimized and 'doubleminimizedamage' in script,
+                         dfn.semi_inv == 'fly' and 'doubleflyingdamage' in script,
+                         dfn.semi_inv == 'dig' and 'doubleundergrounddamage' in script))
+        dmg, eff, crits = move_damage(
+            att, dfn, m, chart, rng, moved_second=foe_moved, pursuit_switch=pursuit_switch,
+            move_type=att.hp_type if e == 'EFFECT_HIDDEN_POWER' else None,
+            rollout_doublings=(att.rollout - 1 + att.curled) if e == 'EFFECT_ROLLOUT' else 0,
+            post_doublings=doublings)
         att.crits += crits
+        if e == 'EFFECT_ROLLOUT' and (att.rollout >= 5 or eff == 0):
+            att.rollout = 0
+        if explode:
+            _self_destruct(att)            # after damagecalc, before the hit lands
         if e in RECHARGE_EFFECTS and eff > 0:
             att.recharging = True          # recharges after any hit, even a KO
-        if dfn.sub_hp > 0 and dmg > 0 and not m.get('sound') and att.ability != 'INFILTRATOR':
+        sub_hit = dfn.sub_hp > 0 and dmg > 0 and not m.get('sound') and att.ability != 'INFILTRATOR'
+        if sub_hit:
             hit = min(dmg, dfn.sub_hp)
             dfn.sub_hp -= hit
             if dfn.sub_hp <= 0:
                 dfn.sub_hp = 0.0
             att.dmg_dealt += hit / dfn.maxhp
-            if e in RECOIL_EFFECTS and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD'):
-                att.hp -= max(1, hit * (1 / 3 if m.get('id') in RECOIL_THIRD else 1 / 4))
+            if e in RECOIL_EFFECTS:
+                _recoil(att, m, hit)
             if att.item == 'LIFE_ORB' and att.ability != 'MAGIC_GUARD':
                 att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:
@@ -1221,9 +1684,13 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             return
         if dmg == 0 and eff == 0.0:
             apply_absorb(dfn, m['type'])
+            if explode:
+                return
         elif dmg > 0 and dfn.ability == 'LIGHTNING_ROD' and m['type'] == 'ELECTRIC':
-            dfn.stage['spa'] = min(6, dfn.stage['spa'] + 1)
-        sturdy = survives_at_1hp(dfn)
+            mechanics.raise_stat(dfn, 'spa', 1)
+        if e == 'EFFECT_FALSE_SWIPE' and dmg >= dfn.hp:
+            dmg = max(0, int(dfn.hp) - 1)  # BattleCommand_falseswipe: leaves 1 HP
+        sturdy = survives_at_1hp(dfn) or (dfn.enduring and dmg >= dfn.hp)
         dealt = min(dmg, dfn.hp)
         att.dmg_dealt += dealt / dfn.maxhp
         dfn.dmg_taken += dealt / dfn.maxhp
@@ -1240,90 +1707,89 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             if dfn.ability == 'LIQUID_OOZE':
                 att.hp -= dealt / 2
             else:
-                healed = min(att.maxhp - att.hp, dealt / 2)
+                gain = dealt / 2
+                if mechanics.held(att) == 'HELD_BIG_ROOT':
+                    gain = gain * 13 // 10      # HandleBigRoot
+                healed = min(att.maxhp - att.hp, gain)
                 att.hp += healed
                 att.heal_done += healed / att.maxhp
         if e == 'EFFECT_KNOCK_OFF' and dfn.item and dfn.ability != 'STICKY_HOLD':
-            dfn.item = None
+            lose_item(dfn)
         if e == 'EFFECT_CLOSE_COMBAT':
-            att.stage['defe'] = max(-6, att.stage['defe'] - 1)
-            att.stage['spd'] = max(-6, att.stage['spd'] - 1)
+            mechanics.raise_stat(att, 'defe', -1)
+            mechanics.raise_stat(att, 'spd', -1)
         if e == 'EFFECT_RAPID_SPIN' and dmg > 0:
             if att_side.spikes or att_side.tspikes or att.seeded:
                 att.hazards_cleared += 1
             att_side.spikes = att_side.tspikes = 0
             att.seeded = False
-        if (e in RECOIL_EFFECTS and dealt > 0
-                and att.ability not in ('MAGIC_GUARD', 'ROCK_HEAD')):
-            frac = 1 / 3 if m.get('id') in RECOIL_THIRD else 1 / 4
-            att.hp -= max(1, dealt * frac)
-            if att.hp <= 0:
-                att.fainted = True
+        if e in RECOIL_EFFECTS and dealt > 0:
+            _recoil(att, m, dealt)
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
             att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
             if att.hp <= 0:
                 att.fainted = True
+        elif mechanics.held(att) == 'HELD_SHELL_BELL' and dealt > 0 and not att.fainted:
+            att.hp = min(att.maxhp, att.hp + int(dealt) // 8)
+        if dealt > 0 and mechanics.held(dfn) == 'HELD_AIR_BALLOON':
+            lose_item(dfn)                       # the balloon pops
+        if (dealt > 0 and mechanics.held(dfn) == 'HELD_ROCKY_HELMET' and not att.fainted
+                and rom_damage.makes_contact(att, m) and att.ability != 'MAGIC_GUARD'):
+            att.hp -= att.maxhp // 6
+            if att.hp <= 0:
+                att.fainted = True
+        target_fainted = False
         if dfn.hp <= 0:
             if sturdy:
                 dfn.hp = 1
-                consume_sash(dfn)
+                if not dfn.enduring:
+                    consume_sash(dfn)
             else:
                 dfn.fainted = True
+                target_fainted = True
                 att.kos += 1
+                if dfn.destiny_bond and not att.fainted:   # takes the attacker down
+                    att.hp = 0
+                    att.fainted = True
+                if att.ability == 'MOXIE' and not att.fainted and dfn_side.alive_indices():
+                    mechanics.raise_stat(att, 'atk', 1)
+        if dealt > 0 and crits and dfn.ability == 'ANGER_POINT' and not dfn.fainted:
+            dfn.stage['atk'] = 6           # a critical hit maximises Attack
+        if dealt > 0:
+            hit_abilities(att, dfn, m, rng, target_fainted, dfn_side)
+        if (not target_fainted and m['type'] == 'FIRE' and dfn.status == 'frz'):
+            dfn.status = None              # a Fire-type hit thaws the target
+        if not att.fainted and not dfn.fainted:
+            check_hp_berry(dfn)
+        if target_fainted or dfn.fainted:
             if e in PIVOT_EFFECTS:
                 _pivot(att_side, dfn_side, moves, chart)
             return
-        # on-hit secondaries: Serene Grace doubles the trigger chance;
-        # Shield Dust on the defender suppresses secondaries entirely.
-        if dfn.ability == 'SHIELD_DUST' or (att.ability == 'SHEER_FORCE' and m.get('secondary')):
-            chance = 0
-        elif att.ability == 'SERENE_GRACE':
-            chance = m['chance'] * 2
-        else:
-            chance = m['chance']
-        if e in ONHIT and dfn.status is None and rng.random() < chance / 100.0:
-            st = ONHIT[e]
-            if st == 'frz' and weather_of(att) == 'sun':
-                pass                        # harsh sunlight prevents freezing
-            elif st != 'slp' and not status_blocked(dfn, st):  # on-hit sleep doesn't exist; guard anyway
-                dfn.status = st
-                att.status_infl += 1
-                if st == 'tox':
-                    dfn.tox = 0
-                apply_synchronize(dfn, att, st)
-        # Flinch (BattleCommand_flinchtarget): only if the target hasn't moved
-        # yet, isn't asleep/frozen and wasn't behind a Substitute. Stench and
-        # King's Rock give other moves a 10% flinch (doubled by Serene Grace).
-        if not foe_moved and dfn.status not in ('slp', 'frz'):
-            if e in FLINCH_EFFECTS:
-                if rng.random() < chance / 100.0:
-                    dfn.flinched = True
-                    att.flinches += 1
-            elif (att.ability == 'STENCH' or att.item == 'KINGS_ROCK') \
-                    and dfn.ability != 'SHIELD_DUST':
-                if rng.randrange(100) < (20 if att.ability == 'SERENE_GRACE' else 10):
-                    dfn.flinched = True
-                    att.flinches += 1
-        if e in STAT_DROP_HIT and rng.random() < chance / 100.0 \
-                and dfn.ability not in ('CLEAR_BODY', 'WHITE_SMOKE'):
-            k = STAT_DROP_HIT[e]
-            if dfn.stage[k] > -6:
-                dfn.stage[k] -= 1
-                att.stat_drops += 1
-        if e in SELF_UP_HIT and rng.random() < chance / 100.0:
-            for k, d in SELF_UP_HIT[e].items():
-                att.stage[k] = min(6, att.stage[k] + d)
-        # contact-status abilities on the (surviving) defender vs a physical hit
-        if m.get('contact') and not att.fainted and att.status is None:
-            cs = CONTACT_STATUS.get(dfn.ability)
-            if cs and not status_blocked(att, cs) and rng.random() < CONTACT_STATUS_CHANCE:
-                att.status = cs
-                apply_synchronize(att, dfn, cs)
+        secondary_effects(att, dfn, m, e, rng, foe_moved, dfn_side)
+        for mon in (dfn, att):
+            white_herb(mon)
+        if e == 'EFFECT_THIEF' and att.item is None and dfn.item and dfn.sub_hp <= 0 \
+                and dfn.ability != 'STICKY_HOLD':
+            att.item = dfn.item
+            lose_item(dfn)
+        if e == 'EFFECT_BUG_BITE' and dfn.item and is_berry(dfn.item) \
+                and dfn.ability not in ('STICKY_HOLD', 'UNNERVE'):
+            berry = dfn.item
+            lose_item(dfn)
+            eat_berry(att, berry, forced=True)
+        check_hp_berry(att)
+        if m.get('sound') and mechanics.held(att) == 'HELD_THROAT_SPRAY' and not att.fainted:
+            mechanics.raise_stat(att, 'spa', 1)
+            lose_item(att)
         if e in PIVOT_EFFECTS:
             _pivot(att_side, dfn_side, moves, chart)
         return
 
     # ---- status / utility moves ----
+    if ('bounceback' in m.get('script', ()) and dfn.ability == 'MAGIC_BOUNCE'
+            and att.ability != 'MAGIC_BOUNCE' and att.ability not in mechanics.MOLD_BREAKERS):
+        att, dfn = dfn, att                     # Magic Bounce sends it back
+        att_side, dfn_side = dfn_side, att_side
     if (dfn.sub_hp > 0 and not m.get('sound') and att.ability != 'INFILTRATOR'
             and (e in INFLICT or e in DROP or e in ('EFFECT_LEECH_SEED', 'EFFECT_SWAGGER',
                                                     'EFFECT_TRICK', 'EFFECT_MEAN_LOOK',
@@ -1335,9 +1801,43 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         return
     if e in BOOST:
         for k, d in BOOST[e].items():
-            att.stage[k] = max(-6, min(6, att.stage.get(k, 0) + d))
-        if e == 'EFFECT_SHELL_SMASH':
-            pass
+            mechanics.raise_stat(att, k, d)        # Contrary inverts
+        if e == 'EFFECT_DEFENSE_CURL':
+            att.curled = True                      # doubles Rollout
+        return
+    if e == 'EFFECT_ATTRACT':
+        if try_attract(att, dfn):
+            att.status_infl += 1
+        return
+    if e == 'EFFECT_DISABLE':
+        # DoEncoreDisable: the target's last move, if it has PP, for 4 uses
+        last = dfn.last_move
+        if (dfn.disabled is None and last is not None and last >= 0 and dfn.pp[last] > 0
+                and not dfn.semi_inv):
+            dfn.disabled, dfn.disable_turns = last, 5
+        return
+    if e == 'EFFECT_DESTINY_BOND':
+        att.destiny_bond = not att.destiny_bond    # fails (and clears) if used twice running
+        return
+    if e == 'EFFECT_SAFEGUARD':
+        if not att_side.safeguard:
+            att_side.safeguard = 5
+        return
+    if e == 'EFFECT_FORESIGHT':
+        if not dfn.semi_inv:
+            dfn.identified = True
+        return
+    if e == 'EFFECT_SKILL_SWAP':
+        if (att.ability and dfn.ability and not dfn.semi_inv
+                and 'NO_SWAP' not in mechanics.ABILITY_FLAGS.get(att.ability, [])
+                and 'NO_SWAP' not in mechanics.ABILITY_FLAGS.get(dfn.ability, [])):
+            att.ability, dfn.ability = dfn.ability, att.ability
+            att.flash_fire = dfn.flash_fire = att.unburden = dfn.unburden = False
+            att.cud_chew = dfn.cud_chew = None
+            entry_abilities(att_side, dfn_side)
+            entry_abilities(dfn_side, att_side)
+        return
+    if e in ('EFFECT_SPLASH', 'EFFECT_TELEPORT'):
         return
     if e == 'EFFECT_BELLY_DRUM':
         att.stage['atk'] = 6
@@ -1348,41 +1848,48 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         return
     if e in DROP:
         for k, d in DROP[e].items():
-            if k in dfn.stage and dfn.stage[k] > -6:
-                dfn.stage[k] = max(-6, min(6, dfn.stage[k] + d))
+            if mechanics.change_opp_stat(dfn, k, d, user=att):
                 att.stat_drops += 1
+        white_herb(dfn)
         return
-    if e in INFLICT and (m.get('powder') and ('GRASS' in dfn.types
-                                               or dfn.ability == 'OVERCOAT')
-                         or m.get('sound') and dfn.ability == 'SOUNDPROOF'):
-        return                              # powder / sound immunity
-    if e in INFLICT and dfn.status is None:
+    if e in SELF_STAGE:                     # Double Team / Minimize
+        for k, d in SELF_STAGE[e].items():
+            mechanics.raise_stat(att, k, d)
+        if e == 'EFFECT_MINIMIZE':
+            att.minimized = True
+        return
+    if e in INFLICT and m.get('sound') and dfn.ability == 'SOUNDPROOF':
+        return                              # sound immunity
+    if e in INFLICT and mechanics.status_move_immune(att, dfn, m, chart, eff_mult):
+        return                              # Thunder Wave vs Ground, Toxic vs Steel, powder
+    if e in INFLICT and nullified_status_move(att, dfn, m):
+        return
+    if e in INFLICT:
         st = INFLICT[e]
+        w = weather_of(att)
         if st == 'cnf':
-            if not status_blocked(dfn, st):
+            if mechanics.can_confuse(dfn, user=att):
                 dfn.confused = rng.randint(2, 5)
                 att.status_infl += 1
             return
-        if status_blocked(dfn, st):
+        if not mechanics.can_status(dfn, st, user=att, move=m, weather=w):
             return
         if st == 'slp':
             if SLEEP_CLAUSE and dfn_side.slept_by_foe:
                 return
-            dfn.status = 'slp'
-            dfn.sleep = rng.randint(1, 3)
             dfn_side.slept_by_foe = True
-        else:
-            dfn.status = st
-            if st == 'tox':
-                dfn.tox = 0
-            apply_synchronize(dfn, att, st)
+        inflict(dfn, st, rng, att)   # sleep counter 2-4 (BattleCommand_sleep), Synchronize, berry
         att.status_infl += 1
         return
     if m.get('id') == 'REST':
-        if att.hp < att.maxhp and att.status != 'slp':
+        # BattleCommand_heal: fails at full HP, while asleep, with Insomnia /
+        # Vital Spirit, or Leaf Guard in sun
+        if (att.hp < att.maxhp and att.status != 'slp'
+                and att.ability not in ('INSOMNIA', 'VITAL_SPIRIT')
+                and not (att.ability == 'LEAF_GUARD' and weather_of(att) == 'sun')):
             att.heal_done += (att.maxhp - att.hp) / att.maxhp
             att.hp = att.maxhp
-            att.status, att.tox, att.sleep = 'slp', 0, 2
+            att.status, att.tox, att.sleep = 'slp', 0, REST_SLEEP_TURNS + 1
         return
     if e in HEAL_EFFECTS:
         frac = 0.5
@@ -1492,8 +1999,8 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         att.focus_energy = True
         return
     if e == 'EFFECT_SWAGGER':
-        dfn.stage['atk'] = min(6, dfn.stage['atk'] + 2)
-        if not dfn.confused and not status_blocked(dfn, 'cnf'):
+        mechanics.change_opp_stat(dfn, 'atk', 2, user=att)   # forceraiseoppstat
+        if mechanics.can_confuse(dfn, user=att):
             dfn.confused = rng.randint(2, 5)
             att.status_infl += 1
         return
@@ -1565,6 +2072,9 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
     field = Field()
     A, B = Side([Pmon(*t) for t in team_a], field), Side([Pmon(*t) for t in team_b], field)
     A.foe, B.foe = B, A
+    for m in A.team + B.team:              # gender from the species' ratio
+        if m.female is not None:
+            m.gender = 'F' if rng.random() < m.female else 'M'
     apply_switch(A, 0, B, chart)
     apply_switch(B, 0, A, chart)
 
@@ -1619,11 +2129,11 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
         ia = choose_move(A, B, moves, chart, rng)
         ib = choose_move(B, A, moves, chart, rng)
         chosen = {id(A): ia, id(B): ib}
-        pa, pb = moves[A.mon.moves[ia]]['prio'], moves[B.mon.moves[ib]]['prio']
-        sa, sb = A.mon.stat('spe'), B.mon.stat('spe')
-        if field.trick_room:               # slower mons move first within a priority
-            sa, sb = -sa, -sb
-        a_first = (pa, sa) > (pb, sb) or ((pa, sa) == (pb, sb) and rng.random() < 0.5)
+        ma = moves[A.mon.moves[ia]] if ia is not None and ia >= 0 else moves['STRUGGLE']
+        mb = moves[B.mon.moves[ib]] if ib is not None and ib >= 0 else moves['STRUGGLE']
+        a_first = mechanics.a_moves_first(A.mon, B.mon, ma, mb, rng,
+                                          trick_room=bool(field.trick_room),
+                                          weather_a=weather_of(A.mon), weather_b=weather_of(B.mon))
         order = (A, B) if a_first else (B, A)
         A.switched = B.switched = False
 
@@ -1632,13 +2142,18 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
             if s.mon.fainted or foe.mon.fainted or s.switched or id(s) in acted:
                 continue                   # a mon dragged in this turn doesn't act
             foe_idx = chosen[id(foe)] if not foe.switched else None
+            foe_mv = None if foe_idx is None else (
+                'STRUGGLE' if foe_idx < 0 else foe.mon.moves[foe_idx])
             perform(s, foe, moves, chart, rng, idx=chosen[id(s)],
-                    foe_move=foe.mon.moves[foe_idx] if foe_idx is not None else None,
+                    foe_move=foe_mv,
                     foe_moved=id(foe) in moved)
             moved.add(id(s))
         for s in (A, B):
             s.mon.protected = False
             s.mon.flinched = False          # cleared at end of turn (endturn.asm)
+            s.mon.enduring = False
+            if s.safeguard:
+                s.safeguard -= 1
             s.reflect = max(0, s.reflect - 1)
             s.light_screen = max(0, s.light_screen - 1)
         # ---- residuals ----

@@ -14,13 +14,15 @@
 "WATER",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "DAMP",
 "WATER_ABSORB",
 "UNAWARE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 750
 },
 "hypno": {
 "id": "hypno",
@@ -36,13 +38,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "INSOMNIA",
 "BAD_DREAMS",
 "INNER_FOCUS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 756
 },
 "kangaskhan": {
 "id": "kangaskhan",
@@ -58,13 +62,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 1.0,
 "abilities": [
 "EARLY_BIRD",
 "SCRAPPY",
 "PARENTAL_BOND"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 800
 },
 "goldeen": {
 "id": "goldeen",
@@ -81,13 +87,15 @@
 "WATER",
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "WATER_VEIL",
 "LIGHTNING_ROD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 150
 },
 "clodsire": {
 "id": "clodsire",
@@ -104,13 +112,15 @@
 "POISON",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_POINT",
 "WATER_ABSORB",
 "UNAWARE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2230
 },
 "azumarill": {
 "id": "azumarill",
@@ -127,13 +137,15 @@
 "WATER",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "THICK_FAT",
 "HUGE_POWER",
 "SAP_SIPPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 285
 },
 "jolteon": {
 "id": "jolteon",
@@ -149,13 +161,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.125,
 "abilities": [
 "VOLT_ABSORB",
 "STATIC",
 "QUICK_FEET"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 245
 },
 "paras": {
 "id": "paras",
@@ -172,13 +186,15 @@
 "BUG",
 "GRASS"
 ],
+"female": 0.5,
 "abilities": [
 "EFFECT_SPORE",
 "DRY_SKIN",
 "DAMP"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 54
 },
 "typhlosion_plain": {
 "id": "typhlosion_plain",
@@ -195,13 +211,15 @@
 "FIRE",
 "GROUND"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "FLAME_BODY",
 "FLASH_FIRE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 795
 },
 "psyduck": {
 "id": "psyduck",
@@ -217,13 +235,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "DAMP",
 "CLOUD_NINE",
 "SWIFT_SWIM"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 196
 },
 "lugia": {
 "id": "lugia",
@@ -240,13 +260,15 @@
 "WATER",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "DRIZZLE",
 "MULTISCALE"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 2160
 },
 "doduo": {
 "id": "doduo",
@@ -263,13 +285,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "EARLY_BIRD",
 "TANGLED_FEET"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 392
 },
 "aerodactyl": {
 "id": "aerodactyl",
@@ -286,13 +310,15 @@
 "ROCK",
 "FLYING"
 ],
+"female": 0.125,
 "abilities": [
 "ROCK_HEAD",
 "UNNERVE",
 "TOUGH_CLAWS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 590
 },
 "nidoqueen": {
 "id": "nidoqueen",
@@ -309,13 +335,15 @@
 "POISON",
 "GROUND"
 ],
+"female": 1.0,
 "abilities": [
 "POISON_POINT",
 "RIVALRY",
 "SHEER_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 600
 },
 "grimer_alolan": {
 "id": "grimer_alolan",
@@ -332,13 +360,15 @@
 "POISON",
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_TOUCH",
 "GLUTTONY",
 "CORROSION"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 420
 },
 "girafarig": {
 "id": "girafarig",
@@ -355,13 +385,15 @@
 "PSYCHIC",
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "EARLY_BIRD",
 "SAP_SIPPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 415
 },
 "poliwag": {
 "id": "poliwag",
@@ -377,13 +409,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "WATER_ABSORB",
 "DAMP",
 "SWIFT_SWIM"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 124
 },
 "qwilfish_hisuian": {
 "id": "qwilfish_hisuian",
@@ -400,13 +434,15 @@
 "DARK",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_POINT",
 "SWIFT_SWIM",
 "INTIMIDATE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 39
 },
 "raichu_alolan": {
 "id": "raichu_alolan",
@@ -423,13 +459,15 @@
 "ELECTRIC",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "STATIC",
 "MOTOR_DRIVE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 210
 },
 "venusaur": {
 "id": "venusaur",
@@ -446,13 +484,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.125,
 "abilities": [
 "OVERGROW",
 "CHLOROPHYLL",
 "THICK_FAT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1000
 },
 "kingdra": {
 "id": "kingdra",
@@ -469,13 +509,15 @@
 "WATER",
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "SNIPER",
 "DAMP"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1520
 },
 "shuckle": {
 "id": "shuckle",
@@ -492,13 +534,15 @@
 "BUG",
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "SOLID_ROCK",
 "GLUTTONY",
 "CONTRARY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 205
 },
 "wobbuffet": {
 "id": "wobbuffet",
@@ -514,13 +558,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "SHADOW_TAG",
 "SHADOW_TAG",
 "SHADOW_TAG"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 285
 },
 "honchkrow": {
 "id": "honchkrow",
@@ -537,13 +583,15 @@
 "DARK",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INSOMNIA",
 "SUPER_LUCK",
 "MOXIE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 273
 },
 "arbok": {
 "id": "arbok",
@@ -559,13 +607,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "INTIMIDATE",
 "SHED_SKIN",
 "UNNERVE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 650
 },
 "poliwhirl": {
 "id": "poliwhirl",
@@ -581,13 +631,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "WATER_ABSORB",
 "DAMP",
 "SWIFT_SWIM"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 200
 },
 "remoraid": {
 "id": "remoraid",
@@ -603,13 +655,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "HUSTLE",
 "SNIPER",
 "SNIPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 120
 },
 "weezing_plain": {
 "id": "weezing_plain",
@@ -625,13 +679,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "NEUTRALIZING_GAS",
 "STENCH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 95
 },
 "ponyta_plain": {
 "id": "ponyta_plain",
@@ -647,13 +703,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "FLASH_FIRE",
 "FLAME_BODY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "nidoran_f": {
 "id": "nidoran_f",
@@ -669,13 +727,15 @@
 "types": [
 "POISON"
 ],
+"female": 1.0,
 "abilities": [
 "POISON_POINT",
 "RIVALRY",
 "HUSTLE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 70
 },
 "dragonair": {
 "id": "dragonair",
@@ -691,13 +751,15 @@
 "types": [
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "SHED_SKIN",
 "SHED_SKIN",
 "MARVEL_SCALE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 165
 },
 "corsola_galarian": {
 "id": "corsola_galarian",
@@ -714,13 +776,15 @@
 "GHOST",
 "ROCK"
 ],
+"female": 0.75,
 "abilities": [
 "WEAK_ARMOR",
 "WEAK_ARMOR",
 "CURSED_BODY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 5
 },
 "ponyta_galarian": {
 "id": "ponyta_galarian",
@@ -736,13 +800,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "PASTEL_VEIL",
 "ANTICIPATION"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 240
 },
 "totodile": {
 "id": "totodile",
@@ -758,13 +824,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "TORRENT",
 "GUTS",
 "SHEER_FORCE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 95
 },
 "xatu": {
 "id": "xatu",
@@ -781,13 +849,15 @@
 "PSYCHIC",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SYNCHRONIZE",
 "EARLY_BIRD",
 "MAGIC_BOUNCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 150
 },
 "pidgeot": {
 "id": "pidgeot",
@@ -804,13 +874,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "TANGLED_FEET",
 "NO_GUARD"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 395
 },
 "azurill": {
 "id": "azurill",
@@ -827,13 +899,15 @@
 "NORMAL",
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "THICK_FAT",
 "HUGE_POWER",
 "SAP_SIPPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 20
 },
 "spearow": {
 "id": "spearow",
@@ -850,13 +924,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "KEEN_EYE",
 "SNIPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 20
 },
 "scyther": {
 "id": "scyther",
@@ -873,13 +949,15 @@
 "BUG",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "TECHNICIAN",
 "STEADFAST"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 560
 },
 "meowth_galarian": {
 "id": "meowth_galarian",
@@ -895,13 +973,15 @@
 "types": [
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "BATTLE_ARMOR",
 "TOUGH_CLAWS",
 "STEELY_SPIRIT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 75
 },
 "alakazam": {
 "id": "alakazam",
@@ -917,13 +997,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.25,
 "abilities": [
 "SYNCHRONIZE",
 "MAGIC_GUARD",
 "TRACE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 480
 },
 "mareep": {
 "id": "mareep",
@@ -939,13 +1021,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "FLUFFY",
 "MOTOR_DRIVE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 78
 },
 "vulpix_alolan": {
 "id": "vulpix_alolan",
@@ -961,13 +1045,15 @@
 "types": [
 "ICE"
 ],
+"female": 0.75,
 "abilities": [
 "SNOW_CLOAK",
 "SNOW_CLOAK",
 "SNOW_WARNING"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 99
 },
 "cursola": {
 "id": "cursola",
@@ -984,13 +1070,15 @@
 "GHOST",
 "ROCK"
 ],
+"female": 0.75,
 "abilities": [
 "WEAK_ARMOR",
 "WEAK_ARMOR",
 "PERISH_BODY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 4
 },
 "cloyster": {
 "id": "cloyster",
@@ -1007,13 +1095,15 @@
 "WATER",
 "ICE"
 ],
+"female": 0.5,
 "abilities": [
 "SHELL_ARMOR",
 "SKILL_LINK",
 "OVERCOAT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1325
 },
 "horsea": {
 "id": "horsea",
@@ -1029,13 +1119,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "SNIPER",
 "DAMP"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 80
 },
 "celebi": {
 "id": "celebi",
@@ -1052,13 +1144,15 @@
 "GRASS",
 "FAIRY"
 ],
+"female": null,
 "abilities": [
 "NATURAL_CURE",
 "NATURAL_CURE",
 "MAGIC_GUARD"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 50
 },
 "wigglytuff": {
 "id": "wigglytuff",
@@ -1075,13 +1169,15 @@
 "NORMAL",
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "CUTE_CHARM",
 "COMPETITIVE",
 "SOUNDPROOF"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 120
 },
 "voltorb_plain": {
 "id": "voltorb_plain",
@@ -1097,13 +1193,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": null,
 "abilities": [
 "SOUNDPROOF",
 "STATIC",
 "AFTERMATH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 104
 },
 "koffing": {
 "id": "koffing",
@@ -1119,13 +1217,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "NEUTRALIZING_GAS",
 "STENCH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 10
 },
 "unown": {
 "id": "unown",
@@ -1141,13 +1241,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": null,
 "abilities": [
 "LEVITATE",
 "LEVITATE",
 "LEVITATE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 50
 },
 "blastoise": {
 "id": "blastoise",
@@ -1164,13 +1266,15 @@
 "WATER",
 "STEEL"
 ],
+"female": 0.125,
 "abilities": [
 "TORRENT",
 "RAIN_DISH",
 "MEGA_LAUNCHER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 855
 },
 "togepi": {
 "id": "togepi",
@@ -1186,13 +1290,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.125,
 "abilities": [
 "HUSTLE",
 "SERENE_GRACE",
 "SUPER_LUCK"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 15
 },
 "sneasel_hisuian": {
 "id": "sneasel_hisuian",
@@ -1209,13 +1315,15 @@
 "POISON",
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "KEEN_EYE",
 "PICKPOCKET"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 270
 },
 "eevee": {
 "id": "eevee",
@@ -1231,13 +1339,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.125,
 "abilities": [
 "RUN_AWAY",
 "ADAPTABILITY",
 "ANTICIPATION"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 65
 },
 "muk_alolan": {
 "id": "muk_alolan",
@@ -1254,13 +1364,15 @@
 "POISON",
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_TOUCH",
 "GLUTTONY",
 "CORROSION"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 520
 },
 "snorlax": {
 "id": "snorlax",
@@ -1276,13 +1388,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.125,
 "abilities": [
 "IMMUNITY",
 "THICK_FAT",
 "GLUTTONY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 4600
 },
 "ariados": {
 "id": "ariados",
@@ -1299,13 +1413,15 @@
 "BUG",
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "INSOMNIA",
 "SNIPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 335
 },
 "aipom": {
 "id": "aipom",
@@ -1321,13 +1437,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "PICKUP",
 "SKILL_LINK"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 115
 },
 "mr__rime": {
 "id": "mr__rime",
@@ -1344,13 +1462,15 @@
 "ICE",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "TANGLED_FEET",
 "SCREEN_CLEANER",
 "ICE_BODY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 582
 },
 "wartortle": {
 "id": "wartortle",
@@ -1366,13 +1486,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "TORRENT",
 "RAIN_DISH",
 "SHELL_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 225
 },
 "cyndaquil": {
 "id": "cyndaquil",
@@ -1388,13 +1510,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "FLAME_BODY",
 "FLASH_FIRE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 79
 },
 "rhyhorn": {
 "id": "rhyhorn",
@@ -1411,13 +1535,15 @@
 "GROUND",
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "SOLID_ROCK",
 "RECKLESS"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1150
 },
 "zubat": {
 "id": "zubat",
@@ -1434,13 +1560,15 @@
 "POISON",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "ANTICIPATION",
 "INFILTRATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 75
 },
 "graveler_alolan": {
 "id": "graveler_alolan",
@@ -1457,13 +1585,15 @@
 "ROCK",
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "MAGNET_PULL",
 "STURDY",
 "GALVANIZE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1100
 },
 "ampharos": {
 "id": "ampharos",
@@ -1480,13 +1610,15 @@
 "ELECTRIC",
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "STATIC",
 "MOLD_BREAKER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 615
 },
 "ledian": {
 "id": "ledian",
@@ -1503,13 +1635,15 @@
 "BUG",
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "EARLY_BIRD",
 "IRON_FIST"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 356
 },
 "venomoth": {
 "id": "venomoth",
@@ -1526,13 +1660,15 @@
 "BUG",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "SHIELD_DUST",
 "TINTED_LENS",
 "WONDER_SKIN"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 125
 },
 "octillery": {
 "id": "octillery",
@@ -1549,13 +1685,15 @@
 "WATER",
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "SUCTION_CUPS",
 "SNIPER",
 "SNIPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 285
 },
 "ambipom": {
 "id": "ambipom",
@@ -1571,13 +1709,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "TECHNICIAN",
 "PICKUP",
 "SKILL_LINK"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 203
 },
 "electabuzz": {
 "id": "electabuzz",
@@ -1593,13 +1733,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.25,
 "abilities": [
 "STATIC",
 "STATIC",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "porygon2": {
 "id": "porygon2",
@@ -1615,13 +1757,15 @@
 "types": [
 "NORMAL"
 ],
+"female": null,
 "abilities": [
 "TRACE",
 "DOWNLOAD",
 "ANALYTIC"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 325
 },
 "nidorino": {
 "id": "nidorino",
@@ -1637,13 +1781,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.0,
 "abilities": [
 "POISON_POINT",
 "RIVALRY",
 "HUSTLE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 195
 },
 "metapod": {
 "id": "metapod",
@@ -1659,13 +1805,15 @@
 "types": [
 "BUG"
 ],
+"female": 0.5,
 "abilities": [
 "SHED_SKIN",
 "SHED_SKIN",
 "SHED_SKIN"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 99
 },
 "gliscor": {
 "id": "gliscor",
@@ -1682,13 +1830,15 @@
 "GROUND",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "HYPER_CUTTER",
 "SAND_VEIL",
 "POISON_HEAL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 425
 },
 "persian_alolan": {
 "id": "persian_alolan",
@@ -1704,13 +1854,15 @@
 "types": [
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "FUR_COAT",
 "TECHNICIAN",
 "RATTLED"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 330
 },
 "rapidash_plain": {
 "id": "rapidash_plain",
@@ -1726,13 +1878,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "FLASH_FIRE",
 "FLAME_BODY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 950
 },
 "steelix": {
 "id": "steelix",
@@ -1749,13 +1903,15 @@
 "STEEL",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SHEER_FORCE",
 "STURDY",
 "SAND_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 4000
 },
 "marowak_alolan": {
 "id": "marowak_alolan",
@@ -1772,13 +1928,15 @@
 "FIRE",
 "GHOST"
 ],
+"female": 0.5,
 "abilities": [
 "CURSED_BODY",
 "LIGHTNING_ROD",
 "ROCK_HEAD"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 340
 },
 "drowzee": {
 "id": "drowzee",
@@ -1794,13 +1952,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "INSOMNIA",
 "BAD_DREAMS",
 "INNER_FOCUS"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 324
 },
 "sudowoodo": {
 "id": "sudowoodo",
@@ -1816,13 +1976,15 @@
 "types": [
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "STURDY",
 "ROCK_HEAD",
 "RATTLED"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 380
 },
 "tauros_paldean": {
 "id": "tauros_paldean",
@@ -1838,13 +2000,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.0,
 "abilities": [
 "INTIMIDATE",
 "ANGER_POINT",
 "CUD_CHEW"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1150
 },
 "articuno_plain": {
 "id": "articuno_plain",
@@ -1861,13 +2025,15 @@
 "ICE",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "SNOW_WARNING",
 "SNOW_CLOAK"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 554
 },
 "squirtle": {
 "id": "squirtle",
@@ -1883,13 +2049,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "TORRENT",
 "RAIN_DISH",
 "SHELL_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 90
 },
 "magcargo": {
 "id": "magcargo",
@@ -1906,13 +2074,15 @@
 "FIRE",
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "MAGMA_ARMOR",
 "FLAME_BODY",
 "WEAK_ARMOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 550
 },
 "tyrogue": {
 "id": "tyrogue",
@@ -1928,13 +2098,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.0,
 "abilities": [
 "GUTS",
 "STEADFAST",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 210
 },
 "poliwrath": {
 "id": "poliwrath",
@@ -1951,13 +2123,15 @@
 "WATER",
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "WATER_ABSORB",
 "DAMP",
 "SWIFT_SWIM"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 540
 },
 "clefairy": {
 "id": "clefairy",
@@ -1973,13 +2147,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "CUTE_CHARM",
 "MAGIC_GUARD",
 "CUTE_CHARM"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 75
 },
 "electivire": {
 "id": "electivire",
@@ -1996,13 +2172,15 @@
 "ELECTRIC",
 "FIGHTING"
 ],
+"female": 0.25,
 "abilities": [
 "MOTOR_DRIVE",
 "MOTOR_DRIVE",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1386
 },
 "porygon_z": {
 "id": "porygon_z",
@@ -2018,13 +2196,15 @@
 "types": [
 "NORMAL"
 ],
+"female": null,
 "abilities": [
 "ADAPTABILITY",
 "DOWNLOAD",
 "ANALYTIC"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 340
 },
 "ninetales_plain": {
 "id": "ninetales_plain",
@@ -2041,13 +2221,15 @@
 "FIRE",
 "GHOST"
 ],
+"female": 0.75,
 "abilities": [
 "FLASH_FIRE",
 "FOREWARN",
 "DROUGHT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 199
 },
 "sneasel_plain": {
 "id": "sneasel_plain",
@@ -2064,13 +2246,15 @@
 "DARK",
 "ICE"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "KEEN_EYE",
 "PICKPOCKET"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 280
 },
 "espeon": {
 "id": "espeon",
@@ -2086,13 +2270,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.125,
 "abilities": [
 "SYNCHRONIZE",
 "MAGIC_GUARD",
 "MAGIC_BOUNCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 265
 },
 "sirfetch_d": {
 "id": "sirfetch_d",
@@ -2108,13 +2294,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "STEADFAST",
 "STEADFAST",
 "SCRAPPY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1170
 },
 "sandshrew_plain": {
 "id": "sandshrew_plain",
@@ -2130,13 +2318,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_VEIL",
 "SHARPNESS",
 "SAND_RUSH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 120
 },
 "spinarak": {
 "id": "spinarak",
@@ -2153,13 +2343,15 @@
 "BUG",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "INSOMNIA",
 "SNIPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 85
 },
 "mr__mime_galarian": {
 "id": "mr__mime_galarian",
@@ -2176,13 +2368,15 @@
 "ICE",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "VITAL_SPIRIT",
 "SCREEN_CLEANER",
 "ICE_BODY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 568
 },
 "stantler": {
 "id": "stantler",
@@ -2199,13 +2393,15 @@
 "NORMAL",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "INTIMIDATE",
 "FRISK",
 "SAP_SIPPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 712
 },
 "abra": {
 "id": "abra",
@@ -2221,13 +2417,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.25,
 "abilities": [
 "SYNCHRONIZE",
 "MAGIC_GUARD",
 "TRACE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 195
 },
 "bayleef": {
 "id": "bayleef",
@@ -2243,13 +2441,15 @@
 "types": [
 "GRASS"
 ],
+"female": 0.125,
 "abilities": [
 "OVERGROW",
 "NATURAL_CURE",
 "LEAF_GUARD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 158
 },
 "hitmonlee": {
 "id": "hitmonlee",
@@ -2265,13 +2465,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.0,
 "abilities": [
 "LIMBER",
 "RECKLESS",
 "UNBURDEN"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 498
 },
 "tauros_paldean_fire": {
 "id": "tauros_paldean_fire",
@@ -2288,6 +2490,7 @@
 "FIGHTING",
 "FIRE"
 ],
+"female": 0.0,
 "abilities": [
 "INTIMIDATE",
 "ANGER_POINT",
@@ -2310,13 +2513,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "GORILLA_TACTICS",
 "ANGER_POINT",
 "DEFIANT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 320
 },
 "growlithe_plain": {
 "id": "growlithe_plain",
@@ -2333,13 +2538,15 @@
 "FIRE",
 "NORMAL"
 ],
+"female": 0.25,
 "abilities": [
 "INTIMIDATE",
 "FLASH_FIRE",
 "JUSTIFIED"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 190
 },
 "dragonite": {
 "id": "dragonite",
@@ -2356,13 +2563,15 @@
 "DRAGON",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "MARVEL_SCALE",
 "INNER_FOCUS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2100
 },
 "togetic": {
 "id": "togetic",
@@ -2379,13 +2588,15 @@
 "FAIRY",
 "FLYING"
 ],
+"female": 0.125,
 "abilities": [
 "HUSTLE",
 "SERENE_GRACE",
 "SUPER_LUCK"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 32
 },
 "nidoran_m": {
 "id": "nidoran_m",
@@ -2401,13 +2612,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.0,
 "abilities": [
 "POISON_POINT",
 "RIVALRY",
 "HUSTLE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 90
 },
 "exeggutor_alolan": {
 "id": "exeggutor_alolan",
@@ -2424,13 +2637,15 @@
 "GRASS",
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "FRISK",
 "FRISK",
 "HARVEST"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 4156
 },
 "sunflora": {
 "id": "sunflora",
@@ -2447,13 +2662,15 @@
 "GRASS",
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "SOLAR_POWER",
 "EARLY_BIRD"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 85
 },
 "skiploom": {
 "id": "skiploom",
@@ -2470,13 +2687,15 @@
 "GRASS",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "WIND_RIDER",
 "INFILTRATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 10
 },
 "houndoom": {
 "id": "houndoom",
@@ -2493,13 +2712,15 @@
 "DARK",
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "EARLY_BIRD",
 "FLASH_FIRE",
 "SOLAR_POWER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 350
 },
 "raichu_plain": {
 "id": "raichu_plain",
@@ -2515,13 +2736,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "LIGHTNING_ROD",
 "NO_GUARD"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "porygon": {
 "id": "porygon",
@@ -2537,13 +2760,15 @@
 "types": [
 "NORMAL"
 ],
+"female": null,
 "abilities": [
 "TRACE",
 "DOWNLOAD",
 "ANALYTIC"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 365
 },
 "golduck": {
 "id": "golduck",
@@ -2560,13 +2785,15 @@
 "WATER",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "DAMP",
 "CLOUD_NINE",
 "SWIFT_SWIM"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 766
 },
 "golem_alolan": {
 "id": "golem_alolan",
@@ -2583,13 +2810,15 @@
 "ROCK",
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "GALVANIZE",
 "STURDY",
 "MAGNET_PULL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 3160
 },
 "diglett_plain": {
 "id": "diglett_plain",
@@ -2605,13 +2834,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_VEIL",
 "ARENA_TRAP",
 "SAND_FORCE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 8
 },
 "yanma": {
 "id": "yanma",
@@ -2628,13 +2859,15 @@
 "BUG",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SPEED_BOOST",
 "COMPOUND_EYES",
 "FRISK"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 380
 },
 "gengar": {
 "id": "gengar",
@@ -2651,13 +2884,15 @@
 "GHOST",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CURSED_BODY",
 "LEVITATE",
 "SHADOW_TAG"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 405
 },
 "weavile": {
 "id": "weavile",
@@ -2674,13 +2909,15 @@
 "DARK",
 "ICE"
 ],
+"female": 0.5,
 "abilities": [
 "PRESSURE",
 "TECHNICIAN",
 "PICKPOCKET"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 340
 },
 "chikorita": {
 "id": "chikorita",
@@ -2696,13 +2933,15 @@
 "types": [
 "GRASS"
 ],
+"female": 0.125,
 "abilities": [
 "OVERGROW",
 "NATURAL_CURE",
 "LEAF_GUARD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 64
 },
 "slowpoke_plain": {
 "id": "slowpoke_plain",
@@ -2719,13 +2958,15 @@
 "WATER",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "OBLIVIOUS",
 "OWN_TEMPO",
 "REGENERATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 360
 },
 "misdreavus": {
 "id": "misdreavus",
@@ -2741,13 +2982,15 @@
 "types": [
 "GHOST"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "LEVITATE",
 "LEVITATE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 10
 },
 "charmeleon": {
 "id": "charmeleon",
@@ -2763,13 +3006,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "SOLAR_POWER",
 "FLAME_BODY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 190
 },
 "noctowl": {
 "id": "noctowl",
@@ -2786,13 +3031,15 @@
 "GHOST",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INSOMNIA",
 "KEEN_EYE",
 "TINTED_LENS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 408
 },
 "overqwil": {
 "id": "overqwil",
@@ -2809,13 +3056,15 @@
 "DARK",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "INTIMIDATE",
 "SWIFT_SWIM",
 "POISON_POINT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 605
 },
 "granbull": {
 "id": "granbull",
@@ -2831,13 +3080,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "INTIMIDATE",
 "QUICK_FEET",
 "RATTLED"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 487
 },
 "marill": {
 "id": "marill",
@@ -2854,13 +3105,15 @@
 "WATER",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "THICK_FAT",
 "HUGE_POWER",
 "SAP_SIPPER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 85
 },
 "caterpie": {
 "id": "caterpie",
@@ -2876,13 +3129,15 @@
 "types": [
 "BUG"
 ],
+"female": 0.5,
 "abilities": [
 "SHIELD_DUST",
 "SHIELD_DUST",
 "RUN_AWAY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 29
 },
 "larvitar": {
 "id": "larvitar",
@@ -2899,13 +3154,15 @@
 "ROCK",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "GUTS",
 "BATTLE_ARMOR",
 "SAND_VEIL"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 720
 },
 "machoke": {
 "id": "machoke",
@@ -2921,13 +3178,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.25,
 "abilities": [
 "GUTS",
 "NO_GUARD",
 "STEADFAST"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 705
 },
 "smoochum": {
 "id": "smoochum",
@@ -2944,13 +3203,15 @@
 "ICE",
 "PSYCHIC"
 ],
+"female": 1.0,
 "abilities": [
 "OBLIVIOUS",
 "FILTER",
 "HYDRATION"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 60
 },
 "tauros_paldean_water": {
 "id": "tauros_paldean_water",
@@ -2967,6 +3228,7 @@
 "FIGHTING",
 "WATER"
 ],
+"female": 0.0,
 "abilities": [
 "INTIMIDATE",
 "ANGER_POINT",
@@ -2990,13 +3252,15 @@
 "BUG",
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "MOXIE",
 "GUTS",
 "SKILL_LINK"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 540
 },
 "bellossom": {
 "id": "bellossom",
@@ -3013,13 +3277,15 @@
 "GRASS",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "OWN_TEMPO"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 58
 },
 "magikarp": {
 "id": "magikarp",
@@ -3035,13 +3301,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "SWIFT_SWIM",
 "RATTLED"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 100
 },
 "gyarados": {
 "id": "gyarados",
@@ -3058,13 +3326,15 @@
 "WATER",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INTIMIDATE",
 "MOXIE",
 "MOLD_BREAKER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2350
 },
 "rhydon": {
 "id": "rhydon",
@@ -3081,13 +3351,15 @@
 "GROUND",
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "SOLID_ROCK",
 "RECKLESS"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1200
 },
 "seadra": {
 "id": "seadra",
@@ -3103,13 +3375,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_POINT",
 "SNIPER",
 "DAMP"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 250
 },
 "perrserker": {
 "id": "perrserker",
@@ -3125,13 +3399,15 @@
 "types": [
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "BATTLE_ARMOR",
 "TOUGH_CLAWS",
 "STEELY_SPIRIT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 280
 },
 "bulbasaur": {
 "id": "bulbasaur",
@@ -3148,13 +3424,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.125,
 "abilities": [
 "OVERGROW",
 "CHLOROPHYLL",
 "EFFECT_SPORE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 69
 },
 "rapidash_galarian": {
 "id": "rapidash_galarian",
@@ -3171,13 +3449,15 @@
 "PSYCHIC",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "PASTEL_VEIL",
 "ANTICIPATION"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 800
 },
 "hitmonchan": {
 "id": "hitmonchan",
@@ -3193,13 +3473,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.0,
 "abilities": [
 "KEEN_EYE",
 "IRON_FIST",
 "INNER_FOCUS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 502
 },
 "slowbro_galarian": {
 "id": "slowbro_galarian",
@@ -3216,13 +3498,15 @@
 "POISON",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "QUICK_DRAW",
 "OWN_TEMPO",
 "REGENERATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 705
 },
 "lanturn": {
 "id": "lanturn",
@@ -3239,13 +3523,15 @@
 "WATER",
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "VOLT_ABSORB",
 "ILLUMINATE",
 "WATER_ABSORB"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 225
 },
 "mantine": {
 "id": "mantine",
@@ -3262,13 +3548,15 @@
 "WATER",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "WATER_ABSORB",
 "WATER_VEIL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2200
 },
 "slowbro_plain": {
 "id": "slowbro_plain",
@@ -3285,13 +3573,15 @@
 "WATER",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "OBLIVIOUS",
 "OWN_TEMPO",
 "REGENERATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 785
 },
 "elekid": {
 "id": "elekid",
@@ -3307,13 +3597,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.25,
 "abilities": [
 "STATIC",
 "STATIC",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 235
 },
 "delibird": {
 "id": "delibird",
@@ -3330,13 +3622,15 @@
 "ICE",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "VITAL_SPIRIT",
 "HUSTLE",
 "INSOMNIA"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 160
 },
 "pikachu": {
 "id": "pikachu",
@@ -3352,13 +3646,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "STATIC",
 "LIGHTNING_ROD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 60
 },
 "quilava": {
 "id": "quilava",
@@ -3374,13 +3670,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "FLAME_BODY",
 "FLASH_FIRE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 190
 },
 "shellder": {
 "id": "shellder",
@@ -3396,13 +3694,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "SHELL_ARMOR",
 "SKILL_LINK",
 "OVERCOAT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 40
 },
 "dugtrio_alolan": {
 "id": "dugtrio_alolan",
@@ -3419,13 +3719,15 @@
 "GROUND",
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_VEIL",
 "TANGLING_HAIR",
 "SAND_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 666
 },
 "zapdos_plain": {
 "id": "zapdos_plain",
@@ -3442,13 +3744,15 @@
 "ELECTRIC",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "DRIZZLE",
 "STATIC"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 526
 },
 "pupitar": {
 "id": "pupitar",
@@ -3465,13 +3769,15 @@
 "ROCK",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SHED_SKIN",
 "SHED_SKIN",
 "BATTLE_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1520
 },
 "vulpix_plain": {
 "id": "vulpix_plain",
@@ -3487,13 +3793,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.75,
 "abilities": [
 "FLASH_FIRE",
 "FOREWARN",
 "DROUGHT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 99
 },
 "kabutops": {
 "id": "kabutops",
@@ -3510,13 +3818,15 @@
 "ROCK",
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "SWIFT_SWIM",
 "BATTLE_ARMOR",
 "WEAK_ARMOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 405
 },
 "ledyba": {
 "id": "ledyba",
@@ -3533,13 +3843,15 @@
 "BUG",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "EARLY_BIRD",
 "RATTLED"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 108
 },
 "meganium": {
 "id": "meganium",
@@ -3556,13 +3868,15 @@
 "GRASS",
 "FAIRY"
 ],
+"female": 0.125,
 "abilities": [
 "OVERGROW",
 "NATURAL_CURE",
 "MEGA_SOL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1005
 },
 "chansey": {
 "id": "chansey",
@@ -3578,13 +3892,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 1.0,
 "abilities": [
 "NATURAL_CURE",
 "SERENE_GRACE",
 "NATURAL_CURE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 346
 },
 "piloswine": {
 "id": "piloswine",
@@ -3601,13 +3917,15 @@
 "ICE",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "OBLIVIOUS",
 "SNOW_CLOAK",
 "THICK_FAT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 558
 },
 "raticate_plain": {
 "id": "raticate_plain",
@@ -3623,13 +3941,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "GUTS",
 "HUSTLE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 185
 },
 "rhyperior": {
 "id": "rhyperior",
@@ -3646,13 +3966,15 @@
 "STEEL",
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "LIGHTNING_ROD",
 "SOLID_ROCK",
 "RECKLESS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2828
 },
 "sylveon": {
 "id": "sylveon",
@@ -3668,13 +3990,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.125,
 "abilities": [
 "CUTE_CHARM",
 "SERENE_GRACE",
 "PIXILATE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 235
 },
 "flaaffy": {
 "id": "flaaffy",
@@ -3690,13 +4014,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "FLUFFY",
 "MOTOR_DRIVE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 133
 },
 "kadabra": {
 "id": "kadabra",
@@ -3712,13 +4038,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.25,
 "abilities": [
 "SYNCHRONIZE",
 "MAGIC_GUARD",
 "TRACE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 565
 },
 "lickitung": {
 "id": "lickitung",
@@ -3734,13 +4062,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "OWN_TEMPO",
 "OBLIVIOUS",
 "CLOUD_NINE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 655
 },
 "dudunsparce": {
 "id": "dudunsparce",
@@ -3757,13 +4087,15 @@
 "NORMAL",
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "SERENE_GRACE",
 "RUN_AWAY",
 "SAND_STREAM"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 392
 },
 "vileplume": {
 "id": "vileplume",
@@ -3780,13 +4112,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "EFFECT_SPORE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 186
 },
 "gloom": {
 "id": "gloom",
@@ -3803,13 +4137,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "STENCH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 86
 },
 "mewtwo_plain": {
 "id": "mewtwo_plain",
@@ -3825,13 +4161,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "INSOMNIA",
 "UNNERVE"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 1220
 },
 "bonsly": {
 "id": "bonsly",
@@ -3847,13 +4185,15 @@
 "types": [
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "STURDY",
 "ROCK_HEAD",
 "RATTLED"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 150
 },
 "pineco": {
 "id": "pineco",
@@ -3869,13 +4209,15 @@
 "types": [
 "BUG"
 ],
+"female": 0.5,
 "abilities": [
 "STURDY",
 "STURDY",
 "OVERCOAT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 72
 },
 "sandslash_alolan": {
 "id": "sandslash_alolan",
@@ -3892,13 +4234,15 @@
 "ICE",
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "SNOW_CLOAK",
 "IRON_BARBS",
 "SLUSH_RUSH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 550
 },
 "suicune": {
 "id": "suicune",
@@ -3914,13 +4258,15 @@
 "types": [
 "WATER"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "INNER_FOCUS",
 "WATER_ABSORB"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 1870
 },
 "butterfree": {
 "id": "butterfree",
@@ -3937,13 +4283,15 @@
 "BUG",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "COMPOUND_EYES",
 "LEVITATE",
 "TINTED_LENS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 320
 },
 "hoothoot": {
 "id": "hoothoot",
@@ -3960,13 +4308,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INSOMNIA",
 "KEEN_EYE",
 "TINTED_LENS"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 212
 },
 "furret": {
 "id": "furret",
@@ -3982,13 +4332,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "KEEN_EYE",
 "FRISK"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 325
 },
 "crobat": {
 "id": "crobat",
@@ -4005,13 +4357,15 @@
 "POISON",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "ANTICIPATION",
 "INFILTRATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 750
 },
 "mr__mime_plain": {
 "id": "mr__mime_plain",
@@ -4028,13 +4382,15 @@
 "PSYCHIC",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "SOUNDPROOF",
 "FILTER",
 "TECHNICIAN"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 545
 },
 "kabuto": {
 "id": "kabuto",
@@ -4051,13 +4407,15 @@
 "ROCK",
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "SWIFT_SWIM",
 "BATTLE_ARMOR",
 "WEAK_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 115
 },
 "mew": {
 "id": "mew",
@@ -4073,13 +4431,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": null,
 "abilities": [
 "SYNCHRONIZE",
 "SYNCHRONIZE",
 "MAGIC_GUARD"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 40
 },
 "chinchou": {
 "id": "chinchou",
@@ -4096,13 +4456,15 @@
 "WATER",
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "VOLT_ABSORB",
 "ILLUMINATE",
 "WATER_ABSORB"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 120
 },
 "exeggcute": {
 "id": "exeggcute",
@@ -4119,13 +4481,15 @@
 "GRASS",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "HARVEST"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 25
 },
 "croconaw": {
 "id": "croconaw",
@@ -4141,13 +4505,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "TORRENT",
 "GUTS",
 "SHEER_FORCE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 250
 },
 "glaceon": {
 "id": "glaceon",
@@ -4163,13 +4529,15 @@
 "types": [
 "ICE"
 ],
+"female": 0.125,
 "abilities": [
 "SNOW_CLOAK",
 "SNOW_WARNING",
 "ICE_BODY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 259
 },
 "ho_oh": {
 "id": "ho_oh",
@@ -4186,13 +4554,15 @@
 "FIRE",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "DROUGHT",
 "REGENERATOR"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 1990
 },
 "dunsparce": {
 "id": "dunsparce",
@@ -4209,13 +4579,15 @@
 "NORMAL",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SERENE_GRACE",
 "RUN_AWAY",
 "SAND_STREAM"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 140
 },
 "corsola_plain": {
 "id": "corsola_plain",
@@ -4232,13 +4604,15 @@
 "WATER",
 "ROCK"
 ],
+"female": 0.75,
 "abilities": [
 "REGENERATOR",
 "NATURAL_CURE",
 "HUSTLE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 50
 },
 "clefable": {
 "id": "clefable",
@@ -4254,13 +4628,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "CUTE_CHARM",
 "MAGIC_GUARD",
 "UNAWARE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 400
 },
 "togekiss": {
 "id": "togekiss",
@@ -4277,13 +4653,15 @@
 "FAIRY",
 "FLYING"
 ],
+"female": 0.125,
 "abilities": [
 "HUSTLE",
 "SERENE_GRACE",
 "SUPER_LUCK"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 380
 },
 "mantyke": {
 "id": "mantyke",
@@ -4300,13 +4678,15 @@
 "WATER",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "WATER_ABSORB",
 "WATER_VEIL"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 650
 },
 "sandshrew_alolan": {
 "id": "sandshrew_alolan",
@@ -4323,13 +4703,15 @@
 "ICE",
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "SNOW_CLOAK",
 "SHARPNESS",
 "SLUSH_RUSH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 400
 },
 "fearow": {
 "id": "fearow",
@@ -4346,13 +4728,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "KEEN_EYE",
 "SNIPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 380
 },
 "machamp": {
 "id": "machamp",
@@ -4368,13 +4752,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.25,
 "abilities": [
 "GUTS",
 "NO_GUARD",
 "STEADFAST"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1300
 },
 "jynx": {
 "id": "jynx",
@@ -4391,13 +4777,15 @@
 "ICE",
 "PSYCHIC"
 ],
+"female": 1.0,
 "abilities": [
 "OBLIVIOUS",
 "FILTER",
 "DRY_SKIN"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 406
 },
 "ninetales_alolan": {
 "id": "ninetales_alolan",
@@ -4414,13 +4802,15 @@
 "ICE",
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "SNOW_CLOAK",
 "SNOW_CLOAK",
 "SNOW_WARNING"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 199
 },
 "muk_plain": {
 "id": "muk_plain",
@@ -4436,13 +4826,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "STENCH",
 "STICKY_HOLD",
 "POISON_TOUCH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "golbat": {
 "id": "golbat",
@@ -4459,13 +4851,15 @@
 "POISON",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INNER_FOCUS",
 "ANTICIPATION",
 "INFILTRATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 550
 },
 "machop": {
 "id": "machop",
@@ -4481,13 +4875,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.25,
 "abilities": [
 "GUTS",
 "NO_GUARD",
 "STEADFAST"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 195
 },
 "forretress": {
 "id": "forretress",
@@ -4504,13 +4900,15 @@
 "BUG",
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "STURDY",
 "STURDY",
 "OVERCOAT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1258
 },
 "electrode_hisuian": {
 "id": "electrode_hisuian",
@@ -4527,13 +4925,15 @@
 "ELECTRIC",
 "GRASS"
 ],
+"female": null,
 "abilities": [
 "SOUNDPROOF",
 "STATIC",
 "AFTERMATH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 710
 },
 "entei": {
 "id": "entei",
@@ -4549,13 +4949,15 @@
 "types": [
 "FIRE"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "INNER_FOCUS",
 "FLASH_FIRE"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 1980
 },
 "hitmontop": {
 "id": "hitmontop",
@@ -4571,13 +4973,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.0,
 "abilities": [
 "INTIMIDATE",
 "TECHNICIAN",
 "STEADFAST"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 480
 },
 "magmortar": {
 "id": "magmortar",
@@ -4594,13 +4998,15 @@
 "FIRE",
 "FIGHTING"
 ],
+"female": 0.25,
 "abilities": [
 "FLAME_BODY",
 "FLAME_BODY",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 680
 },
 "phanpy": {
 "id": "phanpy",
@@ -4616,13 +5022,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "PICKUP",
 "PICKUP",
 "SAND_VEIL"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 335
 },
 "arcanine_hisuian": {
 "id": "arcanine_hisuian",
@@ -4639,13 +5047,15 @@
 "FIRE",
 "ROCK"
 ],
+"female": 0.25,
 "abilities": [
 "INTIMIDATE",
 "FLASH_FIRE",
 "ROCK_HEAD"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1680
 },
 "haunter": {
 "id": "haunter",
@@ -4662,13 +5072,15 @@
 "GHOST",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "LEVITATE",
 "LEVITATE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1
 },
 "slugma": {
 "id": "slugma",
@@ -4684,13 +5096,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "MAGMA_ARMOR",
 "FLAME_BODY",
 "WEAK_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 350
 },
 "marowak_plain": {
 "id": "marowak_plain",
@@ -4706,13 +5120,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "LIGHTNING_ROD",
 "BATTLE_ARMOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 450
 },
 "mime_jr_": {
 "id": "mime_jr_",
@@ -4729,13 +5145,15 @@
 "PSYCHIC",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "SOUNDPROOF",
 "FILTER",
 "TECHNICIAN"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 130
 },
 "jumpluff": {
 "id": "jumpluff",
@@ -4752,13 +5170,15 @@
 "GRASS",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "WIND_RIDER",
 "INFILTRATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 30
 },
 "rattata_plain": {
 "id": "rattata_plain",
@@ -4774,13 +5194,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "GUTS",
 "HUSTLE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 35
 },
 "tentacruel": {
 "id": "tentacruel",
@@ -4797,13 +5219,15 @@
 "WATER",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CLEAR_BODY",
 "LIQUID_OOZE",
 "RAIN_DISH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 550
 },
 "murkrow": {
 "id": "murkrow",
@@ -4820,13 +5244,15 @@
 "DARK",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "INSOMNIA",
 "SUPER_LUCK",
 "PRANKSTER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 21
 },
 "geodude_alolan": {
 "id": "geodude_alolan",
@@ -4843,13 +5269,15 @@
 "ROCK",
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "MAGNET_PULL",
 "STURDY",
 "GALVANIZE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 203
 },
 "natu": {
 "id": "natu",
@@ -4866,13 +5294,15 @@
 "PSYCHIC",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "SYNCHRONIZE",
 "EARLY_BIRD",
 "MAGIC_BOUNCE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 20
 },
 "pinsir": {
 "id": "pinsir",
@@ -4888,13 +5318,15 @@
 "types": [
 "BUG"
 ],
+"female": 0.5,
 "abilities": [
 "HYPER_CUTTER",
 "MOLD_BREAKER",
 "MOXIE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 550
 },
 "umbreon": {
 "id": "umbreon",
@@ -4910,13 +5342,15 @@
 "types": [
 "DARK"
 ],
+"female": 0.125,
 "abilities": [
 "SYNCHRONIZE",
 "MAGIC_GUARD",
 "INNER_FOCUS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 270
 },
 "dodrio": {
 "id": "dodrio",
@@ -4933,13 +5367,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "EARLY_BIRD",
 "TANGLED_FEET"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 852
 },
 "diglett_alolan": {
 "id": "diglett_alolan",
@@ -4956,13 +5392,15 @@
 "GROUND",
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_VEIL",
 "TANGLING_HAIR",
 "SAND_FORCE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 10
 },
 "grimer_plain": {
 "id": "grimer_plain",
@@ -4978,13 +5416,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "STENCH",
 "STICKY_HOLD",
 "POISON_TOUCH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "donphan": {
 "id": "donphan",
@@ -5000,13 +5440,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "STURDY",
 "STURDY",
 "SAND_VEIL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1200
 },
 "happiny": {
 "id": "happiny",
@@ -5022,13 +5464,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 1.0,
 "abilities": [
 "NATURAL_CURE",
 "SERENE_GRACE",
 "NATURAL_CURE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 244
 },
 "charizard": {
 "id": "charizard",
@@ -5045,13 +5489,15 @@
 "FIRE",
 "DRAGON"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "SOLAR_POWER",
 "TOUGH_CLAWS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 905
 },
 "raikou": {
 "id": "raikou",
@@ -5067,13 +5513,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "INNER_FOCUS",
 "VOLT_ABSORB"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 1780
 },
 "slowking_plain": {
 "id": "slowking_plain",
@@ -5090,13 +5538,15 @@
 "WATER",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "OBLIVIOUS",
 "OWN_TEMPO",
 "REGENERATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 795
 },
 "kakuna": {
 "id": "kakuna",
@@ -5113,13 +5563,15 @@
 "BUG",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "SHED_SKIN",
 "SHED_SKIN",
 "SHED_SKIN"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 100
 },
 "parasect": {
 "id": "parasect",
@@ -5136,13 +5588,15 @@
 "BUG",
 "GRASS"
 ],
+"female": 0.5,
 "abilities": [
 "EFFECT_SPORE",
 "DRY_SKIN",
 "DAMP"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 295
 },
 "tangrowth": {
 "id": "tangrowth",
@@ -5158,13 +5612,15 @@
 "types": [
 "GRASS"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "LEAF_GUARD",
 "REGENERATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1286
 },
 "nidoking": {
 "id": "nidoking",
@@ -5181,13 +5637,15 @@
 "POISON",
 "GROUND"
 ],
+"female": 0.0,
 "abilities": [
 "POISON_POINT",
 "RIVALRY",
 "SHEER_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 620
 },
 "houndour": {
 "id": "houndour",
@@ -5204,13 +5662,15 @@
 "DARK",
 "FIRE"
 ],
+"female": 0.5,
 "abilities": [
 "EARLY_BIRD",
 "FLASH_FIRE",
 "UNNERVE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 108
 },
 "cleffa": {
 "id": "cleffa",
@@ -5226,13 +5686,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "CUTE_CHARM",
 "MAGIC_GUARD",
 "CUTE_CHARM"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 30
 },
 "lickilicky": {
 "id": "lickilicky",
@@ -5248,13 +5710,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "OWN_TEMPO",
 "THICK_FAT",
 "CLOUD_NINE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1400
 },
 "scizor": {
 "id": "scizor",
@@ -5271,13 +5735,15 @@
 "BUG",
 "STEEL"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "TECHNICIAN",
 "LIGHT_METAL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1180
 },
 "tauros_plain": {
 "id": "tauros_plain",
@@ -5293,13 +5759,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.0,
 "abilities": [
 "INTIMIDATE",
 "ANGER_POINT",
 "SHEER_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 884
 },
 "victreebel": {
 "id": "victreebel",
@@ -5316,13 +5784,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "GLUTTONY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 155
 },
 "rattata_alolan": {
 "id": "rattata_alolan",
@@ -5339,13 +5809,15 @@
 "DARK",
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "GLUTTONY",
 "HUSTLE",
 "THICK_FAT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 38
 },
 "sunkern": {
 "id": "sunkern",
@@ -5361,13 +5833,15 @@
 "types": [
 "GRASS"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "SOLAR_POWER",
 "EARLY_BIRD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 18
 },
 "seel": {
 "id": "seel",
@@ -5383,13 +5857,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "THICK_FAT",
 "HYDRATION",
 "ICE_BODY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 900
 },
 "nidorina": {
 "id": "nidorina",
@@ -5405,13 +5881,15 @@
 "types": [
 "POISON"
 ],
+"female": 1.0,
 "abilities": [
 "POISON_POINT",
 "RIVALRY",
 "HUSTLE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 200
 },
 "annihilape": {
 "id": "annihilape",
@@ -5428,13 +5906,15 @@
 "FIGHTING",
 "GHOST"
 ],
+"female": 0.5,
 "abilities": [
 "GORILLA_TACTICS",
 "INNER_FOCUS",
 "DEFIANT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 560
 },
 "farfetch_d_plain": {
 "id": "farfetch_d_plain",
@@ -5451,13 +5931,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "INNER_FOCUS",
 "DEFIANT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 150
 },
 "cubone": {
 "id": "cubone",
@@ -5473,13 +5955,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "CURSED_BODY",
 "BATTLE_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 65
 },
 "electrode_plain": {
 "id": "electrode_plain",
@@ -5495,13 +5979,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": null,
 "abilities": [
 "SOUNDPROOF",
 "STATIC",
 "AFTERMATH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 666
 },
 "arcanine_plain": {
 "id": "arcanine_plain",
@@ -5518,13 +6004,15 @@
 "FIRE",
 "NORMAL"
 ],
+"female": 0.25,
 "abilities": [
 "INTIMIDATE",
 "FLASH_FIRE",
 "JUSTIFIED"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1550
 },
 "politoed": {
 "id": "politoed",
@@ -5541,13 +6029,15 @@
 "WATER",
 "GRASS"
 ],
+"female": 0.5,
 "abilities": [
 "WATER_ABSORB",
 "DAMP",
 "DRIZZLE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 339
 },
 "moltres_plain": {
 "id": "moltres_plain",
@@ -5564,13 +6054,15 @@
 "FIRE",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "DROUGHT",
 "FLAME_BODY"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 600
 },
 "mankey": {
 "id": "mankey",
@@ -5586,13 +6078,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "VITAL_SPIRIT",
 "ANGER_POINT",
 "DEFIANT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 280
 },
 "ursaring": {
 "id": "ursaring",
@@ -5608,13 +6102,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "GUTS",
 "QUICK_FEET",
 "UNNERVE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1258
 },
 "hoppip": {
 "id": "hoppip",
@@ -5631,13 +6127,15 @@
 "GRASS",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "WIND_RIDER",
 "INFILTRATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 5
 },
 "zapdos_galarian": {
 "id": "zapdos_galarian",
@@ -5654,13 +6152,15 @@
 "FIGHTING",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "DEFIANT",
 "DEFIANT",
 "DEFIANT"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 582
 },
 "jigglypuff": {
 "id": "jigglypuff",
@@ -5677,13 +6177,15 @@
 "NORMAL",
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "CUTE_CHARM",
 "COMPETITIVE",
 "SOUNDPROOF"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 55
 },
 "magneton": {
 "id": "magneton",
@@ -5700,13 +6202,15 @@
 "ELECTRIC",
 "STEEL"
 ],
+"female": null,
 "abilities": [
 "MAGNET_PULL",
 "LEVITATE",
 "ANALYTIC"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 600
 },
 "slowpoke_galarian": {
 "id": "slowpoke_galarian",
@@ -5722,13 +6226,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "GLUTTONY",
 "OWN_TEMPO",
 "REGENERATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 360
 },
 "munchlax": {
 "id": "munchlax",
@@ -5744,13 +6250,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.125,
 "abilities": [
 "PICKUP",
 "THICK_FAT",
 "GLUTTONY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1050
 },
 "blissey": {
 "id": "blissey",
@@ -5766,13 +6274,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 1.0,
 "abilities": [
 "NATURAL_CURE",
 "SERENE_GRACE",
 "NATURAL_CURE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 468
 },
 "omastar": {
 "id": "omastar",
@@ -5789,13 +6299,15 @@
 "ROCK",
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "SWIFT_SWIM",
 "SHELL_ARMOR",
 "WEAK_ARMOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 350
 },
 "pidgey": {
 "id": "pidgey",
@@ -5812,13 +6324,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "TANGLED_FEET",
 "BIG_PECKS"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 18
 },
 "ekans": {
 "id": "ekans",
@@ -5834,13 +6348,15 @@
 "types": [
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "INTIMIDATE",
 "SHED_SKIN",
 "UNNERVE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 69
 },
 "gastly": {
 "id": "gastly",
@@ -5857,13 +6373,15 @@
 "GHOST",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "LEVITATE",
 "LEVITATE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1
 },
 "swinub": {
 "id": "swinub",
@@ -5880,13 +6398,15 @@
 "ICE",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "OBLIVIOUS",
 "SNOW_CLOAK",
 "THICK_FAT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 65
 },
 "oddish": {
 "id": "oddish",
@@ -5903,13 +6423,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "RUN_AWAY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 54
 },
 "exeggutor_plain": {
 "id": "exeggutor_plain",
@@ -5926,13 +6448,15 @@
 "GRASS",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "HARVEST"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1200
 },
 "snubbull": {
 "id": "snubbull",
@@ -5948,13 +6472,15 @@
 "types": [
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "INTIMIDATE",
 "RUN_AWAY",
 "RATTLED"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 78
 },
 "ursaluna_plain": {
 "id": "ursaluna_plain",
@@ -5971,13 +6497,15 @@
 "GROUND",
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "GUTS",
 "BULLETPROOF",
 "UNNERVE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2900
 },
 "moltres_galarian": {
 "id": "moltres_galarian",
@@ -5994,13 +6522,15 @@
 "DARK",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "BERSERK",
 "BERSERK",
 "BERSERK"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 660
 },
 "qwilfish_plain": {
 "id": "qwilfish_plain",
@@ -6017,13 +6547,15 @@
 "WATER",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_POINT",
 "SWIFT_SWIM",
 "INTIMIDATE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 39
 },
 "teddiursa": {
 "id": "teddiursa",
@@ -6039,13 +6571,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "PICKUP",
 "QUICK_FEET",
 "HONEY_GATHER"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 88
 },
 "dewgong": {
 "id": "dewgong",
@@ -6062,13 +6596,15 @@
 "WATER",
 "ICE"
 ],
+"female": 0.5,
 "abilities": [
 "THICK_FAT",
 "HYDRATION",
 "ICE_BODY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1200
 },
 "mismagius": {
 "id": "mismagius",
@@ -6085,13 +6621,15 @@
 "GHOST",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "LEVITATE",
 "LEVITATE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 44
 },
 "magmar": {
 "id": "magmar",
@@ -6107,13 +6645,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.25,
 "abilities": [
 "FLAME_BODY",
 "FLAME_BODY",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 445
 },
 "farfetch_d_galarian": {
 "id": "farfetch_d_galarian",
@@ -6129,13 +6669,15 @@
 "types": [
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "STEADFAST",
 "STEADFAST",
 "SCRAPPY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 420
 },
 "vaporeon": {
 "id": "vaporeon",
@@ -6151,13 +6693,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "WATER_ABSORB",
 "DRIZZLE",
 "HYDRATION"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 290
 },
 "meowth_alolan": {
 "id": "meowth_alolan",
@@ -6173,13 +6717,15 @@
 "types": [
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "PICKUP",
 "TOUGH_CLAWS",
 "RATTLED"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 42
 },
 "ursaluna_bloodmoon": {
 "id": "ursaluna_bloodmoon",
@@ -6196,6 +6742,7 @@
 "GROUND",
 "NORMAL"
 ],
+"female": 0.0,
 "abilities": [
 "MINDS_EYE",
 "MINDS_EYE",
@@ -6219,13 +6766,15 @@
 "BUG",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "SHIELD_DUST",
 "SHIELD_DUST",
 "RUN_AWAY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 32
 },
 "omanyte": {
 "id": "omanyte",
@@ -6242,13 +6791,15 @@
 "ROCK",
 "WATER"
 ],
+"female": 0.125,
 "abilities": [
 "SWIFT_SWIM",
 "SHELL_ARMOR",
 "WEAK_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 75
 },
 "tangela": {
 "id": "tangela",
@@ -6264,13 +6815,15 @@
 "types": [
 "GRASS"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "LEAF_GUARD",
 "REGENERATOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 350
 },
 "beedrill": {
 "id": "beedrill",
@@ -6287,13 +6840,15 @@
 "BUG",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "SNIPER",
 "ADAPTABILITY"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 295
 },
 "wyrdeer": {
 "id": "wyrdeer",
@@ -6310,13 +6865,15 @@
 "NORMAL",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "INTIMIDATE",
 "FRISK",
 "SAP_SIPPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 951
 },
 "kleavor": {
 "id": "kleavor",
@@ -6333,13 +6890,15 @@
 "BUG",
 "ROCK"
 ],
+"female": 0.5,
 "abilities": [
 "SWARM",
 "SHEER_FORCE",
 "SHARPNESS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 890
 },
 "wynaut": {
 "id": "wynaut",
@@ -6355,13 +6914,15 @@
 "types": [
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "SHADOW_TAG",
 "SHADOW_TAG",
 "SHADOW_TAG"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 140
 },
 "persian_plain": {
 "id": "persian_plain",
@@ -6377,13 +6938,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "SUPER_LUCK",
 "TECHNICIAN",
 "UNNERVE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 320
 },
 "igglybuff": {
 "id": "igglybuff",
@@ -6400,13 +6963,15 @@
 "NORMAL",
 "FAIRY"
 ],
+"female": 0.75,
 "abilities": [
 "CUTE_CHARM",
 "COMPETITIVE",
 "SOUNDPROOF"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 10
 },
 "magnemite": {
 "id": "magnemite",
@@ -6423,13 +6988,15 @@
 "ELECTRIC",
 "STEEL"
 ],
+"female": null,
 "abilities": [
 "MAGNET_PULL",
 "LEVITATE",
 "ANALYTIC"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 60
 },
 "kingler": {
 "id": "kingler",
@@ -6445,13 +7012,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "HYPER_CUTTER",
 "SHELL_ARMOR",
 "SHEER_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 600
 },
 "bellsprout": {
 "id": "bellsprout",
@@ -6468,13 +7037,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "GLUTTONY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 40
 },
 "slowking_galarian": {
 "id": "slowking_galarian",
@@ -6491,13 +7062,15 @@
 "POISON",
 "PSYCHIC"
 ],
+"female": 0.5,
 "abilities": [
 "GLUTTONY",
 "OWN_TEMPO",
 "REGENERATOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 795
 },
 "graveler_plain": {
 "id": "graveler_plain",
@@ -6514,13 +7087,15 @@
 "ROCK",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "STURDY",
 "SAND_VEIL"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 1050
 },
 "mewtwo_armored": {
 "id": "mewtwo_armored",
@@ -6537,6 +7112,7 @@
 "PSYCHIC",
 "STEEL"
 ],
+"female": null,
 "abilities": [
 "PRESSURE",
 "INSOMNIA",
@@ -6559,13 +7135,15 @@
 "types": [
 "GRASS"
 ],
+"female": 0.125,
 "abilities": [
 "LEAF_GUARD",
 "NATURAL_CURE",
 "CHLOROPHYLL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 255
 },
 "voltorb_hisuian": {
 "id": "voltorb_hisuian",
@@ -6582,13 +7160,15 @@
 "ELECTRIC",
 "GRASS"
 ],
+"female": null,
 "abilities": [
 "SOUNDPROOF",
 "STATIC",
 "AFTERMATH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 130
 },
 "wooper_paldean": {
 "id": "wooper_paldean",
@@ -6605,13 +7185,15 @@
 "POISON",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "POISON_POINT",
 "WATER_ABSORB",
 "UNAWARE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 110
 },
 "yanmega": {
 "id": "yanmega",
@@ -6628,13 +7210,15 @@
 "BUG",
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "SPEED_BOOST",
 "TINTED_LENS",
 "LEVITATE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 515
 },
 "wooper_plain": {
 "id": "wooper_plain",
@@ -6651,13 +7235,15 @@
 "WATER",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "DAMP",
 "WATER_ABSORB",
 "UNAWARE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 85
 },
 "weezing_galarian": {
 "id": "weezing_galarian",
@@ -6674,13 +7260,15 @@
 "POISON",
 "FAIRY"
 ],
+"female": 0.5,
 "abilities": [
 "LEVITATE",
 "NEUTRALIZING_GAS",
 "WHITE_SMOKE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 160
 },
 "feraligatr": {
 "id": "feraligatr",
@@ -6697,13 +7285,15 @@
 "WATER",
 "DARK"
 ],
+"female": 0.125,
 "abilities": [
 "TORRENT",
 "INTIMIDATE",
 "SHEER_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 888
 },
 "charmander": {
 "id": "charmander",
@@ -6719,13 +7309,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "SOLAR_POWER",
 "FLAME_BODY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 85
 },
 "ditto": {
 "id": "ditto",
@@ -6741,13 +7333,15 @@
 "types": [
 "NORMAL"
 ],
+"female": null,
 "abilities": [
 "LIMBER",
 "LIMBER",
 "IMPOSTER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 40
 },
 "gligar": {
 "id": "gligar",
@@ -6764,13 +7358,15 @@
 "GROUND",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "HYPER_CUTTER",
 "SAND_VEIL",
 "IMMUNITY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 648
 },
 "pidgeotto": {
 "id": "pidgeotto",
@@ -6787,13 +7383,15 @@
 "NORMAL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "TANGLED_FEET",
 "BIG_PECKS"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "growlithe_hisuian": {
 "id": "growlithe_hisuian",
@@ -6810,13 +7408,15 @@
 "FIRE",
 "ROCK"
 ],
+"female": 0.25,
 "abilities": [
 "INTIMIDATE",
 "FLASH_FIRE",
 "ROCK_HEAD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 227
 },
 "magby": {
 "id": "magby",
@@ -6832,13 +7432,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.25,
 "abilities": [
 "FLAME_BODY",
 "FLAME_BODY",
 "VITAL_SPIRIT"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 214
 },
 "mamoswine": {
 "id": "mamoswine",
@@ -6855,13 +7457,15 @@
 "ICE",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "OBLIVIOUS",
 "SNOW_CLOAK",
 "THICK_FAT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2910
 },
 "lapras": {
 "id": "lapras",
@@ -6878,13 +7482,15 @@
 "WATER",
 "ICE"
 ],
+"female": 0.5,
 "abilities": [
 "WATER_ABSORB",
 "SHELL_ARMOR",
 "HYDRATION"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2200
 },
 "smeargle": {
 "id": "smeargle",
@@ -6900,13 +7506,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "OWN_TEMPO",
 "TECHNICIAN",
 "OWN_TEMPO"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 580
 },
 "farigiraf": {
 "id": "farigiraf",
@@ -6923,13 +7531,15 @@
 "PSYCHIC",
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "CUD_CHEW",
 "ARMOR_TAIL",
 "SAP_SIPPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1600
 },
 "raticate_alolan": {
 "id": "raticate_alolan",
@@ -6946,13 +7556,15 @@
 "DARK",
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "GLUTTONY",
 "HUSTLE",
 "THICK_FAT"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 255
 },
 "miltank": {
 "id": "miltank",
@@ -6968,13 +7580,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 1.0,
 "abilities": [
 "THICK_FAT",
 "SCRAPPY",
 "SAP_SIPPER"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 755
 },
 "staryu": {
 "id": "staryu",
@@ -6990,13 +7604,15 @@
 "types": [
 "WATER"
 ],
+"female": null,
 "abilities": [
 "ILLUMINATE",
 "NATURAL_CURE",
 "ANALYTIC"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 345
 },
 "flareon": {
 "id": "flareon",
@@ -7012,13 +7628,15 @@
 "types": [
 "FIRE"
 ],
+"female": 0.125,
 "abilities": [
 "FLASH_FIRE",
 "DROUGHT",
 "GUTS"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 250
 },
 "geodude_plain": {
 "id": "geodude_plain",
@@ -7035,13 +7653,15 @@
 "ROCK",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "STURDY",
 "SAND_VEIL"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 200
 },
 "articuno_galarian": {
 "id": "articuno_galarian",
@@ -7058,13 +7678,15 @@
 "PSYCHIC",
 "FLYING"
 ],
+"female": null,
 "abilities": [
 "COMPETITIVE",
 "COMPETITIVE",
 "COMPETITIVE"
 ],
 "fully_evolved": true,
-"legendary": true
+"legendary": true,
+"weight": 509
 },
 "sentret": {
 "id": "sentret",
@@ -7080,13 +7702,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "RUN_AWAY",
 "KEEN_EYE",
 "FRISK"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 60
 },
 "dugtrio_plain": {
 "id": "dugtrio_plain",
@@ -7102,13 +7726,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_VEIL",
 "ARENA_TRAP",
 "SAND_FORCE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 333
 },
 "starmie": {
 "id": "starmie",
@@ -7125,13 +7751,15 @@
 "WATER",
 "PSYCHIC"
 ],
+"female": null,
 "abilities": [
 "ILLUMINATE",
 "NATURAL_CURE",
 "ANALYTIC"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 800
 },
 "venonat": {
 "id": "venonat",
@@ -7148,13 +7776,15 @@
 "BUG",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "COMPOUND_EYES",
 "TINTED_LENS",
 "RUN_AWAY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 300
 },
 "ivysaur": {
 "id": "ivysaur",
@@ -7171,13 +7801,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.125,
 "abilities": [
 "OVERGROW",
 "CHLOROPHYLL",
 "EFFECT_SPORE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 130
 },
 "onix": {
 "id": "onix",
@@ -7194,13 +7826,15 @@
 "ROCK",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "STURDY",
 "WEAK_ARMOR"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 2100
 },
 "typhlosion_hisuian": {
 "id": "typhlosion_hisuian",
@@ -7217,13 +7851,15 @@
 "FIRE",
 "GHOST"
 ],
+"female": 0.125,
 "abilities": [
 "BLAZE",
 "FLAME_BODY",
 "FRISK"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 698
 },
 "seaking": {
 "id": "seaking",
@@ -7240,13 +7876,15 @@
 "WATER",
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "SWIFT_SWIM",
 "WATER_VEIL",
 "LIGHTNING_ROD"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 390
 },
 "tentacool": {
 "id": "tentacool",
@@ -7263,13 +7901,15 @@
 "WATER",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CLEAR_BODY",
 "LIQUID_OOZE",
 "RAIN_DISH"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 455
 },
 "golem_plain": {
 "id": "golem_plain",
@@ -7286,13 +7926,15 @@
 "ROCK",
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "ROCK_HEAD",
 "STURDY",
 "SAND_VEIL"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 3000
 },
 "sandslash_plain": {
 "id": "sandslash_plain",
@@ -7308,13 +7950,15 @@
 "types": [
 "GROUND"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_VEIL",
 "SHARPNESS",
 "SAND_RUSH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 295
 },
 "dratini": {
 "id": "dratini",
@@ -7330,13 +7974,15 @@
 "types": [
 "DRAGON"
 ],
+"female": 0.5,
 "abilities": [
 "SHED_SKIN",
 "SHED_SKIN",
 "MARVEL_SCALE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 33
 },
 "sneasler": {
 "id": "sneasler",
@@ -7353,13 +7999,15 @@
 "POISON",
 "FIGHTING"
 ],
+"female": 0.5,
 "abilities": [
 "TECHNICIAN",
 "UNBURDEN",
 "POISON_TOUCH"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 430
 },
 "krabby": {
 "id": "krabby",
@@ -7375,13 +8023,15 @@
 "types": [
 "WATER"
 ],
+"female": 0.5,
 "abilities": [
 "HYPER_CUTTER",
 "SHELL_ARMOR",
 "SHEER_FORCE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 65
 },
 "weepinbell": {
 "id": "weepinbell",
@@ -7398,13 +8048,15 @@
 "GRASS",
 "POISON"
 ],
+"female": 0.5,
 "abilities": [
 "CHLOROPHYLL",
 "CHLOROPHYLL",
 "GLUTTONY"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 64
 },
 "meowth_plain": {
 "id": "meowth_plain",
@@ -7420,13 +8072,15 @@
 "types": [
 "NORMAL"
 ],
+"female": 0.5,
 "abilities": [
 "PICKUP",
 "TECHNICIAN",
 "UNNERVE"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 42
 },
 "magnezone": {
 "id": "magnezone",
@@ -7443,13 +8097,15 @@
 "ELECTRIC",
 "STEEL"
 ],
+"female": null,
 "abilities": [
 "MAGNET_PULL",
 "LEVITATE",
 "ANALYTIC"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 1800
 },
 "skarmory": {
 "id": "skarmory",
@@ -7466,13 +8122,15 @@
 "STEEL",
 "FLYING"
 ],
+"female": 0.5,
 "abilities": [
 "KEEN_EYE",
 "STURDY",
 "WEAK_ARMOR"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 505
 },
 "pichu": {
 "id": "pichu",
@@ -7488,13 +8146,15 @@
 "types": [
 "ELECTRIC"
 ],
+"female": 0.5,
 "abilities": [
 "STATIC",
 "STATIC",
 "LIGHTNING_ROD"
 ],
 "fully_evolved": false,
-"legendary": false
+"legendary": false,
+"weight": 20
 },
 "tyranitar": {
 "id": "tyranitar",
@@ -7511,12 +8171,14 @@
 "ROCK",
 "DARK"
 ],
+"female": 0.5,
 "abilities": [
 "SAND_STREAM",
 "BATTLE_ARMOR",
 "UNNERVE"
 ],
 "fully_evolved": true,
-"legendary": false
+"legendary": false,
+"weight": 2020
 }
 }

@@ -70,6 +70,11 @@ def parse_mon(path):
         a = re.search(r'abilities_for\s+\w+,\s*([A-Z_0-9]+),\s*([A-Z_0-9]+),\s*([A-Z_0-9]+)', s)
         if a:
             mon['abilities'] = [a.group(1), a.group(2), a.group(3)]
+        g = re.match(r'dn GENDER_(F[\d_]+|UNKNOWN)', s)
+        if g:
+            # chance a wild/bred mon is female (None = genderless)
+            mon['female'] = None if g.group(1) == 'UNKNOWN' else \
+                float(g.group(1)[1:].replace('_', '.')) / 100
         tm = re.match(r'tmhm\s+(.+)$', s)
         if tm:
             mon['tmhm'] += [x.strip() for x in tm.group(1).split(',') if x.strip()]
@@ -164,8 +169,13 @@ def extract(root):
             scripts[cur].append(s.strip().split()[0])
     secondary = {eff for eff, lab in zip(effect_ids, labels)
                  if {'effectchance', 'selfeffectchance'} & set(scripts.get(lab, []))}
+    script_of = dict(zip(effect_ids, labels))
     for mv in moves.values():
         mv['secondary'] = mv['effect'] in secondary
+        # the move's battle script (data/moves/effects.asm), so the engine can
+        # follow the ROM's command list (checkhit, effectchance, ...)
+        mv['script'] = [c for c in scripts.get(script_of.get(mv['effect']), [])
+                        if not c.startswith(';')]
 
     # Reckless boosts recoil moves and (Hi) Jump Kick (RecklessAbility).
     for mv in moves.values():
@@ -243,7 +253,49 @@ def extract(root):
         mon['legendary'] = mid in legendary
         mon.pop('tmhm', None)  # rolled into learnsets
 
+    # weights (data/pokemon/body_data.asm, hectograms) for Low Kick
+    forms = {'ALOLAN_FORM': '_alolan', 'GALARIAN_FORM': '_galarian', 'HISUIAN_FORM': '_hisuian',
+             'PALDEAN_FORM': '_paldean', 'PLAIN_FORM': '_plain'}
+    for s in open(os.path.join(root, 'data/pokemon/body_data.asm')).read().splitlines():
+        m = re.match(r'\s*body_data\s+\d+,\s*(\d+),.*;\s*([A-Z0-9_]+)(?:\s*\((\w+)\))?', s)
+        if not m:
+            continue
+        weight, name, form = int(m.group(1)), m.group(2).lower(), m.group(3)
+        for key in ([name + forms[form]] if form in forms else [name, name + '_plain']):
+            if key in mons and 'weight' not in mons[key]:
+                mons[key]['weight'] = weight
     return mons, moves, chart, learnsets
+
+
+def extract_abilities(root):
+    """data/abilities/flags.asm -> {ABILITY: [FLAG, ...]} (e.g. IGNORABLE for
+    Mold Breaker, NO_INTIMIDATE, NO_TRACE)."""
+    out = {}
+    for s in pick(open(os.path.join(root, 'data/abilities/flags.asm')).read().splitlines()):
+        m = re.match(r'abilflag\s+([A-Z_0-9]+)\s*(?:,(.*))?$', s.split(';')[0].strip())
+        if m:
+            out[m.group(1)] = [f.strip() for f in (m.group(2) or '').split(',') if f.strip()]
+    return out
+
+
+def extract_items(root):
+    """data/items/attributes.asm, in item-constant order -> {ITEM: {held, param}}."""
+    names = []
+    for s in open(os.path.join(root, 'constants/item_constants.asm')).read().splitlines():
+        m = re.match(r'\s*const\s+([A-Z_0-9]+)', s)
+        if m:
+            names.append(m.group(1))
+        elif names and re.match(r'\s*DEF NUM_ITEMS', s):
+            break
+    attrs = []
+    for s in pick(open(os.path.join(root, 'data/items/attributes.asm')).read().splitlines()):
+        m = re.match(r'item_attribute\s+[^,]+,\s*([A-Z_0-9]+),\s*([^,]+),', s)
+        if m:
+            attrs.append((m.group(1), m.group(2).strip()))
+    out = {}
+    for name, (held, param) in zip(names[1:], attrs):
+        out[name] = {'held': None if held == '0' else held, 'param': param}
+    return out
 
 
 def main():
@@ -261,6 +313,9 @@ def main():
     json.dump(moves, open(os.path.join(out, 'moves.json'), 'w'), indent=0)
     json.dump(chart, open(os.path.join(out, 'typechart.json'), 'w'), indent=0)
     json.dump(learnsets, open(os.path.join(out, 'learnsets.json'), 'w'), indent=0)
+    json.dump(extract_abilities(args.source), open(os.path.join(out, 'abilities.json'), 'w'),
+              indent=0)
+    json.dump(extract_items(args.source), open(os.path.join(out, 'items.json'), 'w'), indent=0)
 
     fe = sum(1 for m in mons.values() if m['fully_evolved'])
     empty = [k for k, v in learnsets.items() if not v]

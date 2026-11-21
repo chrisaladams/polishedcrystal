@@ -63,6 +63,7 @@ def test_protect_blocks_then_decays():
     hits = 0
     for seed in range(300):
         b.protect_count = 1
+        b.pp = [99]                         # PP is tracked now; keep it topped up
         act(B, A, 'PROTECT', random.Random(seed))
         hits += b.protected
         b.protected = False
@@ -279,7 +280,7 @@ def test_rest_and_sleep_talk():
     b = mon()
     A, B = duel(a, b)
     act(A, B, 'REST')
-    assert a.hp == a.maxhp and a.status == 'slp' and a.sleep == 2
+    assert a.hp == a.maxhp and a.status == 'slp' and a.sleep == engine.REST_SLEEP_TURNS + 1
     assert engine.choose_move(A, B, MOVES, CHART) == 1
     act(A, B, 'SLEEP_TALK', random.Random(0))
     assert b.hp < b.maxhp                   # Sleep Talk called Tackle
@@ -418,7 +419,7 @@ def test_static_damage_and_jump_kick_crash():
     g = mon(types=('GHOST',))
     A, B = duel(k, g)
     for seed in range(20):                  # find a seed that misses (90% accuracy)
-        k.hp = k.maxhp
+        k.hp, k.pp = k.maxhp, [99]
         act(A, B, 'HI_JUMP_KICK', random.Random(seed))
         if k.hp < k.maxhp:
             break
@@ -497,7 +498,7 @@ def test_explosion_not_doubled_and_solar_beam_not_halved():
     a = mon(moves=('EXPLOSION',))
     b = mon(stats={'hp': 9999})
     A, B = duel(a, b)
-    act(A, B, 'EXPLOSION', Seq(ranges=[1, 15]))
+    act(A, B, 'EXPLOSION', Seq(ranges=[0, 1, 15]))     # accuracy roll, crit roll, damage roll
     want, _ = rom_damage.damage(a, b, MOVES['EXPLOSION'], CHART, power=250, roll=15)
     assert b.maxhp - b.hp == want
     g = mon(types=('GRASS',))
@@ -507,6 +508,186 @@ def test_explosion_not_doubled_and_solar_beam_not_halved():
     A.field.weather = None
     clear, _ = engine.expected_damage(g, B.mon, MOVES['SOLAR_BEAM'], CHART)
     assert rain == clear
+
+
+
+# ---- step 1: mechanics ported from the ROM -------------------------------------
+import mechanics  # noqa: E402
+
+
+def test_status_type_immunities():
+    for move, types, ok in (('TOXIC', ('STEEL',), False), ('TOXIC', ('POISON',), False),
+                            ('THUNDER_WAVE', ('GROUND',), False), ('THUNDER_WAVE', ('ELECTRIC',), False),
+                            ('WILL_O_WISP', ('FIRE',), False), ('TOXIC', ('NORMAL',), True)):
+        if move not in MOVES:
+            continue
+        a, b = mon(moves=(move,)), mon(types=types)
+        A, B = duel(a, b)
+        act(A, B, move, Seq(ranges=[0] * 4))
+        assert (b.status is not None) == ok, (move, types, b.status)
+    a, b = mon(moves=('TOXIC',), ability='CORROSION'), mon(types=('STEEL',))
+    A, B = duel(a, b)
+    act(A, B, 'TOXIC', Seq(ranges=[0] * 4))
+    assert b.status == 'tox'                # Corrosion poisons Steel types
+
+
+def test_paralysis_halves_speed():
+    a = mon(stats={'spe': 200})
+    assert mechanics.speed(a) == 200
+    a.status = 'par'
+    assert mechanics.speed(a) == 100        # GetSpeed: x1/2, not 1/4
+    a.ability = 'QUICK_FEET'
+    assert mechanics.speed(a) == 300
+
+
+def test_sleep_lasts_one_to_three_turns():
+    lengths = set()
+    for seed in range(60):
+        a, b = mon(moves=('HYPNOSIS', 'TACKLE')), mon(moves=('TACKLE',))
+        A, B = duel(a, b)
+        b.status, b.sleep = 'slp', random.Random(seed).randint(2, 4)
+        turns = 0
+        while b.status == 'slp':
+            act(B, A, 'TACKLE')
+            turns += 1
+        lengths.add(turns - 1)              # the last call is the waking turn
+    assert lengths == {1, 2, 3}, lengths
+
+
+def test_accuracy_and_evasion_stages():
+    a, b = mon(moves=('TACKLE',)), mon()
+    A, B = duel(a, b)
+    m = MOVES['TACKLE']
+    def rate():
+        rng = random.Random(1)
+        return sum(mechanics.accuracy_hits(a, b, m, rng) for _ in range(4000)) / 4000
+    assert rate() == 1.0
+    b.stage['eva'] = 1
+    assert abs(rate() - 0.75) < 0.03        # +1 evasion = 3/4
+    b.stage['eva'] = 6
+    assert abs(rate() - 0.60) < 0.03        # link battles cap it at +2 (3/5)
+    a.ability = 'KEEN_EYE'
+    assert rate() == 1.0                    # Keen Eye ignores evasion boosts
+
+
+def test_double_team_and_minimize():
+    a = mon(moves=('DOUBLE_TEAM', 'MINIMIZE'))
+    A, B = duel(a, mon())
+    act(A, B, 'DOUBLE_TEAM')
+    assert a.stage['eva'] == 1
+    act(A, B, 'MINIMIZE')
+    assert a.stage['eva'] == 3 and a.minimized
+
+
+def test_secondary_status_moves():
+    for move, st in (('BODY_SLAM', 'par'), ('THUNDER', 'par')):
+        a, b = mon(types=('FIRE',), moves=(move,)), mon(stats={'hp': 999})
+        A, B = duel(a, b)
+        act(A, B, move, Seq(ranges=[0, 23, 15, 0]))   # hit, no crit, top roll, effect roll
+        assert b.status == st, (move, b.status)
+    a, b = mon(moves=('DYNAMICPUNCH',)), mon(stats={'hp': 999})
+    A, B = duel(a, b)
+    act(A, B, 'DYNAMICPUNCH', Seq(ranges=[0, 23, 15, 0]))
+    assert b.confused
+
+
+def test_endure_and_destiny_bond():
+    a, b = mon(stats={'atk': 400}, moves=('TACKLE',)), mon(stats={'hp': 20}, moves=('ENDURE',))
+    A, B = duel(a, b)
+    act(B, A, 'ENDURE', random.Random(0))
+    act(A, B, 'TACKLE')
+    assert b.hp == 1 and not b.fainted
+    c = mon(stats={'hp': 20}, moves=('DESTINY_BOND',))
+    A, B = duel(a, c)
+    act(B, A, 'DESTINY_BOND')
+    act(A, B, 'TACKLE')
+    assert c.fainted and a.fainted          # took the attacker down with it
+
+
+def test_attract_needs_opposite_genders():
+    a, b = mon(moves=('ATTRACT',)), mon()
+    A, B = duel(a, b)
+    a.gender, b.gender = 'M', 'M'
+    act(A, B, 'ATTRACT')
+    assert b.infatuated is None
+    b.gender = 'F'
+    act(A, B, 'ATTRACT')
+    assert b.infatuated is a
+    b.ability = 'OBLIVIOUS'
+    b.infatuated = None
+    act(A, B, 'ATTRACT')
+    assert b.infatuated is None
+
+
+def test_disable_and_pp():
+    a, b = mon(moves=('DISABLE',)), mon(moves=('TACKLE', 'SCRATCH'))
+    A, B = duel(a, b)
+    act(B, A, 'TACKLE')
+    act(A, B, 'DISABLE')
+    assert b.disabled == 0
+    assert engine.choose_move(B, A, MOVES, CHART) == 1
+    b.pp = [0, 0]
+    assert engine.choose_move(B, A, MOVES, CHART) == -1   # Struggle
+    hp = b.hp
+    perform(B, A, MOVES, CHART, random.Random(0), idx=-1)
+    assert b.hp == hp - b.maxhp // 4        # Struggle recoil: 1/4 max HP
+
+
+def test_hidden_power_type():
+    a = mon(types=('NORMAL',), moves=('HIDDEN_POWER',))
+    g = mon(types=('GRASS',), stats={'hp': 999})
+    fire = engine.Pmon('x', {'types': ['NORMAL'], 'stats': dict(a.base)}, ['HIDDEN_POWER'],
+                       hp_type='FIRE')
+    d1, e1, _ = engine.move_damage(a, g, MOVES['HIDDEN_POWER'], CHART, Seq(ranges=[23, 15]))
+    d2, e2, _ = engine.move_damage(fire, g, MOVES['HIDDEN_POWER'], CHART, Seq(ranges=[23, 15]),
+                                   move_type='FIRE')
+    assert e2 == 2.0 and d2 > d1
+
+
+def test_sitrus_berry_and_intimidate():
+    a, b = mon(stats={'atk': 300}, moves=('TACKLE',)), mon(item='SITRUS_BERRY')
+    A, B = duel(a, b)
+    b.hp = b.maxhp // 2 + 5
+    act(A, B, 'TACKLE')
+    assert b.item is None and b.berry_eaten == 'SITRUS_BERRY'
+    i, t = mon(ability='INTIMIDATE', mid='i'), mon(ability='INNER_FOCUS', mid='t')
+    A, B = duel(t, mon(mid='z'), b2=i)
+    engine.apply_switch(B, 1, A, CHART)
+    assert t.stage['atk'] == 0              # Inner Focus resists Intimidate
+    d = mon(ability='DEFIANT', mid='d')
+    A, B = duel(d, mon(mid='z2'), b2=mon(ability='INTIMIDATE', mid='i2'))
+    engine.apply_switch(B, 1, A, CHART)
+    assert d.stage['atk'] == 1              # -1, then Defiant +2
+
+
+def test_explosion_misses_but_user_faints_and_damp():
+    a = mon(moves=('EXPLOSION',))
+    g = mon(types=('GHOST',))
+    A, B = duel(a, g)
+    act(A, B, 'EXPLOSION', Seq(ranges=[0, 23, 15]))
+    assert a.fainted and g.hp == g.maxhp    # immune target, but the user still faints
+    a2, dmp = mon(moves=('EXPLOSION',)), mon(ability='DAMP')
+    A, B = duel(a2, dmp)
+    act(A, B, 'EXPLOSION', Seq(ranges=[0, 23, 15]))
+    assert not a2.fainted and dmp.hp == dmp.maxhp
+
+
+def test_contact_punishers_and_weak_armor():
+    a, b = mon(moves=('TACKLE',)), mon(item='ROCKY_HELMET', stats={'hp': 999})
+    A, B = duel(a, b)
+    act(A, B, 'TACKLE')
+    assert a.maxhp - a.hp == a.maxhp // 6
+    w = mon(ability='WEAK_ARMOR', stats={'hp': 999})
+    A, B = duel(mon(moves=('TACKLE',)), w)
+    act(A, B, 'TACKLE')
+    assert w.stage['defe'] == -1 and w.stage['spe'] == 2
+
+
+def test_magic_bounce_reflects_toxic():
+    a, b = mon(moves=('TOXIC',)), mon(ability='MAGIC_BOUNCE')
+    A, B = duel(a, b)
+    act(A, B, 'TOXIC', Seq(ranges=[0] * 4))
+    assert b.status is None and a.status == 'tox'
 
 
 if __name__ == '__main__':

@@ -41,15 +41,29 @@ ABILITIES = ['TECHNICIAN', 'HUGE_POWER', 'HUSTLE', 'OVERGROW', 'BLAZE', 'TORRENT
              'SHARPNESS', 'ADAPTABILITY', 'TINTED_LENS', 'SNIPER', 'SCRAPPY',
              'MULTISCALE', 'MARVEL_SCALE', 'THICK_FAT', 'DRY_SKIN', 'FUR_COAT', 'FLUFFY',
              'SOLID_ROCK', 'FILTER', 'UNAWARE', 'INFILTRATOR',
-             'INTIMIDATE', 'PRESSURE', 'KEEN_EYE']
+             'INTIMIDATE', 'PRESSURE', 'KEEN_EYE', 'RIVALRY', 'MOLD_BREAKER']
 ATT_ITEMS = [None, 'CHOICE_BAND', 'CHOICE_SPECS', 'LIFE_ORB', 'LEFTOVERS', 'EXPERT_BELT',
-             'MUSCLE_BAND', 'WISE_GLASSES']
-DEF_ITEMS = [None, 'ASSAULT_VEST', 'LEFTOVERS', 'EVIOLITE']
+             'MUSCLE_BAND', 'WISE_GLASSES', 'THICK_CLUB', 'LIGHT_BALL', 'CHOICE_SCARF',
+             'CHARCOAL', 'MYSTIC_WATER', 'MAGNET', 'BLACK_BELT', 'SILK_SCARF', 'FAIRYFEATHER',
+             'NEVERMELTICE', 'SOFT_SAND', 'PUNCHINGLOVE', 'METRONOME_I', 'SCOPE_LENS']
+DEF_ITEMS = [None, 'ASSAULT_VEST', 'LEFTOVERS', 'EVIOLITE', 'METAL_POWDER']
+# species whose items only work for them (UserValidBattleItem), picked more often
+FORM_IDS = {'_plain': 1, '_alolan': 2, '_galarian': 3, '_hisuian': 4, '_paldean': 5}
+
+
+def form_of(name):
+    return next((v for k, v in FORM_IDS.items() if name and name.endswith(k)), 0)
+
+
+ITEM_SPECIES = {'cubone': 'THICK_CLUB', 'marowak_plain': 'THICK_CLUB',
+                'marowak_alolan': 'THICK_CLUB', 'pikachu': 'LIGHT_BALL'}
+HP_TYPES = ['FIGHTING', 'FLYING', 'POISON', 'GROUND', 'ROCK', 'BUG', 'GHOST', 'STEEL',
+            'FIRE', 'WATER', 'GRASS', 'ELECTRIC', 'PSYCHIC', 'ICE', 'DRAGON', 'DARK', 'FAIRY']
 # moves whose damage depends on battle commands this harness doesn't replay
 SKIP_EFFECTS = {'EFFECT_LEVEL_DAMAGE', 'EFFECT_SUPER_FANG', 'EFFECT_STATIC_DAMAGE',
                 'EFFECT_COUNTER', 'EFFECT_GYRO_BALL', 'EFFECT_REVERSAL', 'EFFECT_RETURN',
-                'EFFECT_MAGNITUDE', 'EFFECT_LOW_KICK', 'EFFECT_MULTI_HIT', 'EFFECT_PSYSTRIKE',
-                'EFFECT_CONVERSION', 'EFFECT_FUTURE_SIGHT', 'EFFECT_HIDDEN_POWER',
+                'EFFECT_MAGNITUDE', 'EFFECT_LOW_KICK', 'EFFECT_MULTI_HIT',
+                'EFFECT_CONVERSION', 'EFFECT_FUTURE_SIGHT',
                 'EFFECT_EXPLOSION', 'EFFECT_PURSUIT'}
 SKIP_MOVES = {'AVALANCHE', 'PURSUIT', 'STRUGGLE'}
 STATUS_BITS = {None: 0, 'psn': 1 << 3, 'brn': 1 << 4, 'frz': 1 << 5, 'par': 1 << 6,
@@ -78,11 +92,14 @@ class Side:
 
 class Mon:
     """Just enough of engine.Pmon for rom_damage."""
-    def __init__(self, base, types, ability, item, status, hp, stage, side):
+    def __init__(self, base, types, ability, item, status, hp, stage, side, mid=None,
+                 gender=None):
         self.base, self.types, self.ability, self.item = base, types, ability, item
         self.status, self.maxhp, self.hp, self.stage, self.side = status, base['hp'], hp, stage, side
         self.flash_fire = False
         self.eviolite_ok = True
+        self.id, self.gender = mid, gender
+        self.metronome_count = 0
 
 
 class PipelineOracle(StatOracle):
@@ -92,7 +109,7 @@ class PipelineOracle(StatOracle):
         self.moves = moves
         types = sorted({m['type'] for m in moves.values()})
         effects = sorted({m['effect'] for m in moves.values()})
-        names = (list(moves) + types + effects + ABILITIES
+        names = (list(moves) + types + HP_TYPES + effects + ABILITIES
                  + [i for i in ATT_ITEMS + DEF_ITEMS if i])
         self.ids = rgbasm_values(names, None)
         missing = [n for n in ABILITIES + [i for i in ATT_ITEMS + DEF_ITEMS if i]
@@ -147,11 +164,15 @@ class PipelineOracle(StatOracle):
         w8('wOTPartyMon1Species', sc['att_sid'])
         w8('wOTPartyMon1Item', self.ids[att.item] if att.item else 0)
         w8('wOTPartyMon1Level', 50)
-        w8('wOTPartyMon1Form', 0)
+        a_form, d_form = form_of(sc['names'][0]), form_of(sc['names'][1])
+        w8('wEnemyMonForm', a_form)
+        w8('wBattleMonForm', d_form)
+        w8('wOTPartyMon1Form', a_form | (0x80 if att.gender == 'F' else 0))  # gender shares the byte
         w8('wPartyMon1Level', 50)
         w8('wCurBattleMon', 0)
         h.mem[h.addr('wPartyMon1')] = sc['dfn_sid']
-        h.mem[h.addr('wPartyMon1') + (h.addr('wPartyMon1Form') - h.addr('wPartyMon1'))] = 0
+        h.mem[h.addr('wPartyMon1') + (h.addr('wPartyMon1Form') - h.addr('wPartyMon1'))] = \
+            d_form | (0x80 if dfn.gender == 'F' else 0)
         h.mem[h.addr('wPartyMon1') + 1] = self.ids[dfn.item] if dfn.item else 0
         order = ['atk', 'defe', 'spe', 'spa', 'spd']
         for i in range(7):
@@ -164,13 +185,16 @@ class PipelineOracle(StatOracle):
         w8('wWeatherCount', 5 if sc['weather'] else 0)
         w8('wPlayerScreens', (5 if dfn.side.reflect else 0) | ((5 << 4) if dfn.side.light_screen else 0))
         w8('wEnemyGoesFirst', 0 if sc['moved_second'] else 1)
+        w8('wEnemyMetronomeCount', att.metronome_count)
         w8('wMoveHitState', 1 if sc['crit'] else 0)
         w8('hBattleTurn', 1)
+        if att.ability in rom_damage.MOLD_BREAKERS:
+            w8('wMoveState', 0x40)    # OPP_IGNOREABIL: set while a Mold Breaker's move runs
         w8('wEnemyMoveStructAnimation', self.ids[mv['id']])
         w8('wCurEnemyMove', self.ids[mv['id']])  # BATTLE_VARS_MOVE (contact checks)
         w8('wEnemyMoveStructEffect', self.ids[mv['effect']])
         w8('wEnemyMoveStructPower', mv['power'])
-        w8('wEnemyMoveStructType', self.ids[mv['type']])
+        w8('wEnemyMoveStructType', self.ids[sc.get('hp_type') or mv['type']])
         w8('wEnemyMoveStructAccuracy', 100)
         w8('wEnemyMoveStructEffectChance', mv['chance'])
         w8('wEnemyMoveStructCategory', {'PHYSICAL': 0, 'SPECIAL': 1}[mv['cat']])
@@ -223,19 +247,34 @@ def scenario(rng, pool, species_ids, moves, chart_types):
                      for k in ('atk', 'defe', 'spa', 'spd', 'spe')}
     reflect, screen = rng.random() < 0.2, rng.random() < 0.2
     (an, asid, am), (dn, dsid, dm) = pick(), pick()
+    if rng.random() < 0.15:                 # a species with its own item
+        an = rng.choice(sorted(ITEM_SPECIES))
+        am = dict(pool)[an]
+        asid = species_ids[rom_damage.species(type('M', (), {'id': an})())]
+    if rng.random() < 0.08 and 'ditto' in dict(pool):
+        dn, dm, dsid = 'ditto', dict(pool)['ditto'], species_ids['ditto']
     a_base, d_base = mon_stats(am['stats']), mon_stats(dm['stats'])
     status = lambda: rng.choice([None] * 4 + ['brn', 'psn', 'tox', 'par', 'slp'])
     a_item = rng.choice(ATT_ITEMS)
     d_item = rng.choice(DEF_ITEMS)
     a_hp = a_base['hp'] if rng.random() < 0.5 else rng.randint(1, a_base['hp'])
     d_hp = d_base['hp'] if rng.random() < 0.5 else rng.randint(1, d_base['hp'])
+    if an in ITEM_SPECIES and rng.random() < 0.7:
+        a_item = ITEM_SPECIES[an]
+    if dn == 'ditto' and rng.random() < 0.7:
+        d_item = 'METAL_POWDER'
+    gender = lambda m: (None if m.get('female') is None
+                        else ('F' if rng.random() < m['female'] else 'M'))
     att = Mon(a_base, am['types'], rng.choice(ABILITIES),
-              a_item, status(), a_hp, stage(), Side())
+              a_item, status(), a_hp, stage(), Side(), mid=an, gender=gender(am))
     dfn = Mon(d_base, dm['types'], rng.choice(ABILITIES), d_item, status(), d_hp, stage(),
-              Side(reflect, screen))
+              Side(reflect, screen), mid=dn, gender=gender(dm))
     dfn.eviolite_ok = not dm.get('fully_evolved') and dn not in items.EVIOLITE_EXCLUDED
+    if a_item == 'METRONOME_I':
+        att.metronome_count = rng.randint(0, 5)
     mv = rng.choice(moves)
-    return {'att': att, 'dfn': dfn, 'att_sid': asid, 'dfn_sid': dsid, 'move': mv,
+    hp_type = rng.choice(HP_TYPES) if mv['effect'] == 'EFFECT_HIDDEN_POWER' else None
+    return {'hp_type': hp_type,'att': att, 'dfn': dfn, 'att_sid': asid, 'dfn_sid': dsid, 'move': mv,
             'weather': rng.choice([None, None, 'sun', 'rain', 'sand', 'hail']),
             'crit': rng.random() < 0.15, 'moved_second': rng.random() < 0.5,
             'names': (an, dn)}
@@ -268,7 +307,8 @@ def main():
         want = o.rom(sc)
         got, _ = rom_damage.damage(sc['att'], sc['dfn'], sc['move'], chart,
                                    power=sc['move']['power'], weather=sc['weather'],
-                                   crit=sc['crit'], roll=None, moved_second=sc['moved_second'])
+                                   crit=sc['crit'], roll=None, moved_second=sc['moved_second'],
+                                   move_type=sc.get('hp_type'))
         if got == want:
             ok += 1
         else:
