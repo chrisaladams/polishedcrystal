@@ -345,9 +345,24 @@ IsFollowerObject:
 	ret
 
 SetFacingFollower:
-; Link Edition: the following Pokemon's party icon bounces between its two
-; frames, like in the party menu, and is mirrored while it heads right (the
-; icons face left). Heading up or down keeps the last left/right facing.
+; Link Edition: a following Pokemon with its own sprite uses the normal frames
+; for its direction (facing down, its icon's two frames, so it bounces).
+; Without one, its party icon bounces between its two frames, like in the
+; party menu, and is mirrored while it heads right (the icons face left);
+; heading up or down keeps the last left/right facing.
+	ld a, [wFollowerHasSprite]
+	and a
+	jr z, .icon_only
+	call AlternateStepFrame
+	ld d, 0
+	jr z, .frame
+	inc d
+.frame
+	call GetSpriteDirection
+	or d
+	jmp SetFixedFacing
+
+.icon_only
 	call GetSpriteDirection
 	cp OW_RIGHT
 	jr nz, .not_right

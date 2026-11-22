@@ -1558,3 +1558,7 @@ wFollowerPending:: db
 wFollowerSightFlags:: db
 ; Whether the follower's icon is mirrored (it last headed right).
 wFollowerFacingRight:: db
+; Whether the follower has its own sprite (back and side views), and where.
+wFollowerHasSprite:: db
+wFollowerSpriteBank:: db
+wFollowerSpriteAddr:: dw

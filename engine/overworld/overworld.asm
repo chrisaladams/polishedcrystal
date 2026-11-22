@@ -295,6 +295,12 @@ _GetSpritePalette::
 
 GetUsedSprite::
 	ldh a, [hUsedSpriteIndex]
+	cp SPRITE_FOLLOWER_MON ; Link Edition: a following Pokemon's own sprite
+	jr nz, .not_follower
+	farcall LoadFollowerSpriteGFX
+	ret c
+	ldh a, [hUsedSpriteIndex]
+.not_follower
 	call SafeGetSprite
 	ldh a, [hUsedSpriteTile]
 	call .GetTileAddr

@@ -236,3 +236,162 @@ GetFollowerFlags:
 	add hl, bc
 	and a
 	ret
+
+FindFollowerSprite:
+; Carry, and a:hl = its graphics, if the lead has a follower sprite.
+	ld a, [wFollowerPersonality + 1]
+	and SPECIESFORM_MASK
+	ld e, a
+	ld a, [wFollowerSpecies]
+	ld d, a
+	ld hl, FollowerSprites
+.loop
+	ld a, [hli]
+	cp -1
+	jr z, .none
+	cp d
+	jr nz, .skip
+	ld a, [hl]
+	xor e
+	and EXTSPECIES_MASK
+	jr nz, .skip
+	ld a, [hl]
+	and FORM_MASK
+	jr z, .found ; any form
+	xor e
+	and FORM_MASK
+	jr z, .found
+.skip
+	inc hl ; form
+	inc hl ; bank
+	inc hl
+	inc hl ; address
+	jr .loop
+
+.found
+	inc hl
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ld a, c
+	scf
+	ret
+
+.none
+	and a
+	ret
+
+LoadFollowerSpriteGFX::
+; Called by GetUsedSprite for SPRITE_FOLLOWER_MON. If the lead has a follower
+; sprite, build an NPC-style sprite in its tiles and return carry: standing
+; frames (icon frame 1, back view, side view) and walking frames (icon frame
+; 2, back view, side view), so it walks with the usual frames. Otherwise
+; return no carry, and GetUsedSprite loads the party icon as usual.
+	call FindFollowerSprite
+	jr c, .has_sprite
+	xor a
+	ld [wFollowerHasSprite], a
+	ret ; nc
+
+.has_sprite
+	ld [wFollowerSpriteBank], a
+	ld a, l
+	ld [wFollowerSpriteAddr], a
+	ld a, h
+	ld [wFollowerSpriteAddr + 1], a
+	ld a, TRUE
+	ld [wFollowerHasSprite], a
+	; b:de = the party icon (8 tiles: its two frames)
+	ld a, [wFollowerSpecies]
+	ld [wCurIcon], a
+	ld hl, wCurIconPersonality
+	ld a, [wFollowerPersonality]
+	ld [hli], a
+	ld a, [wFollowerPersonality + 1]
+	and SPECIESFORM_MASK
+	ld [hl], a
+	farcall LoadOverworldMonIcon
+	call .Build
+	; copy the frames into the follower's tiles, as GetUsedSprite does
+	ldh a, [hUsedSpriteTile]
+	and $7f
+	swap a
+	ld l, a
+	and $f
+	ld h, a
+	xor l
+	add LOW(vTiles0)
+	ld l, a
+	ld a, h
+	adc HIGH(vTiles0)
+	ld h, a
+	push hl
+	ld a, [wSpriteFlags]
+	bit 7, a
+	ld de, wDecompressScratch + 16 tiles
+	ld c, 12
+	call z, .ToVram
+	pop hl
+	ld a, [wSpriteFlags]
+	bit 6, a
+	jr nz, .done
+	bit 5, a
+	ld a, h
+	jr nz, .vram1
+	add 4
+.vram1
+	add 4
+	ld h, a
+	ld de, wDecompressScratch + 28 tiles
+	ld c, 12
+	call .ToVram
+.done
+	scf
+	ret
+
+.ToVram:
+	ldh a, [rVBK]
+	push af
+	ld a, [wSpriteFlags]
+	and 1 << 5
+	swap a
+	rra
+	ldh [rVBK], a
+	call Request2bppInWRA6
+	pop af
+	ldh [rVBK], a
+	ret
+
+.Build:
+; In the decompression scratch: the icon in tiles 0-7, the back and side
+; views in tiles 8-15, then the standing frames in tiles 16-27 and the
+; walking frames in tiles 28-39.
+	call RunFunctionInWRA6
+	ld h, d
+	ld l, e
+	ld a, b
+	ld de, wDecompressScratch
+	call FarDecompressToDE
+	ld a, [wFollowerSpriteAddr]
+	ld l, a
+	ld a, [wFollowerSpriteAddr + 1]
+	ld h, a
+	ld a, [wFollowerSpriteBank]
+	ld de, wDecompressScratch + 8 tiles
+	call FarDecompressToDE
+	ld hl, wDecompressScratch ; icon frame 1
+	ld de, wDecompressScratch + 16 tiles
+	ld bc, 4 tiles
+	rst CopyBytes
+	ld hl, wDecompressScratch + 8 tiles ; back, side
+	ld bc, 8 tiles
+	rst CopyBytes
+	ld hl, wDecompressScratch + 4 tiles ; icon frame 2
+	ld bc, 4 tiles
+	rst CopyBytes
+	ld hl, wDecompressScratch + 8 tiles ; back, side
+	ld bc, 8 tiles
+	rst CopyBytes
+	ret
