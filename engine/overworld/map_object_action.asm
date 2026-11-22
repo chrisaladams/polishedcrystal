@@ -103,6 +103,8 @@ SetFixedFacing:
 	ret
 
 SetFacingStandAction:
+	call IsFollowerObject ; Link Edition
+	jmp z, SetFacingFollower
 	ld hl, OBJECT_FACING
 	add hl, bc
 	ld a, [hl]
@@ -111,6 +113,8 @@ SetFacingStandAction:
 	; fallthrough
 SetFacingStepAction:
 SetFacingBumpAction:
+	call IsFollowerObject ; Link Edition
+	jmp z, SetFacingFollower
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
 	bit SLIDING_F, [hl]
@@ -133,7 +137,7 @@ SetFacingSkyfall:
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
 	bit SLIDING_F, [hl]
-	jr nz, SetFacingCurrent
+	jmp nz, SetFacingCurrent
 
 	ld hl, OBJECT_STEP_FRAME
 	add hl, bc
@@ -331,3 +335,43 @@ _GetNextStepFrame:
 	inc [hl]
 	ld a, [hl]
 	ret
+
+IsFollowerObject:
+; Link Edition: z if bc is the following Pokemon's object struct.
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp FOLLOWER_OBJECT
+	ret
+
+SetFacingFollower:
+; Link Edition: the following Pokemon's party icon bounces between its two
+; frames, like in the party menu, and is mirrored while it heads right (the
+; icons face left). Heading up or down keeps the last left/right facing.
+	call GetSpriteDirection
+	cp OW_RIGHT
+	jr nz, .not_right
+	ld a, TRUE
+	ld [wFollowerFacingRight], a
+	jr .facing_done
+.not_right
+	cp OW_LEFT
+	jr nz, .facing_done
+	xor a
+	ld [wFollowerFacingRight], a
+.facing_done
+	call AlternateStepFrame
+	ld a, [wFollowerFacingRight] ; (ld keeps AlternateStepFrame's flags)
+	jr nz, .second_frame
+	and a
+	ld a, FACING_STEP_DOWN_0
+	jmp z, SetFixedFacing
+	ld a, FACING_STEP_DOWN_FLIP
+	jmp SetFixedFacing
+
+.second_frame
+	and a
+	ld a, FACING_STEP_UP_0
+	jmp z, SetFixedFacing
+	ld a, FACING_STEP_UP_FLIP
+	jmp SetFixedFacing

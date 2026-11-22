@@ -60,7 +60,8 @@ SpawnFollowerAtDE:
 	ld a, FOLLOWER_OBJECT
 	call _CopyObjectStruct
 	ret c ; no free object struct
-	; a Pokemon icon only has its facing-down frames, so keep it facing down
+	; its frames come from SetFacingFollower (a Pokemon icon only has two
+	; facing-down frames: it bounces between them, mirrored heading right)
 	ld a, FOLLOWER_OBJECT
 	call GetMapObject
 	ld hl, MAPOBJECT_OBJECT_STRUCT_ID
@@ -69,11 +70,9 @@ SpawnFollowerAtDE:
 	call GetObjectStruct
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
-	set FIXED_FACING_F, [hl]
 	set INVISIBLE_F, [hl] ; until its first step (GetFollowerNextMovementByte)
-	ld hl, OBJECT_FACING
-	add hl, bc
-	ld [hl], OW_DOWN
+	xor a
+	ld [wFollowerFacingRight], a
 	; remember which Pokemon is shown
 	ld hl, wFollowerSpecies
 	ld de, wFollowerShownSpecies

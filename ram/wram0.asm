@@ -1556,3 +1556,5 @@ wFollowerShownPersonality:: dw
 wFollowerPending:: db
 ; The follower's object flags while trainers look past it.
 wFollowerSightFlags:: db
+; Whether the follower's icon is mirrored (it last headed right).
+wFollowerFacingRight:: db
