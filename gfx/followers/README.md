@@ -49,7 +49,7 @@ whatever gap fits.
 | Source | Gain | Status |
 |---|---|---|
 | Identical icons and minis shared | 684 B | done |
-| Drop the 6 songs only the jukebox plays (Dewford Town RSE, Legendary Battle XY, four Prism battle themes) | ~5 KB | needs the go-ahead |
+| Drop the 6 songs only the music player plays (Dewford Town RSE, Legendary Battle XY, four Prism battle themes), letting it play town and battle songs from the game instead | 4.9 KB | needs the go-ahead |
 | Share text repeated in map and phone scripts (100 extra copies now point at one copy with `text_far`) | 1.2 KB | done |
 | Compress the fonts | ~2.5 KB | possible; a few routines read letters straight from ROM |
 | Share the remaining duplicate graphics (two back sprites, three form masks) | ~0.7 KB | needs moving them into shared sections |
@@ -65,6 +65,21 @@ jukebox songs too: about 27 KB, enough for all 333 at ~70 B. With the
 front-sprite animations as well: about 47 KB, enough for all 333 in Rangi's
 style (37 KB). Full walking sprites for everything (48–73 KB) don't fit in
 2 MB.
+
+### Replacing the party icons
+
+The party icons in `gfx/icons/` (31.7 KB) are only drawn on the overworld:
+Pokémon standing on maps, the Fly animation, and the follower. The party
+menu, PC, trades and naming screen draw the separate minis in `gfx/minis/`.
+So a full walking sprite could replace each icon, its front frames then
+drawing those overworld Pokémon too, and it only costs what it adds over
+the icon:
+
+| Replacing every icon with | All 333 | Extra over today |
+|---|---|---|
+| Full walking sprites, symmetric front and back | ~48 KB | ~16 KB |
+| Full walking sprites, drawn as-is | ~73 KB | ~41 KB |
+
 
 Not worth it or not possible: cries (15 KB, every Pokémon needs one), music
 (145 KB, but songs are what the game plays everywhere), phone calls and
