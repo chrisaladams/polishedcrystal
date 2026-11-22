@@ -114,8 +114,8 @@ MapEvents:
 NextOverworldFrame:
 	; If we haven't already performed a delay outside DelayFrame as a result
 	; of a busy LY overflow, perform that now.
-	ld a, [wOverworldDelaySkip]
-	and a
+	ld a, [wOverworldDelayTimer]
+	bit 7, a
 	jr nz, .done
 	ldh a, [hDelayFrameLY]
 	inc a
@@ -123,11 +123,11 @@ NextOverworldFrame:
 	xor a
 	ldh [hDelayFrameLY], a
 .done
-	ld a, [wOverworldDelaySkip]
-	and a
+	ld a, [wOverworldDelayTimer]
+	bit 7, a
 	ret z
-	dec a
-	ld [wOverworldDelaySkip], a
+	xor a
+	ld [wOverworldDelayTimer], a
 	ret
 
 .LoadMapGraphicsAndDelay:
@@ -227,7 +227,7 @@ PlayerEvents:
 	call CheckTimeEvents
 	jr c, .ok
 
-	call OWPlayerInput
+	call OWPlayerInputAndSRAMCheck
 	jr c, .ok
 
 	xor a
@@ -235,6 +235,7 @@ PlayerEvents:
 
 .ok
 	push af
+	call ResetOverworldSaveTimer
 	call EnableScriptMode
 	pop af
 
@@ -501,7 +502,7 @@ CheckTimeEvents:
 	scf
 	ret
 
-OWPlayerInput:
+OWPlayerInputAndSRAMCheck:
 	call PlayerMovement
 	ret c
 	and a
@@ -894,6 +895,28 @@ CheckMenuOW:
 	bit B_PAD_START, a
 	jr nz, .Start
 
+	; Because autosave requires reanchoring in order to set up
+	; player/map state properly for saving, suspend it during the
+	; map name sign (which doesn't handle reanchoring properly).
+	ld a, [wLandmarkSignTimer]
+	and a
+	jr nz, .skip
+
+	; If we're lagging, wait.
+	ld a, [wOverworldDelayTimer]
+	bit 7, a
+	jr nz, .skip
+
+	; Otherwise, if 16 frames has passed since we last moved, autosave.
+	; The reason for the wait is to allow players who move back and forth,
+	; for example Masuda hunters, a bit of margin before autosave kicks in.
+	cp $7f
+	jr z, .skip
+	inc a
+	ld [wOverworldDelayTimer], a
+	cp 16
+	call z, Autosave
+.skip
 	xor a
 	ret
 
@@ -915,6 +938,29 @@ StartMenuScript:
 	callasm StartMenu
 	sjumpfwd StartMenuCallback
 
+Autosave:
+	farcall ReanchorBGMap_NoOAMUpdate
+	call BGMapAnchorTopLeft
+	call LoadMapPart
+
+	; This implicitly does a SRAM integrity check, so we don't need to
+	; make another one.
+	call .DoAutosave
+	call LatchRTCAndVerifySRAM
+	jmp CloseSRAM
+
+.DoAutosave:
+	; Only allow autosave if the player is allowed to save normally.
+	; We should still do the SRAM integrity check, hence why this check
+	; is done here instead of alongside other autosave checks.
+	farcall SavingAllowed
+	ret nz
+
+	; TODO: autosave initial option
+	ld de, SFX_READ_TEXT_2 ; debug
+	call PlaySFX
+	farjp SilentGameSave
+
 SelectMenuScript:
 	callasm SelectMenu
 	sjumpfwd SelectMenuCallback
@@ -933,7 +979,19 @@ SelectMenuCallback:
 	memcallasm wQueuedScriptBank
 	end
 
+ResetOverworldSaveTimer:
+	ld a, [wOverworldDelayTimer]
+	and $80
+	ret nz
+	ld [wOverworldDelayTimer], a
+	ret
+
 CountStep:
+	; Since we just made a step, reset the wait timer.
+	; Used for delay handling and the autosave timer, we use it for the latter
+	; case here.
+	call ResetOverworldSaveTimer
+
 	; Don't count steps in link communication rooms.
 	ld a, [wLinkMode]
 	and a

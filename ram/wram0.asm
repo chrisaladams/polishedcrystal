@@ -1336,7 +1336,7 @@ wInputFlags::
 ; bit 7: SGB flag?
 	db
 
-wOverworldDelaySkip::
+wOverworldDelayTimer::
 ; amount of overworld frames to skip DelayFrame for
 	db
 
