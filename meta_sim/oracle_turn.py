@@ -313,6 +313,9 @@ class Rom:
             out[side] = {'stats': st, 'gender': self.r(pfx + 'Gender') >> 7}
         out['me']['ability'] = self.r('wPlayerAbility')
         out['foe']['ability'] = self.r('wEnemyAbility')
+        # the bench Pokemon's stats too (party struct: max HP, then the rest)
+        for side, pfx in (('me', 'wPartyMon2'), ('foe', 'wOTPartyMon2')):
+            out[side]['bench'] = {k: self.r16(pfx + 'MaxHP', 2 * i) for i, k in enumerate(PARTY_STATS)}
         return out
 
     def _end_turn(self, plan):
@@ -419,8 +422,13 @@ def sim_play(a, b, info, choices, data, seed):
         p.maxhp = p.hp = inf['stats']['hp']
         p.gender = None if mon.get('female') is None else ('F' if inf['gender'] else 'M')
         mons.append(p)
-    bench = [engine.Pmon(BENCH['id'], data['pokemon'][BENCH['id']], list(BENCH['moves']),
-                         BENCH['ability'], None) for _ in range(2)]
+    bench = []
+    for side in ('me', 'foe'):
+        p = engine.Pmon(BENCH['id'], data['pokemon'][BENCH['id']], list(BENCH['moves']),
+                        BENCH['ability'], None)
+        p.base = dict(info[side]['bench'])
+        p.maxhp = p.hp = p.base['hp']
+        bench.append(p)
     A, B = engine.Side([mons[0], bench[0]], field), engine.Side([mons[1], bench[1]], field)
     A.foe, B.foe = B, A
     engine.apply_switch(B, 0, A, data['typechart'])   # the ROM sends out the opponent first
