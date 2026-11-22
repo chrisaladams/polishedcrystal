@@ -87,6 +87,7 @@ StartMenu::
 	call ExitMenu
 .ReturnEnd2:
 	call CloseText
+	farcall RefreshFollower ; Link Edition: the lead or the option may have changed
 	jmp UpdateTimePals
 
 .GetInput:

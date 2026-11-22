@@ -63,3 +63,4 @@ MapSetupCommands:
 	add_mapsetup LoadMapAttributes_Connection ; 38
 	add_mapsetup SavePrevPalStates ; 39
 	add_mapsetup ClearSavedObjPals ; 3a
+	add_mapsetup SpawnFollower ; 3b

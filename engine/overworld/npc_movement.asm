@@ -262,6 +262,13 @@ IsNPCAtCoord:
 	bit EMOTE_OBJECT_F, [hl]
 	jr nz, .next
 
+	; Link Edition: nothing collides with the following Pokemon
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp FOLLOWER_OBJECT
+	jr z, .next
+
 	ld hl, OBJECT_PALETTE
 	add hl, bc
 	bit BIG_OBJECT_F, [hl]

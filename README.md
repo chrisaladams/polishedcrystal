@@ -119,6 +119,13 @@ Battle Tower and Battle Factory prize shops are unchanged.
 - **PC boxes from the start menu.** "Boxes" opens Bill's PC from anywhere you
   could save, so you can swap team members without a Pokémon Center. (When
   the menu is full, Exit makes room for it; B and Start still close the menu.)
+- **Your Pokémon follows you.** Your first healthy Pokémon walks behind you,
+  shown with its party icon: it copies your steps (running, biking, ledges),
+  never blocks you or anyone else, and never hides you from a trainer. It
+  stays in its Poké Ball while you surf and in the battle and trade rooms,
+  and changes when you change your lead. Turn it off under Options →
+  Follower. (Rangi's own follower branch is unfinished; this is a smaller
+  version built on the game's existing follow logic and Pokémon icons.)
 
 ### Smarter trainer AI
 

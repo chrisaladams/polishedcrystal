@@ -24,6 +24,7 @@ DEF JOYPAD_DISABLE_SGB_TRANSFER_F EQU 7
 	const NICKNAMES_ALWAYS   ; 1
 	const NICKNAMES_NEVER    ; 2
 	const AUTOSAVE_OFF_F     ; 3 (Link Edition)
+	const FOLLOWER_OFF_F     ; 4 (Link Edition)
 
 ; wOptions1::
 	const_def 3

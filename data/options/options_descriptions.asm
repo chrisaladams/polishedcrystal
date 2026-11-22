@@ -11,6 +11,7 @@ OptionsDescriptions:
 	dw .Nicknames
 	dw .RunningShoes
 	dw .Autosave
+	dw .Follower
 	dw .TurningSpeed
 	dw .ClockFormat
 	dw .PokedexUnits
@@ -90,6 +91,12 @@ OptionsDescriptions:
 	cont "you stop walking,"
 	cont "wherever you could"
 	cont "save normally."
+	prompt
+
+.Follower:
+	text "Your first healthy"
+	line "#mon follows"
+	cont "you around."
 	prompt
 
 .TurningSpeed:

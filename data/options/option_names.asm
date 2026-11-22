@@ -11,6 +11,7 @@ OptionNames:
 	dw .Nicknames
 	dw .RunningShoes
 	dw .Autosave
+	dw .Follower
 	dw .TurningSpeed
 	dw .ClockFormat
 	dw .PokedexUnits
@@ -38,6 +39,8 @@ OptionNames:
 	db "Running Shoes@"
 .Autosave:
 	db "Autosave@"
+.Follower:
+	db "Follower@"
 .TurningSpeed:
 	db "Turning Speed@"
 .ClockFormat:

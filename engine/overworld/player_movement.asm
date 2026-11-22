@@ -35,6 +35,18 @@ DoPlayerMovement::
 	ld [wCurInput], a
 	ret
 
+.SpawnPendingFollower:
+	xor a
+	ld [wFollowerPending], a
+	push bc
+	push de
+	push hl
+	farcall SpawnFollower
+	pop hl
+	pop de
+	pop bc
+	ret
+
 .TranslateIntoMovement:
 	ld a, [wPlayerState]
 	cp PLAYER_SURF
@@ -45,6 +57,9 @@ DoPlayerMovement::
 	jr z, .Ice
 
 ; normal/run/bike
+	ld a, [wFollowerPending] ; Link Edition: just off the water
+	and a
+	call nz, .SpawnPendingFollower
 	call .CheckForced
 	call .GetAction
 	call .CheckTile
@@ -323,6 +338,8 @@ DoPlayerMovement::
 
 .ExitWater:
 	call .StartWalking
+	ld a, TRUE ; Link Edition: the follower comes back once we're on land
+	ld [wFollowerPending], a
 	call PlayMapMusic
 	ld a, STEP_WALK
 	call .DoStep

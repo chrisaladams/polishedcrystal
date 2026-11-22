@@ -136,6 +136,8 @@ GetSprite::
 
 GetMonSprite:
 ; Return carry if a monster sprite was loaded.
+	cp SPRITE_FOLLOWER_MON
+	jr z, .FollowerMon
 	cp SPRITE_AQUARIUM_MON
 	jr z, .MonIcon
 	cp SPRITE_MON_ICON
@@ -198,6 +200,16 @@ GetMonSprite:
 	and SPECIESFORM_MASK
 	ld e, a
 	ld a, [wBreedMon1Species]
+	jr .Mon
+
+.FollowerMon:
+; Link Edition: the lead Pokemon following you
+	ld a, [wFollowerPersonality]
+	ld d, a
+	ld a, [wFollowerPersonality + 1]
+	and SPECIESFORM_MASK
+	ld e, a
+	ld a, [wFollowerSpecies]
 	jr .Mon
 
 .BreedMon2:

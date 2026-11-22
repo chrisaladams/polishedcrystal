@@ -154,6 +154,11 @@ SECTION "Link Failsafe Code", ROMX
 INCLUDE "engine/link/link_failsafe.asm"
 
 
+SECTION "Follower Code", ROMX
+
+INCLUDE "engine/overworld/follower.asm"
+
+
 SECTION "Random Battle", ROMX
 
 INCLUDE "engine/link/random_battle.asm"

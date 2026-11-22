@@ -264,7 +264,12 @@ PlayerEvents:
 	ret
 
 CheckTrainerEvent:
+	; Link Edition: trainers see past the following Pokemon
+	farcall HideFollowerFromTrainers
 	call CheckTrainerBattle
+	push af
+	farcall UnhideFollowerFromTrainers
+	pop af
 	jr nc, .nope
 
 	ld a, PLAYEREVENT_SEENBYTRAINER

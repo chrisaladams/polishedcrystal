@@ -547,6 +547,7 @@ AutoSurfScript:
 
 	special UpdatePlayerSprite
 	playmapmusic
+	callasm RemoveFollower ; Link Edition: no follower on the water
 ; step into the water
 	special Special_SurfStartStep ; (slow_step_x, step_end)
 	applymovement PLAYER, wMovementBuffer ; PLAYER, MovementBuffer

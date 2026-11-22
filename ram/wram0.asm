@@ -1541,3 +1541,18 @@ wLinkBattleDesynced:: db
 wLinkExchangePhase:: db
 wLinkExchangeCandidates:: ds 3
 wLinkExchangeReceived:: ds 3
+
+
+SECTION "Follower RAM", WRAM0
+
+; Link Edition: the Pokemon following you (engine/overworld/follower.asm).
+; The lead's species and personality (shininess, form), for its icon...
+wFollowerSpecies:: db
+wFollowerPersonality:: dw
+; ...and the ones the follower on screen was made from.
+wFollowerShownSpecies:: db
+wFollowerShownPersonality:: dw
+; Set when the player steps off the water: spawn the follower once on land.
+wFollowerPending:: db
+; The follower's object flags while trainers look past it.
+wFollowerSightFlags:: db

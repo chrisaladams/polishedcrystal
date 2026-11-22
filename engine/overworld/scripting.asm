@@ -1105,7 +1105,8 @@ Script_follow:
 	farjp StartFollow
 
 Script_stopfollow:
-	farjp StopFollow
+	farcall StopFollow
+	farjp SpawnFollower ; Link Edition: back under the player
 
 Script_moveobject:
 	call GetScriptByte

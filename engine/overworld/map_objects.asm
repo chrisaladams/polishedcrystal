@@ -2036,6 +2036,21 @@ GetFollowerNextMovementByte:
 	jr z, .CancelFollowIfLeaderMissing
 	dec a ; 0?
 	jr z, .CancelFollowIfLeaderMissing
+	; Link Edition: the following Pokemon starts out hidden under the
+	; player; it shows itself with its first step
+	push af ; the queue length
+	push hl
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp FOLLOWER_OBJECT
+	jr nz, .not_pokemon
+	ld hl, OBJECT_FLAGS1
+	add hl, bc
+	res INVISIBLE_F, [hl]
+.not_pokemon
+	pop hl
+	pop af
 	dec [hl]
 	ld e, a
 	ld d, 0

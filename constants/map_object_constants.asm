@@ -99,6 +99,9 @@ DEF MAPOBJECT_SCRIPT_POINTER   rw ; a
 DEF MAPOBJECT_EVENT_FLAG       rw ; c
 DEF MAPOBJECT_LENGTH EQU _RS
 DEF NUM_OBJECTS EQU 21
+; Link Edition: the following Pokemon uses the last map object
+; (engine/overworld/follower.asm)
+DEF FOLLOWER_OBJECT EQU NUM_OBJECTS - 1
 DEF PLAYER_OBJECT EQU 0
 
 ; map_object MAPOBJECT_OBJECT_STRUCT_ID values
