@@ -111,6 +111,15 @@ Ability Capsules. Prices rise with power (type boosters ¥3,000, utility items
 ¥20,000, Bottle Cap and Ability Capsule ¥30,000), so they're earned. The
 Battle Tower and Battle Factory prize shops are unchanged.
 
+### Quality of life
+
+- **Autosave.** The game saves itself when you stop walking, wherever you
+  could save normally (it takes a tenth of a second). Turn it off under
+  Options → Autosave.
+- **PC boxes from the start menu.** "Boxes" opens Bill's PC from anywhere you
+  could save, so you can swap team members without a Pokémon Center. (When
+  the menu is full, Exit makes room for it; B and Start still close the menu.)
+
 ### Smarter trainer AI
 
 These apply to every trainer battle, not just link play:

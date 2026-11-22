@@ -9,6 +9,7 @@
 	const STARTMENUITEM_EXIT     ; 6
 	const STARTMENUITEM_POKEGEAR ; 7
 	const STARTMENUITEM_QUIT     ; 8
+	const STARTMENUITEM_BOXES    ; 9 (Link Edition)
 
 StartMenu::
 
@@ -170,6 +171,7 @@ StartMenu::
 	dw StartMenu_Exit,     .ExitString
 	dw StartMenu_Pokegear, .PokegearString
 	dw StartMenu_Quit,     .QuitString
+	dw StartMenu_Boxes,    .BoxesString
 
 .PokedexString:  db "#dex@"
 .PartyString:    db "#mon@"
@@ -180,6 +182,7 @@ StartMenu::
 .ExitString:     db "Exit@"
 .PokegearString: db "<PO><KE>gear@"
 .QuitString:     db "Quit@"
+.BoxesString:    db "Boxes@"
 
 .OpenMenu:
 	ld a, [wMenuSelection]
@@ -228,6 +231,12 @@ endr
 	jr z, .no_pokemon
 	ld a, STARTMENUITEM_POKEMON
 	call .AppendMenuList
+	; Link Edition: the PC boxes, wherever saving is allowed
+	call SavingAllowed
+	jr nz, .no_pokemon
+	jr c, .no_pokemon
+	ld a, STARTMENUITEM_BOXES
+	call .AppendMenuList
 .no_pokemon
 
 	ld a, [wLinkMode]
@@ -261,8 +270,13 @@ endr
 
 	ld a, STARTMENUITEM_OPTION
 	call .AppendMenuList
+	; Exit only if there's room (B and Start close the menu too)
+	ld a, c
+	cp 8
+	jr nc, .no_exit
 	ld a, STARTMENUITEM_EXIT
 	call .AppendMenuList
+.no_exit
 	ld a, c
 	ld [wMenuItemsList], a
 	ret
@@ -346,6 +360,14 @@ StartMenu_Option:
 	call FadeToMenu
 	farcall OptionsMenu
 	ld a, 6
+	ret
+
+StartMenu_Boxes:
+; Link Edition: Bill's PC boxes from the start menu. _BillsPC opens and
+; closes its own window and restores the map (block data included, which the
+; PC's hblank code overwrites), so the start menu just reopens.
+	farcall _BillsPC
+	xor a ; reopen the menu
 	ret
 
 StartMenu_Status:
