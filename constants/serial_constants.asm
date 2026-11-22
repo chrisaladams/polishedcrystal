@@ -7,7 +7,6 @@
 ; hSerialReceive high nybbles
 DEF SERIAL_TRADECENTER EQU $70
 DEF SERIAL_BATTLE      EQU $80
-DEF SERIAL_BATTLE_ODD  EQU $90 ; every other link battle action exchange
 
 DEF ESTABLISH_CONNECTION_WITH_INTERNAL_CLOCK EQU $01
 DEF ESTABLISH_CONNECTION_WITH_EXTERNAL_CLOCK EQU $02
@@ -43,12 +42,28 @@ DEF SERIAL_RNS_LENGTH         EQU 10
 ; resending its first preamble byte, so more of them can arrive
 DEF LINK_CHECK_SLACK  EQU 8
 DEF LINK_CHECK_LENGTH EQU SERIAL_PREAMBLE_LENGTH + 3 * 2 * 2 + LINK_CHECK_SLACK
-DEF LINK_VERDICT_LENGTH EQU SERIAL_PREAMBLE_LENGTH + 2 + LINK_CHECK_SLACK
+DEF LINK_VERDICT_COPIES EQU 4
+DEF LINK_VERDICT_LENGTH EQU SERIAL_PREAMBLE_LENGTH + LINK_VERDICT_COPIES + LINK_CHECK_SLACK
+; how many times the team swap is tried before giving up
+DEF LINK_SETUP_TRIES EQU 5
 DEF LINK_CHECK_OK     EQU $1a
 DEF LINK_CHECK_BAD    EQU $15
 ; frames to keep sending a confirmed action exchange, so the other game can
 ; confirm all three fields too (LinkFailsafe_ExchangeAction)
-DEF LINK_EXCHANGE_SEND_FRAMES EQU 30
+DEF LINK_EXCHANGE_SEND_FRAMES EQU 18
+; link battle action exchanges cycle through four sets of three tags (high
+; nybbles $1-$c), so a byte from the exchange before last is never mistaken
+; for one from the next
+DEF LINK_FIRST_TAG    EQU $10
+DEF LINK_TAG_SET_STEP EQU $30
+; how long a finished link battle keeps answering its last exchange
+DEF LINK_FINISH_FRAMES EQU 180
+; the clock side reading a dead line this many frames in a row: cable out
+DEF LINK_DEAD_FRAMES EQU 60
+; anyone hearing nothing this long: "Still waiting... check the cable"
+DEF LINK_QUIET_FRAMES EQU 15 * 60
+; the external-clock side restarts its transfer every this many quiet frames
+DEF LINK_REARM_FRAMES EQU 32
 DEF LINK_EXCHANGE_SEND_FRAMES_VC EQU 78 ; Virtual Console's wireless link is slower
 
 DEF SERIAL_MAIL_PREAMBLE_BYTE    EQU $20

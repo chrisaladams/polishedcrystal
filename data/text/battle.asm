@@ -3,8 +3,12 @@ BattleText::
 LinkBattleOutOfSyncText::
 	text "Link error: the"
 	line "battle went out of"
-	cont "sync. Please start"
-	cont "it again."
+	cont "sync."
+	para "The game will now"
+	line "reset. Your team"
+	cont "is safe--just link"
+	cont "up and battle"
+	cont "again."
 	prompt
 
 LinkBattleErrorText::

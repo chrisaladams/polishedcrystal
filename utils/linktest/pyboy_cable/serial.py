@@ -141,7 +141,8 @@ class SerialSharedMemory(Serial):
 
     Layout of each side's 64-byte slot: +0 cycles (u64), +8 armed for an
     external transfer, +9 SB, +10 delivery pending, +11 delivered byte,
-    +12 alive.
+    +12 alive, +14 line noise (see linkhelp.h). Byte 126 of the block set:
+    the cable is unplugged (the clock side reads $ff, nothing is delivered).
     """
 
     def __init__(self, cgb_mode, shared_memory, serial_interrupt_based):
@@ -208,7 +209,10 @@ class SerialSharedMemory(Serial):
         if self.transfer_enabled:
             if self.internal_clock:
                 if self.clock >= self.clock_target:
-                    if lk_get8(self.other + 8):
+                    # byte 126 of the shared block: the cable is unplugged
+                    if lk_get8(self.me - 64 * self.shared_slot + 126):
+                        self.SB = 0xFF
+                    elif lk_get8(self.other + 8):
                         lk_set8(self.other + 8, 0)
                         lk_set8(self.other + 11, lk_noise(self.other, self.SB))
                         lk_set8(self.other + 10, 1)

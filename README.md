@@ -45,11 +45,21 @@ either player knowing. Now:
   build"), so everyone has to flash the same file.
 - **Checked team swap.** Before the battle, both games fingerprint the parties
   and random numbers they sent and received and compare them. If anything
-  arrived scrambled, both show "Link error" and you sit down again to retry,
-  instead of starting a battle that's already broken.
+  arrived scrambled, both say "Link error! Trying again. Keep it on!" and redo
+  the swap themselves (up to five times) instead of starting a battle that's
+  already broken.
 - **Confirmed moves.** Each turn's choice only counts once the same byte has
-  arrived twice in a row, each exchange is tagged so a late byte can't be
-  mistaken for the next turn's, and nothing can overwrite a confirmed choice.
+  arrived twice in a row, exchanges cycle through four sets of tags so a late
+  byte can't be mistaken for another turn's, and nothing can overwrite a
+  confirmed choice.
+- **Bumped or unplugged cables.** Nothing in a turn's exchange gives up: if the
+  cable comes out, both games wait, and the game driving the link says "Link
+  cable out! Plug it back in." (after a long silence, either says "Still
+  waiting… Check the cable."). Plug it back in and the battle carries on. Each
+  exchange keeps answering the one before, so a game that missed the end of a
+  turn can always catch up.
+- **No garbage Pokémon.** A switch to a Pokémon the opponent doesn't have
+  (which used to show a random picture with a broken HP bar) stops the battle.
 - **Per-turn fingerprint.** Every turn the games also swap a fingerprint of
   the battle (HP, status, stat changes, the random number position). If the
   two ever disagree, both stop with "the battle went out of sync" and reset.

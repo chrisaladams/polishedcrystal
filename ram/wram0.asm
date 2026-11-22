@@ -1506,21 +1506,27 @@ SECTION "Link Failsafe", WRAM0
 
 ; Link battle safeguards (engine/link/link_failsafe.asm and
 ; LinkBattleSendReceiveAction).
-; The serial tag of the current action exchange: alternates between
-; SERIAL_BATTLE and SERIAL_BATTLE_ODD so a stale byte from the last exchange
-; is never taken for this one.
+; The first serial tag of the current action exchange's set; exchanges cycle
+; through four sets so a stale byte is never taken for this exchange's.
 wLinkBattleExchangeTag:: db
-; The last action received with this exchange's tag; it is accepted once the
-; same action arrives twice in a row.
-wLinkBattleCandidate:: db
 ; Fingerprint of our party as sent before a link battle.
 wLinkSentPartyHash:: dw
 ; Nonzero if the two games didn't receive the same battle.
 wLinkSetupFailed:: db
+; Team swap attempts so far for this battle.
+wLinkSetupTries:: db
 wLinkCheckSend:: ds LINK_CHECK_LENGTH
 wLinkCheckRecv:: ds LINK_CHECK_LENGTH
-; Per-turn action exchange (LinkFailsafe_ExchangeAction).
+; Per-turn action exchange (LinkFailsafe_ExchangeAction): what we send this
+; exchange, and what we sent last exchange (still answered, in case the other
+; game missed it). Each is the action followed by the fingerprint.
+wLinkCurSent:: db
 wLinkBattleFingerprint:: db
+wLinkPrevSent:: db
+wLinkPrevFingerprint:: db
+wLinkQuietFrames:: dw ; frames without a byte for this exchange
+wLinkDeadFrames:: db ; frames the clock side has read a dead line ($ff)
+wLinkLostShown:: db ; 1: "still waiting" shown, 2: "cable out" shown
 wLinkBattleDesynced:: db
 wLinkExchangePhase:: db
 wLinkExchangeCandidates:: ds 3

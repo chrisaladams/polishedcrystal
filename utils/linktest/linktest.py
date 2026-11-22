@@ -97,6 +97,8 @@ class Side:
         self.setup_errors = 0
         self.desync_at = 0
         self.shot_every = 5
+        self.unplug_at = self.unplug_delay = self.unplug_frames = 0
+        self.unplug_wait = self.unplug_left = 0
         # record the battle every time the game starts an action exchange
         # (each turn, and when a fainted Pokemon is replaced): both games
         # make the same exchanges, so these records line up exactly
@@ -124,6 +126,16 @@ class Side:
     def tick(self, n=1):
         for _ in range(n):
             self.pb.tick(1, False)
+            if self.unplug_wait:
+                self.unplug_wait -= 1
+                if not self.unplug_wait:
+                    self.cable.mm[126] = 1
+                    self.say(f'    (test) cable unplugged for {self.unplug_frames} frames')
+            elif self.unplug_left:
+                self.unplug_left -= 1
+                if not self.unplug_left:
+                    self.cable.mm[126] = 0
+                    self.say('    (test) cable plugged back in')
         if self.corrupt and not self.noisy and (
                 self.rd('wBattleMode') or (self.noise_setup and self.where() == COLOSSEUM)):
             # line noise on what this side receives, from the battle on
@@ -168,6 +180,9 @@ class Side:
 
     def _on_exchange(self, _):
         self.exchanges.append(self.snapshot())
+        if self.unplug_at and len(self.exchanges) == self.unplug_at:
+            self.unplug_wait = self.unplug_delay + 1
+            self.unplug_left = self.unplug_frames
         if self.desync_at and len(self.exchanges) == self.desync_at:
             # knock one HP off our active Pokemon, a split that no byte on
             # the cable explains: the per-turn fingerprint must catch it
@@ -211,10 +226,13 @@ class Side:
                 return 'partner finished'
             scr = self.screen()
             joined = '\n'.join(scr)
-            text = ' / '.join(s.strip('│┃ ') for s in scr[12:17] if s.strip('│┃ '))
+            text = ' / '.join(s.strip('│┃ ') for s in scr[9:17] if s.strip('│┃ '))
             if text and text != last_text:
                 self.say('  ' + text)
                 last_text = text
+                if 'Trying' in text and 'again' in text and text != getattr(self, '_last_retry', ''):
+                    self.setup_retries = getattr(self, 'setup_retries', 0) + 1
+                    self._last_retry = text
                 setup_error = 'battle data' in text
                 if setup_error and 'wLinkCheckSend' in self.sym:
                     n = 26
@@ -315,14 +333,16 @@ class Side:
 
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
-           desync_at=0, shot_every=5):
+           desync_at=0, shot_every=5, unplug=(0, 0, 0)):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         s.desync_at = desync_at
         s.shot_every = shot_every
+        s.unplug_at, s.unplug_delay, s.unplug_frames = unplug
         result = s.run(turns, time.time() + seconds)
         cable.mm[127] = 1
-        q.put((name, f'{result} ({s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
+        q.put((name, f'{result} ({getattr(s, "setup_retries", 0)} swap retries, '
+                     f'{s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
         s.pb.stop(save=False)
     except Exception as e:                       # noqa: BLE001
         cable.mm[127] = 1
@@ -354,6 +374,9 @@ def main():
     ap.add_argument('--seconds', type=int, default=900)
     ap.add_argument('--corrupt', type=int, default=0)
     ap.add_argument('--shot-every', type=int, default=5, help='screenshot every N turns')
+    ap.add_argument('--unplug', default='',
+                    help='AT,DELAY,FRAMES: at action exchange AT (side A), wait DELAY frames, '
+                         'then unplug the cable for FRAMES frames')
     ap.add_argument('--desync-at', type=int, default=0,
                     help="change side B's HP at this action exchange, to test desync detection")
     ap.add_argument('--noise-setup', action='store_true',
@@ -372,7 +395,9 @@ def main():
         p = mp.Process(target=worker, args=(name, rom, sav, rom[:-4] + '.sym', cable, slot,
                                             args.out, args.turns, args.seconds, corrupt,
                                             args.seed + slot, q, args.noise_setup,
-                                            args.desync_at if slot else 0, args.shot_every))
+                                            args.desync_at if slot else 0, args.shot_every,
+                                            tuple(map(int, args.unplug.split(','))) if args.unplug and not slot
+                                            else (0, 0, 0)))
         p.start()
         ctx_procs.append(p)
     res = {}

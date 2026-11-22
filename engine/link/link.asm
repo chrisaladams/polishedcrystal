@@ -19,7 +19,7 @@ LinkCommunications:
 	hlcoord 3, 8
 	lb bc, 2, 12
 	call LinkTextbox
-	hlcoord 4, 10
+	hlcoord 4, 9
 	ld de, String_PleaseWait
 	rst PlaceString
 	call SetTradeRoomBGPals
@@ -234,7 +234,10 @@ Gen2ToGen2LinkComms:
 	ld a, [wLinkSetupFailed]
 	and a
 	jr z, .setup_ok
-	farcall LinkFailsafe_ShowSetupError
+	farcall LinkFailsafe_SetupFailed
+	ld a, [wLinkSetupFailed]
+	and a
+	jmp z, Gen2ToGen2LinkComms ; swap again
 	jmp ExitLinkCommunications
 
 .setup_ok
@@ -271,9 +274,10 @@ Gen2ToGen2LinkComms:
 
 	call LinkBattle_BackUpPlayerPartyMonsToLinkData
 	call LinkBattle_SetPlayerPartyMonsToLevel50
-	ld a, SERIAL_BATTLE
+	ld a, LINK_FIRST_TAG
 	ld [wLinkBattleExchangeTag], a
 	farcall StartBattle
+	farcall LinkFailsafe_FinishLinkBattle
 	call LinkBattle_RestorePlayerPartyMonsFromLinkData
 
 	ldh a, [rIF]
@@ -362,7 +366,7 @@ ExchangeBytes:
 	ret
 
 String_PleaseWait:
-	text "Please wait!"
+	text "Please wait!<LNBRK>Keep it on!"
 	done
 
 ClearLinkData:
