@@ -636,7 +636,7 @@ KimonoGirlMinaScript:
 	cont "space in your Bag."
 	done
 
-.IntroText:
+.IntroText::
 	text "I am a Kimono"
 	line "Girl."
 

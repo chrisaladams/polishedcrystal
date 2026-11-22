@@ -66,7 +66,7 @@ BattleTowerHallwayEnterScene:
 	random 5
 	end
 
-.PleaseStepThisWayText:
+.PleaseStepThisWayText::
 	text "Please step this"
 	line "way."
 	done

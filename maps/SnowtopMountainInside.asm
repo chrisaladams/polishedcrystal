@@ -88,16 +88,8 @@ KimonoGirlAmiScript:
 	done
 
 .IntroText:
-	text "I am a Kimono"
-	line "Girl."
-
-	para "Haven't you met my"
-	line "five dancing cou-"
-	cont "sins in Ecruteak?"
-
-	para "Let me know if"
-	line "you do."
-	done
+	text_far KimonoGirlMinaScript.IntroText
+	text_end
 
 .SeenText:
 	text "If I were to dance"

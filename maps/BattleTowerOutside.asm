@@ -137,9 +137,8 @@ BattleTowerOutsideAnabelScript:
 	done
 
 .NoText:
-	text "It's very dis-"
-	line "appointing…"
-	done
+	text_far BattleTower2FAnabelScript.RefuseText
+	text_end
 
 .BeatenText:
 	text "OK, I understand…"

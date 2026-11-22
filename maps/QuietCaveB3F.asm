@@ -74,8 +74,8 @@ QuietCaveB3FMarleyScript:
 	done
 
 .BeatenText:
-	text "…Awww."
-	done
+	text_far BattleTower2FMarleyScript.BeatenText
+	text_end
 
 .ItemText:
 	text "I… I don't like to"

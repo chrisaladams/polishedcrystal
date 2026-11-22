@@ -102,7 +102,7 @@ BattleTower2FCherylScript:
 	cont "for that, too!"
 	done
 
-.BeatenText:
+.BeatenText::
 	text "Striking the right"
 	line "balance of offense"
 	cont "and defense…"
@@ -173,7 +173,7 @@ BattleTower2FRileyScript:
 	line "met elsewhere?"
 	done
 
-.BeatenText:
+.BeatenText::
 	text "At times we bat-"
 	line "tle, and sometimes"
 	cont "we team up."
@@ -234,7 +234,7 @@ BattleTower2FBuckScript:
 	line "improving my team."
 	done
 
-.BeatenText:
+.BeatenText::
 	text "Heeheehee!"
 	line "So hot, you!"
 	done
@@ -289,7 +289,7 @@ BattleTower2FMarleyScript:
 	line "Only a tiny bit."
 	done
 
-.BeatenText:
+.BeatenText::
 	text "…Awww."
 	done
 
@@ -406,7 +406,7 @@ BattleTower2FAnabelScript:
 	text "Thank you…"
 	done
 
-.RefuseText:
+.RefuseText::
 	text "It's very dis-"
 	line "appointing…"
 	done

@@ -151,9 +151,8 @@ CinnabarVolcano1FBuckScript:
 	done
 
 .BeatenText:
-	text "Heeheehee!"
-	line "So hot, you!"
-	done
+	text_far BattleTower2FBuckScript.BeatenText
+	text_end
 
 .ItemText:
 	text "Fweh! Too much!"

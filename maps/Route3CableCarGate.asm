@@ -87,14 +87,12 @@ Route3CableCarGateReceptionistScript:
 	done
 
 .AnotherTimeText:
-	text "Please ride with"
-	line "us another time."
-	done
+	text_far MountMoonSquareCableCarGateReceptionistScript.AnotherTimeText
+	text_end
 
 .StepThisWayText:
-	text "Please step this"
-	line "way."
-	done
+	text_far BattleTowerHallwayEnterScene.PleaseStepThisWayText
+	text_end
 
 .ApproachCableCarMovement:
 	step_up

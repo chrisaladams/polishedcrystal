@@ -1377,6 +1377,7 @@ _MomIsThisAboutYourMoneyText::
 	done
 
 SECTION "_MomBankWhatDoYouWantToDoText", ROMX
+_PlayersPCAskWhatDoText:: ; same as _MomBankWhatDoYouWantToDoText
 _MomBankWhatDoYouWantToDoText::
 	text "What do you want"
 	line "to do?"
@@ -2328,6 +2329,7 @@ _ThrewAwayText::
 	prompt
 
 SECTION "_OakThisIsntTheTimeText", ROMX
+_ItemOakWarningText:: ; same as _OakThisIsntTheTimeText
 _OakThisIsntTheTimeText::
 	text "Oak: <PLAYER>!"
 	line "This isn't the"
@@ -2684,16 +2686,11 @@ _PokecenterPCCantUseText::
 	prompt
 
 SECTION "_PlayersPCTurnOnText", ROMX
+_PokecenterPCTurnOnText:: ; same as _PlayersPCTurnOnText
 _PlayersPCTurnOnText::
 	text "<PLAYER> turned on"
 	line "the PC."
 	prompt
-
-SECTION "_PlayersPCAskWhatDoText", ROMX
-_PlayersPCAskWhatDoText::
-	text "What do you want"
-	line "to do?"
-	done
 
 SECTION "_PlayersPCHowManyWithdrawText", ROMX
 _PlayersPCHowManyWithdrawText::
@@ -2748,12 +2745,6 @@ SECTION "_PlayersPCNoRoomDepositText", ROMX
 _PlayersPCNoRoomDepositText::
 	text "There's no room to"
 	line "store items."
-	prompt
-
-SECTION "_PokecenterPCTurnOnText", ROMX
-_PokecenterPCTurnOnText::
-	text "<PLAYER> turned on"
-	line "the PC."
 	prompt
 
 SECTION "_PokecenterPCWhoseText", ROMX
@@ -3411,6 +3402,8 @@ _EvolvingText::
 	done
 
 SECTION "_MartHowManyText", ROMX
+_HowManyText:: ; same as _MartHowManyText
+_MartSellHowManyText:: ; same as _MartHowManyText
 _MartHowManyText::
 	text "How many?"
 	done
@@ -3534,11 +3527,6 @@ _PharmacyIntroText::
 	line "some medicine?"
 	done
 
-SECTION "_HowManyText", ROMX
-_HowManyText::
-	text "How many?"
-	done
-
 SECTION "_PharmacyFinalPriceText", ROMX
 _PharmacyFinalPriceText::
 	text_decimal wItemQuantityChangeBuffer, 1, 2
@@ -3571,11 +3559,6 @@ SECTION "_PharmacyComeAgainText", ROMX
 _PharmacyComeAgainText::
 	text "All right."
 	line "See you around."
-	done
-
-SECTION "_MartSellHowManyText", ROMX
-_MartSellHowManyText::
-	text "How many?"
 	done
 
 SECTION "_MartSellPriceText", ROMX
@@ -3743,6 +3726,7 @@ _PhoneClickText::
 	done
 
 SECTION "_PhoneEllipseText", ROMX
+_GearEllipseText:: ; same as _PhoneEllipseText
 _PhoneEllipseText::
 	text "……"
 	done
@@ -3907,11 +3891,6 @@ SECTION "_GearTodayText", ROMX
 _GearTodayText::
 	text_today
 	text_end
-
-SECTION "_GearEllipseText", ROMX
-_GearEllipseText::
-	text "……"
-	done
 
 SECTION "_GearOutOfServiceText", ROMX
 _GearOutOfServiceText::
@@ -4146,13 +4125,6 @@ SECTION "_ItemCantUseOnEggText", ROMX
 _ItemCantUseOnEggText::
 	text "That can't be used"
 	line "on an Egg."
-	prompt
-
-SECTION "_ItemOakWarningText", ROMX
-_ItemOakWarningText::
-	text "Oak: <PLAYER>!"
-	line "This isn't the"
-	cont "time to use that!"
 	prompt
 
 SECTION "_ItemWontHaveEffectText", ROMX

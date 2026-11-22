@@ -85,15 +85,14 @@ MountMoonSquareCableCarGateReceptionistScript:
 	line "to be on it?"
 	done
 
-.AnotherTimeText:
+.AnotherTimeText::
 	text "Please ride with"
 	line "us another time."
 	done
 
 .StepThisWayText:
-	text "Please step this"
-	line "way."
-	done
+	text_far BattleTowerHallwayEnterScene.PleaseStepThisWayText
+	text_end
 
 .ApproachCableCarMovement:
 	step_up

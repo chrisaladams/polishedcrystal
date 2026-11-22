@@ -116,14 +116,8 @@ DimCave5FRileyScript:
 	done
 
 .BeatenText:
-	text "At times we bat-"
-	line "tle, and sometimes"
-	cont "we team up."
-
-	para "It's great how"
-	line "trainers can"
-	cont "interact."
-	done
+	text_far BattleTower2FRileyScript.BeatenText
+	text_end
 
 .ItemText:
 	text "Know your enemy."

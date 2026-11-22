@@ -104,13 +104,8 @@ MurkySwampCherylScript:
 	done
 
 .BeatenText:
-	text "Striking the right"
-	line "balance of offense"
-	cont "and defense…"
-
-	para "It's not easy"
-	line "to do."
-	done
+	text_far BattleTower2FCherylScript.BeatenText
+	text_end
 
 .ItemText:
 	text "Thank you,"
