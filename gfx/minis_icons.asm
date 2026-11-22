@@ -122,15 +122,15 @@ ArbokMiniMask:: INCBIN "gfx/minis/arbok_mask.1bpp.lzp"
 ArbokIcon::     INCBIN "gfx/icons/arbok.2bpp.lzp"
 
 SECTION "Pikachu Mini Icon", ROMX
-PikachuSurfIcon:: ; Link Edition: identical to PikachuMini
+PikachuIcon:: ; Link Edition: the icons are identical to PikachuMini
+PikachuFlyIcon::
+PikachuSurfIcon::
 PikachuMini::         INCBIN "gfx/minis/pikachu.2bpp.lzp"
 PikachuFlyMini::      INCBIN "gfx/minis/pikachu_fly.2bpp.lzp"
 PikachuSurfMini::     INCBIN "gfx/minis/pikachu_surf.2bpp.lzp"
 PikachuMiniMask::     INCBIN "gfx/minis/pikachu_mask.1bpp.lzp"
 PikachuFlyMiniMask::  INCBIN "gfx/minis/pikachu_fly_mask.1bpp.lzp"
 PikachuSurfMiniMask:: INCBIN "gfx/minis/pikachu_surf_mask.1bpp.lzp"
-PikachuIcon::
-PikachuFlyIcon::
 
 SECTION "Raichu Mini Icon", ROMX
 RaichuIcon:: ; Link Edition: identical to RaichuMini
