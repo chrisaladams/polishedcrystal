@@ -23,6 +23,7 @@ DEF JOYPAD_DISABLE_SGB_TRANSFER_F EQU 7
 	const QWERTY_KEYBOARD_F  ; 0
 	const NICKNAMES_ALWAYS   ; 1
 	const NICKNAMES_NEVER    ; 2
+	const AUTOSAVE_OFF_F     ; 3 (Link Edition)
 
 ; wOptions1::
 	const_def 3

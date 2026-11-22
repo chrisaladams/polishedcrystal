@@ -956,9 +956,10 @@ Autosave:
 	farcall SavingAllowed
 	ret nz
 
-	; TODO: autosave initial option
-	ld de, SFX_READ_TEXT_2 ; debug
-	call PlaySFX
+	; Link Edition: autosave can be turned off in the Options menu
+	ld a, [wOptions3]
+	bit AUTOSAVE_OFF_F, a
+	ret nz
 	farjp SilentGameSave
 
 SelectMenuScript:

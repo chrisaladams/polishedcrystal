@@ -40,7 +40,7 @@ OptionsMenu:
 .BGPalettes:
 INCLUDE "gfx/options/options_bg.pal"
 
-DEF NUM_OPTIONS EQU 13
+DEF NUM_OPTIONS EQU 14
 
 OptionsMenu_CallOptionRoutine:
 	ld a, [wMenuSelection]
@@ -59,6 +59,7 @@ OptionsMenu_CallOptionRoutine:
 	dw Options_BattleStyle
 	dw Options_Nicknames
 	dw Options_RunningShoes
+	dw Options_Autosave
 	dw Options_TurningSpeed
 	dw Options_ClockFormat
 	dw Options_PokedexUnits
@@ -306,6 +307,30 @@ OffString:
 	db "Off@"
 OnString:
 	db "On @"
+
+Options_Autosave:
+; Link Edition: save automatically when you stop walking.
+	ld hl, wOptions3
+	ldh a, [hJoyPressed]
+	and PAD_LEFT | PAD_RIGHT
+	jr nz, .Toggle
+	bit AUTOSAVE_OFF_F, [hl]
+	jr nz, .SetOff
+	jr .SetOn
+
+.Toggle:
+	bit AUTOSAVE_OFF_F, [hl]
+	jr nz, .SetOn
+.SetOff:
+	set AUTOSAVE_OFF_F, [hl]
+	ld de, OffString
+	jr .Display
+
+.SetOn:
+	res AUTOSAVE_OFF_F, [hl]
+	ld de, OnString
+.Display:
+	jmp OptionsShared_PlaceStringAtValueCoord
 
 Options_Frame:
 	ld hl, wTextboxFrame
