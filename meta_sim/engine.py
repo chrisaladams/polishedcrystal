@@ -1032,7 +1032,7 @@ def apply_switch(side, idx, foe_side, chart):
     # entry hazards (grounded mons only -- Flying-type or Levitate skip these)
     grounded = is_grounded(m)
     if side.spikes and grounded and m.ability != 'MAGIC_GUARD':
-        m.hp -= m.maxhp * [0, 1/8, 1/6, 1/4][side.spikes]
+        m.hp -= max(1, m.maxhp // [0, 8, 6, 4][side.spikes])
     if side.tspikes and grounded:
         if 'POISON' in m.types:
             side.tspikes = 0               # absorbed
@@ -1108,7 +1108,7 @@ def end_of_turn(mon, foe_side, rng=random):
         mon.status = None               # 30%/turn cure of any major status
         mon.sleep = mon.tox = 0
     if mon.ability == 'POISON_HEAL' and mon.status in ('psn', 'tox'):
-        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8)
+        mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // 8))
     elif mon.ability != 'MAGIC_GUARD':
         # DoPoisonBurnDamage: poison 1/8, burn 1/16 (Gen VII), toxic n/16 with
         # the counter capped at 15; each fraction floored, at least 1 HP
@@ -1120,7 +1120,7 @@ def end_of_turn(mon, foe_side, rng=random):
             mon.tox = min(15, mon.tox + 1)
             mon.hp -= mon.tox * max(1, mon.maxhp // 16)
         if mon.seeded:
-            drain = min(mon.maxhp / 8, max(mon.hp, 0))
+            drain = min(max(1, mon.maxhp // 8), max(mon.hp, 0))
             mon.hp -= drain
             seeder = foe_side.mon            # Leech Seed transfers the drained HP
             if not seeder.fainted:
@@ -1133,7 +1133,7 @@ def end_of_turn(mon, foe_side, rng=random):
                     seeder.hp += healed
                     seeder.heal_done += healed / seeder.maxhp
     if mon.cursed and mon.ability != 'MAGIC_GUARD':
-        mon.hp -= mon.maxhp / 4
+        mon.hp -= max(1, mon.maxhp // 4)
     def on_field(p):
         return p is not None and not p.fainted and p.side is not None and p.side.mon is p
     if mon.bound:
@@ -1141,7 +1141,7 @@ def end_of_turn(mon, foe_side, rng=random):
             mon.bound, mon.bound_by = 0, None
         else:
             if mon.ability != 'MAGIC_GUARD':
-                mon.hp -= mon.maxhp * (1 / 6 if mon.bound_by.item == 'BINDING_BAND' else 1 / 8)
+                mon.hp -= max(1, mon.maxhp // (6 if mon.bound_by.item == 'BINDING_BAND' else 8))
             mon.bound -= 1
             if not mon.bound:
                 mon.bound_by = None
@@ -1150,16 +1150,16 @@ def end_of_turn(mon, foe_side, rng=random):
     w = weather_of(mon)
     if w == 'sand' and not (set(mon.types) & SAND_IMMUNE_TYPES) \
             and mon.ability not in SAND_IMMUNE_ABILITIES:
-        mon.hp -= mon.maxhp / 16
+        mon.hp -= max(1, mon.maxhp // 16)
     elif w == 'hail' and not (set(mon.types) & HAIL_IMMUNE_TYPES) \
             and mon.ability not in HAIL_IMMUNE_ABILITIES:
-        mon.hp -= mon.maxhp / 16
+        mon.hp -= max(1, mon.maxhp // 16)
     if mon.ability in ('SOLAR_POWER', 'DRY_SKIN') and w == 'sun':
-        mon.hp -= mon.maxhp / 8
-    heal = {('RAIN_DISH', 'rain'): 1 / 16, ('DRY_SKIN', 'rain'): 1 / 8,
-            ('ICE_BODY', 'hail'): 1 / 16}.get((mon.ability, w), 0)
+        mon.hp -= max(1, mon.maxhp // 8)
+    heal = {('RAIN_DISH', 'rain'): 16, ('DRY_SKIN', 'rain'): 8,
+            ('ICE_BODY', 'hail'): 16}.get((mon.ability, w), 0)
     if heal and mon.hp > 0:
-        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp * heal)
+        mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // heal))
     if mon.ability == 'HYDRATION' and w == 'rain' and mon.status is not None:
         mon.status, mon.sleep, mon.tox = None, 0, 0
     if mon.perish and mon.hp > 0:

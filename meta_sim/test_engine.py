@@ -214,7 +214,7 @@ def test_weather_ability_speed_and_chip():
     assert A.field.weather == 'sand'
     k.hp = k.maxhp
     end_of_turn(k, A)
-    assert k.hp == k.maxhp * 15 / 16
+    assert k.hp == k.maxhp - k.maxhp // 16    # floored, like GetSixteenthMaxHP
     t.hp = t.maxhp
     end_of_turn(t, B)
     assert t.hp == t.maxhp                  # Rock types don't take sand damage
@@ -317,7 +317,7 @@ def test_binding_chips_and_expires():
     assert b.bound in engine.BIND_TURNS and engine.is_trapped(B, A)
     hp = b.hp
     end_of_turn(b, A)
-    assert abs((hp - b.hp) - b.maxhp / 6) < 1e-6
+    assert hp - b.hp == b.maxhp // 6           # floored, like GetSixthMaxHP
 
 
 def test_perish_song_faints():
