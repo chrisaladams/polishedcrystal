@@ -75,9 +75,13 @@ At the battle desk, after "Would you like to battle?", choose **Normal** or
 **Random teams** (both players must choose the same). With random teams each
 player gets six random level 50 Pokémon, all different species, fully evolved
 and non-legendary, with perfect DVs and a neutral nature, so a brand-new save
-can battle a finished one on equal terms. The sets (295 of them, for 155
+can battle a finished one on equal terms. Teams get a decent type spread: no
+more than two members share a type, and no more than three are weak to the
+same type (abilities like Levitate count). The sets (295 of them, for 155
 species) come from the simulator's best-set optimiser, made friendly: no
-Choice items, item-swapping moves or self-hurting orbs. Your own team isn't
+Choice items, item-swapping moves or self-hurting orbs.
+`utils/linktest/test_random_teams.py` builds hundreds of teams with the game's
+own code and checks every one against these rules. Your own team isn't
 touched; it's back after the battle. Regenerate the sets with
 `python3 meta_sim/make_random_sets.py`.
 
