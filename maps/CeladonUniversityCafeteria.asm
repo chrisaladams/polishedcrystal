@@ -262,8 +262,8 @@ CeladonUniversityCafeteriaBakerScript:
 	done
 
 .Text4:
-	text "Have a nice day!"
-	done
+	text_far CeladonHomeDecorStore3FClerk2NoText
+	text_end
 
 .Text6:
 	text "You can't carry"

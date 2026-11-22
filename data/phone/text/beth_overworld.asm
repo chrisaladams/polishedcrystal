@@ -34,9 +34,8 @@ BethAskNumber2Text:
 	done
 
 BethNumberAcceptedText:
-	text "Let's battle again"
-	line "sometime!"
-	done
+	text_far BethLetsBattleAgainSometimeText
+	text_end
 
 BethNumberDeclinedText:
 	text "That's too bad…"

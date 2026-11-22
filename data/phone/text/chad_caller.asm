@@ -66,8 +66,8 @@ ChadBattleRematchText:
 	done
 
 ChadHangUpText:
-	text "See you later!"
-	done
+	text_far AlanHangUpText
+	text_end
 
 ChadBlueGossipText:
 	text "Do you know Blue?"

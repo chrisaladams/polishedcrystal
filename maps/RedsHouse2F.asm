@@ -46,9 +46,5 @@ RedsHouse2FPCText:
 	done
 
 RedsHouse2FSNESText:
-	text "<PLAYER> played the"
-	line "SNES."
-
-	para "Better get going--"
-	line "no time to lose!"
-	done
+	text_far BluesHouse2FSNESText
+	text_end

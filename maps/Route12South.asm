@@ -134,8 +134,8 @@ GenericTrainerBird_keeperJustin:
 	done
 
 .BeatenText:
-	text "Phew…"
-	done
+	text_far BugManiacDionBeatenText
+	text_end
 
 GenericTrainerBird_keeperGail:
 	generictrainer BIRD_KEEPER, GAIL, EVENT_BEAT_BIRD_KEEPER_GAIL, .SeenText, .BeatenText

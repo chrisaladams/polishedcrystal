@@ -869,7 +869,7 @@ Text_ItsTheMissingPokemon:
 	line "#mon!"
 	done
 
-Text_Kwaaaa:
+Text_Kwaaaa::
 	text "Farfetch'd: Kwaa!"
 	done
 

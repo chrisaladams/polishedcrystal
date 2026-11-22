@@ -41,12 +41,12 @@ SoulHouseB3FMrFujiScript:
 	end
 
 .Text1:
-	text "TODO"
-	done
+	text_far DarachMornDayText
+	text_end
 
 .Text2:
-	text "TODO"
-	done
+	text_far DarachMornDayText
+	text_end
 
 .LeaveMovement:
 	slow_step_left

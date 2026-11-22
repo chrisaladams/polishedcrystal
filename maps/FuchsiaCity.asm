@@ -339,7 +339,7 @@ HouseForSaleSignText:
 	line "Nobody lives here."
 	done
 
-FuchsiaCityCarefulSwimmingSignText:
+FuchsiaCityCarefulSwimmingSignText::
 	text "Please be careful"
 	line "if you are swim-"
 	cont "ming to Seafoam"

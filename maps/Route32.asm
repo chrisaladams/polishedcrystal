@@ -885,8 +885,8 @@ YoungsterAlbertSeenText:
 	done
 
 YoungsterAlbertBeatenText:
-	text "You're strong!"
-	done
+	text_far PokefanmColinBeatenText
+	text_end
 
 YoungsterGordonSeenText:
 	text "I found some good"
@@ -1004,7 +1004,7 @@ Route32RuinsSignText:
 	line "East Entrance"
 	done
 
-Route32UnionCaveSignText:
+Route32UnionCaveSignText::
 	text "Union Cave"
 	line "Ahead"
 	done

@@ -508,17 +508,14 @@ IndigoPlateauTeleportGuyScript:
 	done
 
 .YesText:
-	text "OK, OK. Picture"
-	line "your house in your"
-	cont "mind…"
-	done
+	text_far SinjohRuinsHouseGrampsYesText
+	text_end
 
 .NoText:
-	text "OK, OK. The best"
-	line "of luck to you!"
-	done
+	text_far SinjohRuinsHouseGrampsNoText
+	text_end
 
-IndigoPlateauAbraText:
+IndigoPlateauAbraText::
 	text "Abra: Aabra…"
 	done
 

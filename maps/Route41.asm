@@ -356,7 +356,7 @@ SwimmerfDeniseSeenText:
 	cont "a daze!"
 	done
 
-SwimmerfDeniseBeatenText:
+SwimmerfDeniseBeatenText::
 	text "Ohhh!"
 	done
 

@@ -136,14 +136,12 @@ PikachuBedSentText:
 	done
 
 CeladonHomeDecorStore2FNoMoneyText:
-	text "You can't afford"
-	line "that!"
-	done
+	text_far CeladonHomeDecorStore1FNoMoneyText
+	text_end
 
 CeladonHomeDecorStore2FAlreadyBoughtText:
-	text "You already have"
-	line "that!"
-	done
+	text_far CeladonHomeDecorStore1FAlreadyBoughtText
+	text_end
 
 CeladonHomeDecorStore2FPokefanfText:
 	text "Brand-name items"

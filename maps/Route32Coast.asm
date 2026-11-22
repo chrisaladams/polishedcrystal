@@ -298,6 +298,5 @@ Route32CoastTrainerTipsText:
 	done
 
 Route32CoastUnionCaveSignText:
-	text "Union Cave"
-	line "Ahead"
-	done
+	text_far Route32UnionCaveSignText
+	text_end

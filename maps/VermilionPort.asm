@@ -205,51 +205,29 @@ VermilionPortApproachFastShipRightMovement:
 	step_end
 
 VermilionPortDepartingText:
-	text "We're departing"
-	line "soon. Please get"
-	cont "on board."
-	done
+	text_far OlivinePortSailorGetOnBoardText
+	text_end
 
 
 VermilionPortAskBoardingText:
-	text "Welcome to Fast"
-	line "Ship S.S.Aqua."
-
-	para "Will you be board-"
-	line "ing today?"
-	done
+	text_far OlivinePortAskBoardText
+	text_end
 
 VermilionPortAskTicketText:
-	text "May I see your"
-	line "S.S.Ticket?"
-	done
+	text_far OlivinePortAskTicketText
+	text_end
 
 VermilionPortComeAgainText:
-	text "We hope to see you"
-	line "again!"
-	done
+	text_far GoldenrodMagnetTrainStationOfficerHopeToSeeYouAgainText
+	text_end
 
 VermilionPortSSTicketText:
-	text "<PLAYER> flashed"
-	line "the S.S.Ticket."
-
-	para "That's it."
-	line "Thank you!"
-	done
+	text_far OlivinePortFlashTicketText
+	text_end
 
 VermilionPortNoTicketText:
-	text "<PLAYER> tried to"
-	line "show the S.S."
-	cont "Ticket…"
-
-	para "…But no Ticket!"
-
-	para "Sorry!"
-	line "You may board only"
-
-	para "if you have an"
-	line "S.S.Ticket."
-	done
+	text_far OlivinePortNoTicketText
+	text_end
 
 VermilionPortSailMondayText:
 	text "The Fast Ship will"

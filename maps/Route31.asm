@@ -496,7 +496,7 @@ Route31SignText:
 	line "Cherrygrove City"
 	done
 
-DarkCaveSignText:
+DarkCaveSignText::
 	text "Dark Cave"
 	done
 

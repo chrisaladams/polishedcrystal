@@ -123,8 +123,8 @@ SeafoamIslandsArticuno:
 	end
 
 ArticunoText:
-	text "Gyaoo!"
-	done
+	text_far MoltresText
+	text_end
 
 SeafoamIslandsB4FLawrenceSpeechText:
 	text "Lawrence: Hello"
@@ -171,9 +171,8 @@ SeafoamIslandsB4FLawrenceSpeechText:
 	done
 
 SeafoamIslandsB4FLawrenceEscapeRopeText:
-	text "Lawrence used an"
-	line "Escape Rope!"
-	done
+	text_far CinnabarVolcanoB2FLawrenceEscapeRopeText
+	text_end
 
 SeafoamIslandsB4FMovementData_LawrenceSurfApproach1:
 	step_right

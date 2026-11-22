@@ -50,16 +50,12 @@ ValenciaPortSailorScript:
 	done
 
 .DepartText:
-	text "All right!"
-
-	para "All aboard the"
-	line "Seagallop Ferry!"
-	done
+	text_far SeagallopFerryFarawayToVermilionText
+	text_end
 
 .RefuseText:
-	text "I'll be waiting"
-	line "right here."
-	done
+	text_far SeagallopFerryFarawayIslandRefusedText
+	text_end
 
 ValenciaPortFisherText:
 	text "Have you noticed"

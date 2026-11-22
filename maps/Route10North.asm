@@ -243,8 +243,8 @@ Route10Zapdos:
 	end
 
 ZapdosText:
-	text "Gyaoo!"
-	done
+	text_far MoltresText
+	text_end
 
 Route10NorthElectrode:
 	cry ELECTRODE

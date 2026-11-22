@@ -106,20 +106,20 @@ SinjohRuinsHouseGrampsText:
 	cont "you back home?"
 	done
 
-SinjohRuinsHouseGrampsYesText:
+SinjohRuinsHouseGrampsYesText::
 	text "OK, OK. Picture"
 	line "your house in your"
 	cont "mind…"
 	done
 
-SinjohRuinsHouseGrampsNoText:
+SinjohRuinsHouseGrampsNoText::
 	text "OK, OK. The best"
 	line "of luck to you!"
 	done
 
 SinjohRuinsHouseAbraText:
-	text "Abra: Aabra…"
-	done
+	text_far IndigoPlateauAbraText
+	text_end
 
 SinjohRuinsHouseCynthiaChallengeText:
 	text "Cynthia: Hello,"
@@ -147,18 +147,9 @@ SinjohRuinsHouseCynthiaNoText:
 	done
 
 SinjohRuinsHouseCynthiaYesText:
-	text "Cynthia: Before"
-	line "I send out my"
-	cont "#mon,"
-
-	para "my heart always"
-	line "begins to race…"
-	done
+	text_far MystriStageCynthiaYesText
+	text_end
 
 SinjohRuinsHouseCynthiaWinText:
-	text "I can't remember"
-	line "the last time I"
-
-	para "was outclassed"
-	line "like this!"
-	done
+	text_far MystriStageCynthiaWinText
+	text_end

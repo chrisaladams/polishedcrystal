@@ -206,8 +206,8 @@ PicnickerSharonSeenText: ; text > text
 	done
 
 PicnickerSharonBeatenText: ; text > text
-	text "…"
-	done
+	text_far CeruleanCityCooltrainerFText3
+	text_end
 
 Route4SuperNerd1Text:
 	text "#mon with tough"
@@ -263,5 +263,5 @@ Text_Route4Tutor2Question:
 	done
 
 MtMoonSignText:
-	text "Mt.Moon Tunnel"
-	done
+	text_far Route3MtMoonSquareSignText
+	text_end

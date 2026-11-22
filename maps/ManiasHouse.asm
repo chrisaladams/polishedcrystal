@@ -156,7 +156,7 @@ ManiaText_TakeCareOfShuckie:
 	line "it, please!"
 	done
 
-ManiaText_GotShuckie:
+ManiaText_GotShuckie::
 	text "<PLAYER> received a"
 	line "#mon."
 	done

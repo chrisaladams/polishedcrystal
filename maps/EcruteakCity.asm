@@ -136,7 +136,7 @@ EcruteakCitySightseerMText:
 	cont "draw it."
 	done
 
-EcruteakCitySmeargleText:
+EcruteakCitySmeargleText::
 	text "Smeargle: Smeer!"
 	done
 

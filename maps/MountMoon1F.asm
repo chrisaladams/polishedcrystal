@@ -286,7 +286,7 @@ BugManiacRobbySeenText:
 	line "City."
 	done
 
-BugManiacRobbyBeatenText:
+BugManiacRobbyBeatenText::
 	text "I lost…"
 	done
 

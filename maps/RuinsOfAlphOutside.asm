@@ -262,8 +262,8 @@ PsychicNathanSeenText:
 	done
 
 PsychicNathanBeatenText: ; text > text
-	text "…"
-	done
+	text_far CeruleanCityCooltrainerFText3
+	text_end
 
 RuinsOfAlphOutsideMysteryChamberSignText:
 	text "Mystery Stone"

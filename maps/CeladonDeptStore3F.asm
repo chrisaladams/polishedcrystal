@@ -199,7 +199,7 @@ VideoGameClerkText:
 	line "yourself!"
 	done
 
-VideoGameClerkNoSaleText:
+VideoGameClerkNoSaleText::
 	text "Clerk: Well, if"
 	line "you say so."
 	done

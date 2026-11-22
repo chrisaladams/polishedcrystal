@@ -84,9 +84,8 @@ GenericTrainerSwimmerfKendra:
 	done
 
 .BeatenText:
-	text "I didn't want to"
-	line "lose…"
-	done
+	text_far TeacherHillaryBeatenText
+	text_end
 
 GenericTrainerSwimmermEsteban:
 	generictrainer SWIMMERM, ESTEBAN, EVENT_BEAT_SWIMMERM_ESTEBAN, .SeenText, .BeatenText

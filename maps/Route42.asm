@@ -424,7 +424,7 @@ HikerBenjaminSeenText:
 	cont "I feel so free!"
 	done
 
-HikerBenjaminBeatenText:
+HikerBenjaminBeatenText::
 	text "Gahahah!"
 	done
 
@@ -453,14 +453,14 @@ Route42OfficerText:
 	line "ing the rubble."
 	done
 
-Route42Sign1Text:
+Route42Sign1Text::
 	text "Route 42"
 
 	para "Ecruteak City -"
 	line "Mahogany Town"
 	done
 
-MtMortarSign1Text:
+MtMortarSign1Text::
 	text "Mt.Mortar"
 
 	para "Waterfall Cave"
@@ -468,15 +468,9 @@ MtMortarSign1Text:
 	done
 
 MtMortarSign2Text:
-	text "Mt.Mortar"
-
-	para "Waterfall Cave"
-	line "Inside"
-	done
+	text_far MtMortarSign1Text
+	text_end
 
 Route42Sign2Text:
-	text "Route 42"
-
-	para "Ecruteak City -"
-	line "Mahogany Town"
-	done
+	text_far Route42Sign1Text
+	text_end

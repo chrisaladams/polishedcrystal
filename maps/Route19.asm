@@ -215,10 +215,5 @@ Route19SignText:
 	done
 
 CarefulSwimmingSignText:
-	text "Please be careful"
-	line "if you are swim-"
-	cont "ming to Seafoam"
-	cont "Islands."
-
-	para "Fuchsia Police"
-	done
+	text_far FuchsiaCityCarefulSwimmingSignText
+	text_end

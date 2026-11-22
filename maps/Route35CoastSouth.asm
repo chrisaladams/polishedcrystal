@@ -106,8 +106,8 @@ SwimmermWalterSeenText:
 	done
 
 SwimmermWalterBeatenText:
-	text "Ouch!"
-	done
+	text_far BurglarPeteBeatenText
+	text_end
 
 SwimmerfLisaSeenText:
 	text "The fishermen"
@@ -126,8 +126,8 @@ SwimmerfJillSeenText:
 	done
 
 SwimmerfJillBeatenText:
-	text "Hmph!"
-	done
+	text_far OfficerfJamieBeatenText
+	text_end
 
 Bird_keeperBryanSeenText:
 	text "What kinds of"

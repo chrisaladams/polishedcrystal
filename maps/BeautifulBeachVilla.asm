@@ -18,17 +18,17 @@ BeautifulBeachVilla_MapScriptHeader:
 	object_event  9,  2, SPRITE_WEIRD_TREE, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, (1 << NITE), PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, CaitlinNiteScript, -1
 	object_event 11,  4, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, (1 << NITE), 0, OBJECTTYPE_COMMAND, jumptext, DarachsBookText, -1
 
-DarachMornDayText:
+DarachMornDayText::
 	text "TODO"
 	done
 
 DarachNiteText:
-	text "TODO"
-	done
+	text_far DarachMornDayText
+	text_end
 
 CaitlinMornDayText:
-	text "TODO"
-	done
+	text_far DarachMornDayText
+	text_end
 
 CaitlinNiteScript:
 	jumpthistext
@@ -37,5 +37,5 @@ CaitlinNiteScript:
 	done
 
 DarachsBookText:
-	text "TODO"
-	done
+	text_far DarachMornDayText
+	text_end

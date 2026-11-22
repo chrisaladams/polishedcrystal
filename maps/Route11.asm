@@ -99,8 +99,8 @@ GenericTrainerPsychicHerman:
 
 PsychicHermanSeenText: ; text > text
 PsychicHermanBeatenText:
-	text "…"
-	done
+	text_far CeruleanCityCooltrainerFText3
+	text_end
 
 GenericTrainerPsychicFidel:
 	generictrainer PSYCHIC_T, FIDEL, EVENT_BEAT_PSYCHIC_FIDEL, PsychicFidelSeenText, PsychicFidelBeatenText

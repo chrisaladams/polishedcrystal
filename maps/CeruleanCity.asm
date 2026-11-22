@@ -181,7 +181,7 @@ CeruleanCityCooltrainerFText2:
 	line "your Confusion!"
 	done
 
-CeruleanCityCooltrainerFText3: ; text > text
+CeruleanCityCooltrainerFText3:: ; text > text
 	text "…"
 	done
 

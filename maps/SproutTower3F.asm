@@ -276,8 +276,5 @@ SproutTower3FPaintingText:
 	done
 
 SproutTower3FStatueText:
-	text "A #mon statue…"
-
-	para "It looks very"
-	line "distinguished."
-	done
+	text_far SproutTower1FStatueText
+	text_end

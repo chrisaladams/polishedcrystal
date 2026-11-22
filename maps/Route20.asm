@@ -109,8 +109,8 @@ GenericTrainerSwimmerfLeona:
 	done
 
 .BeatenText:
-	text "Ohhh!"
-	done
+	text_far SwimmerfDeniseBeatenText
+	text_end
 
 GenericTrainerSwimmermCameron:
 	generictrainer SWIMMERM, CAMERON, EVENT_BEAT_SWIMMERM_CAMERON, SwimmermCameronSeenText, SwimmermCameronBeatenText
@@ -128,7 +128,7 @@ SwimmermCameronSeenText:
 	line "Johto."
 	done
 
-SwimmermCameronBeatenText:
+SwimmermCameronBeatenText::
 	text "Aiyah!"
 	done
 
@@ -231,8 +231,8 @@ GenericTrainerCamperPedro:
 	done
 
 .BeatenText:
-	text "You're strong!"
-	done
+	text_far PokefanmColinBeatenText
+	text_end
 
 GenericTrainerBird_keeperBert:
 	generictrainer BIRD_KEEPER, BERT, EVENT_BEAT_BIRD_KEEPER_BERT, .SeenText, .BeatenText

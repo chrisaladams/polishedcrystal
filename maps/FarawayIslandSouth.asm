@@ -140,19 +140,19 @@ FarawayIslandSouthSailorArrive2MovementData:
 	turn_head_up
 	step_end
 
-SeagallopFerryFarawayToVermilionQuestionText:
+SeagallopFerryFarawayToVermilionQuestionText::
 	text "Ready to head back"
 	line "to Vermilion City?"
 	done
 
-SeagallopFerryFarawayToVermilionText:
+SeagallopFerryFarawayToVermilionText::
 	text "All right!"
 
 	para "All aboard the"
 	line "Seagallop Ferry!"
 	done
 
-SeagallopFerryFarawayIslandRefusedText:
+SeagallopFerryFarawayIslandRefusedText::
 	text "I'll be waiting"
 	line "right here."
 	done

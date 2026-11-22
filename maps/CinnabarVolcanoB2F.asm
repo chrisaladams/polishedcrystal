@@ -107,7 +107,7 @@ CinnabarVolcanoMoltres:
 .end
 	end
 
-MoltresText:
+MoltresText::
 	text "Gyaoo!"
 	done
 
@@ -157,7 +157,7 @@ CinnabarVolcanoB2FLawrenceSpeechText:
 	cont "those #mon."
 	done
 
-CinnabarVolcanoB2FLawrenceEscapeRopeText:
+CinnabarVolcanoB2FLawrenceEscapeRopeText::
 	text "Lawrence used an"
 	line "Escape Rope!"
 	done

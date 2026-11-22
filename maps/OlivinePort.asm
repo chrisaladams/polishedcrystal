@@ -257,14 +257,14 @@ OlivinePortApproachFastShipAfterHOFRightMovement:
 	step_down
 	step_end
 
-OlivinePortSailorGetOnBoardText:
+OlivinePortSailorGetOnBoardText::
 	text "We're departing"
 	line "soon. Please get"
 	cont "on board."
 	done
 
 
-OlivinePortAskBoardText:
+OlivinePortAskBoardText::
 	text "Welcome to Fast"
 	line "Ship S.S.Aqua."
 
@@ -272,17 +272,16 @@ OlivinePortAskBoardText:
 	line "ing today?"
 	done
 
-OlivinePortAskTicketText:
+OlivinePortAskTicketText::
 	text "May I see your"
 	line "S.S.Ticket?"
 	done
 
 OlivinePortComeAgainText:
-	text "We hope to see you"
-	line "again!"
-	done
+	text_far GoldenrodMagnetTrainStationOfficerHopeToSeeYouAgainText
+	text_end
 
-OlivinePortFlashTicketText:
+OlivinePortFlashTicketText::
 	text "<PLAYER> flashed"
 	line "the S.S.Ticket."
 
@@ -290,7 +289,7 @@ OlivinePortFlashTicketText:
 	line "Thank you!"
 	done
 
-OlivinePortNoTicketText:
+OlivinePortNoTicketText::
 	text "<PLAYER> tried to"
 	line "show the S.S."
 	cont "Ticket…"

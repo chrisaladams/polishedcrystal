@@ -68,8 +68,8 @@ WadeBattleRematchText:
 	done
 
 WadeHangUpText:
-	text "See you later!"
-	done
+	text_far AlanHangUpText
+	text_end
 
 WadeBugCatchingContestText:
 	text "The Bug-Catching"

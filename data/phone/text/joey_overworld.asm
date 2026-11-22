@@ -65,9 +65,8 @@ JoeyTopPercentageText: ; TODO: use this text from HGSS
 	done
 
 JoeyRematchText:
-	text "I've been waiting!"
-	line "Let's battle now!"
-	done
+	text_far ChadRematchText
+	text_end
 
 JoeyPackFullText:
 	text "Hey, wait! Your"

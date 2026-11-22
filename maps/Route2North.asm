@@ -55,6 +55,6 @@ Route2NorthCooltrainermText:
 	line "Snorlax."
 	done
 
-Route2DiglettsCaveSignText:
+Route2DiglettsCaveSignText::
 	text "Diglett's Cave"
 	done

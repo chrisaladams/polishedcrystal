@@ -605,7 +605,7 @@ SrandjrIvyandamy2BeatenText:
 	line "do it…"
 	done
 
-Route43Sign1Text:
+Route43Sign1Text::
 	text "Route 43"
 
 	para "Lake of Rage -"
@@ -613,11 +613,8 @@ Route43Sign1Text:
 	done
 
 Route43Sign2Text:
-	text "Route 43"
-
-	para "Lake of Rage -"
-	line "Mahogany Town"
-	done
+	text_far Route43Sign1Text
+	text_end
 
 Route43TrainerTipsText:
 	text "Trainer Tips"

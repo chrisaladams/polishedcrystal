@@ -170,8 +170,8 @@ Text_ItsCryIsWeak:
 	done
 
 MoomooHappyMooText:
-	text "Miltank: Mooo!"
-	done
+	text_far Route39MiltankText
+	text_end
 
 Text_AskGiveBerry:
 	text "Give an Oran or"
@@ -220,5 +220,5 @@ Text_RefusedToGiveBerry:
 	done
 
 Route39BarnBucketText:
-	text "It's a bucket."
-	done
+	text_far CharcoalKilnBucketText
+	text_end

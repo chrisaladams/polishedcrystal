@@ -275,8 +275,8 @@ HikerKennySeenText:
 	done
 
 HikerKennyBeatenText:
-	text "I lost…"
-	done
+	text_far BugManiacRobbyBeatenText
+	text_end
 
 Route13TrainerTips1Text:
 	text "Trainer Tips"

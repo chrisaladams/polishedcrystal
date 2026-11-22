@@ -405,14 +405,12 @@ GoldenrodHarborOctilleryDollSentText:
 	done
 
 GoldenrodHarborNoMoneyText:
-	text "You can't afford"
-	line "that!"
-	done
+	text_far CeladonHomeDecorStore1FNoMoneyText
+	text_end
 
 GoldenrodHarborAlreadyBoughtText:
-	text "You already have"
-	line "that!"
-	done
+	text_far CeladonHomeDecorStore1FAlreadyBoughtText
+	text_end
 
 GoldenrodHarborPlantVendorText:
 	text "Welcome! I have"

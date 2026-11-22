@@ -92,8 +92,8 @@ GenericTrainerYoungsterWarren:
 	done
 
 .BeatenText:
-	text "I knew I'd lose…"
-	done
+	text_far GruntM18BeatenText
+	text_end
 
 GenericTrainerFirebreatherOtis:
 	generictrainer FIREBREATHER, OTIS, EVENT_BEAT_FIREBREATHER_OTIS, .SeenText, .BeatenText
@@ -271,6 +271,6 @@ Route3MeteoriteText:
 	cont "space?"
 	done
 
-Route3MtMoonSquareSignText:
+Route3MtMoonSquareSignText::
 	text "Mt.Moon Tunnel"
 	done

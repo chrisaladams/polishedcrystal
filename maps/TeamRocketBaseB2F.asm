@@ -805,7 +805,7 @@ GruntM18SeenText:
 	line "I must."
 	done
 
-GruntM18BeatenText:
+GruntM18BeatenText::
 	text "I knew I'd lose…"
 	done
 

@@ -53,7 +53,7 @@ BurglarPeteSeenText:
 	cont "anyone here."
 	done
 
-BurglarPeteBeatenText:
+BurglarPeteBeatenText::
 	text "Ouch!"
 	done
 

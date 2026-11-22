@@ -148,8 +148,8 @@ GoldenrodMuseum2FSightseerMText:
 	done
 
 GoldenrodMuseum2FSmeargleText:
-	text "Smeargle: Smeer!"
-	done
+	text_far EcruteakCitySmeargleText
+	text_end
 
 GoldenrodMuseum2FScientistScript:
 	checkevent EVENT_SOLVED_KABUTO_PUZZLE

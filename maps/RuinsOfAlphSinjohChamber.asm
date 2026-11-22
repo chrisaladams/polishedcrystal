@@ -115,5 +115,5 @@ RuinsofAlphSinjohChamberMystriText:
 	done
 
 RuinsofAlphSinjohChamberSurpriseText: ; text > text
-	text "…!"
-	done
+	text_far LeafWinLossText
+	text_end

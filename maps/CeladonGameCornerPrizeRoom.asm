@@ -229,7 +229,7 @@ CeladonPrizeRoom_PrizeVendorIntroText:
 	cont "prizes!"
 	done
 
-CeladonPrizeRoom_AskWhichPrizeText:
+CeladonPrizeRoom_AskWhichPrizeText::
 	text "Which prize would"
 	line "you like?"
 	done
@@ -248,7 +248,7 @@ CeladonPrizeRoom_ConfirmTMPurchaseText:
 	text "?"
 	done
 
-CeladonPrizeRoom_HereYouGoText:
+CeladonPrizeRoom_HereYouGoText::
 	text "Here you go!"
 	done
 
@@ -271,7 +271,7 @@ CeladonPrizeRoom_ComeAgainText:
 	line "back with coins!"
 	done
 
-CeladonPrizeRoom_NoCoinCaseText:
+CeladonPrizeRoom_NoCoinCaseText::
 	text "Oh? You don't have"
 	line "a Coin Case."
 	done

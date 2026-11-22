@@ -44,9 +44,9 @@ MrFujisPsyduckText:
 	done
 
 MrFujisNidorinoText:
-	text "Nidorino: Gyun!"
-	done
+	text_far IvysLabNidorinoText
+	text_end
 
 MrFujisPidgeyText:
-	text "Pidgey: Pijji!"
-	done
+	text_far CherrygrovePidgeyText
+	text_end

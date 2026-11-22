@@ -25,7 +25,7 @@ BluesHouse2FPCText:
 	line "Dragonite."
 	done
 
-BluesHouse2FSNESText:
+BluesHouse2FSNESText::
 	text "<PLAYER> played the"
 	line "SNES."
 

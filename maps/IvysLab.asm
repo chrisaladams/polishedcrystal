@@ -217,7 +217,7 @@ IvysLabNidorinoScript:
 	showcrytext IvysLabNidorinoText, NIDORINO
 	end
 
-IvysLabNidorinoText:
+IvysLabNidorinoText::
 	text "Nidorino: Gyun!"
 	done
 
@@ -246,9 +246,8 @@ IvysLabHealingMachine:
 	endtext
 
 .Text:
-	text "Would you like to"
-	line "heal your #mon?"
-	done
+	text_far ElmsLabHealingMachineText2
+	text_end
 
 PokemonJournalProfIvyScript:
 	setflag ENGINE_READ_PROF_IVY_JOURNAL

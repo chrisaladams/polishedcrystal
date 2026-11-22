@@ -135,7 +135,7 @@ TeacherHillarySeenText:
 	line "studying in class."
 	done
 
-TeacherHillaryBeatenText:
+TeacherHillaryBeatenText::
 	text "I didn't want to"
 	line "lose…"
 	done
@@ -206,7 +206,7 @@ PokefanfEleanorBeatenText:
 	text "Oh, well…"
 	done
 
-TwinsKayandtia1SeenText:
+TwinsKayandtia1SeenText::
 	text "We're the twins"
 	line "Kay and Tia!"
 
@@ -214,23 +214,18 @@ TwinsKayandtia1SeenText:
 	line "one I am?"
 	done
 
-TwinsKayandtia1BeatenText:
+TwinsKayandtia1BeatenText::
 	text "Tia and Kay both"
 	line "lost…"
 	done
 
 TwinsKayandtia2SeenText:
-	text "We're the twins"
-	line "Kay and Tia!"
-
-	para "Do you know which"
-	line "one I am?"
-	done
+	text_far TwinsKayandtia1SeenText
+	text_end
 
 TwinsKayandtia2BeatenText:
-	text "Tia and Kay both"
-	line "lost…"
-	done
+	text_far TwinsKayandtia1BeatenText
+	text_end
 
 Route15SignText:
 	text "Route 15"

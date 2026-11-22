@@ -44,7 +44,7 @@ OfficerfJamieSeenText:
 	line "causing trouble?"
 	done
 
-OfficerfJamieBeatenText:
+OfficerfJamieBeatenText::
 	text "Hmph!"
 	done
 

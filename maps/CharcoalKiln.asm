@@ -109,9 +109,9 @@ CharcoalKilnFarfetchdScript:
 	end
 
 .Text:
-	text "Farfetch'd: Kwaa!"
-	done
+	text_far Text_Kwaaaa
+	text_end
 
-CharcoalKilnBucketText:
+CharcoalKilnBucketText::
 	text "It's a bucket."
 	done

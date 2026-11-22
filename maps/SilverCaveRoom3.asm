@@ -73,5 +73,5 @@ Red:
 	done
 
 .Text2: ; text > text
-	text "…"
-	done
+	text_far CeruleanCityCooltrainerFText3
+	text_end

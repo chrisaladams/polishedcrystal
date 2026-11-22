@@ -386,7 +386,7 @@ VermilionCitySailorText:
 	line "good sea air!"
 	done
 
-VermilionCityRadioNearSnorlaxText:
+VermilionCityRadioNearSnorlaxText::
 	text "The #gear was"
 	line "placed near the"
 	cont "sleeping Snorlax…"
@@ -430,8 +430,8 @@ PokemonFanClubSignText:
 	done
 
 VermilionCityDiglettsCaveSignText:
-	text "Diglett's Cave"
-	done
+	text_far Route2DiglettsCaveSignText
+	text_end
 
 VermilionCityPortSignText:
 	text "Vermilion Port"

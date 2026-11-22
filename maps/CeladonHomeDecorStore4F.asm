@@ -110,9 +110,8 @@ BigDollClerkText:
 	done
 
 BigDollClerkNoSaleText:
-	text "Clerk: Well, if"
-	line "you say so."
-	done
+	text_far VideoGameClerkNoSaleText
+	text_end
 
 
 BigDollClerkSellLaprasText:

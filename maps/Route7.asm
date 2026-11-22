@@ -79,14 +79,8 @@ Route7Snorlax:
 	end
 
 .AwakeText:
-	text "The #gear was"
-	line "placed near the"
-	cont "sleeping Snorlax…"
-
-	para "…"
-
-	para "Snorlax woke up!"
-	done
+	text_far VermilionCityRadioNearSnorlaxText
+	text_end
 
 Route7UndergroundPathSignText:
 	text "What's this flyer?"
@@ -108,5 +102,5 @@ Route7UndergroundPathSignText:
 	done
 
 Route7LockedDoorText:
-	text "It's locked…"
-	done
+	text_far CinnabarLabLockedDoorText
+	text_end

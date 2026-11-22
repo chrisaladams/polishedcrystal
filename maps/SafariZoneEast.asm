@@ -49,7 +49,7 @@ SafariZoneEastAreaSignText:
 	line "East Area"
 	done
 
-SafariZoneEastRestHouseSignText:
+SafariZoneEastRestHouseSignText::
 	text "Rest House"
 	done
 

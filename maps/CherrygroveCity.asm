@@ -442,7 +442,7 @@ MysticWaterGuyTextBefore:
 	line "so do you want it?"
 	done
 
-CherrygrovePidgeyText:
+CherrygrovePidgeyText::
 	text "Pidgey: Pijji!"
 	done
 

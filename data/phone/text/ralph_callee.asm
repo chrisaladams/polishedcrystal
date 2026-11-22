@@ -1,4 +1,4 @@
-RalphAnswerPhoneText:
+RalphAnswerPhoneText::
 	text "Yes? Ah, <PLAYER>."
 
 	para "You're courteous"
@@ -9,24 +9,12 @@ RalphAnswerPhoneText:
 	done
 
 RalphAnswerPhoneDayText:
-	text "Yes? Ah, <PLAYER>."
-
-	para "You're courteous"
-	line "enough to state"
-
-	para "your name when you"
-	line "call on the phone."
-	done
+	text_far RalphAnswerPhoneText
+	text_end
 
 RalphAnswerPhoneNiteText:
-	text "Yes? Ah, <PLAYER>."
-
-	para "You're courteous"
-	line "enough to state"
-
-	para "your name when you"
-	line "call on the phone."
-	done
+	text_far RalphAnswerPhoneText
+	text_end
 
 RalphGreetText:
 	text "Hiya, it's Uncle"

@@ -258,7 +258,7 @@ MystriStageCynthiaNoText:
 	line "when you're ready."
 	done
 
-MystriStageCynthiaYesText:
+MystriStageCynthiaYesText::
 	text "Cynthia: Before"
 	line "I send out my"
 	cont "#mon,"
@@ -267,7 +267,7 @@ MystriStageCynthiaYesText:
 	line "begins to race…"
 	done
 
-MystriStageCynthiaWinText:
+MystriStageCynthiaWinText::
 	text "I can't remember"
 	line "the last time I"
 

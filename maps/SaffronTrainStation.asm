@@ -124,12 +124,8 @@ SaffronMagnetTrainStationOfficerAreYouComingOnBoardText:
 	done
 
 SaffronMagnetTrainStationOfficerRightThisWayText:
-	text "May I see your"
-	line "rail pass, please?"
-
-	para "OK. Right this"
-	line "way, please."
-	done
+	text_far GoldenrodMagnetTrainStationOfficerRightThisWayText
+	text_end
 
 SaffronMagnetTrainStationOfficerYouDontHaveAPassText:
 	text "Sorry, but you"

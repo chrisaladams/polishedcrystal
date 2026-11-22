@@ -285,7 +285,7 @@ PokefanmColinSeenText:
 	line "battle with me?"
 	done
 
-PokefanmColinBeatenText:
+PokefanmColinBeatenText::
 	text "You're strong!"
 	done
 
@@ -295,7 +295,7 @@ TwinsMegandpeg1SeenText:
 	cont "That's not fair!"
 	done
 
-TwinsMegandpeg1BeatenText:
+TwinsMegandpeg1BeatenText::
 	text "Oh! We lost!"
 	done
 
@@ -307,8 +307,8 @@ TwinsMegandpeg2SeenText:
 	done
 
 TwinsMegandpeg2BeatenText:
-	text "Oh! We lost!"
-	done
+	text_far TwinsMegandpeg1BeatenText
+	text_end
 
 PsychicRodneySeenText:
 	text "Ssh! My brain is"
@@ -355,7 +355,5 @@ SupernerdShawnBeatenText:
 	done
 
 SSAquaHasArrivedVermilionText:
-	text "Fast Ship S.S.Aqua"
-	line "has arrived in"
-	cont "Vermilion City."
-	done
+	text_far FastShip1FSailor1Text_InVermilion
+	text_end

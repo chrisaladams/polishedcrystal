@@ -382,7 +382,7 @@ CinnabarLabRoom4SignText:
 	cont "LEVEL 5 CLEARANCE"
 	done
 
-CinnabarLabLockedDoorText:
+CinnabarLabLockedDoorText::
 	text "It's locked…"
 	done
 

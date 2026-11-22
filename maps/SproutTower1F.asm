@@ -96,7 +96,7 @@ SproutTower1FTeacherText:
 	line "ing upstairs."
 	done
 
-SproutTower1FStatueText:
+SproutTower1FStatueText::
 	text "A #mon statue…"
 
 	para "It looks very"

@@ -165,7 +165,7 @@ LavRadioTower1FSuperNerd2Text_GotExpnCard:
 	cont "off the air!"
 	done
 
-LavRadioTower1FDirectoryText:
+LavRadioTower1FDirectoryText::
 	text "1F Reception"
 	line "2F Sales"
 

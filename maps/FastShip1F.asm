@@ -249,13 +249,13 @@ FastShip1FGrandpaText:
 	line "know!"
 	done
 
-FastShip1FSailor1Text_InOlivine:
+FastShip1FSailor1Text_InOlivine::
 	text "Fast Ship S.S.Aqua"
 	line "has arrived in"
 	cont "Olivine City."
 	done
 
-FastShip1FSailor1Text_InVermilion:
+FastShip1FSailor1Text_InVermilion::
 	text "Fast Ship S.S.Aqua"
 	line "has arrived in"
 	cont "Vermilion City."

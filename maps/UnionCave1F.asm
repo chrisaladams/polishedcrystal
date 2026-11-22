@@ -161,5 +161,5 @@ Ruin_maniacJonesSeenText:
 	done
 
 Ruin_maniacJonesBeatenText:
-	text "Gahahah!"
-	done
+	text_far HikerBenjaminBeatenText
+	text_end

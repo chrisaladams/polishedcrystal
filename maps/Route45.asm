@@ -555,5 +555,5 @@ Route45SignText:
 	done
 
 Route45DarkCaveSignText:
-	text "Dark Cave"
-	done
+	text_far DarkCaveSignText
+	text_end

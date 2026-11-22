@@ -134,7 +134,7 @@ LeafText: ; text > text
 	line "…………!"
 	done
 
-LeafWinLossText: ; text > text
+LeafWinLossText:: ; text > text
 	text "…!"
 	done
 

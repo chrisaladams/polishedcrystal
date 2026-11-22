@@ -100,7 +100,7 @@ BugManiacDionSeenText:
 	cont "run away!"
 	done
 
-BugManiacDionBeatenText:
+BugManiacDionBeatenText::
 	text "Phew…"
 	done
 

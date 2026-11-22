@@ -57,5 +57,5 @@ SafariZoneHubAreaSignText:
 	done
 
 SafariZoneHubRestHouseSignText:
-	text "Rest House"
-	done
+	text_far SafariZoneEastRestHouseSignText
+	text_end

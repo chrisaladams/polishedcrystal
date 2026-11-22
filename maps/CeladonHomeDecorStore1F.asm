@@ -170,12 +170,12 @@ SquirtleDollSentText:
 	line "was sent home."
 	done
 
-CeladonHomeDecorStore1FNoMoneyText:
+CeladonHomeDecorStore1FNoMoneyText::
 	text "You can't afford"
 	line "that!"
 	done
 
-CeladonHomeDecorStore1FAlreadyBoughtText:
+CeladonHomeDecorStore1FAlreadyBoughtText::
 	text "You already have"
 	line "that!"
 	done

@@ -50,7 +50,7 @@ ChadPhoneFullText:
 	line "completely full!"
 	done
 
-ChadRematchText:
+ChadRematchText::
 	text "I've been waiting!"
 	line "Let's battle now!"
 	done

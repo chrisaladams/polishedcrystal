@@ -313,7 +313,7 @@ TrainerPokefanfJaime:
 	line "gets dark soon."
 	done
 
-Route39MiltankText:
+Route39MiltankText::
 	text "Miltank: Mooo!"
 	done
 

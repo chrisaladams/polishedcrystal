@@ -152,7 +152,7 @@ CeladonHomeDecorStore3FClerk2SaleText:
 	done
 
 
-CeladonHomeDecorStore3FClerk2NoText:
+CeladonHomeDecorStore3FClerk2NoText::
 	text "Have a nice day!"
 	done
 
@@ -197,14 +197,12 @@ GreenCarpetSentText:
 	done
 
 CeladonHomeDecorStore3FNoMoneyText:
-	text "You can't afford"
-	line "that!"
-	done
+	text_far CeladonHomeDecorStore1FNoMoneyText
+	text_end
 
 CeladonHomeDecorStore3FAlreadyBoughtText:
-	text "You already have"
-	line "that!"
-	done
+	text_far CeladonHomeDecorStore1FAlreadyBoughtText
+	text_end
 
 CeladonHomeDecorStore3FYoungsterText:
 	text "This carpet feels"

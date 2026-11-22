@@ -124,21 +124,16 @@ SeagallopFerryShamoutiWhichIslandText:
 	done
 
 SeagallopFerryShamoutiToVermilionQuestionText:
-	text "Ready to head back"
-	line "to Vermilion City?"
-	done
+	text_far SeagallopFerryFarawayToVermilionQuestionText
+	text_end
 
 SeagallopFerryShamoutiDepartureText:
-	text "All right!"
-
-	para "All aboard the"
-	line "Seagallop Ferry!"
-	done
+	text_far SeagallopFerryFarawayToVermilionText
+	text_end
 
 SeagallopFerryShamoutiIslandRefusedText:
-	text "I'll be waiting"
-	line "right here."
-	done
+	text_far SeagallopFerryFarawayIslandRefusedText
+	text_end
 
 SeagallopFerryShamoutiGateTwinText:
 	text "I'm here to greet"

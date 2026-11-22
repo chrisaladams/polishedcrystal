@@ -54,8 +54,8 @@ JackBattleRematchText:
 	done
 
 JackHangUpText:
-	text "See you later!"
-	done
+	text_far AlanHangUpText
+	text_end
 
 JackThunderTriviaText:
 	text "Did you know?"

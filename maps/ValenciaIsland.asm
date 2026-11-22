@@ -70,8 +70,8 @@ ValenciaIslandGoneFishingSignText:
 	done
 
 ValenciaIslandLockedDoorText:
-	text "It's locked…"
-	done
+	text_far CinnabarLabLockedDoorText
+	text_end
 
 IvysLabSignText:
 	text "Ivy Research"

@@ -76,7 +76,7 @@ BethHangUpText:
 	text "OK, bye-bye!"
 	done
 
-BethLetsBattleAgainSometimeText:
+BethLetsBattleAgainSometimeText::
 	text "Let's battle again"
 	line "sometime!"
 	done

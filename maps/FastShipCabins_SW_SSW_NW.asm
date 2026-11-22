@@ -195,13 +195,9 @@ FastShipBedText2:
 	done
 
 FastShipArrivedOlivineText:
-	text "Fast Ship S.S.Aqua"
-	line "has arrived in"
-	cont "Olivine City."
-	done
+	text_far FastShip1FSailor1Text_InOlivine
+	text_end
 
 FastShipArrivedVermilionText:
-	text "Fast Ship S.S.Aqua"
-	line "has arrived in"
-	cont "Vermilion City."
-	done
+	text_far FastShip1FSailor1Text_InVermilion
+	text_end

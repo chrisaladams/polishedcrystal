@@ -53,8 +53,8 @@ ToddBattleRematchText:
 	done
 
 ToddHangUpText:
-	text "See you later!"
-	done
+	text_far AlanHangUpText
+	text_end
 
 ToddDepartmentStoreBargainSaleText:
 	text "This is it--the"

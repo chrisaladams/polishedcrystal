@@ -350,9 +350,8 @@ GoldenrodGameCornerPrizeVendorIntroText:
 	done
 
 GoldenrodGameCornerPrizeVendorWhichPrizeText:
-	text "Which prize would"
-	line "you like?"
-	done
+	text_far CeladonPrizeRoom_AskWhichPrizeText
+	text_end
 
 GoldenrodGameCornerPrizeVendorConfirmPrizeText:
 	text_ram wStringBuffer3
@@ -361,8 +360,8 @@ GoldenrodGameCornerPrizeVendorConfirmPrizeText:
 	done
 
 GoldenrodGameCornerPrizeVendorHereYouGoText:
-	text "Here you go!"
-	done
+	text_far CeladonPrizeRoom_HereYouGoText
+	text_end
 
 GoldenrodGameCornerPrizeVendorAlreadyHaveTMText:
 	text "But you already"
@@ -386,9 +385,8 @@ GoldenrodGameCornerPrizeVendorQuitText:
 	done
 
 GoldenrodGameCornerPrizeVendorNoCoinCaseText:
-	text "Oh? You don't have"
-	line "a Coin Case."
-	done
+	text_far CeladonPrizeRoom_NoCoinCaseText
+	text_end
 
 GoldenrodGameCornerFisherText:
 	text "Today's my pay day!"

@@ -378,9 +378,8 @@ MrPokemonText_GimmeTheScale:
 	done
 
 MrPokemonText_GotShinyDitto:
-	text "<PLAYER> received a"
-	line "#mon."
-	done
+	text_far ManiaText_GotShuckie
+	text_end
 
 MrPokemonText_SentToPC:
 	text "The #mon was"

@@ -276,11 +276,8 @@ SeagallopFerryWhichTicketText:
 	done
 
 SeagallopFerryDepartureText:
-	text "All right!"
-
-	para "All aboard the"
-	line "Seagallop Ferry!"
-	done
+	text_far SeagallopFerryFarawayToVermilionText
+	text_end
 
 SeagallopFerryVermilionCityRefusedText:
 	text "Come again!"

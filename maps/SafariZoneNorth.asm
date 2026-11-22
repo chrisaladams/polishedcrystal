@@ -181,8 +181,8 @@ SafariZoneNorthAreaSignText:
 	done
 
 SafariZoneNorthRestHouseSignText:
-	text "Rest House"
-	done
+	text_far SafariZoneEastRestHouseSignText
+	text_end
 
 SafariZoneNorthTrainerTips1SignText:
 	text "Trainer Tips"

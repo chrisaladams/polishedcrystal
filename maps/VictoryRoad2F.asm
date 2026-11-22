@@ -191,8 +191,8 @@ VeteranfJoanneSeenText:
 	done
 
 VeteranfJoanneBeatenText:
-	text "Aiyah!"
-	done
+	text_far SwimmermCameronBeatenText
+	text_end
 
 VeteranfJonetSeenText:
 	text "There's supposed"

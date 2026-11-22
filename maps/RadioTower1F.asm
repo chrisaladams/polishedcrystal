@@ -500,15 +500,8 @@ RadioTower1FWhitney2Text:
 	done
 
 RadioTower1FDirectoryText:
-	text "1F Reception"
-	line "2F Sales"
-
-	para "3F Personnel"
-	line "4F Production"
-
-	para "5F Director's"
-	line "   Office"
-	done
+	text_far LavRadioTower1FDirectoryText
+	text_end
 
 RadioTower1FLuckyChannelSignText:
 	text "Lucky Channel!"

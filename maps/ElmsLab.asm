@@ -1139,7 +1139,7 @@ ElmPokeBallText:
 	done
 
 
-ElmsLabHealingMachineText2:
+ElmsLabHealingMachineText2::
 	text "Would you like to"
 	line "heal your #mon?"
 	done
