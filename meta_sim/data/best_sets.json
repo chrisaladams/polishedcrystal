@@ -17,7 +17,7 @@
    "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "ASSAULT_VEST",
   "ability": "TOUGH_CLAWS",
   "hp_type": null
  },
@@ -28,7 +28,7 @@
    "BRAVE_BIRD",
    "EARTHQUAKE"
   ],
-  "item": "SMOOTH_ROCK",
+  "item": "LIFE_ORB",
   "ability": "TOUGH_CLAWS",
   "hp_type": null
  },
@@ -61,7 +61,7 @@
    "FOCUS_BLAST",
    "TRICK"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "MAGIC_GUARD",
   "hp_type": null
  },
@@ -72,7 +72,7 @@
    "LIGHT_SCREEN",
    "PSYCHIC_M"
   ],
-  "item": "LIFE_ORB",
+  "item": "LIGHT_CLAY",
   "ability": "MAGIC_GUARD",
   "hp_type": null
  },
@@ -83,7 +83,7 @@
    "BATON_PASS",
    "PSYCHIC_M"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "MAGIC_GUARD",
   "hp_type": null
  },
@@ -138,7 +138,7 @@
    "BATON_PASS",
    "DOUBLE_EDGE"
   ],
-  "item": "SILK_SCARF",
+  "item": "LEFTOVERS",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -160,7 +160,7 @@
    "DRAGON_PULSE",
    "FOCUS_BLAST"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "MOLD_BREAKER",
   "hp_type": null
  },
@@ -213,9 +213,9 @@
    "VOLT_SWITCH",
    "THUNDERBOLT",
    "DRAGON_PULSE",
-   "DOUBLE_EDGE"
+   "FOCUS_BLAST"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "LEFTOVERS",
   "ability": "MOLD_BREAKER",
   "hp_type": null
  },
@@ -248,7 +248,7 @@
    "SHADOW_CLAW",
    "DOUBLE_EDGE"
   ],
-  "item": "LEFTOVERS",
+  "item": "CHOICE_BAND",
   "ability": "GORILLA_TACTICS",
   "hp_type": null
  },
@@ -259,7 +259,7 @@
    "SHADOW_CLAW",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "LEFTOVERS",
   "ability": "GORILLA_TACTICS",
   "hp_type": null
  },
@@ -271,7 +271,7 @@
    "AQUA_TAIL"
   ],
   "item": "CHOICE_BAND",
-  "ability": "SHED_SKIN",
+  "ability": "INTIMIDATE",
   "hp_type": null
  },
  "arbok|setup sweeper": {
@@ -299,7 +299,7 @@
  "arcanine_hisuian|mixed attacker": {
   "moves": [
    "STONE_EDGE",
-   "WILD_CHARGE",
+   "FLAME_CHARGE",
    "FIRE_BLAST",
    "HYPER_VOICE"
   ],
@@ -314,15 +314,15 @@
    "FLAME_CHARGE",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "CHOICE_BAND",
   "ability": "FLASH_FIRE",
   "hp_type": null
  },
  "arcanine_hisuian|revenge killer": {
   "moves": [
    "EXTREMESPEED",
-   "FIRE_BLAST",
    "STONE_EDGE",
+   "FIRE_BLAST",
    "WILD_CHARGE"
   ],
   "item": "CHOICE_SCARF",
@@ -334,9 +334,9 @@
    "SUNNY_DAY",
    "TOXIC",
    "FIRE_BLAST",
-   "SOLAR_BEAM"
+   "STONE_EDGE"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "HEAT_ROCK",
   "ability": "FLASH_FIRE",
   "hp_type": null
  },
@@ -380,7 +380,7 @@
    "FLAME_CHARGE",
    "WILD_CHARGE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "FOCUS_SASH",
   "ability": "FLASH_FIRE",
   "hp_type": null
  },
@@ -422,7 +422,7 @@
    "SWORDS_DANCE",
    "LEECH_LIFE",
    "SUCKER_PUNCH",
-   "POISON_JAB"
+   "DOUBLE_EDGE"
   ],
   "item": "FOCUS_SASH",
   "ability": "INSOMNIA",
@@ -465,7 +465,7 @@
   "moves": [
    "REST",
    "SURF",
-   "KNOCK_OFF",
+   "BULLDOZE",
    "ICE_BEAM"
   ],
   "item": "LEFTOVERS",
@@ -512,7 +512,7 @@
    "POISON_JAB",
    "DOUBLE_EDGE"
   ],
-  "item": "LEFTOVERS",
+  "item": "ASSAULT_VEST",
   "ability": "ADAPTABILITY",
   "hp_type": null
  },
@@ -523,7 +523,7 @@
    "BATON_PASS",
    "LEECH_LIFE"
   ],
-  "item": "LEFTOVERS",
+  "item": "SILVERPOWDER",
   "ability": "ADAPTABILITY",
   "hp_type": null
  },
@@ -545,7 +545,7 @@
    "ENERGY_BALL",
    "EARTH_POWER"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "OWN_TEMPO",
   "hp_type": null
  },
@@ -555,6 +555,17 @@
    "SLEEP_TALK",
    "STUN_SPORE",
    "MOONBLAST"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "OWN_TEMPO",
+  "hp_type": null
+ },
+ "bellossom|bulky tank": {
+  "moves": [
+   "REST",
+   "MOONBLAST",
+   "ENERGY_BALL",
+   "EARTH_POWER"
   ],
   "item": "LEFTOVERS",
   "ability": "OWN_TEMPO",
@@ -578,7 +589,7 @@
    "ENERGY_BALL",
    "EARTH_POWER"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "LIFE_ORB",
   "ability": "CHLOROPHYLL",
   "hp_type": null
  },
@@ -622,7 +633,7 @@
    "SURF",
    "FLASH_CANNON"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "DAMP_ROCK",
   "ability": "MEGA_LAUNCHER",
   "hp_type": null
  },
@@ -677,7 +688,7 @@
    "PSYCHIC_M",
    "ENERGY_BALL"
   ],
-  "item": "LEFTOVERS",
+  "item": "FOCUS_SASH",
   "ability": "LEVITATE",
   "hp_type": null
  },
@@ -689,7 +700,7 @@
    "BUG_BUZZ"
   ],
   "item": "LEFTOVERS",
-  "ability": "LEVITATE",
+  "ability": "TINTED_LENS",
   "hp_type": null
  },
  "charizard|special attacker": {
@@ -729,10 +740,10 @@
   "moves": [
    "FIRE_BLAST",
    "SOLAR_BEAM",
-   "OUTRAGE",
+   "FLAMETHROWER",
    "DRAGON_PULSE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "SOLAR_POWER",
   "hp_type": null
  },
@@ -754,7 +765,7 @@
    "FIRE_BLAST",
    "HYPER_VOICE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "MAGIC_GUARD",
   "hp_type": null
  },
@@ -799,7 +810,7 @@
    "POISON_JAB"
   ],
   "item": "LEFTOVERS",
-  "ability": "WATER_ABSORB",
+  "ability": "UNAWARE",
   "hp_type": null
  },
  "clodsire|hazard setter": {
@@ -809,8 +820,8 @@
    "EARTHQUAKE",
    "POISON_JAB"
   ],
-  "item": "ASSAULT_VEST",
-  "ability": "UNAWARE",
+  "item": "LEFTOVERS",
+  "ability": "WATER_ABSORB",
   "hp_type": null
  },
  "clodsire|weather setter": {
@@ -818,10 +829,10 @@
    "SANDSTORM",
    "RECOVER",
    "EARTHQUAKE",
-   "MEGAHORN"
+   "IRON_TAIL"
   ],
-  "item": "SMOOTH_ROCK",
-  "ability": "UNAWARE",
+  "item": "ASSAULT_VEST",
+  "ability": "WATER_ABSORB",
   "hp_type": null
  },
  "cloyster|physical wall": {
@@ -842,7 +853,7 @@
    "TOXIC",
    "ICE_BEAM"
   ],
-  "item": "LEFTOVERS",
+  "item": "FOCUS_SASH",
   "ability": "SKILL_LINK",
   "hp_type": null
  },
@@ -853,7 +864,7 @@
    "POWER_GEM",
    "EARTH_POWER"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "REGENERATOR",
   "hp_type": null
  },
@@ -864,7 +875,7 @@
    "SURF",
    "POWER_GEM"
   ],
-  "item": "LEFTOVERS",
+  "item": "QUICK_CLAW",
   "ability": "REGENERATOR",
   "hp_type": null
  },
@@ -894,8 +905,8 @@
   "moves": [
    "SURF",
    "POWER_GEM",
-   "DOUBLE_EDGE",
-   "EARTH_POWER"
+   "EARTH_POWER",
+   "ICE_BEAM"
   ],
   "item": "LEFTOVERS",
   "ability": "REGENERATOR",
@@ -916,7 +927,7 @@
   "moves": [
    "TOXIC",
    "HAZE",
-   "SLUDGE_BOMB",
+   "POISON_JAB",
    "AIR_SLASH"
   ],
   "item": "LEFTOVERS",
@@ -926,7 +937,7 @@
  "crobat|pivot": {
   "moves": [
    "U_TURN",
-   "SLUDGE_BOMB",
+   "POISON_JAB",
    "AIR_SLASH",
    "DOUBLE_EDGE"
   ],
@@ -938,7 +949,7 @@
   "moves": [
    "MEAN_LOOK",
    "TOXIC",
-   "SLUDGE_BOMB",
+   "POISON_JAB",
    "AIR_SLASH"
   ],
   "item": "LEFTOVERS",
@@ -985,7 +996,7 @@
    "HIDDEN_POWER",
    "SWIFT"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "INSOMNIA",
   "hp_type": null
  },
@@ -994,7 +1005,7 @@
    "QUICK_ATTACK",
    "ICE_BEAM",
    "DRILL_PECK",
-   "SEED_BOMB"
+   "HIDDEN_POWER"
   ],
   "item": "CHOICE_SCARF",
   "ability": "INSOMNIA",
@@ -1033,6 +1044,28 @@
   "ability": "THICK_FAT",
   "hp_type": null
  },
+ "dewgong|support": {
+  "moves": [
+   "TOXIC",
+   "ENCORE",
+   "ICE_BEAM",
+   "SURF"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
+ "dewgong|weather setter": {
+  "moves": [
+   "RAIN_DANCE",
+   "TOXIC",
+   "SURF",
+   "AQUA_TAIL"
+  ],
+  "item": "DAMP_ROCK",
+  "ability": "THICK_FAT",
+  "hp_type": null
+ },
  "ditto|physical attacker": {
   "moves": [
    "TRANSFORM"
@@ -1055,7 +1088,7 @@
  "dodrio|setup sweeper": {
   "moves": [
    "SWORDS_DANCE",
-   "DOUBLE_EDGE",
+   "RETURN",
    "DRILL_PECK",
    "HI_JUMP_KICK"
   ],
@@ -1065,12 +1098,12 @@
  },
  "dodrio|revenge killer": {
   "moves": [
-   "RETURN",
+   "QUICK_ATTACK",
    "DRILL_PECK",
    "HI_JUMP_KICK",
    "KNOCK_OFF"
   ],
-  "item": "ROCKY_HELMET",
+  "item": "CHOICE_SCARF",
   "ability": "RUN_AWAY",
   "hp_type": null
  },
@@ -1125,7 +1158,7 @@
    "DRAGON_PULSE",
    "HURRICANE"
   ],
-  "item": "LIFE_ORB",
+  "item": "SITRUS_BERRY",
   "ability": "MARVEL_SCALE",
   "hp_type": null
  },
@@ -1136,7 +1169,7 @@
    "AERIAL_ACE",
    "CLOSE_COMBAT"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "MARVEL_SCALE",
   "hp_type": null
  },
@@ -1202,7 +1235,7 @@
    "EARTHQUAKE",
    "WILD_CHARGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "SERENE_GRACE",
   "hp_type": null
  },
@@ -1279,7 +1312,7 @@
    "IRON_HEAD",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "FOCUS_SASH",
   "ability": "SAND_VEIL",
   "hp_type": null
  },
@@ -1313,7 +1346,7 @@
    "NIGHT_SLASH"
   ],
   "item": "CHOICE_BAND",
-  "ability": "ARENA_TRAP",
+  "ability": "SAND_VEIL",
   "hp_type": null
  },
  "dugtrio_plain|setup sweeper": {
@@ -1323,8 +1356,8 @@
    "DOUBLE_EDGE",
    "STONE_EDGE"
   ],
-  "item": "CHOICE_BAND",
-  "ability": "ARENA_TRAP",
+  "item": "FOCUS_SASH",
+  "ability": "SAND_VEIL",
   "hp_type": null
  },
  "dugtrio_plain|revenge killer": {
@@ -1334,8 +1367,8 @@
    "DOUBLE_EDGE",
    "STONE_EDGE"
   ],
-  "item": "CHOICE_BAND",
-  "ability": "SAND_VEIL",
+  "item": "CHOICE_SCARF",
+  "ability": "ARENA_TRAP",
   "hp_type": null
  },
  "dugtrio_plain|weather setter": {
@@ -1346,7 +1379,7 @@
    "STONE_EDGE"
   ],
   "item": "SMOOTH_ROCK",
-  "ability": "SAND_VEIL",
+  "ability": "ARENA_TRAP",
   "hp_type": null
  },
  "dugtrio_plain|weather sweeper": {
@@ -1356,8 +1389,8 @@
    "MAGNITUDE",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_BAND",
-  "ability": "ARENA_TRAP",
+  "item": "LIFE_ORB",
+  "ability": "SAND_FORCE",
   "hp_type": null
  },
  "dugtrio_plain|trapper": {
@@ -1367,7 +1400,7 @@
    "DOUBLE_EDGE",
    "STONE_EDGE"
   ],
-  "item": "LEFTOVERS",
+  "item": "FOCUS_SASH",
   "ability": "ARENA_TRAP",
   "hp_type": null
  },
@@ -1408,10 +1441,10 @@
   "moves": [
    "QUICK_ATTACK",
    "CLOSE_COMBAT",
-   "ROCK_SLIDE",
+   "WILD_CHARGE",
    "EARTHQUAKE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "CHOICE_SCARF",
   "ability": "MOTOR_DRIVE",
   "hp_type": null
  },
@@ -1433,7 +1466,7 @@
    "WILD_CHARGE",
    "DOUBLE_EDGE"
   ],
-  "item": "LEFTOVERS",
+  "item": "WHITE_HERB",
   "ability": "MOTOR_DRIVE",
   "hp_type": null
  },
@@ -1444,7 +1477,7 @@
    "THUNDERBOLT",
    "HIDDEN_POWER"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "STATIC",
   "hp_type": null
  },
@@ -1453,7 +1486,7 @@
    "SUCKER_PUNCH",
    "ENERGY_BALL",
    "THUNDERBOLT",
-   "RETURN"
+   "VOLT_SWITCH"
   ],
   "item": "CHOICE_SPECS",
   "ability": "STATIC",
@@ -1499,7 +1532,7 @@
    "BUG_BUZZ",
    "RETURN"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "AIR_BALLOON",
   "ability": "STATIC",
   "hp_type": null
  },
@@ -1521,7 +1554,7 @@
    "BUG_BUZZ",
    "RETURN"
   ],
-  "item": "LEFTOVERS",
+  "item": "CHOICE_SPECS",
   "ability": "STATIC",
   "hp_type": null
  },
@@ -1543,8 +1576,8 @@
    "HYPER_VOICE",
    "DAZZLINGLEAM"
   ],
-  "item": "SITRUS_BERRY",
-  "ability": "MAGIC_BOUNCE",
+  "item": "FOCUS_SASH",
+  "ability": "MAGIC_GUARD",
   "hp_type": null
  },
  "espeon|revenge killer": {
@@ -1555,7 +1588,7 @@
    "TRICK"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "MAGIC_GUARD",
+  "ability": "MAGIC_BOUNCE",
   "hp_type": null
  },
  "espeon|support": {
@@ -1565,7 +1598,7 @@
    "LIGHT_SCREEN",
    "PSYCHIC_M"
   ],
-  "item": "LIFE_ORB",
+  "item": "LIGHT_CLAY",
   "ability": "MAGIC_GUARD",
   "hp_type": null
  },
@@ -1576,7 +1609,7 @@
    "BATON_PASS",
    "PSYCHIC_M"
   ],
-  "item": "LIFE_ORB",
+  "item": "LEFTOVERS",
   "ability": "MAGIC_GUARD",
   "hp_type": null
  },
@@ -1598,7 +1631,7 @@
    "ENERGY_BALL",
    "DRAGON_PULSE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "LIFE_ORB",
   "ability": "FRISK",
   "hp_type": null
  },
@@ -1607,9 +1640,9 @@
    "TRICK_ROOM",
    "REST",
    "OUTRAGE",
-   "POWER_WHIP"
+   "ENERGY_BALL"
   ],
-  "item": "LEFTOVERS",
+  "item": "ASSAULT_VEST",
   "ability": "FRISK",
   "hp_type": null
  },
@@ -1660,7 +1693,7 @@
  "farigiraf|special attacker": {
   "moves": [
    "DARK_PULSE",
-   "DREAM_EATER",
+   "DAZZLINGLEAM",
    "ENERGY_BALL",
    "TRICK"
   ],
@@ -1675,13 +1708,13 @@
    "DREAM_EATER",
    "ENERGY_BALL"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "SAP_SIPPER",
   "hp_type": null
  },
  "farigiraf|revenge killer": {
   "moves": [
-   "SUCKER_PUNCH",
+   "DARK_PULSE",
    "ZEN_HEADBUTT",
    "DOUBLE_EDGE",
    "TRICK"
@@ -1741,7 +1774,7 @@
    "DRILL_PECK",
    "U_TURN"
   ],
-  "item": "CHOICE_BAND",
+  "item": "FOCUS_SASH",
   "ability": "SNIPER",
   "hp_type": null
  },
@@ -1796,7 +1829,7 @@
    "CRUNCH",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -1961,7 +1994,7 @@
    "SHADOW_BALL",
    "TRICK"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "FOCUS_SASH",
   "ability": "LEVITATE",
   "hp_type": null
  },
@@ -1972,7 +2005,7 @@
    "KNOCK_OFF",
    "SLUDGE_BOMB"
   ],
-  "item": "LEFTOVERS",
+  "item": "ASSAULT_VEST",
   "ability": "LEVITATE",
   "hp_type": null
  },
@@ -1983,7 +2016,7 @@
    "SHADOW_BALL",
    "ENERGY_BALL"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "FOCUS_SASH",
   "ability": "SHADOW_TAG",
   "hp_type": null
  },
@@ -2005,19 +2038,19 @@
    "HYPER_VOICE",
    "SHADOW_BALL"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "SNOW_CLOAK",
   "hp_type": null
  },
  "glaceon|revenge killer": {
   "moves": [
-   "BLIZZARD",
+   "ICE_BEAM",
    "HYPER_VOICE",
    "SHADOW_BALL",
    "HIDDEN_POWER"
   ],
-  "item": "CHOICE_SPECS",
-  "ability": "SNOW_WARNING",
+  "item": "CHOICE_SCARF",
+  "ability": "SNOW_CLOAK",
   "hp_type": null
  },
  "glaceon|weather setter": {
@@ -2027,7 +2060,7 @@
    "BLIZZARD",
    "ICY_WIND"
   ],
-  "item": "ICY_ROCK",
+  "item": "ASSAULT_VEST",
   "ability": "SNOW_WARNING",
   "hp_type": null
  },
@@ -2060,7 +2093,7 @@
    "AERIAL_ACE",
    "DOUBLE_EDGE"
   ],
-  "item": "TOXIC_ORB",
+  "item": "EXPERT_BELT",
   "ability": "POISON_HEAL",
   "hp_type": null
  },
@@ -2110,8 +2143,8 @@
  },
  "golduck|revenge killer": {
   "moves": [
-   "FOCUS_BLAST",
-   "ZEN_HEADBUTT",
+   "AQUA_JET",
+   "PSYBEAM",
    "DOUBLE_EDGE",
    "ICE_BEAM"
   ],
@@ -2124,7 +2157,7 @@
    "RAIN_DANCE",
    "TOXIC",
    "SURF",
-   "ZEN_HEADBUTT"
+   "HYDRO_PUMP"
   ],
   "item": "DAMP_ROCK",
   "ability": "DAMP",
@@ -2149,6 +2182,17 @@
    "EARTHQUAKE"
   ],
   "item": "CHOICE_BAND",
+  "ability": "STURDY",
+  "hp_type": null
+ },
+ "golem_alolan|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "WILD_CHARGE",
+   "STONE_EDGE",
+   "DOUBLE_EDGE"
+  ],
+  "item": "FOCUS_SASH",
   "ability": "STURDY",
   "hp_type": null
  },
@@ -2196,6 +2240,17 @@
   "ability": "STURDY",
   "hp_type": null
  },
+ "golem_alolan|weather setter": {
+  "moves": [
+   "SANDSTORM",
+   "THUNDER_WAVE",
+   "STONE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "SMOOTH_ROCK",
+  "ability": "STURDY",
+  "hp_type": null
+ },
  "golem_alolan|trapper": {
   "moves": [
    "THUNDER_WAVE",
@@ -2204,7 +2259,7 @@
    "DOUBLE_EDGE"
   ],
   "item": "LEFTOVERS",
-  "ability": "MAGNET_PULL",
+  "ability": "GALVANIZE",
   "hp_type": null
  },
  "golem_plain|physical attacker": {
@@ -2259,7 +2314,7 @@
    "EARTHQUAKE"
   ],
   "item": "CHOICE_BAND",
-  "ability": "MOXIE",
+  "ability": "INTIMIDATE",
   "hp_type": null
  },
  "gyarados|setup sweeper": {
@@ -2267,10 +2322,10 @@
    "DRAGON_DANCE",
    "AQUA_TAIL",
    "FLY",
-   "DOUBLE_EDGE"
+   "EARTHQUAKE"
   ],
-  "item": "LIFE_ORB",
-  "ability": "MOXIE",
+  "item": "FOCUS_SASH",
+  "ability": "INTIMIDATE",
   "hp_type": null
  },
  "gyarados|special wall": {
@@ -2289,9 +2344,9 @@
    "RAIN_DANCE",
    "THUNDER_WAVE",
    "AQUA_TAIL",
-   "HURRICANE"
+   "WATERFALL"
   ],
-  "item": "DAMP_ROCK",
+  "item": "SITRUS_BERRY",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -2335,14 +2390,14 @@
    "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "IRON_FIST",
   "hp_type": null
  },
  "hitmonchan|revenge killer": {
   "moves": [
    "MACH_PUNCH",
-   "DOUBLE_EDGE",
+   "STRENGTH",
    "EARTHQUAKE",
    "POISON_JAB"
   ],
@@ -2369,7 +2424,7 @@
    "POISON_JAB"
   ],
   "item": "CHOICE_BAND",
-  "ability": "LIMBER",
+  "ability": "RECKLESS",
   "hp_type": null
  },
  "hitmonlee|setup sweeper": {
@@ -2380,7 +2435,7 @@
    "EARTHQUAKE"
   ],
   "item": "FOCUS_SASH",
-  "ability": "LIMBER",
+  "ability": "RECKLESS",
   "hp_type": null
  },
  "hitmonlee|revenge killer": {
@@ -2391,7 +2446,7 @@
    "EARTHQUAKE"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "RECKLESS",
+  "ability": "LIMBER",
   "hp_type": null
  },
  "hitmontop|physical attacker": {
@@ -2412,7 +2467,7 @@
    "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -2420,7 +2475,7 @@
   "moves": [
    "SUCKER_PUNCH",
    "LOW_KICK",
-   "STRENGTH",
+   "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
   "item": "CHOICE_SCARF",
@@ -2473,9 +2528,9 @@
  },
  "honchkrow|revenge killer": {
   "moves": [
-   "DARK_PULSE",
+   "SUCKER_PUNCH",
    "AERIAL_ACE",
-   "DOUBLE_EDGE",
+   "DARK_PULSE",
    "SHADOW_BALL"
   ],
   "item": "CHOICE_SCARF",
@@ -2495,9 +2550,9 @@
  },
  "houndoom|revenge killer": {
   "moves": [
-   "SUCKER_PUNCH",
-   "FIRE_BLAST",
    "DARK_PULSE",
+   "FIRE_BLAST",
+   "DOUBLE_EDGE",
    "SLUDGE_BOMB"
   ],
   "item": "CHOICE_SCARF",
@@ -2509,9 +2564,9 @@
    "SUNNY_DAY",
    "TOXIC",
    "FIRE_BLAST",
-   "DARK_PULSE"
+   "SOLAR_BEAM"
   ],
-  "item": "AIR_BALLOON",
+  "item": "FOCUS_SASH",
   "ability": "FLASH_FIRE",
   "hp_type": null
  },
@@ -2522,7 +2577,7 @@
    "FLAMETHROWER",
    "DARK_PULSE"
   ],
-  "item": "LIFE_ORB",
+  "item": "CHOICE_SPECS",
   "ability": "SOLAR_POWER",
   "hp_type": null
  },
@@ -2533,7 +2588,7 @@
    "FOCUS_BLAST",
    "DAZZLINGLEAM"
   ],
-  "item": "LEFTOVERS",
+  "item": "QUICK_CLAW",
   "ability": "INSOMNIA",
   "hp_type": null
  },
@@ -2545,7 +2600,7 @@
    "PSYCHIC_M"
   ],
   "item": "LEFTOVERS",
-  "ability": "BAD_DREAMS",
+  "ability": "INSOMNIA",
   "hp_type": null
  },
  "hypno|support": {
@@ -2556,7 +2611,7 @@
    "PSYCHIC_M"
   ],
   "item": "LIGHT_CLAY",
-  "ability": "BAD_DREAMS",
+  "ability": "INSOMNIA",
   "hp_type": null
  },
  "hypno|baton passer": {
@@ -2578,14 +2633,14 @@
    "DOUBLE_EDGE"
   ],
   "item": "LEFTOVERS",
-  "ability": "INNER_FOCUS",
+  "ability": "INSOMNIA",
   "hp_type": null
  },
  "jolteon|special attacker": {
   "moves": [
    "THUNDERBOLT",
    "HYPER_VOICE",
-   "VOLT_SWITCH",
+   "SHADOW_BALL",
    "HIDDEN_POWER"
   ],
   "item": "CHOICE_SPECS",
@@ -2599,7 +2654,7 @@
    "HYPER_VOICE",
    "SHADOW_BALL"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "VOLT_ABSORB",
   "hp_type": null
  },
@@ -2610,7 +2665,7 @@
    "SHADOW_BALL",
    "HIDDEN_POWER"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "CHOICE_SCARF",
   "ability": "VOLT_ABSORB",
   "hp_type": null
  },
@@ -2629,7 +2684,7 @@
   "moves": [
    "VOLT_SWITCH",
    "THUNDERBOLT",
-   "IRON_TAIL",
+   "HYPER_VOICE",
    "SHADOW_BALL"
   ],
   "item": "LEFTOVERS",
@@ -2688,7 +2743,7 @@
    "TRICK"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "FILTER",
+  "ability": "DRY_SKIN",
   "hp_type": null
  },
  "jynx|setup sweeper": {
@@ -2707,9 +2762,9 @@
    "HAIL",
    "SING",
    "ICE_BEAM",
-   "FOCUS_BLAST"
+   "BLIZZARD"
   ],
-  "item": "ICY_ROCK",
+  "item": "FOCUS_SASH",
   "ability": "DRY_SKIN",
   "hp_type": null
  },
@@ -2748,24 +2803,24 @@
  },
  "kabutops|revenge killer": {
   "moves": [
-   "AQUA_JET",
+   "AQUA_TAIL",
    "STONE_EDGE",
    "DOUBLE_EDGE",
    "IRON_HEAD"
   ],
-  "item": "CHOICE_BAND",
+  "item": "CHOICE_SCARF",
   "ability": "BATTLE_ARMOR",
   "hp_type": null
  },
  "kabutops|weather sweeper": {
   "moves": [
    "AQUA_TAIL",
-   "WATERFALL",
+   "LEECH_LIFE",
    "STONE_EDGE",
    "AQUA_JET"
   ],
   "item": "LIFE_ORB",
-  "ability": "SWIFT_SWIM",
+  "ability": "WEAK_ARMOR",
   "hp_type": null
  },
  "kangaskhan|setup sweeper": {
@@ -2775,7 +2830,7 @@
    "OUTRAGE",
    "EARTHQUAKE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "SCRAPPY",
   "hp_type": null
  },
@@ -2786,8 +2841,8 @@
    "OUTRAGE",
    "EARTHQUAKE"
   ],
-  "item": "LEFTOVERS",
-  "ability": "PARENTAL_BOND",
+  "item": "CHOICE_BAND",
+  "ability": "SCRAPPY",
   "hp_type": null
  },
  "kingdra|setup sweeper": {
@@ -2801,15 +2856,26 @@
   "ability": "SNIPER",
   "hp_type": null
  },
+ "kingdra|bulky tank": {
+  "moves": [
+   "REST",
+   "OUTRAGE",
+   "WATERFALL",
+   "DOUBLE_EDGE"
+  ],
+  "item": "CHOICE_BAND",
+  "ability": "SNIPER",
+  "hp_type": null
+ },
  "kingdra|weather setter": {
   "moves": [
    "RAIN_DANCE",
    "TOXIC",
    "SURF",
-   "WATERFALL"
+   "OUTRAGE"
   ],
-  "item": "DAMP_ROCK",
-  "ability": "SNIPER",
+  "item": "ASSAULT_VEST",
+  "ability": "SWIFT_SWIM",
   "hp_type": null
  },
  "kingdra|weather sweeper": {
@@ -2864,7 +2930,7 @@
    "CLOSE_COMBAT"
   ],
   "item": "FOCUS_SASH",
-  "ability": "SHARPNESS",
+  "ability": "SHEER_FORCE",
   "hp_type": null
  },
  "kleavor|revenge killer": {
@@ -2875,7 +2941,7 @@
    "CLOSE_COMBAT"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "SHEER_FORCE",
+  "ability": "SHARPNESS",
   "hp_type": null
  },
  "kleavor|pivot": {
@@ -2885,8 +2951,8 @@
    "X_SCISSOR",
    "CLOSE_COMBAT"
   ],
-  "item": "ASSAULT_VEST",
-  "ability": "SHEER_FORCE",
+  "item": "LEFTOVERS",
+  "ability": "SHARPNESS",
   "hp_type": null
  },
  "lanturn|special attacker": {
@@ -2905,7 +2971,7 @@
    "SUCKER_PUNCH",
    "SURF",
    "THUNDERBOLT",
-   "DOUBLE_EDGE"
+   "ICE_BEAM"
   ],
   "item": "CHOICE_SCARF",
   "ability": "WATER_ABSORB",
@@ -2927,7 +2993,7 @@
    "VOLT_SWITCH",
    "SURF",
    "THUNDERBOLT",
-   "DOUBLE_EDGE"
+   "ICE_BEAM"
   ],
   "item": "LEFTOVERS",
   "ability": "WATER_ABSORB",
@@ -3028,7 +3094,7 @@
    "BATON_PASS",
    "SEED_BOMB"
   ],
-  "item": "MIRACLE_SEED",
+  "item": "ASSAULT_VEST",
   "ability": "NATURAL_CURE",
   "hp_type": null
  },
@@ -3050,7 +3116,7 @@
    "U_TURN",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "IRON_FIST",
   "hp_type": null
  },
@@ -3072,7 +3138,7 @@
    "TOXIC",
    "STRENGTH"
   ],
-  "item": "LEFTOVERS",
+  "item": "ASSAULT_VEST",
   "ability": "IRON_FIST",
   "hp_type": null
  },
@@ -3116,7 +3182,7 @@
    "EARTHQUAKE",
    "IRON_TAIL"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "THICK_FAT",
   "hp_type": null
  },
@@ -3153,12 +3219,34 @@
   "ability": "GUTS",
   "hp_type": null
  },
+ "machamp|setup sweeper": {
+  "moves": [
+   "CURSE",
+   "CLOSE_COMBAT",
+   "DOUBLE_EDGE",
+   "EARTHQUAKE"
+  ],
+  "item": "CHOICE_SCARF",
+  "ability": "GUTS",
+  "hp_type": null
+ },
  "machamp|revenge killer": {
   "moves": [
    "MACH_PUNCH",
    "DOUBLE_EDGE",
    "EARTHQUAKE",
    "POISON_JAB"
+  ],
+  "item": "FLAME_ORB",
+  "ability": "GUTS",
+  "hp_type": null
+ },
+ "machamp|support": {
+  "moves": [
+   "TOXIC",
+   "LIGHT_SCREEN",
+   "KNOCK_OFF",
+   "CLOSE_COMBAT"
   ],
   "item": "FLAME_ORB",
   "ability": "GUTS",
@@ -3172,7 +3260,7 @@
    "HIDDEN_POWER"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "WEAK_ARMOR",
+  "ability": "MAGMA_ARMOR",
   "hp_type": null
  },
  "magcargo|setup sweeper": {
@@ -3182,7 +3270,7 @@
    "ANCIENTPOWER",
    "EARTH_POWER"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "WEAK_ARMOR",
   "hp_type": null
  },
@@ -3226,7 +3314,7 @@
    "FIRE_BLAST",
    "SOLAR_BEAM"
   ],
-  "item": "HEAT_ROCK",
+  "item": "CHARCOAL",
   "ability": "MAGMA_ARMOR",
   "hp_type": null
  },
@@ -3237,7 +3325,7 @@
    "THUNDERBOLT",
    "FLASH_CANNON"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "VITAL_SPIRIT",
   "hp_type": null
  },
@@ -3246,9 +3334,9 @@
    "SUNNY_DAY",
    "TOXIC",
    "FIRE_BLAST",
-   "FOCUS_BLAST"
+   "SOLAR_BEAM"
   ],
-  "item": "CHARCOAL",
+  "item": "FOCUS_SASH",
   "ability": "VITAL_SPIRIT",
   "hp_type": null
  },
@@ -3268,7 +3356,7 @@
    "QUICK_ATTACK",
    "THUNDERBOLT",
    "FLASH_CANNON",
-   "DOUBLE_EDGE"
+   "HIDDEN_POWER"
   ],
   "item": "CHOICE_SCARF",
   "ability": "LEVITATE",
@@ -3290,18 +3378,18 @@
    "VOLT_SWITCH",
    "THUNDERBOLT",
    "FLASH_CANNON",
-   "DOUBLE_EDGE"
+   "TRI_ATTACK"
   ],
-  "item": "LEFTOVERS",
+  "item": "CHOICE_SCARF",
   "ability": "LEVITATE",
   "hp_type": null
  },
  "magnezone|trapper": {
   "moves": [
    "THUNDER_WAVE",
-   "VOLT_SWITCH",
+   "THUNDERBOLT",
    "FLASH_CANNON",
-   "DOUBLE_EDGE"
+   "TRI_ATTACK"
   ],
   "item": "LEFTOVERS",
   "ability": "LEVITATE",
@@ -3325,7 +3413,7 @@
    "AVALANCHE",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "THICK_FAT",
   "hp_type": null
  },
@@ -3358,7 +3446,7 @@
    "AIR_SLASH",
    "SCALD"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "LIFE_ORB",
   "ability": "SWIFT_SWIM",
   "hp_type": null
  },
@@ -3366,7 +3454,7 @@
   "moves": [
    "FIRE_PUNCH",
    "SHADOW_CLAW",
-   "DOUBLE_EDGE",
+   "IRON_HEAD",
    "EARTHQUAKE"
   ],
   "item": "THICK_CLUB",
@@ -3392,7 +3480,7 @@
    "HIDDEN_POWER"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "OVERGROW",
+  "ability": "NATURAL_CURE",
   "hp_type": null
  },
  "meganium|setup sweeper": {
@@ -3402,7 +3490,7 @@
    "DAZZLINGLEAM",
    "EARTH_POWER"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "NATURAL_CURE",
   "hp_type": null
  },
@@ -3534,7 +3622,7 @@
    "ICE_BEAM",
    "ZEN_HEADBUTT"
   ],
-  "item": "LEFTOVERS",
+  "item": "FOCUS_SASH",
   "ability": "TANGLED_FEET",
   "hp_type": null
  },
@@ -3556,7 +3644,7 @@
    "CRUNCH",
    "RETURN"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "POISON_TOUCH",
   "hp_type": null
  },
@@ -3571,17 +3659,6 @@
   "ability": "POISON_TOUCH",
   "hp_type": null
  },
- "muk_alolan|bulky tank": {
-  "moves": [
-   "REST",
-   "GUNK_SHOT",
-   "CRUNCH",
-   "RETURN"
-  ],
-  "item": "LEFTOVERS",
-  "ability": "POISON_TOUCH",
-  "hp_type": null
- },
  "muk_alolan|support": {
   "moves": [
    "TOXIC",
@@ -3590,7 +3667,7 @@
    "GUNK_SHOT"
   ],
   "item": "LEFTOVERS",
-  "ability": "CORROSION",
+  "ability": "POISON_TOUCH",
   "hp_type": null
  },
  "muk_plain|physical attacker": {
@@ -3611,7 +3688,7 @@
    "RETURN",
    "STRENGTH"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "FOCUS_SASH",
   "ability": "STENCH",
   "hp_type": null
  },
@@ -3706,7 +3783,7 @@
  "nidoqueen|revenge killer": {
   "moves": [
    "SUCKER_PUNCH",
-   "EARTHQUAKE",
+   "EARTH_POWER",
    "SLUDGE_BOMB",
    "CLOSE_COMBAT"
   ],
@@ -3729,8 +3806,8 @@
   "moves": [
    "SANDSTORM",
    "TOXIC",
-   "EARTHQUAKE",
-   "THUNDERBOLT"
+   "EARTH_POWER",
+   "IRON_TAIL"
   ],
   "item": "SMOOTH_ROCK",
   "ability": "SHEER_FORCE",
@@ -3766,7 +3843,7 @@
    "DARK_PULSE"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "FLASH_FIRE",
+  "ability": "DROUGHT",
   "hp_type": null
  },
  "ninetales_plain|setup sweeper": {
@@ -3787,7 +3864,7 @@
    "SHADOW_BALL",
    "ENERGY_BALL"
   ],
-  "item": "LUM_BERRY",
+  "item": "CHOICE_SCARF",
   "ability": "DROUGHT",
   "hp_type": null
  },
@@ -3810,7 +3887,7 @@
    "FIRE_BLAST"
   ],
   "item": "LEFTOVERS",
-  "ability": "DROUGHT",
+  "ability": "FLASH_FIRE",
   "hp_type": null
  },
  "noctowl|special attacker": {
@@ -3832,7 +3909,7 @@
    "SHADOW_BALL"
   ],
   "item": "LEFTOVERS",
-  "ability": "KEEN_EYE",
+  "ability": "INSOMNIA",
   "hp_type": null
  },
  "octillery|physical attacker": {
@@ -3908,7 +3985,7 @@
    "BUBBLE_BEAM",
    "ANCIENTPOWER"
   ],
-  "item": "LIFE_ORB",
+  "item": "CHOICE_SPECS",
   "ability": "SWIFT_SWIM",
   "hp_type": null
  },
@@ -3930,7 +4007,7 @@
    "POISON_JAB",
    "DOUBLE_EDGE"
   ],
-  "item": "BLACKGLASSES",
+  "item": "FOCUS_SASH",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -3941,7 +4018,7 @@
    "POISON_JAB",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "CHOICE_SCARF",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -4008,7 +4085,7 @@
    "PLAY_ROUGH"
   ],
   "item": "LEFTOVERS",
-  "ability": "STEELY_SPIRIT",
+  "ability": "TOUGH_CLAWS",
   "hp_type": null
  },
  "persian_alolan|setup sweeper": {
@@ -4029,7 +4106,7 @@
    "THUNDERBOLT",
    "POWER_GEM"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "EXPERT_BELT",
   "ability": "FUR_COAT",
   "hp_type": null
  },
@@ -4049,7 +4126,7 @@
    "U_TURN",
    "DOUBLE_EDGE",
    "PLAY_ROUGH",
-   "THUNDERBOLT"
+   "IRON_TAIL"
   ],
   "item": "LEFTOVERS",
   "ability": "TECHNICIAN",
@@ -4101,7 +4178,7 @@
  },
  "pinsir|physical attacker": {
   "moves": [
-   "LEECH_LIFE",
+   "MEGAHORN",
    "CLOSE_COMBAT",
    "DOUBLE_EDGE",
    "OUTRAGE"
@@ -4113,7 +4190,7 @@
  "pinsir|setup sweeper": {
   "moves": [
    "SWORDS_DANCE",
-   "LEECH_LIFE",
+   "MEGAHORN",
    "CLOSE_COMBAT",
    "DOUBLE_EDGE"
   ],
@@ -4129,7 +4206,18 @@
    "OUTRAGE"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "MOLD_BREAKER",
+  "ability": "MOXIE",
+  "hp_type": null
+ },
+ "politoed|setup sweeper": {
+  "moves": [
+   "CALM_MIND",
+   "ENERGY_BALL",
+   "SURF",
+   "EARTH_POWER"
+  ],
+  "item": "FOCUS_SASH",
+  "ability": "WATER_ABSORB",
   "hp_type": null
  },
  "politoed|special wall": {
@@ -4147,7 +4235,7 @@
   "moves": [
    "HYPNOSIS",
    "SURF",
-   "WATERFALL",
+   "SCALD",
    "ENERGY_BALL"
   ],
   "item": "DAMP_ROCK",
@@ -4172,7 +4260,7 @@
    "WATERFALL",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "WATER_ABSORB",
   "hp_type": null
  },
@@ -4194,7 +4282,7 @@
    "WATERFALL",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "LEFTOVERS",
   "ability": "WATER_ABSORB",
   "hp_type": null
  },
@@ -4260,7 +4348,7 @@
    "EARTHQUAKE",
    "AQUA_TAIL"
   ],
-  "item": "SITRUS_BERRY",
+  "item": "LEFTOVERS",
   "ability": "UNAWARE",
   "hp_type": null
  },
@@ -4290,7 +4378,7 @@
   "moves": [
    "RAIN_DANCE",
    "THUNDER_WAVE",
-   "SHADOW_BALL",
+   "AQUA_TAIL",
    "WATERFALL"
   ],
   "item": "DAMP_ROCK",
@@ -4326,7 +4414,7 @@
    "THUNDERBOLT",
    "SURF"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "MOTOR_DRIVE",
   "hp_type": null
  },
@@ -4337,7 +4425,7 @@
    "THUNDERBOLT",
    "SURF"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "LIFE_ORB",
   "ability": "MOTOR_DRIVE",
   "hp_type": null
  },
@@ -4346,7 +4434,7 @@
    "THUNDER_WAVE",
    "REFLECT",
    "LIGHT_SCREEN",
-   "PSYCHIC_M"
+   "THUNDERBOLT"
   ],
   "item": "LIGHT_CLAY",
   "ability": "MOTOR_DRIVE",
@@ -4359,7 +4447,7 @@
    "THUNDERBOLT",
    "DOUBLE_EDGE"
   ],
-  "item": "LEFTOVERS",
+  "item": "FOCUS_SASH",
   "ability": "MOTOR_DRIVE",
   "hp_type": null
  },
@@ -4400,7 +4488,7 @@
   "moves": [
    "AGILITY",
    "WILD_CHARGE",
-   "DOUBLE_EDGE",
+   "KNOCK_OFF",
    "IRON_TAIL"
   ],
   "item": "FOCUS_SASH",
@@ -4414,7 +4502,7 @@
    "FOCUS_BLAST",
    "IRON_TAIL"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "CHOICE_SCARF",
   "ability": "LIGHTNING_ROD",
   "hp_type": null
  },
@@ -4465,11 +4553,11 @@
  "rapidash_galarian|revenge killer": {
   "moves": [
    "EXTREMESPEED",
-   "MOONBLAST",
+   "PLAY_ROUGH",
    "PSYCHIC_M",
    "MEGAHORN"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "CHOICE_SCARF",
   "ability": "RUN_AWAY",
   "hp_type": null
  },
@@ -4477,10 +4565,10 @@
   "moves": [
    "TOXIC",
    "REFLECT",
-   "MOONBLAST",
+   "PLAY_ROUGH",
    "PSYCHIC_M"
   ],
-  "item": "LEFTOVERS",
+  "item": "ASSAULT_VEST",
   "ability": "RUN_AWAY",
   "hp_type": null
  },
@@ -4489,7 +4577,7 @@
    "SWORDS_DANCE",
    "SUBSTITUTE",
    "BATON_PASS",
-   "MOONBLAST"
+   "PLAY_ROUGH"
   ],
   "item": "LEFTOVERS",
   "ability": "RUN_AWAY",
@@ -4514,7 +4602,7 @@
    "MEGAHORN"
   ],
   "item": "FOCUS_SASH",
-  "ability": "FLAME_BODY",
+  "ability": "FLASH_FIRE",
   "hp_type": null
  },
  "rapidash_plain|revenge killer": {
@@ -4568,7 +4656,7 @@
    "CRUNCH",
    "IRON_TAIL"
   ],
-  "item": "LEFTOVERS",
+  "item": "ROCKY_HELMET",
   "ability": "THICK_FAT",
   "hp_type": null
  },
@@ -4579,7 +4667,7 @@
    "WILD_CHARGE",
    "CRUNCH"
   ],
-  "item": "CHOICE_BAND",
+  "item": "FLAME_ORB",
   "ability": "GUTS",
   "hp_type": null
  },
@@ -4613,7 +4701,7 @@
    "EARTHQUAKE"
   ],
   "item": "CHOICE_BAND",
-  "ability": "IRON_BARBS",
+  "ability": "SNOW_CLOAK",
   "hp_type": null
  },
  "sandslash_alolan|physical wall": {
@@ -4634,7 +4722,7 @@
    "ICE_PUNCH",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "LIFE_ORB",
   "ability": "SLUSH_RUSH",
   "hp_type": null
  },
@@ -4656,18 +4744,18 @@
    "TOXIC",
    "EARTHQUAKE"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "LEFTOVERS",
   "ability": "SHARPNESS",
   "hp_type": null
  },
  "sandslash_plain|weather sweeper": {
   "moves": [
    "EARTHQUAKE",
-   "IRON_TAIL",
+   "STONE_EDGE",
    "MAGNITUDE",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "LIFE_ORB",
   "ability": "SAND_RUSH",
   "hp_type": null
  },
@@ -4686,10 +4774,10 @@
   "moves": [
    "BULLET_PUNCH",
    "X_SCISSOR",
-   "IRON_HEAD",
+   "CLOSE_COMBAT",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "CHOICE_BAND",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -4706,13 +4794,13 @@
  },
  "seaking|physical attacker": {
   "moves": [
-   "RETURN",
+   "DOUBLE_EDGE",
    "AQUA_TAIL",
    "POISON_JAB",
    "KNOCK_OFF"
   ],
   "item": "CHOICE_BAND",
-  "ability": "LIGHTNING_ROD",
+  "ability": "WATER_VEIL",
   "hp_type": null
  },
  "seaking|setup sweeper": {
@@ -4722,7 +4810,7 @@
    "AQUA_TAIL",
    "POISON_JAB"
   ],
-  "item": "EXPERT_BELT",
+  "item": "FOCUS_SASH",
   "ability": "WATER_VEIL",
   "hp_type": null
  },
@@ -4833,7 +4921,7 @@
    "TRICK"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "QUICK_DRAW",
+  "ability": "REGENERATOR",
   "hp_type": null
  },
  "slowbro_galarian|mixed attacker": {
@@ -4844,7 +4932,7 @@
    "SLUDGE_BOMB"
   ],
   "item": "LIFE_ORB",
-  "ability": "REGENERATOR",
+  "ability": "QUICK_DRAW",
   "hp_type": null
  },
  "slowbro_galarian|physical wall": {
@@ -4887,7 +4975,7 @@
    "SURF",
    "FIRE_BLAST"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "FOCUS_SASH",
   "ability": "REGENERATOR",
   "hp_type": null
  },
@@ -4975,7 +5063,7 @@
    "SLUDGE_BOMB",
    "FIRE_BLAST"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "REGENERATOR",
   "hp_type": null
  },
@@ -5041,7 +5129,7 @@
    "SURF",
    "FIRE_BLAST"
   ],
-  "item": "LIFE_ORB",
+  "item": "FOCUS_SASH",
   "ability": "REGENERATOR",
   "hp_type": null
  },
@@ -5085,7 +5173,7 @@
    "SURF",
    "PSYCHIC_M"
   ],
-  "item": "DAMP_ROCK",
+  "item": "SITRUS_BERRY",
   "ability": "REGENERATOR",
   "hp_type": null
  },
@@ -5115,7 +5203,7 @@
    "DOUBLE_EDGE",
    "IRON_TAIL"
   ],
-  "item": "CHOICE_BAND",
+  "item": "FOCUS_SASH",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -5137,7 +5225,7 @@
    "GUNK_SHOT",
    "IRON_TAIL"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "CHOICE_BAND",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -5181,7 +5269,7 @@
    "CLOSE_COMBAT",
    "OUTRAGE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "SITRUS_BERRY",
   "ability": "THICK_FAT",
   "hp_type": null
  },
@@ -5225,7 +5313,7 @@
    "DREAM_EATER",
    "ENERGY_BALL"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "NATURAL_CURE",
   "hp_type": null
  },
@@ -5291,7 +5379,7 @@
    "IRON_TAIL",
    "BULLDOZE"
   ],
-  "item": "LIFE_ORB",
+  "item": "QUICK_CLAW",
   "ability": "SAND_FORCE",
   "hp_type": null
  },
@@ -5313,7 +5401,7 @@
    "CLOSE_COMBAT",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
+  "item": "CHOICE_BAND",
   "ability": "STURDY",
   "hp_type": null
  },
@@ -5324,7 +5412,7 @@
    "CLOSE_COMBAT",
    "DOUBLE_EDGE"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "CHOICE_BAND",
   "ability": "STURDY",
   "hp_type": null
  },
@@ -5335,7 +5423,7 @@
    "TOXIC",
    "STONE_EDGE"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "LEFTOVERS",
   "ability": "STURDY",
   "hp_type": null
  },
@@ -5368,7 +5456,7 @@
    "STONE_EDGE",
    "EARTHQUAKE"
   ],
-  "item": "SMOOTH_ROCK",
+  "item": "QUICK_CLAW",
   "ability": "STURDY",
   "hp_type": null
  },
@@ -5413,7 +5501,7 @@
    "HIDDEN_POWER"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "CUTE_CHARM",
+  "ability": "PIXILATE",
   "hp_type": null
  },
  "sylveon|special wall": {
@@ -5511,7 +5599,7 @@
    "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
-  "item": "SITRUS_BERRY",
+  "item": "FOCUS_SASH",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -5522,7 +5610,18 @@
    "EARTHQUAKE",
    "WILD_CHARGE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "CHOICE_SCARF",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
+ "tauros_paldean|physical wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -5551,7 +5650,7 @@
  "tauros_paldean_fire|revenge killer": {
   "moves": [
    "STRENGTH",
-   "FIRE_BLAST",
+   "FLAME_CHARGE",
    "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
@@ -5559,21 +5658,32 @@
   "ability": "INTIMIDATE",
   "hp_type": null
  },
+ "tauros_paldean_fire|physical wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
  "tauros_paldean_fire|weather setter": {
   "moves": [
    "SUNNY_DAY",
    "TOXIC",
-   "STRENGTH",
+   "FLAME_CHARGE",
    "SOLAR_BEAM"
   ],
-  "item": "ROCKY_HELMET",
+  "item": "HEAT_ROCK",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
  "tauros_paldean_water|physical attacker": {
   "moves": [
    "STRENGTH",
-   "AQUA_JET",
+   "RETURN",
    "DOUBLE_EDGE",
    "EARTHQUAKE"
   ],
@@ -5600,6 +5710,17 @@
    "EARTHQUAKE"
   ],
   "item": "CHOICE_SCARF",
+  "ability": "INTIMIDATE",
+  "hp_type": null
+ },
+ "tauros_paldean_water|physical wall": {
+  "moves": [
+   "REST",
+   "SLEEP_TALK",
+   "TOXIC",
+   "STRENGTH"
+  ],
+  "item": "LEFTOVERS",
   "ability": "INTIMIDATE",
   "hp_type": null
  },
@@ -5638,7 +5759,7 @@
  },
  "tauros_plain|revenge killer": {
   "moves": [
-   "DOUBLE_EDGE",
+   "QUICK_ATTACK",
    "EARTHQUAKE",
    "WILD_CHARGE",
    "IRON_HEAD"
@@ -5654,7 +5775,7 @@
    "DOUBLE_EDGE",
    "POWER_WHIP"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "CHOICE_SCARF",
   "ability": "LIQUID_OOZE",
   "hp_type": null
  },
@@ -5687,7 +5808,7 @@
    "SURF",
    "SLUDGE_BOMB"
   ],
-  "item": "SITRUS_BERRY",
+  "item": "DAMP_ROCK",
   "ability": "LIQUID_OOZE",
   "hp_type": null
  },
@@ -5775,7 +5896,7 @@
    "SHADOW_BALL",
    "FOCUS_BLAST"
   ],
-  "item": "ASSAULT_VEST",
+  "item": "CHOICE_SCARF",
   "ability": "FLAME_BODY",
   "hp_type": null
  },
@@ -5786,7 +5907,7 @@
    "FIRE_BLAST",
    "SOLAR_BEAM"
   ],
-  "item": "HEAT_ROCK",
+  "item": "SITRUS_BERRY",
   "ability": "FLAME_BODY",
   "hp_type": null
  },
@@ -5819,7 +5940,7 @@
    "FIRE_BLAST",
    "SOLAR_BEAM"
   ],
-  "item": "HEAT_ROCK",
+  "item": "ASSAULT_VEST",
   "ability": "FLASH_FIRE",
   "hp_type": null
  },
@@ -5842,7 +5963,7 @@
    "ANCIENTPOWER"
   ],
   "item": "LIFE_ORB",
-  "ability": "SAND_STREAM",
+  "ability": "BATTLE_ARMOR",
   "hp_type": null
  },
  "tyranitar|setup sweeper": {
@@ -5852,8 +5973,8 @@
    "STONE_EDGE",
    "DOUBLE_EDGE"
   ],
-  "item": "LIFE_ORB",
-  "ability": "SAND_STREAM",
+  "item": "FOCUS_SASH",
+  "ability": "BATTLE_ARMOR",
   "hp_type": null
  },
  "tyranitar|special wall": {
@@ -5863,7 +5984,7 @@
    "THUNDER_WAVE",
    "CRUNCH"
   ],
-  "item": "LEFTOVERS",
+  "item": "ASSAULT_VEST",
   "ability": "SAND_STREAM",
   "hp_type": null
  },
@@ -5872,10 +5993,10 @@
    "REST",
    "CRUNCH",
    "STONE_EDGE",
-   "DOUBLE_EDGE"
+   "DRAGON_CLAW"
   ],
-  "item": "CHOICE_BAND",
-  "ability": "BATTLE_ARMOR",
+  "item": "LEFTOVERS",
+  "ability": "SAND_STREAM",
   "hp_type": null
  },
  "tyranitar|weather setter": {
@@ -5988,7 +6109,7 @@
  "ursaluna_plain|bulky tank": {
   "moves": [
    "REST",
-   "DOUBLE_EDGE",
+   "FIRE_PUNCH",
    "EARTHQUAKE",
    "GUNK_SHOT"
   ],
@@ -6004,18 +6125,7 @@
    "SHADOW_BALL"
   ],
   "item": "CHOICE_SPECS",
-  "ability": "DRIZZLE",
-  "hp_type": null
- },
- "vaporeon|setup sweeper": {
-  "moves": [
-   "CALM_MIND",
-   "SURF",
-   "HYPER_VOICE",
-   "ICE_BEAM"
-  ],
-  "item": "LIFE_ORB",
-  "ability": "DRIZZLE",
+  "ability": "WATER_ABSORB",
   "hp_type": null
  },
  "vaporeon|revenge killer": {
@@ -6040,17 +6150,6 @@
   "ability": "DRIZZLE",
   "hp_type": null
  },
- "vaporeon|support": {
-  "moves": [
-   "TOXIC",
-   "HAZE",
-   "ROAR",
-   "SURF"
-  ],
-  "item": "LEFTOVERS",
-  "ability": "DRIZZLE",
-  "hp_type": null
- },
  "vaporeon|weather setter": {
   "moves": [
    "RECOVER",
@@ -6059,17 +6158,6 @@
    "SCALD"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "DRIZZLE",
-  "hp_type": null
- },
- "vaporeon|baton passer": {
-  "moves": [
-   "CALM_MIND",
-   "SUBSTITUTE",
-   "BATON_PASS",
-   "SURF"
-  ],
-  "item": "LEFTOVERS",
   "ability": "DRIZZLE",
   "hp_type": null
  },
@@ -6091,7 +6179,7 @@
    "SLUDGE_BOMB",
    "ENERGY_BALL"
   ],
-  "item": "CHOICE_SPECS",
+  "item": "FOCUS_SASH",
   "ability": "TINTED_LENS",
   "hp_type": null
  },
@@ -6135,19 +6223,19 @@
    "SLUDGE_BOMB",
    "EARTH_POWER"
   ],
-  "item": "WISE_GLASSES",
+  "item": "FOCUS_SASH",
   "ability": "THICK_FAT",
   "hp_type": null
  },
  "venusaur|weather sweeper": {
   "moves": [
-   "SOLAR_BEAM",
+   "STRENGTH",
    "PETAL_DANCE",
    "SLUDGE_BOMB",
    "EARTH_POWER"
   ],
-  "item": "SITRUS_BERRY",
-  "ability": "OVERGROW",
+  "item": "LIFE_ORB",
+  "ability": "CHLOROPHYLL",
   "hp_type": null
  },
  "victreebel|physical attacker": {
@@ -6166,7 +6254,7 @@
    "ENERGY_BALL",
    "SLUDGE_BOMB",
    "EARTH_POWER",
-   "DOUBLE_EDGE"
+   "HIDDEN_POWER"
   ],
   "item": "CHOICE_SPECS",
   "ability": "CHLOROPHYLL",
@@ -6175,7 +6263,7 @@
  "victreebel|mixed attacker": {
   "moves": [
    "POISON_JAB",
-   "SUCKER_PUNCH",
+   "SEED_BOMB",
    "ENERGY_BALL",
    "SLUDGE_BOMB"
   ],
@@ -6245,7 +6333,7 @@
    "SLUDGE_BOMB",
    "MOONBLAST"
   ],
-  "item": "LIFE_ORB",
+  "item": "ASSAULT_VEST",
   "ability": "CHLOROPHYLL",
   "hp_type": null
  },
@@ -6267,7 +6355,7 @@
    "ICICLE_CRASH",
    "DOUBLE_EDGE"
   ],
-  "item": "FOCUS_SASH",
+  "item": "CHOICE_BAND",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -6275,10 +6363,10 @@
   "moves": [
    "ICE_SHARD",
    "CRUNCH",
-   "DOUBLE_EDGE",
+   "STRENGTH",
    "IRON_TAIL"
   ],
-  "item": "CHOICE_BAND",
+  "item": "FOCUS_SASH",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -6289,7 +6377,7 @@
    "KNOCK_OFF",
    "CRUNCH"
   ],
-  "item": "LEFTOVERS",
+  "item": "BLACKGLASSES",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -6300,7 +6388,7 @@
    "ICICLE_CRASH",
    "CRUNCH"
   ],
-  "item": "EXPERT_BELT",
+  "item": "FOCUS_SASH",
   "ability": "TECHNICIAN",
   "hp_type": null
  },
@@ -6355,7 +6443,7 @@
    "DAZZLINGLEAM",
    "FIRE_BLAST"
   ],
-  "item": "LIFE_ORB",
+  "item": "ASSAULT_VEST",
   "ability": "SOUNDPROOF",
   "hp_type": null
  },
@@ -6364,7 +6452,7 @@
    "REST",
    "SLEEP_TALK",
    "SING",
-   "DOUBLE_EDGE"
+   "HYPER_VOICE"
   ],
   "item": "LEFTOVERS",
   "ability": "SOUNDPROOF",
@@ -6378,7 +6466,7 @@
    "FIRE_BLAST"
   ],
   "item": "LEFTOVERS",
-  "ability": "SOUNDPROOF",
+  "ability": "COMPETITIVE",
   "hp_type": null
  },
  "wigglytuff|support": {
@@ -6386,7 +6474,7 @@
    "SING",
    "REFLECT",
    "LIGHT_SCREEN",
-   "DOUBLE_EDGE"
+   "HYPER_VOICE"
   ],
   "item": "LIGHT_CLAY",
   "ability": "SOUNDPROOF",
@@ -6397,7 +6485,7 @@
    "NASTY_PLOT",
    "SUBSTITUTE",
    "BATON_PASS",
-   "DOUBLE_EDGE"
+   "HYPER_VOICE"
   ],
   "item": "LEFTOVERS",
   "ability": "SOUNDPROOF",
@@ -6451,18 +6539,7 @@
    "EXTRASENSORY",
    "SWIFT"
   ],
-  "item": "LIFE_ORB",
-  "ability": "SAP_SIPPER",
-  "hp_type": null
- },
- "wyrdeer|setup sweeper": {
-  "moves": [
-   "AGILITY",
-   "DOUBLE_EDGE",
-   "ZEN_HEADBUTT",
-   "EARTHQUAKE"
-  ],
-  "item": "CHOICE_BAND",
+  "item": "CHOICE_SCARF",
   "ability": "SAP_SIPPER",
   "hp_type": null
  },
@@ -6474,17 +6551,6 @@
    "EARTHQUAKE"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "SAP_SIPPER",
-  "hp_type": null
- },
- "wyrdeer|support": {
-  "moves": [
-   "HYPNOSIS",
-   "REFLECT",
-   "LIGHT_SCREEN",
-   "DOUBLE_EDGE"
-  ],
-  "item": "LIGHT_CLAY",
   "ability": "SAP_SIPPER",
   "hp_type": null
  },
@@ -6518,7 +6584,7 @@
    "DAZZLINGLEAM"
   ],
   "item": "FOCUS_SASH",
-  "ability": "SYNCHRONIZE",
+  "ability": "MAGIC_BOUNCE",
   "hp_type": null
  },
  "xatu|revenge killer": {
@@ -6529,7 +6595,7 @@
    "TRICK"
   ],
   "item": "CHOICE_SCARF",
-  "ability": "MAGIC_BOUNCE",
+  "ability": "SYNCHRONIZE",
   "hp_type": null
  },
  "xatu|pivot": {
@@ -6539,8 +6605,8 @@
    "AIR_SLASH",
    "DOUBLE_EDGE"
   ],
-  "item": "LEFTOVERS",
-  "ability": "SYNCHRONIZE",
+  "item": "CHOICE_SPECS",
+  "ability": "MAGIC_BOUNCE",
   "hp_type": null
  },
  "xatu|baton passer": {
@@ -6550,8 +6616,8 @@
    "BATON_PASS",
    "PSYCHIC_M"
   ],
-  "item": "LEFTOVERS",
-  "ability": "MAGIC_BOUNCE",
+  "item": "TWISTEDSPOON",
+  "ability": "SYNCHRONIZE",
   "hp_type": null
  },
  "yanmega|special attacker": {
@@ -6572,7 +6638,7 @@
    "LEECH_LIFE",
    "SHADOW_BALL"
   ],
-  "item": "CHOICE_SCARF",
+  "item": "CHOICE_SPECS",
   "ability": "LEVITATE",
   "hp_type": null
  },
@@ -6584,7 +6650,7 @@
    "DOUBLE_EDGE"
   ],
   "item": "LEFTOVERS",
-  "ability": "LEVITATE",
+  "ability": "SPEED_BOOST",
   "hp_type": null
  }
 }
