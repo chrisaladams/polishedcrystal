@@ -705,6 +705,20 @@ def test_lead_intimidate_survives_the_other_lead_entering():
     assert c.stage['atk'] == -1
 
 
+def test_full_paralysis_is_25_percent():
+    # one check, where the ROM makes it (the turn oracle caught a second one)
+    stopped = 0
+    n = 4000
+    for seed in range(n):
+        a, b = mon(moves=('TACKLE',)), mon(stats={'hp': 999})
+        a.status = 'par'
+        A, B = duel(a, b)
+        act(A, B, 'TACKLE', random.Random(seed))
+        stopped += b.hp == b.maxhp
+    # Tackle can also miss (5%), so allow for that on top of 25%
+    assert 0.25 * n <= stopped <= 0.33 * n, stopped
+
+
 if __name__ == '__main__':
     failed = 0
     for name, fn in list(globals().items()):

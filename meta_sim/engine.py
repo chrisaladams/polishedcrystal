@@ -1538,9 +1538,6 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             if att.hp <= 0:
                 att.fainted = True
             return
-    if att.status == 'par' and rng.random() < 0.25:
-        return
-
     if att.infatuated is not None:
         if att.infatuated is not dfn or dfn.fainted:
             att.infatuated = None          # infatuation ends when either leaves
