@@ -110,6 +110,7 @@ LinkReceptionistScript_DoTradeOrBattle:
 	ifequalfwd LINK_ERR_OTHER_VERSION_TOO_LOW, .OtherPlayerWrongMinVersion
 	ifequalfwd LINK_ERR_MISMATCH_GAME_OPTIONS, .WrongOptions
 	ifequalfwd LINK_ERR_MISMATCH_BUILD, .WrongBuild
+	ifequalfwd LINK_ERR_MISMATCH_RULES, .WrongRules
 	ifequalfwd LINK_ERR_INCOMPATIBLE_ROOMS, .IncompatibleRooms
 	writetext Text_PleaseComeIn
 	waitbutton
@@ -156,6 +157,10 @@ LinkReceptionistScript_DoTradeOrBattle:
 
 .WrongBuild
 	writetext Text_WrongBuild
+	sjumpfwd .CloseLink
+
+.WrongRules
+	writetext Text_WrongRules
 	sjumpfwd .CloseLink
 
 .IncompatibleRooms:
@@ -205,8 +210,38 @@ LinkReceptionistScript_Battle:
 	writetext Text_BattleReceptionistIntro
 	yesorno
 	iffalse_endtext
+	; Link Edition: normal rules, or Random Battle
+	writetext Text_WhichRules
+	loadmenu .RulesMenuHeader
+	verticalmenu
+	closewindow
+	ifequalfwd 1, .NormalRules
+	ifequalfwd 2, .RandomRules
+	endtext
+
+.NormalRules:
+	loadmem wLinkBattleRules, 0
+	sjumpfwd .GotRules
+
+.RandomRules:
+	loadmem wLinkBattleRules, 1
+	writetext Text_RandomRules
+	promptbutton
+.GotRules:
 	special Special_SetBitsForBattleRequest
 	sjump LinkReceptionistScript_DoTradeOrBattle
+
+.RulesMenuHeader:
+	db MENU_BACKUP_TILES
+	menu_coords 0, 4, 14, 9
+	dw .RulesMenuData
+	db 1 ; default option
+
+.RulesMenuData:
+	db $80 ; flags
+	db 2 ; items
+	db "Normal@"
+	db "Random teams@"
 
 .BattleRoomClosed:
 	jumpthistextfaceplayer
@@ -378,6 +413,31 @@ Text_WrongOptions:
 
 	para "with the other"
 	line "player."
+	prompt
+
+Text_WhichRules:
+	text "Which rules would"
+	line "you like to use?"
+	done
+
+Text_RandomRules:
+	text "Random teams: you"
+	line "each get six ran-"
+	cont "dom #mon at"
+	cont "level 50."
+
+	para "Your own team is"
+	line "safe. It's back"
+	cont "after the battle."
+	done
+
+Text_WrongRules:
+	text "You and your"
+	line "friend chose"
+	cont "different rules."
+
+	para "Choose the same"
+	line "rules to battle."
 	prompt
 
 Text_WrongBuild:

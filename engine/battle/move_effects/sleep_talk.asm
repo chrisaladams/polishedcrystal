@@ -54,7 +54,10 @@ BattleCommand_sleeptalk:
 	ld a, c
 	and a
 	jr z, .fail
-	call RandomRange
+	; Link Edition: BattleRandomRange, not RandomRange. In a link battle only
+	; the battle random numbers are shared; with RandomRange each game picked
+	; its own move and the battle split.
+	call BattleRandomRange
 	inc a
 	ld b, a
 	ld c, NUM_MOVES

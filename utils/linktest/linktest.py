@@ -95,6 +95,8 @@ class Side:
         self.noisy = False
         self.noise_setup = noise_setup
         self.setup_errors = 0
+        self.rules = 'normal'
+        self.rules_chosen = False
         self.desync_at = 0
         self.shot_every = 5
         self.unplug_at = self.unplug_delay = self.unplug_frames = 0
@@ -105,6 +107,11 @@ class Side:
         self.exchanges = []
         bank, addr = sym['LinkBattleSendReceiveAction']
         self.pb.hook_register(bank, addr, self._on_exchange, None)
+        # optionally give every party Pokemon the same moves just before the
+        # party is sent (the real party comes back from the save afterwards)
+        self.force_moves = None
+        bank, addr = sym['Link_PrepPartyData_Gen2']
+        self.pb.hook_register(bank, addr, self._on_prep_party, None)
 
     # ---- memory helpers
     def rd(self, name, k=0):
@@ -177,6 +184,20 @@ class Side:
             self.mem[0xff92] = 0xf1        # hMapEntryMethod = MAPSETUP_WARP
             self.tick(600)
         self.say(f'booted at {self.where()} party {self.rd("wPartyCount")}')
+        self.party_before = self.party_ids()
+
+    def _on_prep_party(self, _):
+        if not self.force_moves:
+            return
+        base = self.sym['wPartyMon1'][1]
+        stride = self.sym['wPartyMon2'][1] - base
+        mv = self.sym['wPartyMon1Moves'][1] - base
+        pp = self.sym['wPartyMon1PP'][1] - base
+        for i in range(self.rd('wPartyCount')):
+            for j, m in enumerate(self.force_moves):
+                self.mem[1, base + i * stride + mv + j] = m
+                self.mem[1, base + i * stride + pp + j] = 10
+        self.say(f'    (test) forced moves {self.force_moves} on the party')
 
     def _on_exchange(self, _):
         self.exchanges.append(self.snapshot())
@@ -190,8 +211,19 @@ class Side:
             self.mem[a] = (self.mem[a] - 1) & 0xff
             self.say(f'    (test) changed our HP at exchange {self.desync_at}')
 
+    def party_ids(self):
+        n = self.rd('wPartyCount')
+        stride = self.sym['wPartyMon2'][1] - self.sym['wPartyMon1'][1]
+        base = self.sym['wPartyMon1'][1]
+        mons = [(self.mem[1, base + i * stride], self.mem[1, base + i * stride + 21])
+                for i in range(n)]
+        dex = sum(bin(self.rd('wPokedexCaught', k)).count('1') for k in range(32))
+        return {'mons': mons, 'dex': dex}
+
     def snapshot(self):
-        return {'clock': self.rd('hSerialConnectionStatus'),
+        return {'mestat': [self.rd('wBattleMonStatus')] + [self.rd('wPlayerStatLevels', k) for k in range(7)],
+                'foestat': [self.rd('wEnemyMonStatus')] + [self.rd('wEnemyStatLevels', k) for k in range(7)],
+                'clock': self.rd('hSerialConnectionStatus'),
                 'rn': self.rd('wLinkBattleRNCount'),
                 'me': (self.rd('wBattleMonSpecies'), self.rd16('wBattleMonHP')),
                 'foe': (self.rd('wEnemyMonSpecies'), self.rd16('wEnemyMonHP')),
@@ -230,9 +262,16 @@ class Side:
             if text and text != last_text:
                 self.say('  ' + text)
                 last_text = text
-                if 'Trying' in text and 'again' in text and text != getattr(self, '_last_retry', ''):
+                if 'Link error! Trying' in text and not getattr(self, '_in_retry', False):
+                    self._in_retry = True
                     self.setup_retries = getattr(self, 'setup_retries', 0) + 1
-                    self._last_retry = text
+                    n = 26
+                    snd = bytes(self.rd('wLinkCheckSend', k) for k in range(n)).hex(' ')
+                    rcv = bytes(self.rd('wLinkCheckRecv', k) for k in range(n)).hex(' ')
+                    self.say(f'    retry: sent hash {self.rd("wLinkSentPartyHash"):02x}'
+                             f'{self.rd("wLinkSentPartyHash", 1):02x} send [{snd}] recv [{rcv}]')
+                elif 'Trying' not in text:
+                    self._in_retry = False
                 setup_error = 'battle data' in text
                 if setup_error and 'wLinkCheckSend' in self.sym:
                     n = 26
@@ -241,7 +280,12 @@ class Side:
                     self.say(f'    sent hash {self.rd("wLinkSentPartyHash"):02x}{self.rd("wLinkSentPartyHash", 1):02x}'
                              f' send [{snd}] recv [{rcv}] failed {self.rd("wLinkSetupFailed")}')
                 if 'out of' in text and 'sync' in text:
-                    self.say('*** the games stopped the battle: out of sync')
+                    recv = [self.rd('wLinkExchangeReceived', k) for k in range(3)]
+                    self.say(f'*** the games stopped the battle: out of sync. fingerprint '
+                             f'{self.rd("wLinkBattleFingerprint"):02x} received {recv} '
+                             f'desynced {self.rd("wLinkBattleDesynced")} action {self.rd("wBattleAction")} '
+                             f'enemy switch target {self.rd("wEnemySwitchTarget")} '
+                             f'OT party {self.rd("wOTPartyCount")} {self.snapshot()}')
                     return 'stopped: out of sync'
                 if setup_error:
                     self.setup_errors += 1
@@ -276,9 +320,11 @@ class Side:
                     if target is None:
                         self.press('b', 20)
                         continue
-                    for _ in range(6):
-                        self.press('up', 6)
-                    for _ in range(target):
+                    # the party menu cursor wraps around: move it until the
+                    # game says it's on the target
+                    for _ in range(12):
+                        if self.rd('wMenuCursorY') == target + 1:
+                            break
                         self.press('down', 6)
                     self.press('a', 30)
                     self.press('a', 30)   # "Switch" on the submenu
@@ -287,9 +333,19 @@ class Side:
                     self.press('a', 12)
                 continue
             if state == 'battle':
+                self.tick(400)                # the game reloads the real party
                 self.shot('after')
-                self.say('battle over')
-                return 'battle over'
+                after = self.party_ids()
+                same = after == self.party_before
+                self.say(f'battle over; real party back: {same} {self.party_before} -> {after}')
+                return f'battle over, real party back: {same}'
+            if 'Random teams' in joined and not self.rules_chosen:
+                self.rules_chosen = True
+                if self.rules == 'random':
+                    self.press('down', 10)
+                self.press('a', 30)
+                self.say(f'--- chose {self.rules} rules')
+                continue
             if here == POKECENTER_2F and not talked:
                 if self.slot:
                     self.tick(150)        # people never talk to the desk on the same frame
@@ -333,12 +389,15 @@ class Side:
 
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
-           desync_at=0, shot_every=5, unplug=(0, 0, 0)):
+           desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         s.desync_at = desync_at
         s.shot_every = shot_every
         s.unplug_at, s.unplug_delay, s.unplug_frames = unplug
+        s.rules = rules
+        if force_moves:
+            s.force_moves = force_moves
         result = s.run(turns, time.time() + seconds)
         cable.mm[127] = 1
         q.put((name, f'{result} ({getattr(s, "setup_retries", 0)} swap retries, '
@@ -357,6 +416,11 @@ def compare(ta, tb):
         if a['me'] != b['foe'] or a['foe'] != b['me']:
             problems.append(f'exchange {i + 1}: A sees me {a["me"]} foe {a["foe"]}, '
                             f'B sees me {b["me"]} foe {b["foe"]}')
+        elif a.get('mestat') != b.get('foestat') or a.get('foestat') != b.get('mestat'):
+            problems.append(f'exchange {i + 1}: status/stat changes differ: A me {a["mestat"]} '
+                            f'foe {a["foestat"]}, B me {b["mestat"]} foe {b["foestat"]}')
+        elif a.get('rn') != b.get('rn'):
+            problems.append(f'exchange {i + 1}: random number position differs: A {a["rn"]} B {b["rn"]}')
         elif a['party'] != b['otparty'] or a['otparty'] != b['party']:
             problems.append(f'exchange {i + 1}: party HP differs: A {a["party"]}/{a["otparty"]}, '
                             f'B {b["party"]}/{b["otparty"]}')
@@ -374,6 +438,10 @@ def main():
     ap.add_argument('--seconds', type=int, default=900)
     ap.add_argument('--corrupt', type=int, default=0)
     ap.add_argument('--shot-every', type=int, default=5, help='screenshot every N turns')
+    ap.add_argument('--force-moves', default='',
+                    help='comma-separated move constants every party Pokemon gets before the swap')
+    ap.add_argument('--rules', default='normal', help='rules each side picks at the desk: '
+                    'normal, random, or A,B (e.g. random,normal)')
     ap.add_argument('--unplug', default='',
                     help='AT,DELAY,FRAMES: at action exchange AT (side A), wait DELAY frames, '
                          'then unplug the cable for FRAMES frames')
@@ -385,6 +453,13 @@ def main():
     ap.add_argument('--out', default='linktest_out')
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
+    force_ids = None
+    if args.force_moves:
+        sys.path.insert(0, os.path.join(ROOT, 'meta_sim'))
+        from oracle_pipeline import rgbasm_values
+        names = args.force_moves.split(',')
+        ids = rgbasm_values(names, None)
+        force_ids = [ids[n] for n in names]
     symp = args.rom[:-4] + '.sym'
     cable = Cable()
     q = mp.Queue()
@@ -397,7 +472,8 @@ def main():
                                             args.seed + slot, q, args.noise_setup,
                                             args.desync_at if slot else 0, args.shot_every,
                                             tuple(map(int, args.unplug.split(','))) if args.unplug and not slot
-                                            else (0, 0, 0)))
+                                            else (0, 0, 0),
+                                            (args.rules.split(',') * 2)[slot], force_ids))
         p.start()
         ctx_procs.append(p)
     res = {}

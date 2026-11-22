@@ -19,7 +19,7 @@ A pass at tightening up the meta for L50 link battles:
   These only apply to the normal build; `make faithful` keeps canon base stats.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes). The restriction check used to wipe the attacking move's power, so every hit on an Eviolite holder did 1 damage; that's fixed.
 - **Moody removed.**
-- **Upstream battle bugs fixed:** Thunder never missed in harsh sunlight (it's 50% now), harsh sunlight didn't stop freezing (it let a freeze chance skip every check instead), and Low Kick gave 80 power to anything between 5 kg and 100 kg (it now follows the weight table: 40 power above 10 kg, 60 above 25 kg, 80 above 50 kg).
+- **Upstream battle bugs fixed:** Thunder never missed in harsh sunlight (it's 50% now), harsh sunlight didn't stop freezing (it let a freeze chance skip every check instead), and Low Kick gave 80 power to anything between 5 kg and 100 kg (it now follows the weight table: 40 power above 10 kg, 60 above 25 kg, 80 above 50 kg). In link battles, Sleep Talk picked its move with each Game Boy's own random numbers instead of the shared battle ones, so the two games could pick different moves and the battle split; it now uses the shared ones.
 - **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
 - **Link-battle healing/leveling** — mons get forced to L50 and topped off before a link battle, so games aren't decided by who happened to grind more.
 - A few mart/item tweaks to go with the above.
@@ -68,6 +68,18 @@ either player knowing. Now:
 
 `utils/linktest/` plays link battles between two emulated Game Boys on a
 virtual cable, with optional line noise, to test all of this.
+
+### Random Battle
+
+At the battle desk, after "Would you like to battle?", choose **Normal** or
+**Random teams** (both players must choose the same). With random teams each
+player gets six random level 50 Pokémon, all different species, fully evolved
+and non-legendary, with perfect DVs and a neutral nature, so a brand-new save
+can battle a finished one on equal terms. The sets (295 of them, for 155
+species) come from the simulator's best-set optimiser, made friendly: no
+Choice items, item-swapping moves or self-hurting orbs. Your own team isn't
+touched; it's back after the battle. Regenerate the sets with
+`python3 meta_sim/make_random_sets.py`.
 
 A save made inside a room whose scripts moved in a newer build (the Pokémon
 Center 2F link room, after this update) used to crash when you talked to

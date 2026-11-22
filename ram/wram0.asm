@@ -259,8 +259,8 @@ wLinkPlayerFixedPartyMon1ID:: ds 3
 SECTION UNION "Misc 404", WRAM0
 ; polished link transfer buffer
 
-wLinkReceivedPolishedMiscBuffer:: ds 10
-wLinkPolishedMiscBuffer:: ds 10
+wLinkReceivedPolishedMiscBuffer:: ds LINK_MISC_BUFFER_LENGTH
+wLinkPolishedMiscBuffer:: ds LINK_MISC_BUFFER_LENGTH
 
 
 SECTION UNION "Misc 404", WRAM0
@@ -1509,6 +1509,8 @@ SECTION "Link Failsafe", WRAM0
 ; The first serial tag of the current action exchange's set; exchanges cycle
 ; through four sets so a stale byte is never taken for this exchange's.
 wLinkBattleExchangeTag:: db
+; The rules chosen at the battle desk: 0 normal, 1 Random Battle.
+wLinkBattleRules:: db
 ; Fingerprint of our party as sent before a link battle.
 wLinkSentPartyHash:: dw
 ; Nonzero if the two games didn't receive the same battle.
@@ -1517,6 +1519,8 @@ wLinkSetupFailed:: db
 wLinkSetupTries:: db
 wLinkCheckSend:: ds LINK_CHECK_LENGTH
 wLinkCheckRecv:: ds LINK_CHECK_LENGTH
+wLinkVerdictSend:: ds LINK_VERDICT_LENGTH
+wLinkVerdictRecv:: ds LINK_VERDICT_LENGTH
 ; Per-turn action exchange (LinkFailsafe_ExchangeAction): what we send this
 ; exchange, and what we sent last exchange (still answered, in case the other
 ; game missed it). Each is the action followed by the fingerprint.

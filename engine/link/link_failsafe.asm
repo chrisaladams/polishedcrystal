@@ -148,7 +148,7 @@ LinkFailsafe_VerifySetup::
 .verdict
 	; tell each other the verdict: the battle only starts if both are happy
 	ld [wLinkSetupFailed], a
-	ld hl, wLinkCheckSend
+	ld hl, wLinkVerdictSend
 	ld b, SERIAL_PREAMBLE_LENGTH
 	ld c, a
 	ld a, SERIAL_PREAMBLE_BYTE
@@ -163,8 +163,8 @@ LinkFailsafe_VerifySetup::
 	dec b
 	jr nz, .verdict_copies
 	call .PutSlack
-	ld hl, wLinkCheckSend
-	ld de, wLinkCheckRecv
+	ld hl, wLinkVerdictSend
+	ld de, wLinkVerdictRecv
 	ld bc, LINK_VERDICT_LENGTH
 	farcall Serial_ExchangeBytes
 	xor a
@@ -174,7 +174,7 @@ LinkFailsafe_VerifySetup::
 
 	; the other game is happy if most of its verdict copies say so (one bad
 	; byte mustn't make the two games decide differently)
-	ld de, wLinkCheckRecv
+	ld de, wLinkVerdictRecv
 	call .SkipPreamble
 	ld b, LINK_VERDICT_COPIES
 	ld c, 0

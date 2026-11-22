@@ -28,6 +28,15 @@ LinkCommunications:
 	xor a
 	ld [hli], a
 	ld [hl], $50
+	; Link Edition: with Random Battle rules, battle with a random team
+	ld a, [wLinkMode]
+	cp LINK_COLOSSEUM
+	jr nz, .not_random
+	ld a, [wLinkBattleRules]
+	and a
+	jr z, .not_random
+	farcall LinkRandomBattle_MakeTeam
+.not_random
 	; fallthrough
 
 Gen2ToGen2LinkComms:
@@ -238,6 +247,7 @@ Gen2ToGen2LinkComms:
 	ld a, [wLinkSetupFailed]
 	and a
 	jmp z, Gen2ToGen2LinkComms ; swap again
+	farcall LoadPokemonData ; the real party, in case it was a random team
 	jmp ExitLinkCommunications
 
 .setup_ok
@@ -2283,7 +2293,7 @@ endc
 
 PerformLinkChecks:
 	xor a
-	ld bc, 10
+	ld bc, LINK_MISC_BUFFER_LENGTH
 	ld hl, wLinkReceivedPolishedMiscBuffer
 	rst ByteFill
 
@@ -2396,9 +2406,12 @@ PerformLinkChecks:
 	call .PutNybbles
 	ld a, [wRomChecksum + 1]
 	call .PutNybbles
+	ld a, [wLinkBattleRules]
+	or $10
+	ld [hl], a
 	ld hl, wLinkPolishedMiscBuffer
 	ld de, wLinkReceivedPolishedMiscBuffer
-	ld bc, SERIAL_POLISHED_MAX_PREAMBLE_LENGTH + 6
+	ld bc, SERIAL_POLISHED_MAX_PREAMBLE_LENGTH + 7
 	call Serial_ExchangeBytes
 	xor a
 	ldh [rIF], a
@@ -2433,6 +2446,18 @@ PerformLinkChecks:
 	inc hl
 	call .CheckNybbles
 	jr nz, .WrongBuild
+	; and both must have chosen the same rules
+	ld a, [de]
+	ld b, a
+	and $f0
+	cp $10
+	jmp nz, .WrongRules
+	ld a, b
+	and $f
+	ld b, a
+	ld a, [wLinkBattleRules]
+	cp b
+	jmp nz, .WrongRules
 .skip_options
 
 	; Process link opponent gender
@@ -2474,6 +2499,10 @@ PerformLinkChecks:
 
 .WrongBuild
 	ld a, LINK_ERR_MISMATCH_BUILD
+	jr .return_result_restore_interrupts
+
+.WrongRules
+	ld a, LINK_ERR_MISMATCH_RULES
 	jr .return_result_restore_interrupts
 
 .WrongRoom

@@ -154,6 +154,11 @@ SECTION "Link Failsafe Code", ROMX
 INCLUDE "engine/link/link_failsafe.asm"
 
 
+SECTION "Random Battle", ROMX
+
+INCLUDE "engine/link/random_battle.asm"
+
+
 SECTION "Wild Data", ROMX
 
 INCLUDE "engine/overworld/wildmons.asm"
