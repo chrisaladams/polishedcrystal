@@ -123,6 +123,7 @@ import abilities
 import items
 import rom_damage
 import mechanics
+import stats
 import json as _json
 import os as _os
 
@@ -405,10 +406,10 @@ class Pmon:
         self.id = mid
         self.types = mon['types']
         self.base = dict(mon['stats'])     # already L50 stats dict
-        # Hidden Power: its type comes from the DVs; an even DV costs 1 point
-        # of that stat at L50 (stats.py assumes DV 15 everywhere)
+        # Hidden Power: its type comes from the DVs; under the perfect-DV
+        # profiles an even DV costs 1 point of that stat at L50
         self.hp_type = hp_type or 'FAIRY'
-        if 'HIDDEN_POWER' in moveset and self.hp_type != 'FAIRY':
+        if 'HIDDEN_POWER' in moveset and self.hp_type != 'FAIRY' and stats.DV == 15:
             for k, dv in mechanics.dvs_for_hidden_power(self.hp_type).items():
                 if dv < 15:
                     self.base[k] -= 1
@@ -2079,6 +2080,53 @@ STAT_KEYS = ('dmg_dealt', 'kos', 'status_infl', 'heal_done', 'dmg_taken', 'turns
              'tricks', 'trick_rooms', 'traps', 'perish_kos', 'crits', 'flinches')
 
 
+def resolve_turn(A, B, field, ia, ib, moves, chart, rng, acted=frozenset()):
+    """Play out a turn once both moves are chosen (ia, ib: move indexes, -1
+    for Struggle): move order, both moves, then end-of-turn effects. Sides
+    in `acted` already spent their turn (Pursuit on a switch)."""
+    for s in (A, B):
+        s.mon.hit_phys = s.mon.hit_spec = 0.0
+
+    # ---- order by (priority of chosen move, speed) ----
+    # Each side's move is chosen once, here, and that same move is the one
+    # used (turn order used to be decided by one choice and the attack
+    # made with a second, independently randomised one).
+    chosen = {id(A): ia, id(B): ib}
+    ma = moves[A.mon.moves[ia]] if ia is not None and ia >= 0 else moves['STRUGGLE']
+    mb = moves[B.mon.moves[ib]] if ib is not None and ib >= 0 else moves['STRUGGLE']
+    a_first = mechanics.a_moves_first(A.mon, B.mon, ma, mb, rng,
+                                      trick_room=bool(field.trick_room),
+                                      weather_a=weather_of(A.mon), weather_b=weather_of(B.mon))
+    order = (A, B) if a_first else (B, A)
+    A.switched = B.switched = False
+
+    moved = set()
+    for s, foe in (order, order[::-1]):
+        if s.mon.fainted or foe.mon.fainted or s.switched or id(s) in acted:
+            continue                   # a mon dragged in this turn doesn't act
+        foe_idx = chosen[id(foe)] if not foe.switched else None
+        foe_mv = None if foe_idx is None else (
+            'STRUGGLE' if foe_idx < 0 else foe.mon.moves[foe_idx])
+        perform(s, foe, moves, chart, rng, idx=chosen[id(s)],
+                foe_move=foe_mv,
+                foe_moved=id(foe) in moved)
+        moved.add(id(s))
+    for s in (A, B):
+        s.mon.protected = False
+        s.mon.flinched = False          # cleared at end of turn (endturn.asm)
+        s.mon.enduring = False
+        if s.safeguard:
+            s.safeguard -= 1
+        s.reflect = max(0, s.reflect - 1)
+        s.light_screen = max(0, s.light_screen - 1)
+    # ---- residuals ----
+    for s, foe in ((A, B), (B, A)):
+        end_of_turn(s.mon, foe, rng)
+    for s in (A, B):
+        land_future_sight(s, moves, chart, rng)
+    return a_first
+
+
 def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
     """Run one 6v6. Returns (result, contrib_a, contrib_b):
       result    : 0 if side A wins, 1 if B, -1 on turn-limit draw.
@@ -2146,13 +2194,6 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
             return 1, contrib(A), contrib(B)
         if not B.alive_indices():
             return 0, contrib(A), contrib(B)
-        for s in (A, B):
-            s.mon.hit_phys = s.mon.hit_spec = 0.0
-
-        # ---- order by (priority of chosen move, speed) ----
-        # Each side's move is chosen once, here, and that same move is the one
-        # used (turn order used to be decided by one choice and the attack
-        # made with a second, independently randomised one).
         A.mon.turns_active += 1
         B.mon.turns_active += 1
         global _ED_CACHE
@@ -2160,39 +2201,7 @@ def run_battle(team_a, team_b, moves, chart, seed=None, detail=False):
         ia = choose_move(A, B, moves, chart, rng)
         ib = choose_move(B, A, moves, chart, rng)
         _ED_CACHE = None
-        chosen = {id(A): ia, id(B): ib}
-        ma = moves[A.mon.moves[ia]] if ia is not None and ia >= 0 else moves['STRUGGLE']
-        mb = moves[B.mon.moves[ib]] if ib is not None and ib >= 0 else moves['STRUGGLE']
-        a_first = mechanics.a_moves_first(A.mon, B.mon, ma, mb, rng,
-                                          trick_room=bool(field.trick_room),
-                                          weather_a=weather_of(A.mon), weather_b=weather_of(B.mon))
-        order = (A, B) if a_first else (B, A)
-        A.switched = B.switched = False
-
-        moved = set()
-        for s, foe in (order, order[::-1]):
-            if s.mon.fainted or foe.mon.fainted or s.switched or id(s) in acted:
-                continue                   # a mon dragged in this turn doesn't act
-            foe_idx = chosen[id(foe)] if not foe.switched else None
-            foe_mv = None if foe_idx is None else (
-                'STRUGGLE' if foe_idx < 0 else foe.mon.moves[foe_idx])
-            perform(s, foe, moves, chart, rng, idx=chosen[id(s)],
-                    foe_move=foe_mv,
-                    foe_moved=id(foe) in moved)
-            moved.add(id(s))
-        for s in (A, B):
-            s.mon.protected = False
-            s.mon.flinched = False          # cleared at end of turn (endturn.asm)
-            s.mon.enduring = False
-            if s.safeguard:
-                s.safeguard -= 1
-            s.reflect = max(0, s.reflect - 1)
-            s.light_screen = max(0, s.light_screen - 1)
-        # ---- residuals ----
-        for s, foe in ((A, B), (B, A)):
-            end_of_turn(s.mon, foe, rng)
-        for s in (A, B):
-            land_future_sight(s, moves, chart, rng)
+        resolve_turn(A, B, field, ia, ib, moves, chart, rng, acted)
         if not A.alive_indices():
             return 1, contrib(A), contrib(B)
         if not B.alive_indices():

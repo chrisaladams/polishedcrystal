@@ -25,6 +25,7 @@ reproducible statistical signal that stays in sync with the source.
 | `rom_damage.py` | The ROM's damage pipeline (crit, stats, stat stages, abilities, items, STAB, weather, roll, conditional boosts) ported step for step with the same integer arithmetic. `engine.py` uses it for every hit. |
 | `oracle_pipeline.py` | Ground truth for `rom_damage.py`: runs the ROM's `damagestats` → `damagecalc` → `stab` → `conditionalboost` (and `damagevariation`) under PyBoy on random scenarios and diffs them. |
 | `mechanics.py` | Non-damage rules ported from the ROM: accuracy/evasion (`checkhit`), status immunities (`CanStatusTarget`), stat-stage changes (`FarChangeStat`, Defiant/Competitive/Contrary/Clear Body...), Speed (`GetSpeed`), turn order (priority, Prankster, Quick Claw, Quick Draw, Custap, Lagging Tail), Hidden Power typing. |
+| `oracle_turn.py` | Ground truth for whole turns: plays real link-battle turns in the ROM (one emulator, menus and the link exchange answered by script, random numbers chosen per sample) and compares who moved first, HP, fainting, status and stat stages with `engine.resolve_turn`, over many samples. |
 | `oracle_accuracy.py`, `oracle_status.py`, `oracle_speed.py` | Ground truth for `mechanics.py`: run `checkhit` (with the link RNG pinned), `CanXTarget` and `GetSpeed` under PyBoy and diff them. |
 | `optimize.py` | Finds each build's best set (moves, item, ability, Hidden Power type) with paired battles, and writes `data/best_sets.json`, which the meta test then uses. |
 
@@ -192,7 +193,17 @@ python3 meta_sim/oracle_pipeline.py 20000   # engine damage (rom_damage.py) vs t
 python3 meta_sim/oracle_accuracy.py 3000     # accuracy / evasion vs checkhit
 python3 meta_sim/oracle_status.py 4000       # status immunities vs CanStatusTarget
 python3 meta_sim/oracle_speed.py 4000        # Speed vs GetSpeed
+python3 meta_sim/oracle_turn.py --scenarios 40   # whole turns: the ROM vs engine.py
 ```
+
+`oracle_turn.py` is the end-to-end check. It builds two random optimised sets
+(plus a bench Pokemon each, so a faint doesn't end the battle) with the
+game's own party code, starts a link battle in a single emulator, and saves
+the state at the first menu. Each sample reloads it, writes new link random
+numbers, and plays three turns of a fixed pair of moves; the engine plays the
+same three turns from the same stats, abilities and genders. A difference is
+reported when it is both clear (over 4 standard errors) and big enough to
+matter (4% of HP, 8 points of a probability, a quarter of a stat stage).
 
 `oracle_accuracy.py` matches 6,000/6,000 scenarios (two seeds), `oracle_status.py`
 12,000/12,000 and `oracle_speed.py` 4,000/4,000. Hidden Power typing matched
@@ -216,8 +227,27 @@ order (move **priority**, then **Speed**). Equal hits-to-KO → the faster mover
 wins; neither can damage → draw. Per mon we aggregate wins/losses/draws into a
 win rate ("threat score").
 
-Baseline build (uniform for everyone, so comparison is fair): **L50, DV 15, 252
-EVs in every stat, neutral nature, average damage roll (0.925), crits off.**
+Baseline build (uniform for everyone, so comparison is fair): **L50, the stat
+profile's DVs and EVs in every stat (below), neutral nature, average damage roll
+(0.925), crits off.**
+
+### Stat profiles
+
+`stats.py` gives every mon the same DVs and EVs, set by `META_STAT_PROFILE`:
+
+| profile | DV | EV | what it models |
+|---|---|---|---|
+| `family` (default) | 8 | 64 | the family's real link teams, read from their saves |
+| `random` | 15 | 0 | Random Battle teams |
+| `max` | 15 | 252 | the theoretical maximum build (the old default) |
+
+The real teams have random DVs (about 8 on average), EVs from ordinary play
+(0 to 510 in total, spread over every stat; the 510 cap applies) and random
+natures. The profile matters for balance: DVs and EVs add the same number of
+points to every mon's stats (about 52 under `max`, about 21 for real teams), and
+the bigger that number, the smaller the gap between a high base stat and a low
+one looks. Under `max` a base-130 attacker against a base-80 wall hits about 8%
+softer, relative to everyone else, than it does in real play.
 
 ## What this does NOT model (read before trusting a number)
 

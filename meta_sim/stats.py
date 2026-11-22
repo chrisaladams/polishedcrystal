@@ -8,17 +8,33 @@ Formula reproduced from the asm:
     then nature: floor(stat * mult / 10), mult in {9,10,11}; HP is never natured.
     capped at 999.
 
-Baseline used by the matrix (documented, uniform for every mon -> fair compare):
-    DV = 15, EV = 252 in every stat (EV>>2 = 63), neutral nature.
-This is the "theoretical max" build; it inflates absolute numbers but treats all
-mons identically, which is what an all-vs-all damage comparison needs.
+Every mon gets the same DVs and EVs in every stat and a neutral nature, so
+the comparison is fair; which DVs and EVs is the stat profile, chosen with the
+META_STAT_PROFILE environment variable:
+    family (default)  DV 8, EV 64: what the family's real link teams have. Read
+                      from their saves: DVs are random (about 8 on average),
+                      EVs come from ordinary play (0 to 510 in total, spread
+                      over every stat), natures random (neutral on average).
+    random            DV 15, EV 0: Random Battle teams.
+    max               DV 15, EV 252: the theoretical maximum build.
+The profile matters for balance: the DVs and EVs add the same amount to every
+mon's stats, and the bigger that amount, the smaller the gap between a high
+base stat and a low one. The max build adds about 52 points to every stat,
+real teams about 21, so under the max build strong base stats look weaker
+than they are in real play.
 """
+import os
 
 DV_MAX = 15
 EV_MAX = 252
 LEVEL  = 50
+PROFILES = {'family': (8, 64), 'random': (15, 0), 'max': (DV_MAX, EV_MAX)}
+PROFILE = os.environ.get('META_STAT_PROFILE', 'family')
+DV, EV = PROFILES[PROFILE]
 
-def calc_stat(base, is_hp, dv=DV_MAX, ev=EV_MAX, level=LEVEL, nature_mult=10):
+def calc_stat(base, is_hp, dv=None, ev=None, level=LEVEL, nature_mult=10):
+    dv = DV if dv is None else dv
+    ev = EV if ev is None else ev
     inner = 2 * (base + dv) + 1 + (ev >> 2)
     val = (inner * level) // 100
     val += (level + 10) if is_hp else 5

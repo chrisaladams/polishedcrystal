@@ -209,7 +209,7 @@ def validate(pokemon_json=os.path.join(HERE, 'data', 'pokemon.json')):
                 continue
             got = oracle.query_by_id(sid)
         checked += 1
-        want = mon_stats(m['stats'])
+        want = mon_stats(m['stats'], dv=15, ev=EV)
         if got != want:
             mismatches.append((name, got, want))
     oracle.h.stop()
