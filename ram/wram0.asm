@@ -1500,3 +1500,22 @@ wResolvedObjectPals:: ds NUM_OBJECT_STRUCTS
 ; Invalidate the selected map rectangle palettes across text/menu rendering.
 wPaletteSwapNeedsReload:: db
 wPaletteSwapReloadMask:: db
+
+
+SECTION "Link Failsafe", WRAM0
+
+; Link battle safeguards (engine/link/link_failsafe.asm and
+; LinkBattleSendReceiveAction).
+; The serial tag of the current action exchange: alternates between
+; SERIAL_BATTLE and SERIAL_BATTLE_ODD so a stale byte from the last exchange
+; is never taken for this one.
+wLinkBattleExchangeTag:: db
+; The last action received with this exchange's tag; it is accepted once the
+; same action arrives twice in a row.
+wLinkBattleCandidate:: db
+; Fingerprint of our party as sent before a link battle.
+wLinkSentPartyHash:: dw
+; Nonzero if the two games didn't receive the same battle.
+wLinkSetupFailed:: db
+wLinkCheckSend:: ds LINK_CHECK_LENGTH
+wLinkCheckRecv:: ds LINK_CHECK_LENGTH

@@ -109,6 +109,7 @@ LinkReceptionistScript_DoTradeOrBattle:
 	ifequalfwd LINK_ERR_VERSION_TOO_LOW, .WrongMinVersion
 	ifequalfwd LINK_ERR_OTHER_VERSION_TOO_LOW, .OtherPlayerWrongMinVersion
 	ifequalfwd LINK_ERR_MISMATCH_GAME_OPTIONS, .WrongOptions
+	ifequalfwd LINK_ERR_MISMATCH_BUILD, .WrongBuild
 	ifequalfwd LINK_ERR_INCOMPATIBLE_ROOMS, .IncompatibleRooms
 	writetext Text_PleaseComeIn
 	waitbutton
@@ -151,6 +152,10 @@ LinkReceptionistScript_DoTradeOrBattle:
 
 .WrongOptions
 	writetext Text_WrongOptions
+	sjumpfwd .CloseLink
+
+.WrongBuild
+	writetext Text_WrongBuild
 	sjumpfwd .CloseLink
 
 .IncompatibleRooms:
@@ -373,6 +378,16 @@ Text_WrongOptions:
 
 	para "with the other"
 	line "player."
+	prompt
+
+Text_WrongBuild:
+	text "Your games are not"
+	line "the same build."
+
+	para "To battle, both"
+	line "games must be"
+	cont "from the same ROM"
+	cont "file."
 	prompt
 
 Text_IncompatibleRooms:

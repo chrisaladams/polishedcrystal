@@ -33,6 +33,7 @@ LinkCommunications:
 Gen2ToGen2LinkComms:
 	call ClearLinkData
 	call Link_PrepPartyData_Gen2
+	farcall LinkFailsafe_HashSentParty
 	call FixDataForLinkTransfer
 	call PrepareForLinkTransfers
 
@@ -227,6 +228,16 @@ Gen2ToGen2LinkComms:
 	cp LINK_COLOSSEUM
 	jr nz, .ready_to_trade
 
+	; Link Edition: only start the battle if both games received the same
+	; parties and random numbers
+	farcall LinkFailsafe_VerifySetup
+	ld a, [wLinkSetupFailed]
+	and a
+	jr z, .setup_ok
+	farcall LinkFailsafe_ShowSetupError
+	jmp ExitLinkCommunications
+
+.setup_ok
 	ld a, [wLinkOtherPlayerGender]
 	assert PLAYER_MALE + 1 == CAL
 	assert PLAYER_FEMALE + 1 == CARRIE
@@ -260,6 +271,8 @@ Gen2ToGen2LinkComms:
 
 	call LinkBattle_BackUpPlayerPartyMonsToLinkData
 	call LinkBattle_SetPlayerPartyMonsToLevel50
+	ld a, SERIAL_BATTLE
+	ld [wLinkBattleExchangeTag], a
 	farcall StartBattle
 	call LinkBattle_RestorePlayerPartyMonsFromLinkData
 
@@ -2222,7 +2235,7 @@ Special_TryQuickSave:
 	ld [wChosenCableClubRoom], a
 	ret
 
-PrepareForLinkTransfers:
+PrepareForLinkTransfers::
 	call CheckLinkTimeout_Gen2
 	ldh a, [hScriptVar]
 	and a
@@ -2354,26 +2367,34 @@ PerformLinkChecks:
 	; Check correct room
 	ld a, [wChosenCableClubRoom]
 	cp b
-	jr nz, .WrongRoom
+	jmp nz, .WrongRoom
 	inc a
 	ld [wLinkMode], a
 	; Check version
 	call CheckCorrectLinkVersion
 	cp TRUE
-	jr c, .WrongVersion
-	jr nz, .WrongMinVersion
+	jmp c, .WrongVersion
+	jmp nz, .WrongMinVersion
 
-	; Perform options byte transfers
-	ld hl, wLinkPolishedMiscBuffer + 3
-	ld a, [wInitialOptions2]
-	ld [hld], a
-	ld a, [wInitialOptions]
-	ld [hld], a
+	; Perform options byte transfers, followed by the ROM checksum (Link
+	; Edition: battles need the exact same build) as four nybbles in
+	; $10-$1f, so no data byte can look like a control byte
+	ld hl, wLinkPolishedMiscBuffer
+	ld a, SERIAL_PREAMBLE_BYTE
+	ld [hli], a
 	ld a, SERIAL_POLISHED_PREAMBLE_BYTE
-	ld [hld], a
-	ld [hl], SERIAL_PREAMBLE_BYTE
+	ld [hli], a
+	ld a, [wInitialOptions]
+	ld [hli], a
+	ld a, [wInitialOptions2]
+	ld [hli], a
+	ld a, [wRomChecksum]
+	call .PutNybbles
+	ld a, [wRomChecksum + 1]
+	call .PutNybbles
+	ld hl, wLinkPolishedMiscBuffer
 	ld de, wLinkReceivedPolishedMiscBuffer
-	ld bc, SERIAL_POLISHED_MAX_PREAMBLE_LENGTH + 2
+	ld bc, SERIAL_POLISHED_MAX_PREAMBLE_LENGTH + 6
 	call Serial_ExchangeBytes
 	xor a
 	ldh [rIF], a
@@ -2400,6 +2421,14 @@ PerformLinkChecks:
 	xor b
 	and EV_OPTMASK
 	jr nz, .WrongOptions
+	; Link Edition: both games must be the same build to battle
+	inc de
+	ld hl, wRomChecksum
+	call .CheckNybbles
+	jr nz, .WrongBuild
+	inc hl
+	call .CheckNybbles
+	jr nz, .WrongBuild
 .skip_options
 
 	; Process link opponent gender
@@ -2439,6 +2468,10 @@ PerformLinkChecks:
 	ld a, LINK_ERR_MISMATCH_GAME_OPTIONS
 	jr .return_result_restore_interrupts
 
+.WrongBuild
+	ld a, LINK_ERR_MISMATCH_BUILD
+	jr .return_result_restore_interrupts
+
 .WrongRoom
 	ld a, LINK_ERR_INCOMPATIBLE_ROOMS
 	; fallthrough
@@ -2450,6 +2483,47 @@ PerformLinkChecks:
 	ldh [rIF], a
 	ld e, MUSIC_POKEMON_CENTER
 	jmp PlayMusic
+
+.PutNybbles
+; Store a as two bytes at hl: $10 | high nybble, $10 | low nybble.
+	push af
+	swap a
+	and $f
+	or $10
+	ld [hli], a
+	pop af
+	and $f
+	or $10
+	ld [hli], a
+	ret
+
+.CheckNybbles
+; Compare the two nybble bytes at de with [hl]; advances de by 2.
+; Returns nz if they differ or aren't nybble bytes.
+	ld a, [de]
+	inc de
+	ld b, a
+	and $f0
+	cp $10
+	jr nz, .nybbles_bad
+	ld a, [de]
+	inc de
+	ld c, a
+	and $f0
+	cp $10
+	jr nz, .nybbles_bad
+	ld a, b
+	swap a
+	and $f0
+	ld b, a
+	ld a, c
+	and $f
+	or b
+	cp [hl]
+	ret
+.nybbles_bad
+	or 1
+	ret
 
 .SkipPreambleBytes
 ; This sub function skips over the no longer

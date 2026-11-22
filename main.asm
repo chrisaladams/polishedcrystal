@@ -149,6 +149,11 @@ INCLUDE "engine/link/link.asm"
 INCLUDE "engine/movie/trade_animation.asm"
 
 
+SECTION "Link Failsafe Code", ROMX
+
+INCLUDE "engine/link/link_failsafe.asm"
+
+
 SECTION "Wild Data", ROMX
 
 INCLUDE "engine/overworld/wildmons.asm"

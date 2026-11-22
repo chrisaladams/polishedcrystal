@@ -77,7 +77,7 @@ class Cable:
 class Side:
     """One Game Boy and the scripted player holding it."""
 
-    def __init__(self, name, rom, sav, sym, cable, slot, out, corrupt, seed):
+    def __init__(self, name, rom, sav, sym, cable, slot, out, corrupt, seed, noise_setup=False):
         from pyboy import PyBoy
         self.name, self.sym, self.out = name, sym, out
         self.ch = load_charmap()
@@ -93,6 +93,14 @@ class Side:
         self.corrupt = corrupt
         self.rng = random.Random(seed)
         self.noisy = False
+        self.noise_setup = noise_setup
+        self.setup_errors = 0
+        # record the battle every time the game starts an action exchange
+        # (each turn, and when a fainted Pokemon is replaced): both games
+        # make the same exchanges, so these records line up exactly
+        self.exchanges = []
+        bank, addr = sym['LinkBattleSendReceiveAction']
+        self.pb.hook_register(bank, addr, self._on_exchange, None)
 
     # ---- memory helpers
     def rd(self, name, k=0):
@@ -114,8 +122,10 @@ class Side:
     def tick(self, n=1):
         for _ in range(n):
             self.pb.tick(1, False)
-        if self.corrupt and not self.noisy and self.rd('wBattleMode'):
+        if self.corrupt and not self.noisy and (
+                self.rd('wBattleMode') or (self.noise_setup and self.where() == COLOSSEUM)):
             # line noise on what this side receives, from the battle on
+            # (or from entering the Colosseum, to hit the pre-battle data swap)
             self.cable.set_noise(self.slot, self.corrupt, self.rng.randrange(1 << 30))
             self.noisy = True
 
@@ -142,6 +152,9 @@ class Side:
             self.press('b', 30)
         self.tick(60)
         self.say(f'booted at {self.where()} party {self.rd("wPartyCount")}')
+
+    def _on_exchange(self, _):
+        self.exchanges.append(self.snapshot())
 
     def snapshot(self):
         return {'clock': self.rd('hSerialConnectionStatus'),
@@ -183,6 +196,9 @@ class Side:
             if text and text != last_text:
                 self.say('  ' + text)
                 last_text = text
+                if 'Link error' in text:
+                    self.setup_errors += 1
+                    seated = False        # back in the Colosseum: sit down again
             in_battle = self.rd('wBattleMode') != 0
             here = self.where()
             if in_battle:
@@ -269,12 +285,12 @@ class Side:
         self.press('a', 60)
 
 
-def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q):
+def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup):
     try:
-        s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed)
+        s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         result = s.run(turns, time.time() + seconds)
         cable.mm[127] = 1
-        q.put((name, result, s.turns, cable.flips(slot)))
+        q.put((name, f'{result} ({s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
         s.pb.stop(save=False)
     except Exception as e:                       # noqa: BLE001
         cable.mm[127] = 1
@@ -283,14 +299,14 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
 
 
 def compare(ta, tb):
-    """Check each turn's records agree, mirrored."""
+    """Check the records of each action exchange agree, mirrored."""
     problems = []
     for i, (a, b) in enumerate(zip(ta, tb)):
         if a['me'] != b['foe'] or a['foe'] != b['me']:
-            problems.append(f'turn {i + 1}: A sees me {a["me"]} foe {a["foe"]}, '
+            problems.append(f'exchange {i + 1}: A sees me {a["me"]} foe {a["foe"]}, '
                             f'B sees me {b["me"]} foe {b["foe"]}')
         elif a['party'] != b['otparty'] or a['otparty'] != b['party']:
-            problems.append(f'turn {i + 1}: party HP differs: A {a["party"]}/{a["otparty"]}, '
+            problems.append(f'exchange {i + 1}: party HP differs: A {a["party"]}/{a["otparty"]}, '
                             f'B {b["party"]}/{b["otparty"]}')
     return problems
 
@@ -305,6 +321,8 @@ def main():
     ap.add_argument('--turns', type=int, default=30)
     ap.add_argument('--seconds', type=int, default=900)
     ap.add_argument('--corrupt', type=int, default=0)
+    ap.add_argument('--noise-setup', action='store_true',
+                    help='start the noise on entering the Colosseum, before the parties are swapped')
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--out', default='linktest_out')
     args = ap.parse_args()
@@ -318,7 +336,7 @@ def main():
             ('B', args.save_b, args.rom_b or args.rom, args.corrupt))):
         p = mp.Process(target=worker, args=(name, rom, sav, rom[:-4] + '.sym', cable, slot,
                                             args.out, args.turns, args.seconds, corrupt,
-                                            args.seed + slot, q))
+                                            args.seed + slot, q, args.noise_setup))
         p.start()
         ctx_procs.append(p)
     res = {}
@@ -328,9 +346,11 @@ def main():
     for p in ctx_procs:
         p.join(timeout=30)
     for name in 'AB':
-        print(f'{name}: {res[name][0]} after {len(res[name][1])} turns, {res[name][2]} bits flipped')
+        print(f'{name}: {res[name][0]} after {len(res[name][1])} action exchanges, '
+              f'{res[name][2]} bits flipped')
     problems = compare(res['A'][1], res['B'][1])
-    print('\n'.join(problems[:10]) if problems else 'in sync on every turn both sides recorded')
+    n = min(len(res['A'][1]), len(res['B'][1]))
+    print('\n'.join(problems[:10]) if problems else f'in sync at all {n} action exchanges both sides made')
     return 1 if problems else 0
 
 

@@ -5903,6 +5903,12 @@ LinkBattleError:
 LinkBattleSendReceiveAction:
 ; Note that only the lower 4 bits is usable. The higher 4 determines what kind
 ; of linking we are performing.
+;
+; Link Edition: a single bad bit on the cable used to change the other
+; player's move without either game noticing. Now each exchange has its own
+; tag (alternating SERIAL_BATTLE and SERIAL_BATTLE_ODD), the other player's
+; action is only accepted once the same byte has arrived twice in a row, and
+; nothing received afterwards can overwrite it.
 	call .StageForSend
 	ld [wLinkBattleSentAction], a
 	vc_hook Wireless_start_exchange
@@ -5911,13 +5917,18 @@ LinkBattleSendReceiveAction:
 	ld [wPlayerLinkAction], a
 	ld a, $ff
 	ld [wOtherPlayerLinkAction], a
+	ld [wLinkBattleCandidate], a
 
 .waiting
-	call LinkTransfer
 	call DelayFrame
-	ld a, [wOtherPlayerLinkAction]
-	inc a
+	call LinkBattleTransfer
+	cp $ff
 	jr z, .waiting
+	ld hl, wLinkBattleCandidate
+	cp [hl]
+	ld [hl], a
+	jr nz, .waiting
+	ld [wOtherPlayerLinkAction], a
 
 	vc_hook Wireless_end_exchange
 	vc_patch Wireless_net_delay_3
@@ -5928,8 +5939,11 @@ else
 endc
 	vc_patch_end
 .receive
+	; keep sending our action so the other player can confirm it too
 	call DelayFrame
-	call LinkTransfer
+	push bc
+	call LinkBattleTransfer
+	pop bc
 	dec b
 	jr nz, .receive
 
@@ -5948,6 +5962,9 @@ endc
 	jr nz, .acknowledge
 
 	vc_hook Wireless_end_send_zero_bytes
+	ld a, [wLinkBattleExchangeTag]
+	xor SERIAL_BATTLE ^ SERIAL_BATTLE_ODD
+	ld [wLinkBattleExchangeTag], a
 	ld a, [wOtherPlayerLinkAction]
 	ld [wBattleAction], a
 	ret
@@ -5969,6 +5986,35 @@ endc
 	ld a, [wPlayerSwitchTarget]
 	add BATTLEACTION_SWITCH1 - 1
 	jr .use_move
+
+LinkBattleTransfer:
+; Send this exchange's tag | [wLinkBattleSentAction]. Returns the other
+; player's action (0-15) if a byte with this exchange's tag has arrived since
+; the last call, or $ff if not.
+	ld a, [wLinkBattleExchangeTag]
+	ld b, a
+	ld a, [wLinkBattleSentAction]
+	or b
+	ldh [hSerialSend], a
+	ldh a, [hSerialConnectionStatus]
+	cp USING_INTERNAL_CLOCK
+	jr nz, .receive
+	ld a, $1
+	ldh [rSC], a
+	ld a, SC_START | SC_INTERNAL
+	ldh [rSC], a
+.receive
+	ldh a, [hSerialReceive]
+	ld c, a
+	and $f0
+	cp b
+	ld a, $ff
+	ret nz
+	xor a
+	ldh [hSerialReceive], a
+	ld a, c
+	and $0f
+	ret
 
 LoadEnemyWildmon:
 ; Initialize wildmon data

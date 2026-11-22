@@ -320,7 +320,50 @@ GetMapConnection::
 	ret
 
 LoadMapAttributes_SkipObjects::
+; Used when continuing a saved game: the map objects come from the save.
 	ld a, -1
+	call _LoadMapAttributes_ReadEvents
+; Link Edition: a saved map object also keeps its script pointer, which points
+; into the ROM that made the save. If a newer build moved that script, talking
+; to the object would run garbage, so take each object's type, script and
+; event flag from this ROM (positions and movement stay as saved).
+	ld a, [hli]
+	and a
+	ret z
+	ld c, a
+	ld de, wMap1Object + MAPOBJECT_TYPE
+.refresh
+	push hl
+	ld a, l
+	add MAPOBJECT_TYPE - 1
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld b, MAPOBJECT_LENGTH - MAPOBJECT_TYPE
+.copy
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .copy
+	pop hl
+	ld a, l
+	add OBJECT_EVENT_SIZE
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld a, e
+	add MAPOBJECT_TYPE
+	ld e, a
+	adc d
+	sub e
+	ld d, a
+	dec c
+	jr nz, .refresh
+	ret
+
 _LoadMapAttributes_ReadEvents:
 	ld [wOldTileset], a
 	call CopyMapPartialAndAttributes
