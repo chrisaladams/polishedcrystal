@@ -245,7 +245,7 @@ class Rom:
                 plan['snaps'].append(self.snapshot())
                 plan['t'] += 1
                 plan['menu'] = plan['sent'] = False
-            if plan['t'] >= len(plan['choices']) or plan['fainted']:
+            if plan['t'] >= len(plan['choices']) or plan['fainted'] or plan['out']:
                 self.hit = name
                 return
             plan['menu'] = True
@@ -316,9 +316,12 @@ class Rom:
                 ('foe', 'wCurOTMon', 'wEnemyMon', 'wEnemyStatLevels', 'wOTPartyMon1')):
             if self.r(cur) == 0:
                 out[side] = self.read_side(pfx, stages)
-            else:
-                out[side] = {'hp': 0, 'maxhp': self.r16(party + 'MaxHP'), 'status': None,
-                             'stages': [0] * 7}
+            else:                               # fainted, or forced out
+                status = self.r(party + 'Status')
+                st = 'slp' if status & 7 else 'tox' if status & 0x80 else STATUS_NAMES.get(status & 0x78)
+                out[side] = {'hp': self.r16(party + 'HP'), 'maxhp': self.r16(party + 'MaxHP'),
+                             'status': st, 'stages': [0] * 7}
+                self.plan['out'] = True
         return out
 
     def play(self, choices, rns, count):
@@ -330,7 +333,7 @@ class Rom:
             self.w('wLinkBattleRNs', rns[k], k)
         self.w('wLinkBattleRNCount', count)
         self.plan = {'choices': choices, 't': 0, 'menu': False, 'sent': False, 'snaps': [],
-                     'fainted': False}
+                     'fainted': False, 'out': False}
         where = self.run(frames=4000 * len(choices))
         snaps = self.plan['snaps']
         self.plan = None
@@ -412,8 +415,8 @@ def sim_play(a, b, info, choices, data, seed):
     engine.apply_switch(A, 0, B, data['typechart'])
     snaps = []
     for ia, ib in choices:
-        if mons[0].fainted or mons[1].fainted:
-            break
+        if mons[0].fainted or mons[1].fainted or A.mon is not mons[0] or B.mon is not mons[1]:
+            break                           # a lead fainted or was forced out
         A.mon.turns_active += 1
         B.mon.turns_active += 1
         first = engine.resolve_turn(A, B, field, ia, ib, data['moves'], data['typechart'], rng)

@@ -1110,11 +1110,15 @@ def end_of_turn(mon, foe_side, rng=random):
     if mon.ability == 'POISON_HEAL' and mon.status in ('psn', 'tox'):
         mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 8)
     elif mon.ability != 'MAGIC_GUARD':
-        if mon.status == 'brn' or mon.status == 'psn':
-            mon.hp -= mon.maxhp / 8
+        # DoPoisonBurnDamage: poison 1/8, burn 1/16 (Gen VII), toxic n/16 with
+        # the counter capped at 15; each fraction floored, at least 1 HP
+        if mon.status == 'psn':
+            mon.hp -= max(1, mon.maxhp // 8)
+        elif mon.status == 'brn':
+            mon.hp -= max(1, mon.maxhp // 16)
         elif mon.status == 'tox':
-            mon.tox += 1
-            mon.hp -= mon.maxhp * mon.tox / 16
+            mon.tox = min(15, mon.tox + 1)
+            mon.hp -= mon.tox * max(1, mon.maxhp // 16)
         if mon.seeded:
             drain = min(mon.maxhp / 8, max(mon.hp, 0))
             mon.hp -= drain
