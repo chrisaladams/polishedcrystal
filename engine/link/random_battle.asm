@@ -31,15 +31,12 @@ LinkRandomBattle_MakeTeam::
 	add hl, de
 	pop hl
 	jr c, .next
-	; hl = RandomBattleSets + index * RANDOM_SET_LENGTH (13)
+	; hl = RandomBattleSets + index * RANDOM_SET_LENGTH (9)
 	ld d, h
 	ld e, l
 	add hl, hl
 	add hl, hl
-	ld b, h
-	ld c, l
 	add hl, hl
-	add hl, bc
 	add hl, de
 	ld de, RandomBattleSets
 	add hl, de
@@ -146,8 +143,7 @@ LinkRandomBattle_MakeTeam::
 ; Carry if adding the set at hl would put too many of a type on the team, or
 ; too many members weak to the same type.
 	push hl
-	ld de, RANDOM_SET_TYPES
-	add hl, de
+	call .GetProfile
 	ld a, [hli] ; first type
 	ld b, a
 	call .TypeFull
@@ -187,6 +183,22 @@ LinkRandomBattle_MakeTeam::
 	pop hl
 	ret
 
+.GetProfile:
+; hl = the type profile of the set at hl.
+	ld de, RANDOM_SET_PROFILE
+	add hl, de
+	ld l, [hl]
+	ld h, 0
+	ld d, h
+	ld e, l
+	add hl, hl
+	add hl, hl
+	add hl, de
+	assert RANDOM_PROFILE_LENGTH == 5
+	ld de, RandomBattleProfiles
+	add hl, de
+	ret
+
 .TypeFull:
 ; Carry if type a is already on RANDOM_MAX_SAME_TYPE team members.
 	push hl
@@ -205,8 +217,7 @@ LinkRandomBattle_MakeTeam::
 .CountTypes:
 ; Add the set at hl's types and weaknesses to the team counts.
 	push hl
-	ld de, RANDOM_SET_TYPES
-	add hl, de
+	call .GetProfile
 	ld a, [hli]
 	ld b, a
 	call .CountType

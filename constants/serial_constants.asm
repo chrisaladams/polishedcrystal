@@ -50,8 +50,9 @@ DEF LINK_VERDICT_LENGTH EQU SERIAL_PREAMBLE_LENGTH + LINK_VERDICT_COPIES + LINK_
 DEF LINK_SETUP_TRIES EQU 5
 
 ; Random Battle (engine/link/random_battle.asm)
-DEF RANDOM_SET_LENGTH     EQU 13 ; bytes per set in data/link/random_battle_sets.asm
-DEF RANDOM_SET_TYPES      EQU 8  ; offset of a set's two types (then 3 weakness bytes)
+DEF RANDOM_SET_LENGTH     EQU 9  ; bytes per set in data/link/random_battle_sets.asm
+DEF RANDOM_SET_PROFILE    EQU 8  ; offset of a set's type profile index
+DEF RANDOM_PROFILE_LENGTH EQU 5  ; two types, then 3 weakness bytes
 DEF NUM_RANDOM_TYPES      EQU 18 ; types counted for the type spread
 DEF RANDOM_MAX_SAME_TYPE  EQU 2  ; at most this many team members share a type
 DEF RANDOM_MAX_SAME_WEAK  EQU 3  ; at most this many are weak to the same type

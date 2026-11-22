@@ -33,20 +33,20 @@ TRAP, STACK = 0xff90, 0xdff0
 def load_sets():
     """(species byte, form byte, moves) -> (name, types, weaknesses) from the table."""
     lines = open(os.path.join(ROOT, 'data/link/random_battle_sets.asm')).read().splitlines()
+    profiles = []
+    for i, line in enumerate(lines):
+        if re.match(r'\s*db \d+, \d+ ; \d+:', line):
+            t1, t2 = (int(x) for x in line.split(';')[0].split('db')[1].split(','))
+            wb = [int(x.strip().lstrip('$'), 16) for x in lines[i + 1].split(';')[0].split('db')[1].split(',')]
+            bits = wb[0] | wb[1] << 8 | wb[2] << 16
+            profiles.append(({TYPES[t1], TYPES[t2]}, [TYPES[k] for k in range(18) if bits >> k & 1]))
     raw = []
-    i = 0
-    while i < len(lines):
-        m = re.match(r'\s*dp (\w+), (\w+)', lines[i])
+    for i, line in enumerate(lines):
+        m = re.match(r'\s*dp (\w+), (\w+)', line)
         if m:
             moves = [x.strip() for x in lines[i + 1].split('db')[1].split(',')]
-            t1, t2 = (int(x) for x in lines[i + 3].split(';')[0].split('db')[1].split(','))
-            wb = [int(x.strip().lstrip('$'), 16) for x in lines[i + 4].split(';')[0].split('db')[1].split(',')]
-            bits = wb[0] | wb[1] << 8 | wb[2] << 16
-            weak = [TYPES[k] for k in range(18) if bits >> k & 1]
-            raw.append((m.group(1), m.group(2), moves, {TYPES[t1], TYPES[t2]}, weak))
-            i += 5
-        else:
-            i += 1
+            types, weak = profiles[int(lines[i + 2].split(',')[2])]
+            raw.append((m.group(1), m.group(2), moves, types, weak))
     names = sorted({n for r in raw for n in [r[0], r[1]] + r[2]})
     ids = rgbasm_values(names, None)
     sets = {}
