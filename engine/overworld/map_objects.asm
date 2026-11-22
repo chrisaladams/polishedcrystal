@@ -2047,7 +2047,15 @@ GetFollowerNextMovementByte:
 	jr nz, .not_pokemon
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
+	bit INVISIBLE_F, [hl]
+	jr z, .not_pokemon
 	res INVISIBLE_F, [hl]
+	; its palette wasn't loaded while it was hidden
+	push bc
+	push de
+	farcall CheckForUsedObjPals
+	pop de
+	pop bc
 .not_pokemon
 	pop hl
 	pop af
