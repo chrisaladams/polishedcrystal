@@ -488,11 +488,24 @@ def run_scenario(args):
     for pair in choices:
         seq = [pair] * TURNS
         rom_s, sim_s = [], []
+        stuck = 0
         for n in range(samples):
             rns = [rng.randrange(0xfd) for _ in range(10)]
-            rom_s.append(features(rom.play(seq, rns, rng.randrange(9)), TURNS))
+            count = rng.randrange(9)
+            try:
+                snaps = rom.play(seq, rns, count)
+            except RuntimeError:
+                stuck += 1                  # the ROM waited somewhere unscripted
+                if stuck > 3:
+                    break
+                continue
+            rom_s.append(features(snaps, TURNS))
             sim_s.append(features(sim_play(a, b, info, seq, data, rng.randrange(1 << 30)), TURNS))
-        results.append((pair, compare(rom_s, sim_s, TURNS)))
+        found = compare(rom_s, sim_s, TURNS) if len(rom_s) >= 10 else []
+        if stuck:
+            found.append((0, f'{stuck} sample(s) stuck in the ROM (first: rns {rns} count {count})',
+                          0.0, 0.0))
+        results.append((pair, found))
     return a, b, info, results
 
 
@@ -530,7 +543,10 @@ def main():
                     continue
                 print(f'DIFF  {head}', flush=True)
                 for t, k, x, y in found:
-                    print(f'        turn {t}: {k}: ROM {x:.3f}, engine {y:.3f}', flush=True)
+                    if t == 0:
+                        print(f'        {k}', flush=True)
+                    else:
+                        print(f'        turn {t}: {k}: ROM {x:.3f}, engine {y:.3f}', flush=True)
     print(f'\n{clean}/{2 * len(jobs)} matchups agree')
 
 

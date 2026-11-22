@@ -379,7 +379,7 @@ def apply_absorb(mon, move_type):
     elif ab == 'MOTOR_DRIVE':
         mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
     else:                       # WATER_ABSORB, VOLT_ABSORB, DRY_SKIN
-        mon.hp = min(mon.maxhp, mon.hp + mon.maxhp / 4)
+        mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // 4))
 
 
 class Pmon:
@@ -1020,7 +1020,7 @@ def apply_switch(side, idx, foe_side, chart):
     old.reset_volatile()
     if idx != side.active and not old.fainted:
         if old.ability == 'REGENERATOR':
-            old.hp = min(old.maxhp, old.hp + old.maxhp / 3)
+            old.hp = min(old.maxhp, old.hp + max(1, old.maxhp // 3))
         if old.ability == 'NATURAL_CURE':   # cures status on switch-out
             old.status = None
             old.sleep = old.tox = 0
@@ -1646,7 +1646,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         att.rampage = 0                    # a miss ends a rampage, no confusion
         att.rollout = 0
         if e == 'EFFECT_JUMP_KICK' and att.ability != 'MAGIC_GUARD':
-            att.hp -= att.maxhp / 2        # crash damage
+            att.hp -= max(1, att.maxhp // 2)   # crash damage
             if att.hp <= 0:
                 att.fainted = True
         if explode:
@@ -1708,7 +1708,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             if e in RECOIL_EFFECTS:
                 _recoil(att, m, hit)
             if att.item == 'LIFE_ORB' and att.ability != 'MAGIC_GUARD':
-                att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
+                att.hp -= max(1, att.maxhp // 10)   # Life Orb: GetMaxHP / 10
             if att.hp <= 0:
                 att.fainted = True
             if e in PIVOT_EFFECTS:
@@ -1760,7 +1760,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         if e in RECOIL_EFFECTS and dealt > 0:
             _recoil(att, m, dealt)
         if att.item == 'LIFE_ORB' and dmg > 0 and att.ability != 'MAGIC_GUARD':
-            att.hp -= att.maxhp * items.LIFE_ORB_RECOIL_FRAC
+            att.hp -= max(1, att.maxhp // 10)   # Life Orb: GetMaxHP / 10
             if att.hp <= 0:
                 att.fainted = True
         elif mechanics.held(att) == 'HELD_SHELL_BELL' and dealt > 0 and not att.fainted:
@@ -1876,7 +1876,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if e == 'EFFECT_BELLY_DRUM':
         att.stage['atk'] = 6
         if att.ability != 'MAGIC_GUARD':
-            att.hp -= att.maxhp / 2
+            att.hp -= max(1, att.maxhp // 2)
             if att.hp <= 0:
                 att.fainted = True
         return
@@ -1926,11 +1926,14 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
             att.status, att.tox, att.sleep = 'slp', 0, REST_SLEEP_TURNS + 1
         return
     if e in HEAL_EFFECTS:
-        frac = 0.5
+        amount = att.maxhp // 2
         if e == 'EFFECT_HEALING_LIGHT':    # Synthesis-style: 2/3 in sun, 1/4 in other weather
             w = weather_of(att)
-            frac = 2 / 3 if w == 'sun' else (0.25 if w else 0.5)
-        healed = min(att.maxhp - att.hp, att.maxhp * frac)
+            if w == 'sun':
+                amount = 2 * (att.maxhp // 3)   # GetThirdMaxHP, doubled
+            elif w:
+                amount = att.maxhp // 4
+        healed = min(att.maxhp - att.hp, max(1, amount))
         att.hp += healed
         att.heal_done += healed / att.maxhp
         return
@@ -1985,7 +1988,7 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
     if e == 'EFFECT_CURSE':
         if 'GHOST' in att.types:
             if not dfn.cursed:
-                att.hp -= att.maxhp / 2
+                att.hp -= max(1, att.maxhp // 2)
                 dfn.cursed = True
                 if att.hp <= 0:
                     att.fainted = True
@@ -1998,9 +2001,9 @@ def perform(att_side, dfn_side, moves, chart, rng, idx=None, foe_move=None, foe_
         set_weather(att_side.field, WEATHER_MOVES[e], att)
         return
     if e == 'EFFECT_SUBSTITUTE':
-        if att.sub_hp <= 0 and att.hp > att.maxhp / 4:
-            att.hp -= att.maxhp / 4
-            att.sub_hp = att.maxhp / 4
+        if att.sub_hp <= 0 and att.hp > att.maxhp // 4:
+            att.hp -= max(1, att.maxhp // 4)
+            att.sub_hp = max(1, att.maxhp // 4)
             att.subs_made += 1
         return
     if e == 'EFFECT_BATON_PASS':
