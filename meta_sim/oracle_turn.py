@@ -113,7 +113,7 @@ class Rom:
         self.stride = self.a('wPartyMon2') - base
         self.field = {f: self.a('wPartyMon1' + f) - base for f in
                       ('Species', 'Item', 'Moves', 'PP', 'EVs', 'DVs', 'Personality',
-                       'Form', 'Level', 'HP', 'MaxHP', 'Stats')}
+                       'Form', 'Level', 'HP', 'MaxHP', 'Stats', 'Happiness')}
         self.boot = io.BytesIO()
         self.pb.save_state(self.boot)
 
@@ -180,6 +180,7 @@ class Rom:
             self.mem[1, o + f['DVs'] + j] = 0xff
         for j in range(6):
             self.mem[1, o + f['EVs'] + j] = 84                    # 504 in all: under the 510 cap
+        self.mem[1, o + f['Happiness']] = 255                     # Return at full power, as the engine has it
         self.w('wCurPartyMon', i)
         self.call('FillPP', hl=o + f['Moves'], de=o + f['PP'])
         self.call('UpdatePkmnStats')
