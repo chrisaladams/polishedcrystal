@@ -91,6 +91,26 @@ someone there; continuing a save now takes the room's scripts from the ROM.
 
 **Both players need the same build.** This is Link Edition 1.0, link version 1. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync. A later release that changes battles will raise the link version, and everyone will need to update together.
 
+### Specialty shops
+
+Every town's Poké Mart keeps its basics and adds a specialty corner that
+fits the town, so building teams means travelling: a type-boosting item for
+every type (Violet: Sharp Beak and Silk Scarf, Azalea: Silver Powder and
+Charcoal, Ecruteak: Spell Tag and Black Glasses, Olivine: Metal Coat and
+Mystic Water, Cianwood: Black Belt, Mahogany: Never-Melt Ice, Blackthorn:
+Dragon Fang, Pewter: Hard Stone, Viridian: Soft Sand, Vermilion: Magnet,
+Celadon: Miracle Seed, Saffron: Twisted Spoon and Fairy Feather, Fuchsia:
+Poison Barb), utility items along the way (Goldenrod: Muscle Band, Wise
+Glasses, Shell Bell, Sitrus and Lum Berries; Cianwood: Punching Glove, Expert
+Belt; Blackthorn: Scope Lens, Focus Sash; weather rocks and Light Clay in
+Azalea, Mahogany, Pewter, Cerulean and Vermilion), and the strongest items at
+the end: the Indigo Plateau sells Leftovers, Life Orb, the Choice items,
+Assault Vest and Rocky Helmet. Celadon sells Bottle Caps and Lavender sells
+Ability Capsules. Prices rise with power (type boosters ¥3,000, utility items
+¥6,000, Focus Sash and similar ¥10,000, Leftovers, Life Orb and Choice items
+¥20,000, Bottle Cap and Ability Capsule ¥30,000), so they're earned. The
+Battle Tower and Battle Factory prize shops are unchanged.
+
 ### Smarter trainer AI
 
 These apply to every trainer battle, not just link play:

@@ -65,7 +65,7 @@ CherrygroveMartAfterDex:
 	db -1
 
 VioletMart:
-	db 11 ; # items
+	db 13 ; # items
 	db POKE_BALL
 	db REPEAT_BALL
 	db POTION
@@ -77,10 +77,12 @@ VioletMart:
 	db X_DEFEND
 	db X_SPEED
 	db FLOWER_MAIL
+	db SHARP_BEAK ; Link Edition specialty
+	db SILK_SCARF ; Link Edition specialty
 	db -1
 
 AzaleaMart:
-	db 10 ; # items
+	db 14 ; # items
 	db CHARCOAL
 	db POKE_BALL
 	db NET_BALL
@@ -91,10 +93,14 @@ AzaleaMart:
 	db ANTIDOTE
 	db PARALYZEHEAL
 	db FLOWER_MAIL
+	db SILVERPOWDER ; Link Edition specialty
+	db BIG_ROOT ; Link Edition specialty
+	db HEAT_ROCK ; Link Edition specialty
+	db FLAME_ORB ; Link Edition specialty
 	db -1
 
 Goldenrod2FMart1:
-	db 9 ; # items
+	db 14 ; # items
 	db POTION
 	db SUPER_POTION
 	db ANTIDOTE
@@ -104,6 +110,11 @@ Goldenrod2FMart1:
 	db ICE_HEAL
 	db FULL_HEAL
 	db REVIVE
+	db MUSCLE_BAND ; Link Edition specialty
+	db WISE_GLASSES ; Link Edition specialty
+	db SHELL_BELL ; Link Edition specialty
+	db SITRUS_BERRY ; Link Edition specialty
+	db LUM_BERRY ; Link Edition specialty
 	db -1
 
 Goldenrod2FMart2:
@@ -215,7 +226,7 @@ UndergroundMart:
 	db -1
 
 EcruteakMart:
-	db 11 ; # items
+	db 13 ; # items
 	db POKE_BALL
 	db GREAT_BALL
 	db NEST_BALL
@@ -227,10 +238,12 @@ EcruteakMart:
 	db BURN_HEAL
 	db ICE_HEAL
 	db REVIVE
+	db SPELL_TAG ; Link Edition specialty
+	db BLACKGLASSES ; Link Edition specialty
 	db -1
 
 OlivineMart:
-	db 10 ; # items
+	db 13 ; # items
 	db GREAT_BALL
 	db DIVE_BALL
 	db SUPER_POTION
@@ -241,15 +254,21 @@ OlivineMart:
 	db ICE_HEAL
 	db SUPER_REPEL
 	db SURF_MAIL
+	db METAL_COAT ; Link Edition specialty
+	db MYSTIC_WATER ; Link Edition specialty
+	db AIR_BALLOON ; Link Edition specialty
 	db -1
 
 CianwoodMart:
-	db 5 ; # items
+	db 8 ; # items
 	db POTION
 	db SUPER_POTION
 	db HYPER_POTION
 	db FULL_HEAL
 	db REVIVE
+	db BLACK_BELT ; Link Edition specialty
+	db PUNCHINGLOVE ; Link Edition specialty
+	db EXPERT_BELT ; Link Edition specialty
 	db -1
 
 YellowForestMart:
@@ -269,7 +288,7 @@ MahoganyMart1:
 	db -1
 
 MahoganyMart2:
-	db 10 ; # items
+	db 12 ; # items
 	db RAGECANDYBAR
 	db AIR_BALLOON
 	db QUICK_CLAW
@@ -280,10 +299,12 @@ MahoganyMart2:
 	db SUPER_REPEL
 	db REVIVE
 	db FLOWER_MAIL
+	db NEVERMELTICE ; Link Edition specialty
+	db ICY_ROCK ; Link Edition specialty
 	db -1
 
 BlackthornMart:
-	db 11 ; # items
+	db 14 ; # items
 	db GREAT_BALL
 	db ULTRA_BALL
 	db DUSK_BALL
@@ -295,10 +316,13 @@ BlackthornMart:
 	db X_DEFEND
 	db X_ATTACK
 	db MUSIC_MAIL
+	db DRAGON_FANG ; Link Edition specialty
+	db SCOPE_LENS ; Link Edition specialty
+	db FOCUS_SASH ; Link Edition specialty
 	db -1
 
 IndigoPlateauMart:
-	db 8 ; # items
+	db 14 ; # items
 	db ULTRA_BALL
 	db MAX_REPEL
 	db HYPER_POTION
@@ -306,11 +330,17 @@ IndigoPlateauMart:
 	db FULL_RESTORE
 	db REVIVE
 	db FULL_HEAL
-	db EXP_SHARE
+	db LEFTOVERS ; Link Edition specialty
+	db LIFE_ORB ; Link Edition specialty
+	db CHOICE_BAND ; Link Edition specialty
+	db CHOICE_SPECS ; Link Edition specialty
+	db CHOICE_SCARF ; Link Edition specialty
+	db ASSAULT_VEST ; Link Edition specialty
+	db ROCKY_HELMET ; Link Edition specialty
 	db -1
 
 ViridianMart:
-	db 11 ; # items
+	db 12 ; # items
 	db ULTRA_BALL
 	db NET_BALL
 	db HYPER_POTION
@@ -322,10 +352,11 @@ ViridianMart:
 	db MAX_REPEL
 	db REVIVE
 	db FLOWER_MAIL
+	db SOFT_SAND ; Link Edition specialty
 	db -1
 
 PewterMart:
-	db 8 ; # items
+	db 10 ; # items
 	db GREAT_BALL
 	db DUSK_BALL
 	db SUPER_POTION
@@ -334,6 +365,8 @@ PewterMart:
 	db PARALYZEHEAL
 	db AWAKENING
 	db BURN_HEAL
+	db HARD_STONE ; Link Edition specialty
+	db SMOOTH_ROCK ; Link Edition specialty
 	db -1
 
 MtMoonMart:
@@ -349,7 +382,7 @@ MtMoonMart:
 	db -1
 
 CeruleanMart:
-	db 10 ; # items
+	db 11 ; # items
 	db GREAT_BALL
 	db ULTRA_BALL
 	db DIVE_BALL
@@ -360,10 +393,11 @@ CeruleanMart:
 	db X_ATTACK
 	db DIRE_HIT
 	db SURF_MAIL
+	db DAMP_ROCK ; Link Edition specialty
 	db -1
 
 LavenderMart:
-	db 9 ; # items
+	db 10 ; # items
 	db GREAT_BALL
 	db HEAL_BALL
 	db POTION
@@ -373,10 +407,11 @@ LavenderMart:
 	db PARALYZEHEAL
 	db AWAKENING
 	db BURN_HEAL
+	db ABILITY_CAP ; Link Edition specialty
 	db -1
 
 VermilionMart:
-	db 9 ; # items
+	db 11 ; # items
 	db ULTRA_BALL
 	db REPEAT_BALL
 	db SUPER_POTION
@@ -386,6 +421,8 @@ VermilionMart:
 	db AWAKENING
 	db BURN_HEAL
 	db LITEBLUEMAIL
+	db MAGNET ; Link Edition specialty
+	db LIGHT_CLAY ; Link Edition specialty
 	db -1
 
 Celadon2FMart1:
@@ -405,7 +442,7 @@ Celadon2FMart1:
 	db -1
 
 Celadon2FMart2:
-	db 9 ; # items
+	db 12 ; # items
 	db POKE_BALL
 	db GREAT_BALL
 	db ULTRA_BALL
@@ -415,6 +452,9 @@ Celadon2FMart2:
 	db REPEL
 	db SUPER_REPEL
 	db MAX_REPEL
+	db MIRACLE_SEED ; Link Edition specialty
+	db BIG_ROOT ; Link Edition specialty
+	db BOTTLE_CAP ; Link Edition specialty
 	db -1
 
 Celadon3FTMMart:
@@ -444,7 +484,7 @@ Celadon4FMart:
 	db -1
 
 SaffronMart:
-	db 9 ; # items
+	db 12 ; # items
 	db GREAT_BALL
 	db ULTRA_BALL
 	db LUXURY_BALL
@@ -454,6 +494,9 @@ SaffronMart:
 	db X_ATTACK
 	db X_DEFEND
 	db FLOWER_MAIL
+	db TWISTEDSPOON ; Link Edition specialty
+	db FAIRYFEATHER ; Link Edition specialty
+	db WEAK_POLICY ; Link Edition specialty
 	db -1
 
 SilphCoMart:
@@ -466,7 +509,7 @@ SilphCoMart:
 	db -1
 
 FuchsiaMart:
-	db 8 ; # items
+	db 11 ; # items
 	db GREAT_BALL
 	db ULTRA_BALL
 	db NEST_BALL
@@ -475,6 +518,9 @@ FuchsiaMart:
 	db FULL_HEAL
 	db MAX_REPEL
 	db FLOWER_MAIL
+	db POISON_BARB ; Link Edition specialty
+	db BLACK_SLUDGE ; Link Edition specialty
+	db TOXIC_ORB ; Link Edition specialty
 	db -1
 
 ShamoutiMart1:
