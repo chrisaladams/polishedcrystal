@@ -189,12 +189,6 @@
 	const MUSIC_POST_CREDITS                   ; b9
 	const MUSIC_PRINTER                        ; ba
 	const MUSIC_TITLE_XY                       ; bb
-	const MUSIC_DEWFORD_TOWN_RSE               ; bc ; unused
-	const MUSIC_LEGENDARY_BATTLE_XY            ; bd ; unused
-	const MUSIC_WILD_BATTLE_PRISM              ; be ; unused
-	const MUSIC_TRAINER_BATTLE_PRISM           ; bf ; unused
-	const MUSIC_GYM_LEADER_BATTLE_PRISM        ; c0 ; unused
-	const MUSIC_PALETTE_BATTLE_PRISM           ; c1 ; unused
 DEF NUM_MUSIC_SONGS EQU const_value
 
 ; GetMapMusic picks music for these values (see data/maps/alternate_music.asm)

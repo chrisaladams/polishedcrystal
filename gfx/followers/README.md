@@ -49,7 +49,7 @@ whatever gap fits.
 | Source | Gain | Status |
 |---|---|---|
 | Identical icons and minis shared | 684 B | done |
-| Drop the 6 songs only the music player plays (Dewford Town RSE, Legendary Battle XY, four Prism battle themes), letting it play town and battle songs from the game instead | 4.9 KB | needs the go-ahead |
+| Drop the 6 songs only the music player played (Dewford Town RSE, Legendary Battle XY, four Prism battle themes); it still plays every song the game uses | 5.1 KB | done |
 | Share text repeated in map and phone scripts (100 extra copies now point at one copy with `text_far`) | 1.2 KB | done |
 | Compress the fonts | ~2.5 KB | possible; a few routines read letters straight from ROM |
 | Share the remaining duplicate graphics (two back sprites, three form masks) | ~0.7 KB | needs moving them into shared sections |

@@ -17,5 +17,4 @@ SongOrigins:
 	li "Stadium"
 	li "Go"
 	li "M02"
-	li "Prism"
 	assert_list_length NUM_SONG_ORIGINS

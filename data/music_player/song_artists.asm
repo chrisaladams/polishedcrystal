@@ -21,11 +21,6 @@ SongArtists:
 	li "TriteHexagon"
 	li "Pigu, PikalaxALT"
 	li "GACT, Pigu"
-	li "LevusBevus"
-	li "GACT"
-	li "GRonnoc"
-	li "Cat333Pokemon"
-	li "NotFroggestSpirit"
 	li "ShinkoNetCavy,      ShockSlayer"
 	li "Cosmic Angel"
 	assert_list_length NUM_SONG_ARTISTS
