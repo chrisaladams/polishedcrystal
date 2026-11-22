@@ -1064,7 +1064,8 @@ GetEnemySwitchTarget:
 	; we've already performed LinkBattleSendReceiveAction
 	ld a, [wBattleAction]
 	sub BATTLEACTION_SWITCH1 - 1 ; -1 to get the switch offset
-	jr .done
+	ld [wEnemySwitchTarget], a
+	farjp LinkFailsafe_CheckEnemySwitch
 .ai_switch
 	farcall GetSwitchScores
 	ld a, [wEnemySwitchMonParam]
@@ -5792,6 +5793,7 @@ ParseEnemyAction:
 	; Link enemy is switching
 	inc a
 	ld [wEnemySwitchTarget], a
+	farcall LinkFailsafe_CheckEnemySwitch
 
 .no_linkswitch
 	ld a, [wEnemySwitchTarget]

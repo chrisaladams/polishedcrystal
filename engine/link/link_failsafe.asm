@@ -516,3 +516,32 @@ endc
 	ret nz
 	ld [hl], c
 	ret
+
+LinkFailsafe_CheckEnemySwitch::
+; [wEnemySwitchTarget] (1-6) came from the other game's choice. It must be a
+; Pokemon the opponent actually has that can still battle. If it isn't, the
+; two games disagree about the battle: stop it now, instead of sending out an
+; empty party slot (a garbage Pokemon with a random picture and HP bar).
+; Returns a = [wEnemySwitchTarget] if it's fine.
+	ld a, [wEnemySwitchTarget]
+	and a
+	jr z, .bad
+	ld b, a
+	ld a, [wOTPartyCount]
+	cp b
+	jr c, .bad
+	ld a, b
+	dec a
+	ld hl, wOTPartyMon1HP
+	ld bc, PARTYMON_STRUCT_LENGTH
+	rst AddNTimes
+	ld a, [hli]
+	or [hl]
+	jr z, .bad
+	ld a, [wEnemySwitchTarget]
+	ret
+
+.bad
+	ld hl, LinkBattleOutOfSyncText
+	call StdBattleTextbox
+	jmp SoftReset

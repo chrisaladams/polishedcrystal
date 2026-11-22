@@ -96,6 +96,7 @@ class Side:
         self.noise_setup = noise_setup
         self.setup_errors = 0
         self.desync_at = 0
+        self.shot_every = 5
         # record the battle every time the game starts an action exchange
         # (each turn, and when a fainted Pokemon is replaced): both games
         # make the same exchanges, so these records line up exactly
@@ -152,6 +153,17 @@ class Side:
         for _ in range(4):
             self.press('b', 30)
         self.tick(60)
+        if self.where() != POKECENTER_2F:
+            # warp to the link room, in front of the battle desk
+            for n, v in (('wMapGroup', 20), ('wMapNumber', 1), ('wXCoord', 9), ('wYCoord', 3),
+                         ('wDefaultSpawnpoint', 255), ('wMapStatus', 1)):
+                a = self.sym[n][1]
+                if 0xd000 <= a < 0xe000:
+                    self.mem[1, a] = v
+                else:
+                    self.mem[a] = v
+            self.mem[0xff92] = 0xf1        # hMapEntryMethod = MAPSETUP_WARP
+            self.tick(600)
         self.say(f'booted at {self.where()} party {self.rd("wPartyCount")}')
 
     def _on_exchange(self, _):
@@ -226,7 +238,7 @@ class Side:
                         return 'turn limit'
                     snap = self.snapshot()
                     self.turns.append(snap)
-                    if len(self.turns) % 5 == 1:
+                    if len(self.turns) % self.shot_every == 1 % self.shot_every:
                         self.shot(f'turn{len(self.turns)}')
                     cur = self.rd('wCurBattleMon')
                     nmoves = max(1, sum(1 for j in range(4) if self.rd('wBattleMonMoves', j)))
@@ -303,10 +315,11 @@ class Side:
 
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
-           desync_at=0):
+           desync_at=0, shot_every=5):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         s.desync_at = desync_at
+        s.shot_every = shot_every
         result = s.run(turns, time.time() + seconds)
         cable.mm[127] = 1
         q.put((name, f'{result} ({s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
@@ -340,6 +353,7 @@ def main():
     ap.add_argument('--turns', type=int, default=30)
     ap.add_argument('--seconds', type=int, default=900)
     ap.add_argument('--corrupt', type=int, default=0)
+    ap.add_argument('--shot-every', type=int, default=5, help='screenshot every N turns')
     ap.add_argument('--desync-at', type=int, default=0,
                     help="change side B's HP at this action exchange, to test desync detection")
     ap.add_argument('--noise-setup', action='store_true',
@@ -358,7 +372,7 @@ def main():
         p = mp.Process(target=worker, args=(name, rom, sav, rom[:-4] + '.sym', cable, slot,
                                             args.out, args.turns, args.seconds, corrupt,
                                             args.seed + slot, q, args.noise_setup,
-                                            args.desync_at if slot else 0))
+                                            args.desync_at if slot else 0, args.shot_every))
         p.start()
         ctx_procs.append(p)
     res = {}
