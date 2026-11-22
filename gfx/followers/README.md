@@ -39,47 +39,55 @@ The 174 fully evolved Pokémon alone need about 12 KB at ~70 B, or about
 
 ### What we have
 
-About 10.0 KB free (after the savings marked done below), almost all in a
-few large gaps, so it packs well: about 160 sprites at 60 B, 120 at 80 B,
-or 85 at 112 B. Each sprite is its own section, so the linker places it in
-whatever gap fits.
+About 11.9 KB of free ROM (measured from the build's map file, ROM banks
+only; an earlier figure of "about 10 KB" wrongly counted spare RAM too, and
+the true figure before the savings below was 3.2 KB). Each sprite is its
+own section, so the linker places it in whatever gap fits.
 
-### What we can still make
+### What we freed
 
-| Source | Gain | Status |
-|---|---|---|
-| Identical icons and minis shared | 684 B | done |
-| Drop the 6 songs only the music player played (Dewford Town RSE, Legendary Battle XY, four Prism battle themes); it still plays every song the game uses | 5.1 KB | done |
-| Share text repeated in map and phone scripts (100 extra copies now point at one copy with `text_far`) | 1.2 KB | done |
-| Compress the fonts | ~2.5 KB | possible; a few routines read letters straight from ROM |
-| Share the remaining duplicate graphics (two back sprites, three form masks) | ~0.7 KB | needs moving them into shared sections |
-| Share the remaining repeated text (in item/move descriptions and common texts, which are printed differently, so it needs another approach) | ~0.5 KB | possible |
-| Store less in our Random Battle set table (work out types and weaknesses when the game needs them) | ~1.5 KB | possible |
-| Drop the Pokédex footprints (the small footprint box on each Pokédex page) | 5.2 KB | needs the go-ahead |
-| Drop Game Boy Printer support | 2.0 KB | needs the go-ahead |
-| Drop the front-sprite animations (Pokémon would appear in battle and the Pokédex in a still pose) | 20.4 KB | needs the go-ahead; could be kept for some Pokémon |
+| Source | Gain |
+|---|---|
+| Identical icons and minis shared | 684 B |
+| Text repeated in map and phone scripts shared with `text_far` (100 copies) | 1.2 KB |
+| The 6 songs only the music player played (Dewford Town RSE, Legendary Battle XY, four Prism battle themes); it still plays every song the game uses | 5.1 KB |
+| Fonts stored compressed, unpacked when needed | 2.0 KB |
+| Duplicate graphics shared (two back sprites, three mini masks) | 735 B |
+| Random Battle sets: each type profile stored once | 653 B |
+| More repeated text shared (10 map texts, 6 menu prompts) | 255 B |
 
-The lossless items together: about 15 KB free, enough for every fully
-evolved Pokémon (12 KB) in this style. With the footprints, printer and
-jukebox songs too: about 27 KB, enough for all 333 at ~70 B. With the
-front-sprite animations as well: about 47 KB, enough for all 333 in Rangi's
-style (37 KB). Full walking sprites for everything (48–73 KB) don't fit in
-2 MB.
+### Replacing the minis and party icons
 
-### Replacing the party icons
+The game has two sets of small Pokémon pictures, 78 KB together: the
+**party icons** in `gfx/icons/` (drawn only on the overworld: Pokémon
+standing on maps, the Fly animation, and the follower) and the **minis** in
+`gfx/minis/` (the party menu, PC, Pokédex list, trades and naming screen).
+A full walking sprite per species could replace both: its front frames would
+draw everything the icon and mini draw now, with a mask made from its
+outline. Per species that frees about 220 B and costs about 145–220 B, so
+space stops being the limit:
 
-The party icons in `gfx/icons/` (31.7 KB) are only drawn on the overworld:
-Pokémon standing on maps, the Fly animation, and the follower. The party
-menu, PC, trades and naming screen draw the separate minis in `gfx/minis/`.
-So a full walking sprite could replace each icon, its front frames then
-drawing those overworld Pokémon too, and it only costs what it adds over
-the icon:
+| Replace | Frees | All 333 walking sprites cost | Left over |
+|---|---|---|---|
+| Party icons only | ~31 KB | ~48 KB (symmetric) / ~73 KB (as-is) | short by ~4 KB / ~29 KB |
+| Party icons and minis | ~78 KB | ~48 KB (symmetric) / ~73 KB (as-is) | ~42 KB / ~17 KB |
 
-| Replacing every icon with | All 333 | Extra over today |
-|---|---|---|
-| Full walking sprites, symmetric front and back | ~48 KB | ~16 KB |
-| Full walking sprites, drawn as-is | ~73 KB | ~41 KB |
+It works species by species, so a Pokémon without a walking sprite keeps
+its mini and icon. Cosmetic forms (Unown letters, Magikarp patterns) can
+share one walking sprite per species.
 
+### What we could still cut
+
+| Cut | Gain |
+|---|---|
+| Magikarp's 19 extra colour patterns (every Magikarp looks plain) | 17.1 KB |
+| Front-sprite animations (Pokémon appear in battle and the Pokédex in a still pose) | 20.4 KB |
+| Unown letters B–Z, ! and ? (every Unown looks like A) | 12.5 KB |
+| Pokédex footprints (the small footprint box on each Pokédex page) | 5.2 KB |
+| Six of the eight font choices in Options | ~3.9 KB |
+| Pikachu's Fly and Chuchu forms | 2.4 KB |
+| Game Boy Printer support | 2.0 KB |
+| The second title-screen song (X/Y title, after the Hall of Fame) | 1.1 KB |
 
 Not worth it or not possible: cries (15 KB, every Pokémon needs one), music
 (145 KB, but songs are what the game plays everywhere), phone calls and
