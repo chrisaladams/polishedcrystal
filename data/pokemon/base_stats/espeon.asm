@@ -1,5 +1,10 @@
+if DEF(FAITHFUL)
 	bst 525,  65,  65,  60, 130,  95, 110
 	;   bst   hp  atk  def  sat  sdf  spe
+else
+	bst 515,  65,  65,  60, 120,  95, 110
+	;   bst   hp  atk  def  sat  sdf  spe
+endc
 
 	db PSYCHIC, PSYCHIC ; type
 	db 45 ; catch rate

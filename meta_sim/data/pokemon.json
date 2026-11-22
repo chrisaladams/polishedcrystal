@@ -301,11 +301,11 @@
 "hp": 80,
 "atk": 95,
 "defe": 65,
-"spe": 130,
+"spe": 120,
 "spa": 60,
 "spd": 75
 },
-"bst": 505,
+"bst": 495,
 "types": [
 "ROCK",
 "FLYING"
@@ -451,10 +451,10 @@
 "atk": 95,
 "defe": 50,
 "spe": 120,
-"spa": 105,
+"spa": 95,
 "spd": 85
 },
-"bst": 515,
+"bst": 505,
 "types": [
 "ELECTRIC",
 "PSYCHIC"
@@ -522,14 +522,14 @@
 "shuckle": {
 "id": "shuckle",
 "stats": {
-"hp": 40,
+"hp": 55,
 "atk": 10,
 "defe": 230,
 "spe": 5,
 "spa": 10,
 "spd": 230
 },
-"bst": 525,
+"bst": 540,
 "types": [
 "BUG",
 "ROCK"
@@ -668,14 +668,14 @@
 "weezing_plain": {
 "id": "weezing_plain",
 "stats": {
-"hp": 65,
+"hp": 80,
 "atk": 90,
 "defe": 120,
 "spe": 60,
 "spa": 85,
 "spd": 70
 },
-"bst": 490,
+"bst": 505,
 "types": [
 "POISON"
 ],
@@ -1676,11 +1676,11 @@
 "hp": 75,
 "atk": 105,
 "defe": 75,
-"spe": 55,
+"spe": 65,
 "spa": 105,
 "spd": 75
 },
-"bst": 490,
+"bst": 500,
 "types": [
 "WATER",
 "FIRE"
@@ -2263,10 +2263,10 @@
 "atk": 65,
 "defe": 60,
 "spe": 110,
-"spa": 130,
+"spa": 120,
 "spd": 95
 },
-"bst": 525,
+"bst": 515,
 "types": [
 "PSYCHIC"
 ],
@@ -2876,10 +2876,10 @@
 "atk": 65,
 "defe": 60,
 "spe": 110,
-"spa": 120,
+"spa": 110,
 "spd": 75
 },
-"bst": 490,
+"bst": 480,
 "types": [
 "GHOST",
 "POISON"
@@ -3315,13 +3315,13 @@
 "id": "gyarados",
 "stats": {
 "hp": 95,
-"atk": 125,
+"atk": 115,
 "defe": 79,
 "spe": 81,
 "spa": 60,
 "spd": 100
 },
-"bst": 540,
+"bst": 530,
 "types": [
 "WATER",
 "FLYING"
@@ -3931,13 +3931,13 @@
 "id": "raticate_plain",
 "stats": {
 "hp": 60,
-"atk": 92,
+"atk": 100,
 "defe": 60,
 "spe": 108,
 "spa": 50,
 "spd": 70
 },
-"bst": 440,
+"bst": 448,
 "types": [
 "NORMAL"
 ],
@@ -5480,11 +5480,11 @@
 "hp": 75,
 "atk": 93,
 "defe": 75,
-"spe": 100,
+"spe": 95,
 "spa": 109,
 "spd": 75
 },
-"bst": 527,
+"bst": 522,
 "types": [
 "FIRE",
 "DRAGON"
@@ -5894,14 +5894,14 @@
 "annihilape": {
 "id": "annihilape",
 "stats": {
-"hp": 100,
+"hp": 90,
 "atk": 95,
 "defe": 80,
 "spe": 75,
 "spa": 50,
 "spd": 90
 },
-"bst": 490,
+"bst": 480,
 "types": [
 "FIGHTING",
 "GHOST"
@@ -6613,10 +6613,10 @@
 "atk": 60,
 "defe": 60,
 "spe": 110,
-"spa": 110,
+"spa": 100,
 "spd": 110
 },
-"bst": 510,
+"bst": 500,
 "types": [
 "GHOST",
 "FAIRY"
@@ -6928,13 +6928,13 @@
 "id": "persian_plain",
 "stats": {
 "hp": 65,
-"atk": 85,
+"atk": 95,
 "defe": 60,
 "spe": 115,
 "spa": 70,
 "spd": 65
 },
-"bst": 460,
+"bst": 470,
 "types": [
 "NORMAL"
 ],
@@ -7545,13 +7545,13 @@
 "id": "raticate_alolan",
 "stats": {
 "hp": 80,
-"atk": 82,
+"atk": 90,
 "defe": 70,
 "spe": 88,
 "spa": 40,
 "spd": 80
 },
-"bst": 440,
+"bst": 448,
 "types": [
 "DARK",
 "NORMAL"
@@ -7716,13 +7716,13 @@
 "id": "dugtrio_plain",
 "stats": {
 "hp": 50,
-"atk": 100,
+"atk": 90,
 "defe": 55,
 "spe": 120,
 "spa": 50,
 "spd": 70
 },
-"bst": 445,
+"bst": 435,
 "types": [
 "GROUND"
 ],
@@ -7988,13 +7988,13 @@
 "id": "sneasler",
 "stats": {
 "hp": 80,
-"atk": 115,
+"atk": 105,
 "defe": 60,
 "spe": 115,
 "spa": 40,
 "spd": 80
 },
-"bst": 490,
+"bst": 480,
 "types": [
 "POISON",
 "FIGHTING"
@@ -8089,10 +8089,10 @@
 "atk": 70,
 "defe": 115,
 "spe": 60,
-"spa": 120,
+"spa": 110,
 "spd": 90
 },
-"bst": 525,
+"bst": 515,
 "types": [
 "ELECTRIC",
 "STEEL"
