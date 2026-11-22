@@ -54,10 +54,22 @@ whatever gap fits.
 | Compress the fonts | ~2.5 KB | possible; a few routines read letters straight from ROM |
 | Share the remaining duplicate graphics (two back sprites, three form masks) | ~0.7 KB | needs moving them into shared sections |
 | Share the remaining repeated text (in item/move descriptions and common texts, which are printed differently, so it needs another approach) | ~0.5 KB | possible |
+| Store less in our Random Battle set table (work out types and weaknesses when the game needs them) | ~1.5 KB | possible |
+| Drop the Pokédex footprints (the small footprint box on each Pokédex page) | 5.2 KB | needs the go-ahead |
+| Drop Game Boy Printer support | 2.0 KB | needs the go-ahead |
+| Drop the front-sprite animations (Pokémon would appear in battle and the Pokédex in a still pose) | 20.4 KB | needs the go-ahead; could be kept for some Pokémon |
 
-All of it together: about 19 KB, enough for every fully evolved Pokémon in
-either style, and about 280 of the 333 at ~70 B (all of them at 60 B). Full
-walking sprites for everything (48–73 KB) don't fit in 2 MB.
+The lossless items together: about 15 KB free, enough for every fully
+evolved Pokémon (12 KB) in this style. With the footprints, printer and
+jukebox songs too: about 27 KB, enough for all 333 at ~70 B. With the
+front-sprite animations as well: about 47 KB, enough for all 333 in Rangi's
+style (37 KB). Full walking sprites for everything (48–73 KB) don't fit in
+2 MB.
+
+Not worth it or not possible: cries (15 KB, every Pokémon needs one), music
+(145 KB, but songs are what the game plays everywhere), phone calls and
+radio (mostly text that is already compressed), and a 4 MB ROM (MBC30, which
+most flash carts don't support).
 
 Not available: the graphics compressor (`tools/lzpcompress`) is already
 optimal and already exploits mirrored and repeated data within each file,
