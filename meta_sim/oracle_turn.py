@@ -241,20 +241,26 @@ class Rom:
             self.hit = name
             return
         if name == 'BattleMenu':
-            if plan['menu']:                    # back at the menu: the turn is over
-                plan['snaps'].append(self.snapshot())
-                plan['t'] += 1
-                plan['menu'] = plan['sent'] = False
+            if plan['sent']:                    # back at the menu: the turn is over
+                self._end_turn(plan)
             if plan['t'] >= len(plan['choices']) or plan['fainted'] or plan['out']:
                 self.hit = name
                 return
-            plan['menu'] = True
             self.w('wBattlePlayerAction', 0)
         elif name == 'MoveSelectionScreen':
             mine = plan['choices'][plan['t']][0]
             self.w('wCurMoveNum', mine)
             self.w('wCurPlayerMove', self.r('wBattleMonMoves', mine))
-        elif name == 'LinkBattleSendReceiveAction' and not plan['sent']:
+        elif name == 'LinkBattleSendReceiveAction' and not (
+                self.r16('wBattleMonHP') == 0 or self.r16('wEnemyMonHP') == 0):
+            # a turn's move exchange. If this turn's already happened, we were
+            # locked into a move (Petal Dance, Outrage...), so the menu was
+            # skipped and a new turn has begun
+            if plan['sent']:
+                self._end_turn(plan)
+                if plan['t'] >= len(plan['choices']) or plan['out']:
+                    self.hit = name
+                    return
             plan['sent'] = True
             self.w('wBattleAction', plan['choices'][plan['t']][1])
         elif name == 'LinkBattleSendReceiveAction':
@@ -269,7 +275,7 @@ class Rom:
             self.w('wBattleAction', self.ids['BATTLEACTION_SWITCH1'] + 1)
             plan['fainted'] = True
         else:
-            if name == 'end':                   # the battle is over: someone fainted
+            if name == 'end':                   # the battle is over
                 plan['snaps'].append(self.snapshot())
             self.hit = name
             return
@@ -307,6 +313,11 @@ class Rom:
         out['me']['ability'] = self.r('wPlayerAbility')
         out['foe']['ability'] = self.r('wEnemyAbility')
         return out
+
+    def _end_turn(self, plan):
+        plan['snaps'].append(self.snapshot())
+        plan['t'] += 1
+        plan['sent'] = False
 
     def snapshot(self):
         """Both lead Pokemon (once one has been replaced, it's fainted)."""
