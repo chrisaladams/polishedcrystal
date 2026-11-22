@@ -257,13 +257,21 @@ class Rom:
             # a turn's move exchange. If this turn's already happened, we were
             # locked into a move (Petal Dance, Outrage...), so the menu was
             # skipped and a new turn has begun
-            if plan['sent']:
-                self._end_turn(plan)
-                if plan['t'] >= len(plan['choices']) or plan['out']:
-                    self.hit = name
-                    return
-            plan['sent'] = True
-            self.w('wBattleAction', plan['choices'][plan['t']][1])
+            turn = self.r('wTotalBattleTurns')
+            if plan['sent'] and turn == plan['turn']:
+                # still the same turn: the opponent used U-turn or Volt
+                # Switch and is choosing who comes in: its second one
+                self.w('wBattleAction', self.ids['BATTLEACTION_SWITCH1'] + 1)
+                plan['out'] = True
+            else:
+                if plan['sent']:
+                    self._end_turn(plan)
+                    if plan['t'] >= len(plan['choices']) or plan['out']:
+                        self.hit = name
+                        return
+                plan['sent'] = True
+                plan['turn'] = turn
+                self.w('wBattleAction', plan['choices'][plan['t']][1])
         elif name == 'LinkBattleSendReceiveAction':
             # the opponent replacing a fainted Pokemon: its second one
             self.w('wBattleAction', self.ids['BATTLEACTION_SWITCH1'] + 1)
@@ -348,7 +356,7 @@ class Rom:
             self.w('wLinkBattleRNs', rns[k], k)
         self.w('wLinkBattleRNCount', count)
         self.plan = {'choices': choices, 't': 0, 'menu': False, 'sent': False, 'snaps': [],
-                     'fainted': False, 'out': False}
+                     'fainted': False, 'out': False, 'turn': None}
         where = self.run(frames=4000 * len(choices))
         snaps = self.plan['snaps']
         self.plan = None
