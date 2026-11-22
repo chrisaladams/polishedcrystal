@@ -122,6 +122,7 @@ ArbokMiniMask:: INCBIN "gfx/minis/arbok_mask.1bpp.lzp"
 ArbokIcon::     INCBIN "gfx/icons/arbok.2bpp.lzp"
 
 SECTION "Pikachu Mini Icon", ROMX
+PikachuSurfIcon:: ; Link Edition: identical to PikachuMini
 PikachuMini::         INCBIN "gfx/minis/pikachu.2bpp.lzp"
 PikachuFlyMini::      INCBIN "gfx/minis/pikachu_fly.2bpp.lzp"
 PikachuSurfMini::     INCBIN "gfx/minis/pikachu_surf.2bpp.lzp"
@@ -130,12 +131,11 @@ PikachuFlyMiniMask::  INCBIN "gfx/minis/pikachu_fly_mask.1bpp.lzp"
 PikachuSurfMiniMask:: INCBIN "gfx/minis/pikachu_surf_mask.1bpp.lzp"
 PikachuIcon::
 PikachuFlyIcon::
-PikachuSurfIcon::     INCBIN "gfx/icons/pikachu.2bpp.lzp"
 
 SECTION "Raichu Mini Icon", ROMX
+RaichuIcon:: ; Link Edition: identical to RaichuMini
 RaichuMini::     INCBIN "gfx/minis/raichu.2bpp.lzp"
 RaichuMiniMask:: INCBIN "gfx/minis/raichu_mask.1bpp.lzp"
-RaichuIcon::     INCBIN "gfx/icons/raichu.2bpp.lzp"
 
 SECTION "Sandshrew Mini Icon", ROMX
 SandshrewMini::     INCBIN "gfx/minis/sandshrew.2bpp.lzp"
@@ -268,9 +268,9 @@ MeowthMiniMask:: INCBIN "gfx/minis/meowth_mask.1bpp.lzp"
 MeowthIcon::     INCBIN "gfx/icons/meowth.2bpp.lzp"
 
 SECTION "Persian Mini Icon", ROMX
+PersianIcon:: ; Link Edition: identical to PersianMini
 PersianMini::     INCBIN "gfx/minis/persian.2bpp.lzp"
 PersianMiniMask:: INCBIN "gfx/minis/persian_mask.1bpp.lzp"
-PersianIcon::     INCBIN "gfx/icons/persian.2bpp.lzp"
 
 SECTION "Psyduck Mini Icon", ROMX
 PsyduckMini::     INCBIN "gfx/minis/psyduck.2bpp.lzp"
@@ -778,9 +778,9 @@ MeganiumMiniMask:: INCBIN "gfx/minis/meganium_mask.1bpp.lzp"
 MeganiumIcon::     INCBIN "gfx/icons/meganium.2bpp.lzp"
 
 SECTION "Cyndaquil Mini Icon", ROMX
+CyndaquilIcon:: ; Link Edition: identical to CyndaquilMini
 CyndaquilMini::     INCBIN "gfx/minis/cyndaquil.2bpp.lzp"
 CyndaquilMiniMask:: INCBIN "gfx/minis/cyndaquil_mask.1bpp.lzp"
-CyndaquilIcon::     INCBIN "gfx/icons/cyndaquil.2bpp.lzp"
 
 SECTION "Quilava Mini Icon", ROMX
 QuilavaMini::     INCBIN "gfx/minis/quilava.2bpp.lzp"
@@ -853,9 +853,9 @@ CrobatMiniMask:: INCBIN "gfx/minis/crobat_mask.1bpp.lzp"
 CrobatIcon::     INCBIN "gfx/icons/crobat.2bpp.lzp"
 
 SECTION "Chinchou Mini Icon", ROMX
+ChinchouIcon:: ; Link Edition: identical to ChinchouMini
 ChinchouMini::     INCBIN "gfx/minis/chinchou.2bpp.lzp"
 ChinchouMiniMask:: INCBIN "gfx/minis/chinchou_mask.1bpp.lzp"
-ChinchouIcon::     INCBIN "gfx/icons/chinchou.2bpp.lzp"
 
 SECTION "Lanturn Mini Icon", ROMX
 LanturnMini::     INCBIN "gfx/minis/lanturn.2bpp.lzp"
@@ -988,9 +988,9 @@ EspeonMiniMask:: INCBIN "gfx/minis/espeon_mask.1bpp.lzp"
 EspeonIcon::     INCBIN "gfx/icons/espeon.2bpp.lzp"
 
 SECTION "Umbreon Mini Icon", ROMX
+UmbreonIcon:: ; Link Edition: identical to UmbreonMini
 UmbreonMini::     INCBIN "gfx/minis/umbreon.2bpp.lzp"
 UmbreonMiniMask:: INCBIN "gfx/minis/umbreon_mask.1bpp.lzp"
-UmbreonIcon::     INCBIN "gfx/icons/umbreon.2bpp.lzp"
 
 SECTION "Murkrow Mini Icon", ROMX
 MurkrowMini::     INCBIN "gfx/minis/murkrow.2bpp.lzp"
@@ -1093,9 +1093,9 @@ UrsaringMiniMask:: INCBIN "gfx/minis/ursaring_mask.1bpp.lzp"
 UrsaringIcon::     INCBIN "gfx/icons/ursaring.2bpp.lzp"
 
 SECTION "Slugma Mini Icon", ROMX
+SlugmaIcon:: ; Link Edition: identical to SlugmaMini
 SlugmaMini::     INCBIN "gfx/minis/slugma.2bpp.lzp"
 SlugmaMiniMask:: INCBIN "gfx/minis/slugma_mask.1bpp.lzp"
-SlugmaIcon::     INCBIN "gfx/icons/slugma.2bpp.lzp"
 
 SECTION "Magcargo Mini Icon", ROMX
 MagcargoMini::     INCBIN "gfx/minis/magcargo.2bpp.lzp"
@@ -1278,9 +1278,9 @@ AmbipomMiniMask:: INCBIN "gfx/minis/ambipom_mask.1bpp.lzp"
 AmbipomIcon::     INCBIN "gfx/icons/ambipom.2bpp.lzp"
 
 SECTION "Egg Mini Icon", ROMX
+EggIcon:: ; Link Edition: identical to EggMini
 EggMini::     INCBIN "gfx/minis/egg.2bpp.lzp"
 EggMiniMask:: INCBIN "gfx/minis/egg_mask.1bpp.lzp"
-EggIcon::     INCBIN "gfx/icons/egg.2bpp.lzp"
 
 SECTION "Mismagius Mini Icon", ROMX
 MismagiusMini::     INCBIN "gfx/minis/mismagius.2bpp.lzp"
