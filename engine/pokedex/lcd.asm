@@ -193,10 +193,10 @@ StackDexGraphics:
 	call Get2bpp
 
 	; (partial) unown font
-	ld de, FontUnown
+	farcall DecompressUnownFont
 	ld hl, vTiles4
-	lb bc, BANK(FontUnown), $20
-	call Get1bpp
+	ld c, $20
+	call .GetUnownFont
 
 	; slowpoke oam
 	ld hl, PokedexSlowpokeLZ
@@ -356,6 +356,12 @@ StackDexGraphics:
 	call GetCGBLayout
 	ld b, MAPS_COPY_SET_DEFAULT_PALS
 	jmp SafeCopyTilemapAtOnce
+
+.GetUnownFont:
+	call RunFunctionInWRA6
+	ld de, wDecompressScratch
+	ld b, BANK(@)
+	jmp Get1bpp
 
 Pokedex_RefreshOAM:
 ; Reloads OAM data.

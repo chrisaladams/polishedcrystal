@@ -26,9 +26,12 @@ BSOD:
 	ldh [hBGMapHalf], a
 	call DelayFrame
 
-	ld de, FontNormal
+	ld hl, FontNormal
+	ld b, BANK(FontNormal)
+	call FarDecompressWRA6InB ; a DMG has one WRAMX bank: no switch needed
+	ld de, wDecompressScratch
 	ld hl, vTiles1
-	lb bc, BANK(FontNormal), 111
+	lb bc, BANK(@), 111
 	call Get1bpp
 
 	ld de, BSODMessage

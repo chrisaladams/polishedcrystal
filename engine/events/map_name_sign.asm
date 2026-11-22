@@ -274,6 +274,10 @@ LoadMapNameSignGFX:
 	add hl, bc
 	ld d, h
 	ld e, l
+	; the font's letters, unpacked
+	push de
+	farcall DecompressStandardFont
+	pop de
 	; hl = start of landmark name
 	ld hl, wStringBuffer1
 .loop
@@ -322,16 +326,14 @@ LoadMapNameSignGFX:
 	ld c, l
 	pop hl
 	; hl = start of font tile graphic
-	push bc
-	farcall LoadStandardFontPointer
-	pop bc
+	ld hl, wDecompressScratch
 	add hl, bc
 .got_tile
 	; swap hl and de, so de = font tile graphic, and hl = vram
 	call SwapHLDE
 	; get font tile into vram
 	push hl
-	call GetOpaque1bppFontTile
+	call .GetFontTile
 	pop hl
 	; increment position in vram
 	ld bc, TILE_SIZE
@@ -342,6 +344,10 @@ LoadMapNameSignGFX:
 	; restore hl = position in landmark name
 	pop hl
 	jr .loop
+
+.GetFontTile:
+	call RunFunctionInWRA6
+	jmp GetOpaque1bppFontTile
 
 INCLUDE "data/maps/map_name_signs.asm"
 

@@ -1,22 +1,22 @@
 FontTiles::
-	table_width 114 * TILE_1BPP_SIZE
+; Compressed: DecompressStandardFont unpacks the chosen one to
+; wDecompressScratch (114 1bpp tiles).
 FontNormal:
-INCBIN "gfx/font/normal.1bpp"
+INCBIN "gfx/font/normal.1bpp.lzp"
 FontNarrow:
-INCBIN "gfx/font/narrow.1bpp"
+INCBIN "gfx/font/narrow.1bpp.lzp"
 FontBold:
-INCBIN "gfx/font/bold.1bpp"
+INCBIN "gfx/font/bold.1bpp.lzp"
 FontItalic:
-INCBIN "gfx/font/italic.1bpp"
+INCBIN "gfx/font/italic.1bpp.lzp"
 FontSerif:
-INCBIN "gfx/font/serif.1bpp"
+INCBIN "gfx/font/serif.1bpp.lzp"
 FontMICR:
-INCBIN "gfx/font/micr.1bpp"
+INCBIN "gfx/font/micr.1bpp.lzp"
 FontChicago:
-INCBIN "gfx/font/chicago.1bpp"
+INCBIN "gfx/font/chicago.1bpp.lzp"
 FontUnown:
-INCBIN "gfx/font/unown.1bpp"
-	assert_table_length NUM_FONTS
+INCBIN "gfx/font/unown.1bpp.lzp"
 
 FontCommon:
 INCBIN "gfx/font/common.1bpp"

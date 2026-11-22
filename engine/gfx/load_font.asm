@@ -11,21 +11,35 @@ _LoadStandardFont::
 	xor a
 _LoadStandardMaybeOpaqueFont:
 	push af
-	call LoadStandardFontPointer
-	ld d, h
-	ld e, l
-	ld hl, vTiles0 tile 'A'
-	lb bc, BANK(FontTiles), 114
+	call DecompressStandardFont
 	pop af
 	ldh [hRequestOpaque1bpp], a
 	push af
-	call GetMaybeOpaque1bpp
+	call .CopyFont
 	ld de, FontCommon
 	ld hl, vTiles0 tile '↑'
 	lb bc, BANK(FontCommon), 6
 	pop af
 	ldh [hRequestOpaque1bpp], a
 	jmp GetMaybeOpaque1bpp
+
+.CopyFont:
+	call RunFunctionInWRA6
+	ld de, wDecompressScratch
+	ld hl, vTiles0 tile 'A'
+	lb bc, BANK(FontTiles), 114
+	jmp GetMaybeOpaque1bpp
+
+DecompressStandardFont::
+; Unpack the font chosen in the options to wDecompressScratch.
+	call LoadStandardFontPointer
+	ld b, BANK(FontTiles)
+	jmp FarDecompressWRA6InB
+
+DecompressUnownFont::
+	ld hl, FontUnown
+	ld b, BANK(FontUnown)
+	jmp FarDecompressWRA6InB
 
 LoadStandardFontPointer::
 	ld hl, .FontPointers
@@ -138,22 +152,9 @@ LoadEnemyStatusIcon:
 	ret
 
 LoadBoldPDoubled:
-	; point hl to the '<BOLDP>' 1bpp tile in ROM
-	call LoadStandardFontPointer
-	ld de, ('<BOLDP>' - $80) * TILE_1BPP_SIZE
-	add hl, de
-	; copy the bold P, with halves swapped, to the middle char of wSummaryScreenPPTileBuffer
-	ld de, wSummaryScreenPPTileBuffer + TILE_1BPP_SIZE
-	push de
-	ld c, TILE_1BPP_SIZE
-.loop
-	ld a, [hli]
-	swap a
-	ld [de], a
-	inc de
-	dec c
-	jr nz, .loop
-	pop hl
+	call DecompressStandardFont
+	call .SwapHalves
+	ld hl, wSummaryScreenPPTileBuffer + TILE_1BPP_SIZE
 	; copy the left and right halves to the two other chars of wSummaryScreenPPTileBuffer
 	ld c, TILE_1BPP_SIZE
 .loop2
@@ -179,20 +180,54 @@ LoadBoldPDoubled:
 	lb bc, BANK(@), 3
 	jmp Get1bpp
 
+.SwapHalves:
+	; copy the bold P from the unpacked font, with halves swapped, to the
+	; middle char of wSummaryScreenPPTileBuffer
+	call RunFunctionInWRA6
+	ld hl, wDecompressScratch + ('<BOLDP>' - $80) * TILE_1BPP_SIZE
+	ld de, wSummaryScreenPPTileBuffer + TILE_1BPP_SIZE
+	ld c, TILE_1BPP_SIZE
+.loop
+	ld a, [hli]
+	swap a
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .loop
+	ret
+
 CopyColoredMaleFemaleShinyTiles:
 ; Copy dark '♂', light '♀', and light '★' to de.
 ; Must be in VRAM bank 0.
-	call LoadStandardFontPointer
-	ld bc, ('♂' - $80) * TILE_1BPP_SIZE
-	add hl, bc
+	; the two symbols from the unpacked font, via a buffer on the stack
+	; (WRAM0, so readable whichever WRAMX bank de is in)
+	push de
+	call DecompressStandardFont
+	pop de
+	add sp, -2 * TILE_1BPP_SIZE
+	ld hl, sp + 0
+	push de
+	ld d, h
+	ld e, l
+	call .GetSymbols
+	pop de
+	ld hl, sp + 0
 	call Copy1bppTileAsDark
 	assert '♂' + 1 == '♀'
 	call Copy1bppTileAsLight
+	add sp, 2 * TILE_1BPP_SIZE
 	ld h, d
 	ld l, e
 	ld de, ShinyIconGFX
 	lb bc, BANK(ShinyIconGFX), 1
 	jmp Get2bpp
+
+.GetSymbols:
+	call RunFunctionInWRA6
+	ld hl, wDecompressScratch + ('♂' - $80) * TILE_1BPP_SIZE
+	ld bc, 2 * TILE_1BPP_SIZE
+	rst CopyBytes
+	ret
 
 Copy1bppTileAsLight:
 ; Copy one 1bpp tile from hl to de, with the
