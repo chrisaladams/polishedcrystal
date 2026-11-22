@@ -1105,17 +1105,79 @@ def orb_can_status(mon, st):
 
 
 def end_of_turn(mon, foe_side, rng=random):
-    """Residual damage/heal. Returns False if mon faints."""
+    """Residual damage/heal, in HandleBetweenTurnEffects' order: weather (and
+    the weather abilities), Shed Skin/Hydration, Leftovers/Black Sludge, Leech
+    Seed, poison, burn, Curse, binding, Perish Song, Speed Boost and the other
+    end-of-turn abilities, the status orbs, then healing berries. Returns False
+    if mon faints."""
     if mon.fainted:
         return False
+
+    def fainted():
+        if mon.hp <= 0:
+            mon.fainted = True
+        return mon.fainted
+
+    def on_field(p):
+        return p is not None and not p.fainted and p.side is not None and p.side.mon is p
+
+    foe = foe_side.mon if foe_side else None
+    # 1. weather: sand/hail chip, then the weather abilities (HandleWeather)
+    w = weather_of(mon)
+    if w == 'sand' and not (set(mon.types) & SAND_IMMUNE_TYPES) \
+            and mon.ability not in SAND_IMMUNE_ABILITIES:
+        mon.hp -= max(1, mon.maxhp // 16)
+    elif w == 'hail' and not (set(mon.types) & HAIL_IMMUNE_TYPES) \
+            and mon.ability not in HAIL_IMMUNE_ABILITIES:
+        mon.hp -= max(1, mon.maxhp // 16)
+    if fainted():
+        return False
+    if mon.ability in ('SOLAR_POWER', 'DRY_SKIN') and w == 'sun':
+        mon.hp -= max(1, mon.maxhp // 8)
+    heal = {('RAIN_DISH', 'rain'): 16, ('DRY_SKIN', 'rain'): 8,
+            ('ICE_BODY', 'hail'): 16}.get((mon.ability, w), 0)
+    if heal and mon.hp > 0:
+        mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // heal))
+    if fainted():
+        return False
+    # 2. EndturnAbilitiesA (status healing abilities), then HandleLeftovers
     if mon.ability == 'SHED_SKIN' and mon.status is not None and rng.random() < 0.3:
         mon.status = None               # 30%/turn cure of any major status
         mon.sleep = mon.tox = 0
+    if mon.ability == 'HYDRATION' and w == 'rain' and mon.status is not None:
+        mon.status, mon.sleep, mon.tox = None, 0, 0
+    h = mechanics.held(mon)
+    if h == 'HELD_LEFTOVERS' or (h == 'HELD_BLACK_SLUDGE' and 'POISON' in mon.types):
+        if mon.hp < mon.maxhp:
+            mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // 16))
+    elif h == 'HELD_BLACK_SLUDGE' and mon.ability != 'MAGIC_GUARD':
+        mon.hp -= max(1, mon.maxhp // 8)        # hurts non-Poison holders
+        if fainted():
+            return False
+    # 3. Leech Seed
+    if mon.seeded and mon.ability != 'MAGIC_GUARD':
+        drain = min(max(1, mon.maxhp // 8), max(mon.hp, 0))
+        mon.hp -= drain
+        seeder = foe                     # Leech Seed transfers the drained HP
+        if seeder is not None and not seeder.fainted:
+            if seeder.ability == 'LIQUID_OOZE':
+                seeder.hp -= drain       # Liquid Ooze: the drainer is hurt instead
+                if seeder.hp <= 0:
+                    seeder.fainted = True
+            else:
+                healed = min(seeder.maxhp - seeder.hp, drain)
+                seeder.hp += healed
+                seeder.heal_done += healed / seeder.maxhp
+        if fainted():
+            return False
+    # 4. poison (Poison Heal), 5. burn: DoPoisonBurnDamage. Poison 1/8, burn
+    # 1/16 (Gen VII), toxic n/16 with the counter capped at 15; each fraction
+    # floored, at least 1 HP
     if mon.ability == 'POISON_HEAL' and mon.status in ('psn', 'tox'):
+        if mon.status == 'tox':
+            mon.tox = min(15, mon.tox + 1)  # the counter still rises
         mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // 8))
     elif mon.ability != 'MAGIC_GUARD':
-        # DoPoisonBurnDamage: poison 1/8, burn 1/16 (Gen VII), toxic n/16 with
-        # the counter capped at 15; each fraction floored, at least 1 HP
         if mon.status == 'psn':
             mon.hp -= max(1, mon.maxhp // 8)
         elif mon.status == 'brn':
@@ -1123,23 +1185,14 @@ def end_of_turn(mon, foe_side, rng=random):
         elif mon.status == 'tox':
             mon.tox = min(15, mon.tox + 1)
             mon.hp -= mon.tox * max(1, mon.maxhp // 16)
-        if mon.seeded:
-            drain = min(max(1, mon.maxhp // 8), max(mon.hp, 0))
-            mon.hp -= drain
-            seeder = foe_side.mon            # Leech Seed transfers the drained HP
-            if not seeder.fainted:
-                if seeder.ability == 'LIQUID_OOZE':
-                    seeder.hp -= drain       # Liquid Ooze: the drainer is hurt instead
-                    if seeder.hp <= 0:
-                        seeder.fainted = True
-                else:
-                    healed = min(seeder.maxhp - seeder.hp, drain)
-                    seeder.hp += healed
-                    seeder.heal_done += healed / seeder.maxhp
+    if fainted():
+        return False
+    # 6. Curse
     if mon.cursed and mon.ability != 'MAGIC_GUARD':
         mon.hp -= max(1, mon.maxhp // 4)
-    def on_field(p):
-        return p is not None and not p.fainted and p.side is not None and p.side.mon is p
+        if fainted():
+            return False
+    # 7. binding moves
     if mon.bound:
         if not on_field(mon.bound_by):
             mon.bound, mon.bound_by = 0, None
@@ -1149,73 +1202,48 @@ def end_of_turn(mon, foe_side, rng=random):
             mon.bound -= 1
             if not mon.bound:
                 mon.bound_by = None
+            if fainted():
+                return False
     if mon.mean_looked and not on_field(mon.mean_looked):
         mon.mean_looked = False
-    w = weather_of(mon)
-    if w == 'sand' and not (set(mon.types) & SAND_IMMUNE_TYPES) \
-            and mon.ability not in SAND_IMMUNE_ABILITIES:
-        mon.hp -= max(1, mon.maxhp // 16)
-    elif w == 'hail' and not (set(mon.types) & HAIL_IMMUNE_TYPES) \
-            and mon.ability not in HAIL_IMMUNE_ABILITIES:
-        mon.hp -= max(1, mon.maxhp // 16)
-    if mon.ability in ('SOLAR_POWER', 'DRY_SKIN') and w == 'sun':
-        mon.hp -= max(1, mon.maxhp // 8)
-    heal = {('RAIN_DISH', 'rain'): 16, ('DRY_SKIN', 'rain'): 8,
-            ('ICE_BODY', 'hail'): 16}.get((mon.ability, w), 0)
-    if heal and mon.hp > 0:
-        mon.hp = min(mon.maxhp, mon.hp + max(1, mon.maxhp // heal))
-    if mon.ability == 'HYDRATION' and w == 'rain' and mon.status is not None:
-        mon.status, mon.sleep, mon.tox = None, 0, 0
-    if mon.perish and mon.hp > 0:
+    # 8. Disable's count, Perish Song
+    if mon.disable_turns:
+        mon.disable_turns -= 1
+        if mon.disable_turns <= 0:
+            mon.disabled = None
+    if mon.perish:
         mon.perish -= 1
         if mon.perish == 0:
             mon.hp = 0
             if mon.perish_by is not None and mon.perish_by.side is not mon.side:
                 mon.perish_by.perish_kos += 1
-    if mon.hp <= 0:
-        mon.fainted = True
-        return False
-    h = mechanics.held(mon)
-    if h == 'HELD_LEFTOVERS' or (h == 'HELD_BLACK_SLUDGE' and 'POISON' in mon.types):
-        if mon.hp < mon.maxhp:
-            mon.hp = min(mon.maxhp, mon.hp + mon.maxhp // 16)
-    elif h == 'HELD_BLACK_SLUDGE' and mon.ability != 'MAGIC_GUARD':
-        mon.hp -= mon.maxhp // 8                # HandleLeftovers: hurts non-Poison holders
-        if mon.hp <= 0:
-            mon.fainted = True
+            fainted()
             return False
-    # Bad Dreams: a sleeping foe loses 1/8
-    foe = foe_side.mon if foe_side else None
-    if mon.ability == 'BAD_DREAMS' and foe is not None and not foe.fainted \
-            and foe.status == 'slp' and foe.ability != 'MAGIC_GUARD':
-        foe.hp -= foe.maxhp // 8
-        if foe.hp <= 0:
-            foe.fainted = True
-    # Harvest (50%, always in sun) and Cud Chew bring a berry back
-    if mon.ability == 'HARVEST' and mon.item is None and mon.berry_eaten \
-            and (w == 'sun' or rng.randrange(256) < 128):
-        mon.item = mon.berry_eaten
+    # 9. EndturnAbilitiesB: Cud Chew, Harvest, Speed Boost, Bad Dreams...
     if mon.cud_chew:
         mon.cud_chew[1] -= 1
         if mon.cud_chew[1] <= 0:
             berry, mon.cud_chew = mon.cud_chew[0], None
             eat_berry(mon, berry, forced=True, rng=rng)
-    check_hp_berry(mon)                         # HandleHealingItems
-    if mon.disable_turns:
-        mon.disable_turns -= 1
-        if mon.disable_turns <= 0:
-            mon.disabled = None
-    # self-status orbs fire at end of turn, so the status only starts ticking
-    # on the following end_of_turn
+    if mon.ability == 'HARVEST' and mon.item is None and mon.berry_eaten \
+            and (w == 'sun' or rng.randrange(256) < 128):
+        mon.item = mon.berry_eaten           # 50%, always in sun
+    if mon.ability == 'SPEED_BOOST':
+        mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
+    if mon.ability == 'BAD_DREAMS' and foe is not None and not foe.fainted \
+            and foe.status == 'slp' and foe.ability != 'MAGIC_GUARD':
+        foe.hp -= max(1, foe.maxhp // 8)     # a sleeping foe loses 1/8
+        if foe.hp <= 0:
+            foe.fainted = True
+    # ...then the self-status orbs, so the status only starts ticking on the
+    # following end of turn
     st = items.ORB_STATUS.get(mon.item)
     if st and mon.status is None and orb_can_status(mon, st):
         mon.status = st
         if st == 'tox':
             mon.tox = 0
-    if mon.ability == 'SPEED_BOOST' and False:
-        pass
-    if mon.ability == 'SPEED_BOOST':
-        mon.stage['spe'] = min(6, mon.stage['spe'] + 1)
+    # 10. HandleHealingItems
+    check_hp_berry(mon)
     return True
 
 
