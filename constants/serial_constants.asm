@@ -124,9 +124,11 @@ endc
 ; this game's link version
 ; Bump whenever battle-affecting link logic changes (party normalization,
 ; healing, clauses, base stats, abilities, damage) so mismatched builds can't
-; connect and desync. Link Edition 1.0 (first family release) is version 1.
-DEF LINK_VERSION EQU 1
-; This is the minimum link version allowed for trading
+; connect and desync. Link Edition 1.0 (first family release) is version 1;
+; the Christmas release (link failsafes, Random Battle, specialty shops) is 2.
+DEF LINK_VERSION EQU 2
+; This is the minimum link version allowed for trading (the party layout
+; hasn't changed since version 1, so trades with 1.0 still work)
 DEF LINK_MIN_TRADE_VERSION EQU 1
 
 ; PerformLinkChecks error codes

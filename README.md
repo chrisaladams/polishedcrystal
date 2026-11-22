@@ -89,7 +89,7 @@ A save made inside a room whose scripts moved in a newer build (the Pokémon
 Center 2F link room, after this update) used to crash when you talked to
 someone there; continuing a save now takes the room's scripts from the ROM.
 
-**Both players need the same build.** This is Link Edition 1.0, link version 1. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync. A later release that changes battles will raise the link version, and everyone will need to update together.
+**Both players need the same build.** This is the Christmas release, link version 2 (Link Edition 1.0 was version 1). A version 2 game won't battle a version 1 game, since the battle rules changed; everyone needs to flash the new build. Trading with a 1.0 game still works, because the party layout hasn't changed. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync.
 
 ### Specialty shops
 
