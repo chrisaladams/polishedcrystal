@@ -690,6 +690,21 @@ def test_magic_bounce_reflects_toxic():
     assert b.status is None and a.status == 'tox'
 
 
+def test_lead_intimidate_survives_the_other_lead_entering():
+    # both leads come out at the start; the second one sent out must keep
+    # the first one's Intimidate drop (the turn oracle caught it being wiped)
+    a, b = mon(ability='INTIMIDATE'), mon()
+    A, B = duel(a, b)
+    engine.apply_switch(A, 0, B, CHART)
+    engine.apply_switch(B, 0, A, CHART)
+    assert b.stage['atk'] == -1
+    c, d = mon(), mon(ability='INTIMIDATE')
+    C, D = duel(c, d)
+    engine.apply_switch(C, 0, D, CHART)
+    engine.apply_switch(D, 0, C, CHART)
+    assert c.stage['atk'] == -1
+
+
 if __name__ == '__main__':
     failed = 0
     for name, fn in list(globals().items()):

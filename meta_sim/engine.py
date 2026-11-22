@@ -1017,7 +1017,11 @@ def choose_switch(side, foe, moves, chart, forced, rng=random):
 # ---- per-turn mechanics ------------------------------------------------------
 def apply_switch(side, idx, foe_side, chart):
     old = side.mon
-    old.reset_volatile()
+    if idx != side.active:
+        # switching out clears stat changes and the like; a lead being sent
+        # out at the start (idx == active) keeps whatever the other lead's
+        # entry ability (Intimidate...) already did to it
+        old.reset_volatile()
     if idx != side.active and not old.fainted:
         if old.ability == 'REGENERATOR':
             old.hp = min(old.maxhp, old.hp + max(1, old.maxhp // 3))
