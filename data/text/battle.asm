@@ -1,5 +1,12 @@
 BattleText::
 
+LinkBattleOutOfSyncText::
+	text "Link error: the"
+	line "battle went out of"
+	cont "sync. Please start"
+	cont "it again."
+	prompt
+
 LinkBattleErrorText::
 	text "There was a link"
 	line "error."

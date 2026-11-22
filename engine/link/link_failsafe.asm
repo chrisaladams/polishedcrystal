@@ -98,6 +98,7 @@ LinkFailsafe_VerifySetup::
 	; keep our values to compare with what the other game sends back
 	push de
 	push bc
+	call .PutSlack
 
 	farcall PrepareForLinkTransfers
 	ld hl, wLinkCheckSend
@@ -158,9 +159,10 @@ LinkFailsafe_VerifySetup::
 	ld a, c
 	ld [hli], a
 	ld [hli], a
+	call .PutSlack
 	ld hl, wLinkCheckSend
 	ld de, wLinkCheckRecv
-	ld bc, SERIAL_PREAMBLE_LENGTH + 2
+	ld bc, LINK_VERDICT_LENGTH
 	farcall Serial_ExchangeBytes
 	xor a
 	ldh [rIF], a
@@ -200,6 +202,16 @@ LinkFailsafe_VerifySetup::
 	and $f
 	or $10
 	ld [hli], a
+	ret
+
+.PutSlack:
+; Pad the send buffer at hl with zeros.
+	xor a
+	ld b, LINK_CHECK_SLACK
+.slack
+	ld [hli], a
+	dec b
+	jr nz, .slack
 	ret
 
 .ReadNybbles:
@@ -256,3 +268,251 @@ LinkFailsafe_ShowSetupError::
 	cont "arrive intact."
 	para "Please try again."
 	done
+
+LinkFailsafe_BattleFingerprint:
+; Returns a = a fingerprint of the battle state that both games share: both
+; active Pokemon's HP, status and stat changes, both parties' HP and the
+; position in the shared random numbers. The clock side's half comes first,
+; so both games add the same bytes in the same order.
+	ld de, 0
+	ldh a, [hSerialConnectionStatus]
+	cp USING_INTERNAL_CLOCK
+	jr nz, .enemy_first
+	call .Player
+	call .Enemy
+	jr .done
+.enemy_first
+	call .Enemy
+	call .Player
+.done
+	ld hl, wLinkBattleRNCount
+	ld bc, 1
+	call LinkFailsafe_Hash
+	ld a, d
+	xor e
+	ret
+
+.Player:
+	ld hl, wBattleMonHP
+	ld bc, 2
+	call LinkFailsafe_Hash
+	ld hl, wBattleMonStatus
+	ld bc, 1
+	call LinkFailsafe_Hash
+	ld hl, wPlayerStatLevels
+	ld bc, NUM_LEVEL_STATS
+	call LinkFailsafe_Hash
+	ld a, [wPartyCount]
+	ld hl, wPartyMon1HP
+	jr .PartyHP
+
+.Enemy:
+	ld hl, wEnemyMonHP
+	ld bc, 2
+	call LinkFailsafe_Hash
+	ld hl, wEnemyMonStatus
+	ld bc, 1
+	call LinkFailsafe_Hash
+	ld hl, wEnemyStatLevels
+	ld bc, NUM_LEVEL_STATS
+	call LinkFailsafe_Hash
+	ld a, [wOTPartyCount]
+	ld hl, wOTPartyMon1HP
+	; fallthrough
+
+.PartyHP:
+; Add the 2-byte HP of each of the first a party structs at hl.
+	cp PARTY_LENGTH + 1
+	jr c, .hp_count_ok
+	ld a, PARTY_LENGTH
+.hp_count_ok
+	and a
+	ret z
+.hp_loop
+	push af
+	push hl
+	ld bc, 2
+	call LinkFailsafe_Hash
+	pop hl
+	ld bc, PARTYMON_STRUCT_LENGTH
+	add hl, bc
+	pop af
+	dec a
+	jr nz, .hp_loop
+	ret
+
+LinkFailsafe_ExchangeAction::
+; Swap this turn's action with the other game, along with a fingerprint of
+; the battle state. [wLinkBattleSentAction] is our action (0-15).
+;
+; Three fields go out in rotation, one byte per frame, each with its own tag:
+; the action, then the fingerprint's high and low nybbles. Each exchange uses
+; a different set of tags from the last (wLinkBattleExchangeTag alternates
+; between SERIAL_BATTLE and SERIAL_BATTLE_ODD), so stale bytes are ignored. A
+; field only counts once the same value arrives twice in a row, and can't be
+; overwritten after that, so one bad bit on the cable can't change it.
+;
+; Returns the other game's action in [wOtherPlayerLinkAction], and sets
+; [wLinkBattleDesynced] if the two games' battles no longer match.
+	call LinkFailsafe_BattleFingerprint
+	ld [wLinkBattleFingerprint], a
+	ld a, $ff
+	ld hl, wLinkExchangeCandidates
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld hl, wLinkExchangeReceived
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	xor a
+	ld [wLinkExchangePhase], a
+
+.waiting
+	call DelayFrame
+	call .Transfer
+	ld hl, wLinkExchangeReceived
+	ld b, 3
+.check
+	ld a, [hli]
+	inc a
+	jr z, .waiting
+	dec b
+	jr nz, .check
+
+	vc_hook Wireless_end_exchange
+	; keep sending so the other game can confirm all three too
+	vc_patch Wireless_net_delay_3
+if DEF(VIRTUAL_CONSOLE)
+	ld b, LINK_EXCHANGE_SEND_FRAMES_VC
+else
+	ld b, LINK_EXCHANGE_SEND_FRAMES
+endc
+	vc_patch_end
+.keep_sending
+	push bc
+	call DelayFrame
+	call .Transfer
+	pop bc
+	dec b
+	jr nz, .keep_sending
+
+	vc_hook Wireless_start_send_zero_bytes
+	vc_patch Wireless_net_delay_4
+if DEF(VIRTUAL_CONSOLE)
+	ld b, 26
+else
+	ld b, LINK_EXCHANGE_SEND_FRAMES / 2
+endc
+	vc_patch_end
+.acknowledge
+	call DelayFrame
+	call LinkDataReceived
+	dec b
+	jr nz, .acknowledge
+
+	ld a, [wLinkBattleExchangeTag]
+	xor SERIAL_BATTLE ^ SERIAL_BATTLE_ODD
+	ld [wLinkBattleExchangeTag], a
+
+	ld hl, wLinkExchangeReceived
+	ld a, [hli]
+	ld [wOtherPlayerLinkAction], a
+	ld a, [hli]
+	swap a
+	or [hl]
+	ld hl, wLinkBattleFingerprint
+	xor [hl]
+	ld [wLinkBattleDesynced], a ; nonzero if the fingerprints differ
+	ret
+
+.Transfer:
+; Send the next of our three fields, and take in whatever arrived.
+	ld a, [wLinkExchangePhase]
+	ld c, a
+	inc a
+	cp 3
+	jr c, .phase_ok
+	xor a
+.phase_ok
+	ld [wLinkExchangePhase], a
+	; tag = this exchange's tag + field * $20
+	ld a, c
+	swap a
+	add a
+	ld b, a
+	ld a, [wLinkBattleExchangeTag]
+	add b
+	ld b, a
+	ld a, c
+	and a
+	ld a, [wLinkBattleSentAction]
+	jr z, .send
+	ld a, [wLinkBattleFingerprint]
+	dec c
+	jr nz, .low_nybble
+	swap a
+.low_nybble
+	and $f
+.send
+	or b
+	ldh [hSerialSend], a
+	ldh a, [hSerialConnectionStatus]
+	cp USING_INTERNAL_CLOCK
+	jr nz, .receive
+	ld a, $1
+	ldh [rSC], a
+	ld a, SC_START | SC_INTERNAL
+	ldh [rSC], a
+
+.receive
+	ldh a, [hSerialReceive]
+	ld c, a
+	and $f0
+	ld b, a
+	ld a, [wLinkBattleExchangeTag]
+	ld e, a
+	ld a, b
+	sub e
+	ret c
+	ld d, 0
+	and a
+	jr z, .got_field
+	inc d
+	cp $20
+	jr z, .got_field
+	inc d
+	cp $40
+	ret nz
+.got_field
+	xor a
+	ldh [hSerialReceive], a
+	ld a, c
+	and $f
+	ld c, a
+	; already confirmed: never overwritten
+	ld hl, wLinkExchangeReceived
+	ld a, l
+	add d
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld a, [hl]
+	inc a
+	ret nz
+	push hl
+	ld hl, wLinkExchangeCandidates
+	ld a, l
+	add d
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld a, [hl]
+	ld [hl], c
+	pop hl
+	cp c
+	ret nz
+	ld [hl], c
+	ret

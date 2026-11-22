@@ -1519,3 +1519,9 @@ wLinkSentPartyHash:: dw
 wLinkSetupFailed:: db
 wLinkCheckSend:: ds LINK_CHECK_LENGTH
 wLinkCheckRecv:: ds LINK_CHECK_LENGTH
+; Per-turn action exchange (LinkFailsafe_ExchangeAction).
+wLinkBattleFingerprint:: db
+wLinkBattleDesynced:: db
+wLinkExchangePhase:: db
+wLinkExchangeCandidates:: ds 3
+wLinkExchangeReceived:: ds 3

@@ -95,6 +95,7 @@ class Side:
         self.noisy = False
         self.noise_setup = noise_setup
         self.setup_errors = 0
+        self.desync_at = 0
         # record the battle every time the game starts an action exchange
         # (each turn, and when a fainted Pokemon is replaced): both games
         # make the same exchanges, so these records line up exactly
@@ -155,6 +156,12 @@ class Side:
 
     def _on_exchange(self, _):
         self.exchanges.append(self.snapshot())
+        if self.desync_at and len(self.exchanges) == self.desync_at:
+            # knock one HP off our active Pokemon, a split that no byte on
+            # the cable explains: the per-turn fingerprint must catch it
+            a = self.sym['wBattleMonHP'][1] + 1
+            self.mem[a] = (self.mem[a] - 1) & 0xff
+            self.say(f'    (test) changed our HP at exchange {self.desync_at}')
 
     def snapshot(self):
         return {'clock': self.rd('hSerialConnectionStatus'),
@@ -196,7 +203,17 @@ class Side:
             if text and text != last_text:
                 self.say('  ' + text)
                 last_text = text
-                if 'Link error' in text:
+                setup_error = 'battle data' in text
+                if setup_error and 'wLinkCheckSend' in self.sym:
+                    n = 26
+                    snd = bytes(self.rd('wLinkCheckSend', k) for k in range(n)).hex(' ')
+                    rcv = bytes(self.rd('wLinkCheckRecv', k) for k in range(n)).hex(' ')
+                    self.say(f'    sent hash {self.rd("wLinkSentPartyHash"):02x}{self.rd("wLinkSentPartyHash", 1):02x}'
+                             f' send [{snd}] recv [{rcv}] failed {self.rd("wLinkSetupFailed")}')
+                if 'out of' in text and 'sync' in text:
+                    self.say('*** the games stopped the battle: out of sync')
+                    return 'stopped: out of sync'
+                if setup_error:
                     self.setup_errors += 1
                     seated = False        # back in the Colosseum: sit down again
             in_battle = self.rd('wBattleMode') != 0
@@ -285,9 +302,11 @@ class Side:
         self.press('a', 60)
 
 
-def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup):
+def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
+           desync_at=0):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
+        s.desync_at = desync_at
         result = s.run(turns, time.time() + seconds)
         cable.mm[127] = 1
         q.put((name, f'{result} ({s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
@@ -321,6 +340,8 @@ def main():
     ap.add_argument('--turns', type=int, default=30)
     ap.add_argument('--seconds', type=int, default=900)
     ap.add_argument('--corrupt', type=int, default=0)
+    ap.add_argument('--desync-at', type=int, default=0,
+                    help="change side B's HP at this action exchange, to test desync detection")
     ap.add_argument('--noise-setup', action='store_true',
                     help='start the noise on entering the Colosseum, before the parties are swapped')
     ap.add_argument('--seed', type=int, default=1)
@@ -336,7 +357,8 @@ def main():
             ('B', args.save_b, args.rom_b or args.rom, args.corrupt))):
         p = mp.Process(target=worker, args=(name, rom, sav, rom[:-4] + '.sym', cable, slot,
                                             args.out, args.turns, args.seconds, corrupt,
-                                            args.seed + slot, q, args.noise_setup))
+                                            args.seed + slot, q, args.noise_setup,
+                                            args.desync_at if slot else 0))
         p.start()
         ctx_procs.append(p)
     res = {}

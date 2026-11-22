@@ -39,9 +39,17 @@ DEF SERIAL_RNS_LENGTH         EQU 10
 
 ; Link Edition: the check both games make before a link battle starts
 ; (engine/link/link_failsafe.asm): three 2-byte fingerprints, sent as nybbles
-DEF LINK_CHECK_LENGTH EQU SERIAL_PREAMBLE_LENGTH + 3 * 2 * 2
+; plus room for extra preamble bytes: while waiting to sync, each game keeps
+; resending its first preamble byte, so more of them can arrive
+DEF LINK_CHECK_SLACK  EQU 8
+DEF LINK_CHECK_LENGTH EQU SERIAL_PREAMBLE_LENGTH + 3 * 2 * 2 + LINK_CHECK_SLACK
+DEF LINK_VERDICT_LENGTH EQU SERIAL_PREAMBLE_LENGTH + 2 + LINK_CHECK_SLACK
 DEF LINK_CHECK_OK     EQU $1a
 DEF LINK_CHECK_BAD    EQU $15
+; frames to keep sending a confirmed action exchange, so the other game can
+; confirm all three fields too (LinkFailsafe_ExchangeAction)
+DEF LINK_EXCHANGE_SEND_FRAMES EQU 30
+DEF LINK_EXCHANGE_SEND_FRAMES_VC EQU 78 ; Virtual Console's wireless link is slower
 
 DEF SERIAL_MAIL_PREAMBLE_BYTE    EQU $20
 DEF SERIAL_MAIL_REPLACEMENT_BYTE EQU $21

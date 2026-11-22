@@ -33,6 +33,36 @@ Linking up used to need both players to be almost perfectly in sync. Now:
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
 
+### Link battles that can't silently desync
+
+In a link battle each Game Boy works out every turn itself; the two only swap
+the players' choices, and nothing ever checked that they still agreed. One bad
+byte on the cable, or two different builds, and the battle split without
+either player knowing. Now:
+
+- **Same-build check.** The battle desk compares the two ROMs and refuses to
+  start a battle between different builds ("Your games are not the same
+  build"), so everyone has to flash the same file.
+- **Checked team swap.** Before the battle, both games fingerprint the parties
+  and random numbers they sent and received and compare them. If anything
+  arrived scrambled, both show "Link error" and you sit down again to retry,
+  instead of starting a battle that's already broken.
+- **Confirmed moves.** Each turn's choice only counts once the same byte has
+  arrived twice in a row, each exchange is tagged so a late byte can't be
+  mistaken for the next turn's, and nothing can overwrite a confirmed choice.
+- **Per-turn fingerprint.** Every turn the games also swap a fingerprint of
+  the battle (HP, status, stat changes, the random number position). If the
+  two ever disagree, both stop with "the battle went out of sync" and reset.
+  The desk saves before every link battle and a link battle never changes your
+  team, so nothing is lost: just start the battle again.
+
+`utils/linktest/` plays link battles between two emulated Game Boys on a
+virtual cable, with optional line noise, to test all of this.
+
+A save made inside a room whose scripts moved in a newer build (the Pokémon
+Center 2F link room, after this update) used to crash when you talked to
+someone there; continuing a save now takes the room's scripts from the ROM.
+
 **Both players need the same build.** This is Link Edition 1.0, link version 1. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync. A later release that changes battles will raise the link version, and everyone will need to update together.
 
 ### Smarter trainer AI
