@@ -1581,18 +1581,16 @@ MeowthPlainFrames:   INCLUDE "gfx/pokemon/meowth_plain/frames.asm"
 
 SECTION "PersianPlain Pics", ROMX
 PersianPlainFrontpic: INCBIN "gfx/pokemon/persian_plain/front.animated.2bpp.lzp"
+PersianAlolanBackpic:: ; same as PersianPlainBackpic
 PersianPlainBackpic:  INCBIN "gfx/pokemon/persian_plain/back.2bpp.lzp"
 PersianPlainFrames:   INCLUDE "gfx/pokemon/persian_plain/frames.asm"
+PersianAlolanFrontpic: INCBIN "gfx/pokemon/persian_alolan/front.animated.2bpp.lzp"
+PersianAlolanFrames:   INCLUDE "gfx/pokemon/persian_alolan/frames.asm"
 
 SECTION "MeowthAlolan Pics", ROMX
 MeowthAlolanFrontpic: INCBIN "gfx/pokemon/meowth_alolan/front.animated.2bpp.lzp"
 MeowthAlolanBackpic:  INCBIN "gfx/pokemon/meowth_alolan/back.2bpp.lzp"
 MeowthAlolanFrames:   INCLUDE "gfx/pokemon/meowth_alolan/frames.asm"
-
-SECTION "PersianAlolan Pics", ROMX
-PersianAlolanFrontpic: INCBIN "gfx/pokemon/persian_alolan/front.animated.2bpp.lzp"
-PersianAlolanBackpic:  INCBIN "gfx/pokemon/persian_alolan/back.2bpp.lzp"
-PersianAlolanFrames:   INCLUDE "gfx/pokemon/persian_alolan/frames.asm"
 
 SECTION "MeowthGalarian Pics", ROMX
 MeowthGalarianFrontpic: INCBIN "gfx/pokemon/meowth_galarian/front.animated.2bpp.lzp"
@@ -1611,8 +1609,11 @@ GeodudePlainFrames:   INCLUDE "gfx/pokemon/geodude_plain/frames.asm"
 
 SECTION "GravelerPlain Pics", ROMX
 GravelerPlainFrontpic: INCBIN "gfx/pokemon/graveler_plain/front.animated.2bpp.lzp"
+GravelerAlolanBackpic:: ; same as GravelerPlainBackpic
 GravelerPlainBackpic:  INCBIN "gfx/pokemon/graveler_plain/back.2bpp.lzp"
 GravelerPlainFrames:   INCLUDE "gfx/pokemon/graveler_plain/frames.asm"
+GravelerAlolanFrontpic: INCBIN "gfx/pokemon/graveler_alolan/front.animated.2bpp.lzp"
+GravelerAlolanFrames:   INCLUDE "gfx/pokemon/graveler_alolan/frames.asm"
 
 SECTION "GolemPlain Pics", ROMX
 GolemPlainFrontpic: INCBIN "gfx/pokemon/golem_plain/front.animated.2bpp.lzp"
@@ -1623,11 +1624,6 @@ SECTION "GeodudeAlolan Pics", ROMX
 GeodudeAlolanFrontpic: INCBIN "gfx/pokemon/geodude_alolan/front.animated.2bpp.lzp"
 GeodudeAlolanBackpic:  INCBIN "gfx/pokemon/geodude_alolan/back.2bpp.lzp"
 GeodudeAlolanFrames:   INCLUDE "gfx/pokemon/geodude_alolan/frames.asm"
-
-SECTION "GravelerAlolan Pics", ROMX
-GravelerAlolanFrontpic: INCBIN "gfx/pokemon/graveler_alolan/front.animated.2bpp.lzp"
-GravelerAlolanBackpic:  INCBIN "gfx/pokemon/graveler_alolan/back.2bpp.lzp"
-GravelerAlolanFrames:   INCLUDE "gfx/pokemon/graveler_alolan/frames.asm"
 
 SECTION "GolemAlolan Pics", ROMX
 GolemAlolanFrontpic: INCBIN "gfx/pokemon/golem_alolan/front.animated.2bpp.lzp"

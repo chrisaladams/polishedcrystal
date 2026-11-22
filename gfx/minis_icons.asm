@@ -449,8 +449,11 @@ GrimerIcon::     INCBIN "gfx/icons/grimer.2bpp.lzp"
 
 SECTION "Muk Mini Icon", ROMX
 MukMini::     INCBIN "gfx/minis/muk.2bpp.lzp"
+MukAlolanMiniMask:: ; same as MukMiniMask
 MukMiniMask:: INCBIN "gfx/minis/muk_mask.1bpp.lzp"
 MukIcon::     INCBIN "gfx/icons/muk.2bpp.lzp"
+MukAlolanMini::     INCBIN "gfx/minis/muk_alolan.2bpp.lzp"
+MukAlolanIcon::     INCBIN "gfx/icons/muk_alolan.2bpp.lzp"
 
 SECTION "Shellder Mini Icon", ROMX
 ShellderMini::     INCBIN "gfx/minis/shellder.2bpp.lzp"
@@ -504,13 +507,19 @@ KinglerIcon::     INCBIN "gfx/icons/kingler.2bpp.lzp"
 
 SECTION "Voltorb Mini Icon", ROMX
 VoltorbMini::     INCBIN "gfx/minis/voltorb.2bpp.lzp"
+VoltorbHisuianMiniMask:: ; same as VoltorbMiniMask
 VoltorbMiniMask:: INCBIN "gfx/minis/voltorb_mask.1bpp.lzp"
 VoltorbIcon::     INCBIN "gfx/icons/voltorb.2bpp.lzp"
+VoltorbHisuianMini::     INCBIN "gfx/minis/voltorb_hisuian.2bpp.lzp"
+VoltorbHisuianIcon::     INCBIN "gfx/icons/voltorb_hisuian.2bpp.lzp"
 
 SECTION "Electrode Mini Icon", ROMX
 ElectrodeMini::     INCBIN "gfx/minis/electrode.2bpp.lzp"
+ElectrodeHisuianMiniMask:: ; same as ElectrodeMiniMask
 ElectrodeMiniMask:: INCBIN "gfx/minis/electrode_mask.1bpp.lzp"
 ElectrodeIcon::     INCBIN "gfx/icons/electrode.2bpp.lzp"
+ElectrodeHisuianMini::     INCBIN "gfx/minis/electrode_hisuian.2bpp.lzp"
+ElectrodeHisuianIcon::     INCBIN "gfx/icons/electrode_hisuian.2bpp.lzp"
 
 SECTION "Exeggcute Mini Icon", ROMX
 ExeggcuteMini::     INCBIN "gfx/minis/exeggcute.2bpp.lzp"
@@ -1677,11 +1686,6 @@ GrimerAlolanMini::     INCBIN "gfx/minis/grimer_alolan.2bpp.lzp"
 GrimerAlolanMiniMask:: INCBIN "gfx/minis/grimer_alolan_mask.1bpp.lzp"
 GrimerAlolanIcon::     INCBIN "gfx/icons/grimer_alolan.2bpp.lzp"
 
-SECTION "MukAlolan Mini Icon", ROMX
-MukAlolanMini::     INCBIN "gfx/minis/muk_alolan.2bpp.lzp"
-MukAlolanMiniMask:: INCBIN "gfx/minis/muk_alolan_mask.1bpp.lzp"
-MukAlolanIcon::     INCBIN "gfx/icons/muk_alolan.2bpp.lzp"
-
 SECTION "ExeggutorAlolan Mini Icon", ROMX
 ExeggutorAlolanMini::     INCBIN "gfx/minis/exeggutor_alolan.2bpp.lzp"
 ExeggutorAlolanMiniMask:: INCBIN "gfx/minis/exeggutor_alolan_mask.1bpp.lzp"
@@ -1766,16 +1770,6 @@ SECTION "ArcanineHisuian Mini Icon", ROMX
 ArcanineHisuianMini::     INCBIN "gfx/minis/arcanine_hisuian.2bpp.lzp"
 ArcanineHisuianMiniMask:: INCBIN "gfx/minis/arcanine_hisuian_mask.1bpp.lzp"
 ArcanineHisuianIcon::     INCBIN "gfx/icons/arcanine_hisuian.2bpp.lzp"
-
-SECTION "VoltorbHisuian Mini Icon", ROMX
-VoltorbHisuianMini::     INCBIN "gfx/minis/voltorb_hisuian.2bpp.lzp"
-VoltorbHisuianMiniMask:: INCBIN "gfx/minis/voltorb_hisuian_mask.1bpp.lzp"
-VoltorbHisuianIcon::     INCBIN "gfx/icons/voltorb_hisuian.2bpp.lzp"
-
-SECTION "ElectrodeHisuian Mini Icon", ROMX
-ElectrodeHisuianMini::     INCBIN "gfx/minis/electrode_hisuian.2bpp.lzp"
-ElectrodeHisuianMiniMask:: INCBIN "gfx/minis/electrode_hisuian_mask.1bpp.lzp"
-ElectrodeHisuianIcon::     INCBIN "gfx/icons/electrode_hisuian.2bpp.lzp"
 
 SECTION "TyphlosionHisuian Mini Icon", ROMX
 TyphlosionHisuianMini::     INCBIN "gfx/minis/typhlosion_hisuian.2bpp.lzp"
