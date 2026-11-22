@@ -12,8 +12,12 @@ a random team, the battle is played with the current set and with the
 candidate on the same teams and the same battle seed, and the win rates are
 compared pairwise, so team luck and battle luck cancel out. Every candidate in
 a round is screened on the same contexts; the best one must then win again on
-a fresh, larger sample (and by more than 2 standard errors) to be accepted, so
-picking the luckiest of many candidates doesn't fool it.
+a fresh, larger sample (and by more than 2.5 standard errors) to be accepted,
+so picking the luckiest of many candidates doesn't fool it. To save time,
+screening is done in two stages (every candidate on a third of the contexts,
+then the best few on all), and confirmation stops early once a candidate
+clearly can't pass, or clearly passes (by 3 standard errors, after at least
+200 contexts).
 
 Writes data/best_sets.json; archetypes.build_pool_builds applies it, so the
 meta test uses the optimised sets.
@@ -123,6 +127,35 @@ def evaluate(pool, key, base, cands, n, seed, workers):
     return [_stats(d) for d in out]
 
 
+SCREEN_KEEP = 4        # candidates kept after the first screening stage
+CONFIRM_CHUNK = 100    # contexts per confirmation chunk
+CONFIRM_MIN = 200      # contexts before a change can be accepted
+
+
+def confirm(pool, key, base, cand, args, seed):
+    """Confirm a candidate on fresh contexts, in chunks: stop as soon as it
+    clearly can't pass (its mean plus 2.5 standard errors is no better than
+    the base), or once it clearly passes after at least CONFIRM_MIN contexts
+    (by 3 standard errors before the full args.confirm, to allow for having
+    looked early). Returns the mean and standard error of what was played."""
+    diffs = []
+    chunk = 0
+    while len(diffs) < args.confirm:
+        n = min(CONFIRM_CHUNK, args.confirm - len(diffs))
+        per = max(1, n // args.workers)
+        jobs = [(key, base, [cand], seed * 1000 + chunk * args.workers + j, per)
+                for j in range(args.workers)]
+        for d in pool.map(_eval_job, jobs):
+            diffs.extend(d[0])
+        chunk += 1
+        m, se = _stats(diffs)
+        if m + 2.5 * se <= 0.01:
+            break                                   # can't pass
+        if len(diffs) >= CONFIRM_MIN and len(diffs) < args.confirm and m > 3 * se and m > 0.01:
+            break                                   # clearly passes
+    return _stats(diffs)
+
+
 def candidates(b, moves):
     """The options for each dimension, from what the mon can use."""
     mon = b.mon
@@ -166,14 +199,21 @@ def optimise_build(pool, b, moves, args, log):
         if not cands:
             return
         seed += 1
+        # screen in two stages: every candidate on a third of the contexts,
+        # then only the best few on all of them
+        if len(cands) > SCREEN_KEEP:
+            first = evaluate(pool, b.key, cur, [{**cur, dim: o} for o in cands],
+                             max(args.workers, args.screen // 3), seed, args.workers)
+            order = sorted(range(len(cands)), key=lambda i: -first[i][0])
+            cands = [cands[i] for i in order[:SCREEN_KEEP]]
+            seed += 1
         screened = evaluate(pool, b.key, cur, [{**cur, dim: o} for o in cands],
                             args.screen, seed, args.workers)
         best_i = max(range(len(cands)), key=lambda i: screened[i][0])
         if screened[best_i][0] <= 0:
             return
         seed += 1
-        (m, se), = evaluate(pool, b.key, cur, [{**cur, dim: cands[best_i]}],
-                            args.confirm, seed + 50000, args.workers)
+        m, se = confirm(pool, b.key, cur, {**cur, dim: cands[best_i]}, args, seed + 50000)
         if m > 2.5 * se and m > 0.01:
             base = {**cur, dim: cands[best_i]}
             log(f'    {dim}: {getattr(b, dim) if dim not in cur else cur[dim]} -> '
@@ -204,6 +244,7 @@ def main():
     ap.add_argument('--workers', type=int, default=os.cpu_count() or 2)
     ap.add_argument('--only', default='', help='comma-separated mon ids')
     ap.add_argument('--resume', action='store_true', help='skip builds already in the output')
+    ap.add_argument('--out', default=OUT, help='where to write the sets (default: data/best_sets.json)')
     ap.add_argument('--include-legendary', action='store_true')
     ap.add_argument('--include-unevolved', action='store_true')
     args = ap.parse_args()
@@ -215,7 +256,8 @@ def main():
     MT._init(margs)
     moves = MT._G['moves']
     builds = [b for b in MT._G['builds'] if not args.only or b.mid in args.only.split(',')]
-    best = json.load(open(OUT)) if os.path.exists(OUT) and (args.only or args.resume) else {}
+    out = args.out
+    best = json.load(open(out)) if os.path.exists(out) and (args.only or args.resume) else {}
     if args.resume:
         builds = [b for b in builds if b.key not in best]
     t0 = time.time()
@@ -230,8 +272,8 @@ def main():
                   f'{"unchanged" if not change else "improved"}', flush=True)
             for ln in lines:
                 print(ln, flush=True)
-            json.dump(best, open(OUT, 'w'), indent=1)
-    print(f'wrote {OUT} ({len(best)} builds) in {time.time() - t0:.0f}s')
+            json.dump(best, open(out, 'w'), indent=1)
+    print(f'wrote {out} ({len(best)} builds) in {time.time() - t0:.0f}s')
 
 
 if __name__ == '__main__':
