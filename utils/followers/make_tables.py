@@ -31,6 +31,9 @@ SHARE = {
     'QwilfishHisuian': 'Qwilfish', 'SneaselHisuian': 'Sneasel', 'WooperPaldean': 'Wooper',
     'TaurosPaldean': 'Tauros', 'TaurosPaldeanFire': 'Tauros', 'TaurosPaldeanWater': 'Tauros',
     'UrsalunaBloodmoon': 'Ursaluna',
+    # shaped like a relative: its sprite in their own colours
+    'Sneasler': 'Sneasel', 'Farigiraf': 'Girafarig', 'Clodsire': 'Quagsire',
+    'ExeggutorAlolan': 'Exeggutor', 'ZapdosGalarian': 'Zapdos',
 }
 SECTION = re.compile(r'SECTION "(\w+) Mini Icon", ROMX\n(.*?)(?=\n\n|\nSECTION|\Z)', re.S)
 
@@ -81,12 +84,12 @@ ENDM
 MiniIconPointers:''', 1)
 
     def entry(m):
-        label = m.group(2)
+        label = m.group(3)
         target = SHARE.get(label, label)
         if target in walking:
             return f'{m.group(1)}walking_mon {target}'
         return m.group(0)
-    ptrs = re.sub(r'^(\s*)mini_icon (\w+)', entry, ptrs, flags=re.M)
+    ptrs = re.sub(r'^(\s*)(mini_icon|walking_mon) (\w+)', entry, ptrs, flags=re.M)
     open(POINTERS, 'w').write(ptrs)
 
     # the walking sprites

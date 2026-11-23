@@ -296,11 +296,11 @@ MiniIconPointers:
 	walking_mon Wyrdeer
 	walking_mon Kleavor
 	walking_mon Ursaluna
-	walking_mon Sneasler
+	walking_mon Sneasel
 	walking_mon Overqwil
 	walking_mon DudunsparceTwoSegment
-	walking_mon Farigiraf
-	walking_mon Clodsire
+	walking_mon Girafarig
+	walking_mon Quagsire
 	walking_mon Annihilape
 	assert_table_length NUM_SPECIES
 
@@ -374,7 +374,7 @@ endr
 	walking_mon GolemAlolan
 	walking_mon GrimerAlolan
 	walking_mon MukAlolan
-	walking_mon ExeggutorAlolan
+	walking_mon Exeggutor
 	walking_mon MarowakAlolan
 
 	walking_mon MeowthGalarian
@@ -386,7 +386,7 @@ endr
 	walking_mon WeezingGalarian
 	walking_mon MrMimeGalarian
 	walking_mon Articuno
-	walking_mon ZapdosGalarian
+	walking_mon Zapdos
 	walking_mon Moltres
 	walking_mon SlowkingGalarian
 	walking_mon CorsolaGalarian
