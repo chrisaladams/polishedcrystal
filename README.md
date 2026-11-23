@@ -138,7 +138,9 @@ Battle Tower and Battle Factory prize shops are unchanged.
   legendaries, lead abilities, music and Cleanse Tag, and the same 1 in 4,096
   shiny chance (3 with the Shiny Charm). Two are there when you arrive, and
   each step brings another, while there's room, with the map's usual
-  encounter chance. One that wanders off screen is gone, making room for
+  encounter chance. A roaming legendary on your map comes just as often as
+  it did: if every slot is full, it takes the place of the wild Pokémon
+  furthest from you. One that wanders off screen is gone, making room for
   another. While a Repel works, the ones it would have kept away run from
   you, and run off if you walk into them. The Bug-Catching Contest's bugs work
   the same way. Fishing, Headbutt, Rock Smash and Sweet Honey are unchanged,

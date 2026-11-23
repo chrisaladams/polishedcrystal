@@ -309,7 +309,33 @@ TrySpawnWildMon:
 	ld a, c
 	cp NUM_WILD_MONS
 	jr c, .find_slot
-	ret
+	; all out: a roaming legendary on this map still comes as often as it
+	; would in a random battle, in place of the one furthest from you
+	ld a, [wWildMonSpawnMode]
+	and a
+	ret nz
+	farcall TryRoamerSpawn
+	ret nz
+	call IsSameRoamerOut
+	ret z
+	call FurthestOrdinaryWildMon ; a = which, or carry if none
+	ret c
+	ld [wWildMonSpawnSlot], a
+	; (roaming legendaries are only met on land)
+	ld a, [wEnvironment]
+	cp FIRST_DIGGABLE_ENV
+	ld a, HABITAT_FLOOR
+	jr nc, .roamer_habitat
+	ld a, HABITAT_GRASS
+.roamer_habitat
+	ld [wWildMonSpawnHabitat], a
+	call FindWildMonSpot
+	ret nc
+	push de
+	ld a, [wWildMonSpawnSlot]
+	call RemoveWildMon
+	pop de
+	jr .place
 
 .got_slot
 	ld a, c
@@ -356,22 +382,8 @@ TrySpawnWildMon:
 	ret z
 
 	; at most one of each roaming legendary
-	ld a, [wBattleType]
-	cp BATTLETYPE_ROAMING
-	jr nz, .not_roaming
-	ld a, [wTempWildMonSpecies]
-	ld b, a
-	ld hl, wWildMons
-	ld de, WILDMON_LENGTH
-	ld c, NUM_WILD_MONS
-.roamer_loop
-	ld a, [hl]
-	cp b
+	call IsSameRoamerOut
 	ret z
-	add hl, de
-	dec c
-	jr nz, .roamer_loop
-.not_roaming
 
 	; where it lives, and a free spot for it there
 	call GetPlayerStandingTile
@@ -398,6 +410,7 @@ TrySpawnWildMon:
 .found_spot
 	xor a
 	ld [wWildMonSpawnPending], a
+.place
 
 	; what it is
 	push de
@@ -468,6 +481,92 @@ TrySpawnWildMon:
 	; no free object struct
 	ld a, [wWildMonSpawnSlot]
 	jmp RemoveWildMon
+
+IsSameRoamerOut:
+; Return z if the chosen Pokemon is a roaming legendary that's already out.
+	ld a, [wBattleType]
+	cp BATTLETYPE_ROAMING
+	jr nz, .no
+	ld a, [wTempWildMonSpecies]
+	ld b, a
+	ld hl, wWildMons
+	ld de, WILDMON_LENGTH
+	ld c, NUM_WILD_MONS
+.loop
+	ld a, [hl]
+	cp b
+	ret z
+	add hl, de
+	dec c
+	jr nz, .loop
+.no
+	or 1
+	ret
+
+FurthestOrdinaryWildMon:
+; a = the wild Pokemon furthest from the player that isn't a roaming
+; legendary (to make room for one), or carry if there's none.
+	ld a, -1
+	ld [wWildMonSpawnSlot], a
+	ld e, 0 ; furthest so far
+	xor a
+.loop
+	push af
+	call GetWildMonSlot
+	ld a, [hl]
+	and a
+	jr z, .next
+	ld bc, WILDMON_BATTLETYPE
+	add hl, bc
+	ld a, [hl]
+	cp BATTLETYPE_ROAMING
+	jr z, .next
+	pop af
+	push af
+	add FIRST_WILD_OBJECT
+	call GetMapObject
+	ld hl, MAPOBJECT_OBJECT_STRUCT_ID
+	add hl, bc
+	ld a, [hl]
+	cp NUM_OBJECT_STRUCTS
+	jr nc, .next
+	call GetObjectStruct
+	; distance = |dx| + |dy|
+	ld hl, OBJECT_MAP_X
+	add hl, bc
+	ld a, [wPlayerMapX]
+	sub [hl]
+	jr nc, .x_ok
+	cpl
+	inc a
+.x_ok
+	ld d, a
+	ld hl, OBJECT_MAP_Y
+	add hl, bc
+	ld a, [wPlayerMapY]
+	sub [hl]
+	jr nc, .y_ok
+	cpl
+	inc a
+.y_ok
+	add d
+	cp e
+	jr c, .next
+	ld e, a
+	pop af
+	push af
+	ld [wWildMonSpawnSlot], a
+.next
+	pop af
+	inc a
+	cp NUM_WILD_MONS
+	jr c, .loop
+	ld a, [wWildMonSpawnSlot]
+	cp -1
+	scf
+	ret z
+	and a
+	ret
 
 ChooseWildMon:
 ; Choose a wild Pokemon as a random encounter would be (if a is nonzero,

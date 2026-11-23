@@ -11,6 +11,8 @@ In the emulator (PyBoy), from a save:
 - walking into one starts a battle with that Pokemon (species, level, and
   shininess), and afterwards it's gone and the others stay; so does facing one
   and pressing A;
+- a roaming legendary on the map still comes when every slot is full (in
+  place of the one furthest away), never twice, and battles as one;
 - with a Repel, a weaker one runs from you and runs off if you walk into it,
   and a stronger one still battles;
 - saving with some out, then Continue, leaves no stale ones;
@@ -139,7 +141,8 @@ def main():
               'OBJECT_LAST_TILE', 'OBJECT_PALETTE', 'OBJECT_SPRITE_TILE', 'PLAYER_SURF',
               'COLL_WATER', 'COLL_TALL_GRASS', 'COLL_LONG_GRASS', 'COLL_FLOOR', 'HABITAT_GRASS',
               'HABITAT_FLOOR', 'HABITAT_WATER', 'EXTSPECIES_MASK', 'SHINY_MASK',
-              'BATTLETYPE_ROAMING', 'STATUSFLAGS2_BUG_CONTEST_TIMER_F']
+              'BATTLETYPE_ROAMING', 'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'OBJECT_FLAGS1',
+              'OBJECT_FLAGS2', 'NUM_OBJECTS']
     K = rgbasm_values(names, None)
     by_value = {K[n]: n for n in species_names}
     save = open(args.save, 'rb').read()
@@ -348,6 +351,49 @@ def main():
     g.press('a', 2, 4)
     if not wait_battle(300) or g.rd('wTempWildMonSpecies') != x['sp']:
         fails.append(('pressed A facing one', 'no battle with it'))
+
+    # 3b. roaming legendaries: all three on Route 29, every slot kept full
+    g.load(route29)
+    roam_len = g.addr('wRoamMon2') - g.addr('wRoamMon1')
+    roamers = {K[n]: n for n in ('RAIKOU', 'ENTEI', 'SUICUNE')}
+    for i, sp in enumerate(roamers):
+        for k, v in ((0, sp), (1, 40), (2, K['GROUP_ROUTE_29']), (3, K['MAP_ROUTE_29'])):
+            g.wr('wRoamMon1', v, i * roam_len + k)
+    roamer = None
+    # (wild Pokemon also leave, freeing a slot: watch the way in for when all
+    # are out, where one makes room)
+    made_room = []
+    rb, ra = sym['TrySpawnWildMon.roamer_habitat']
+    g.pb.hook_register(rb, ra, lambda _: made_room.append(1), None)
+    for i in range(400):
+        for j in range(K['NUM_OBJECT_STRUCTS']):  # hide the people, so all 4 come out
+            b = g.addr('wObjectStructs') + j * K['OBJECT_LENGTH']
+            if 1 <= g.m[1, b + K['OBJECT_MAP_OBJECT_INDEX']] < K['NUM_OBJECTS'] - 1:
+                g.m[1, b + K['OBJECT_FLAGS1']] |= 1
+        full = len(wild()) == K['NUM_WILD_MONS']
+        g.wr('wGrassEncounterRate', 255)
+        g.press(['up', 'up', 'down', 'down'][i % 4], 6, 16)
+        out = wild()
+        names = [x['name'] for x in out if x['battletype'] == K['BATTLETYPE_ROAMING']]
+        if len(names) != len(set(names)):
+            fails.append(('roaming legendaries', f'one is out twice: {names}'))
+            break
+        if names and full and made_room and roamer is None:
+            roamer = [x for x in out if x['battletype'] == K['BATTLETYPE_ROAMING']][0]
+            break
+        made_room.clear()
+    g.pb.hook_deregister(rb, ra)
+    if roamer is None:
+        fails.append(('roaming legendaries', 'none came while every slot was full'))
+    else:
+        put_next_to_player(roamer['slot'], 0, -1)
+        g.press('up', 2, 8)
+        put_next_to_player(roamer['slot'], 0, -1)
+        g.press('up', 2, 8)
+        if not wait_battle():
+            fails.append(('roaming legendaries', f'walking into {roamer["name"]} started no battle'))
+        elif (g.rd('wBattleType'), g.rd('wTempWildMonSpecies')) != (K['BATTLETYPE_ROAMING'], roamer['sp']):
+            fails.append(('roaming legendaries', f'{roamer["name"]} did not battle as a roaming legendary'))
 
     # 4. Repel
     g.load(route29)

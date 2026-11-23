@@ -190,6 +190,24 @@ TryWildSpawn:
 	inc a
 	ret
 
+TryRoamerSpawn:
+; Link Edition: when every wild Pokemon you can see is already out, a roaming
+; legendary on this map still comes as often as it would in a random battle:
+; return z with it in wTempWildMonSpecies, wWildMonForm, wCurPartyLevel and
+; wBattleType (BATTLETYPE_ROAMING).
+	call TryWildEncounter.EncounterRate
+	jr nc, .no
+	call CheckEncounterRoamMon
+	jr nc, .no
+	xor a
+	ret
+
+.no
+	xor a ; BATTLETYPE_NORMAL
+	ld [wBattleType], a
+	inc a
+	ret
+
 MapHasWildMons:
 ; Link Edition: carry if this map has wild Pokemon in the grass or water.
 	call _GrassWildmonLookup
