@@ -60,6 +60,7 @@ Pokémon Polished Crystal would never have been finished without the help of man
 * Blue Emerald, solo993, Chamber, Lake, Neslug, and Pikachu25 for many sprites and icons.
 * ShockSlayer and the Pokémon Crystal Clear team, vulcandth, and FrenchOrange and LJSTAR (Unown) for the walking sprites of following Pokémon, taken from gcox32's pokecrystal following-Pokémon hack.
 * Megaman-Omega, Sadfish, Internet_Goblin, betsybugaboo, LuxBeacon, Invader, SkwovetSquire, Shaqtothefuture, and the other artists credited in SheerSt's PokéWilds for the walking sprites of later Pokémon and regional forms, taken from PokéWilds.
+* The pokeemerald-expansion team and its sprite artists, whose follower sprites were the reference for the back and side views of the newest Pokémon's walking sprites.
 * ShadowOne333, Mia, and Quichless for Paldean Pokémon sprites and animations.
 * metalflygon08 for many Pokémon and trainer sprites.
 * JaceDeane for the Goldenrod Museum paintings, many Pokémon and trainer sprites, many overworld tiles, Prof. Ivy's overworld sprite, and map name sign borders.

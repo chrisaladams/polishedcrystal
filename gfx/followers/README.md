@@ -52,9 +52,11 @@ sprites by `draw.py`): Overqwil, Galarian Meowth and Unown ! and ? edited from
 Qwilfish, Meowth and the Unown letters; and Perrserker, Wyrdeer, Sneasler,
 Farigiraf, Clodsire, Annihilape, both Dudunsparce, Alolan Sandslash, Golem and
 Exeggutor, and Galarian Slowbro, Slowking, Weezing and Zapdos, whose front
-view is the game's own mini of them and whose back and side come from a
-relative (Galarian Meowth, Stantler, Sneasel, Girafarig, Quagsire, Primeape,
-Dunsparce, Sandslash, Golem, Exeggutor, Slowbro, Slowking, Weezing, Zapdos).
+view is the game's own mini of them and whose back and side views were drawn
+at 16×16 from their follower sprites in
+[pokeemerald-expansion](https://github.com/rh-hideout/pokeemerald-expansion)
+(`graphics/pokemon/*/overworld.png`, 32×32 GBA art): shrunk, outlined and
+reshaded, with Dudunsparce's stripes and Exeggutor's trunk touched up by hand.
 They're first drafts: adjust a grid and run `draw.py` and `make_tables.py`.
 
 43 more (most Gen 4 evolutions, Sylveon, Cursola, Sirfetch'd, Mr. Rime,
