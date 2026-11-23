@@ -155,6 +155,11 @@ TrainerPicPointers::
 	dba CooltrainermPic ; Rudy
 	dba LadyPic         ; Luana
 	dba VeteranmPic     ; Drake
+	dba CalPic ; Ash
+	dba YoungsterPic ; Ritchie
+	dba CamperPic ; Harrison
+	dba ArtistPic ; Tracey
+	dba PicnickerPic ; Casey
 	assert_table_length NUM_TRAINER_CLASSES
 	dba OmastarFossilPic
 	dba KabutopsFossilPic

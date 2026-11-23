@@ -9559,3 +9559,121 @@ DrakeGroup:
 		tr_evs 252 Atk, 4 Def, 252 Spe
 		tr_moves DRAGON_DANCE, OUTRAGE, EARTHQUAKE, EXTREMESPEED
 	end_trainer
+
+
+; Link Edition: anime cameos, after the Elite Four and the Orange League.
+
+SECTION "AshGroup", ROMX
+AshGroup:
+
+	def_trainer_class ASH_T
+	def_trainer 1, "Ash"
+	tr_mon 80, BULBASAUR @ EVIOLITE, MALE
+		tr_extra DEF_UP_ATK_DOWN
+		tr_evs 252 HP, 252 Def, 4 SDf
+		tr_moves GIGA_DRAIN, SLUDGE_BOMB, LEECH_SEED, SLEEP_POWDER
+	tr_mon 80, PIDGEOT @ SHARP_BEAK, MALE
+		tr_extra SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves BRAVE_BIRD, QUICK_ATTACK, U_TURN, ROOST
+	tr_mon 81, HERACROSS @ CHOICE_BAND, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves MEGAHORN, CLOSE_COMBAT, STONE_EDGE, KNOCK_OFF
+	tr_mon 81, SNORLAX @ LEFTOVERS, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Atk, 252 SDf
+		tr_moves BODY_SLAM, EARTHQUAKE, REST, SLEEP_TALK
+	tr_mon 82, CHARIZARD @ CHARCOAL, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves FLAMETHROWER, AIR_SLASH, DRAGON_PULSE, SEISMIC_TOSS
+	tr_mon 84, PIKACHU @ LIGHT_BALL, MALE
+		tr_extra SPE_UP_DEF_DOWN
+		tr_evs 252 SAt, 4 Atk, 252 Spe
+		tr_moves THUNDERBOLT, IRON_TAIL, QUICK_ATTACK, AGILITY
+	end_trainer
+
+
+SECTION "RitchieGroup", ROMX
+RitchieGroup:
+
+	def_trainer_class RITCHIE_T
+	def_trainer 1, "Ritchie"
+	tr_mon 80, "Happy", BUTTERFREE @ SILVERPOWDER, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves BUG_BUZZ, PSYCHIC_M, SLEEP_POWDER, AIR_SLASH
+	tr_mon 81, "Zippo", CHARMELEON @ EVIOLITE, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves FLAMETHROWER, DRAGON_PULSE, FOCUS_BLAST, SWORDS_DANCE
+	tr_mon 82, "Sparky", PIKACHU @ LIGHT_BALL, MALE
+		tr_extra SPE_UP_DEF_DOWN
+		tr_evs 252 SAt, 4 Atk, 252 Spe
+		tr_moves THUNDERBOLT, IRON_TAIL, QUICK_ATTACK, THUNDER_WAVE
+	end_trainer
+
+
+SECTION "HarrisonGroup", ROMX
+HarrisonGroup:
+
+	def_trainer_class HARRISON_T
+	def_trainer 1, "Harrison"
+	tr_mon 80, HYPNO @ LEFTOVERS, MALE
+		tr_extra SDEF_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SAt, 252 SDf
+		tr_moves PSYCHIC_M, HYPNOSIS, DREAM_EATER, NASTY_PLOT
+	tr_mon 80, SNEASEL @ EVIOLITE, MALE
+		tr_extra SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves NIGHT_SLASH, ICE_SHARD, ICE_PUNCH, SWORDS_DANCE
+	tr_mon 81, STEELIX @ LEFTOVERS, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 Atk
+		tr_moves IRON_HEAD, EARTHQUAKE, STONE_EDGE, CRUNCH
+	tr_mon 83, HOUNDOOM @ LIFE_ORB, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves DARK_PULSE, FLAMETHROWER, NASTY_PLOT, SUCKER_PUNCH
+	end_trainer
+
+
+SECTION "TraceyGroup", ROMX
+TraceyGroup:
+
+	def_trainer_class TRACEY_T
+	def_trainer 1, "Tracey"
+	tr_mon 79, VENONAT @ EVIOLITE, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves BUG_BUZZ, PSYCHIC_M, SLEEP_POWDER, SLUDGE_BOMB
+	tr_mon 79, MARILL @ EVIOLITE, FEMALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 Atk
+		tr_moves AQUA_JET, PLAY_ROUGH, AQUA_TAIL, BELLY_DRUM
+	tr_mon 80, SCYTHER @ EVIOLITE, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves X_SCISSOR, NIGHT_SLASH, AERIAL_ACE, SWORDS_DANCE
+	end_trainer
+
+
+SECTION "CaseyGroup", ROMX
+CaseyGroup:
+
+	def_trainer_class CASEY_T
+	def_trainer 1, "Casey"
+	tr_mon 79, BEEDRILL @ LIFE_ORB, FEMALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves POISON_JAB, X_SCISSOR, U_TURN, SWORDS_DANCE
+	tr_mon 80, MEGANIUM @ LEFTOVERS, FEMALE
+		tr_extra DEF_UP_ATK_DOWN
+		tr_evs 252 HP, 252 Def, 4 SDf
+		tr_moves GIGA_DRAIN, LEECH_SEED, REFLECT, LIGHT_SCREEN
+	tr_mon 81, ELECTABUZZ @ EVIOLITE, MALE
+		tr_extra SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves THUNDERPUNCH, FIRE_PUNCH, CROSS_CHOP, ICE_PUNCH
+	end_trainer

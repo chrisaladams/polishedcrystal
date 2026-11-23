@@ -1149,6 +1149,17 @@ DEF BETA EQU __trainer_class__
 
 	trainerclass DRAKE_T
 
+; Link Edition: anime cameos (after the Elite Four and the Orange League)
+	trainerclass ASH_T
+
+	trainerclass RITCHIE_T
+
+	trainerclass HARRISON_T
+
+	trainerclass TRACEY_T
+
+	trainerclass CASEY_T
+
 DEF NUM_TRAINER_CLASSES EQU __trainer_class__ - 1
 
 	trainerclass OMASTAR_FOSSIL

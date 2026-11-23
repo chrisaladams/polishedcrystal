@@ -154,4 +154,9 @@ TrainerClassNames::
 	li "Orange Crew"      ; RUDY_T
 	li "Orange Crew"      ; LUANA_T
 	li "Head Leader"      ; DRAKE_T
+	li "<PK><MN> Trainer" ; ASH_T
+	li "<PK><MN> Trainer" ; RITCHIE_T
+	li "<PK><MN> Trainer" ; HARRISON_T
+	li "<PK><MN> Watcher" ; TRACEY_T
+	li "<PK><MN> Trainer" ; CASEY_T
 	assert_list_length NUM_TRAINER_CLASSES

@@ -2476,6 +2476,9 @@
 	const EVENT_BEAT_ORANGE_CREW_LUANA
 	const EVENT_BEAT_DRAKE
 	const EVENT_GOT_ORANGE_LEAGUE_PRIZE
+; set while the anime cameos stay hidden (until the Elite Four and Drake are
+; beaten: their maps' callbacks keep it up to date)
+	const EVENT_ANIME_CAMEOS_HIDDEN
 	assert const_value <= $8ff, "Out of spare event flags"
 
 	const_next $8ff

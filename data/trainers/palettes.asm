@@ -156,6 +156,11 @@ INCLUDE "gfx/trainers/dark_sailor.pal"   ; Danny
 INCLUDE "gfx/trainers/cooltrainer_m.pal" ; Rudy
 INCLUDE "gfx/trainers/lady.pal"          ; Luana
 INCLUDE "gfx/trainers/veteran_m.pal"     ; Drake
+INCLUDE "gfx/trainers/cal.pal" ; Ash
+INCLUDE "gfx/trainers/youngster.pal" ; Ritchie
+INCLUDE "gfx/trainers/camper.pal" ; Harrison
+INCLUDE "gfx/trainers/artist.pal" ; Tracey
+INCLUDE "gfx/trainers/picnicker.pal" ; Casey
 INCLUDE "gfx/trainers/omastar_fossil.pal"
 INCLUDE "gfx/trainers/kabutops_fossil.pal"
 INCLUDE "gfx/trainers/aerodactyl_fossil.pal"

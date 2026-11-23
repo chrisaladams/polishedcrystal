@@ -2,6 +2,7 @@ PalletTown_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, PalletTownAnimeCameosCallback
 	callback MAPCALLBACK_NEWMAP, PalletTownFlyPoint
 
 	def_warp_events
@@ -22,6 +23,7 @@ PalletTown_MapScriptHeader:
 	object_event 12, 14, SPRITE_FAT_GUY, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 2, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, PalletTownFisherText, -1
 	object_event 17,  7, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_WALK_UP_DOWN, 2, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, PalletTownYoungsterText, -1
 	fruittree_event 12, 21, FRUITTREE_ROUTE_21, ENIGMA_BERRY, PAL_NPC_BLACK
+	object_event  9, 12, SPRITE_RED, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, CameoAshScript, EVENT_ANIME_CAMEOS_HIDDEN
 
 PalletTownFlyPoint:
 	setflag ENGINE_FLYPOINT_PALLET
@@ -76,4 +78,58 @@ OaksLabSignText:
 
 BluesHouseSignText:
 	text "Blue's House"
+	done
+
+PalletTownAnimeCameosCallback:
+; Link Edition: the anime cameos come after the Elite Four and the Orange League
+	checkevent EVENT_BEAT_ELITE_FOUR
+	iffalsefwd .hide
+	checkevent EVENT_BEAT_DRAKE
+	iffalsefwd .hide
+	clearevent EVENT_ANIME_CAMEOS_HIDDEN
+	endcallback
+
+.hide
+	setevent EVENT_ANIME_CAMEOS_HIDDEN
+	endcallback
+
+CameoAshScript:
+; Link Edition: an anime cameo
+	faceplayer
+	opentext
+	writetext .IntroText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer ASH_T, 1
+	startbattle
+	reloadmapafterbattle
+	jumptext .AfterText
+
+.IntroText:
+	text "I'm Ash, from"
+	line "right here in"
+	cont "Pallet Town!"
+	para "I'm gonna be a"
+	line "#mon Master!"
+	para "Want to battle?"
+	done
+
+.NoText:
+	text "Aw, come on!"
+	line "Next time, then."
+	done
+
+.BeatenText:
+	text "Wow, you're"
+	line "really strong!"
+	done
+
+.AfterText:
+	text "Pikachu and I"
+	line "will keep"
+	cont "training."
+	para "We'll beat you"
+	line "next time!"
 	done

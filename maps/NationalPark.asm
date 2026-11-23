@@ -2,6 +2,7 @@ NationalPark_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, NationalParkAnimeCameosCallback
 
 	def_warp_events
 	warp_event 35, 18, ROUTE_36_NATIONAL_PARK_GATE, 1
@@ -34,6 +35,7 @@ NationalPark_MapScriptHeader:
 	object_event  4, 19, SPRITE_OFFICER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OfficermKeithScript, -1
 	itemball_event 37, 12, SHINY_STONE, 1, EVENT_NATIONAL_PARK_SHINY_STONE
 	tmhmball_event  3, 43, TM_DIG, EVENT_NATIONAL_PARK_TM_DIG
+	object_event 23, 22, SPRITE_PICNICKER, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, CameoCaseyScript, EVENT_ANIME_CAMEOS_HIDDEN
 
 NationalParkTeacher1Script:
 	faceplayer
@@ -532,4 +534,54 @@ NationalParkTrainerTipsText:
 	para "haircuts, bless-"
 	line "ings, photographs,"
 	cont "and other treats."
+	done
+
+NationalParkAnimeCameosCallback:
+; Link Edition: the anime cameos come after the Elite Four and the Orange League
+	checkevent EVENT_BEAT_ELITE_FOUR
+	iffalsefwd .hide
+	checkevent EVENT_BEAT_DRAKE
+	iffalsefwd .hide
+	clearevent EVENT_ANIME_CAMEOS_HIDDEN
+	endcallback
+
+.hide
+	setevent EVENT_ANIME_CAMEOS_HIDDEN
+	endcallback
+
+CameoCaseyScript:
+; Link Edition: an anime cameo
+	faceplayer
+	opentext
+	writetext .IntroText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer CASEY_T, 1
+	startbattle
+	reloadmapafterbattle
+	jumptext .AfterText
+
+.IntroText:
+	text "I'm Casey, the"
+	line "biggest fan of"
+	cont "the Electabuzz!"
+	para "Let's play ball!"
+	done
+
+.NoText:
+	text "A rain delay?"
+	line "Aww…"
+	done
+
+.BeatenText:
+	text "Strike three…"
+	line "I'm out!"
+	done
+
+.AfterText:
+	text "Win or lose, I'll"
+	line "always root for"
+	cont "the Electabuzz!"
 	done

@@ -2,6 +2,7 @@ OaksLab_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, OaksLabAnimeCameosCallback
 
 	def_warp_events
 	warp_event  4, 11, PALLET_TOWN, 3
@@ -33,6 +34,7 @@ OaksLab_MapScriptHeader:
 	object_event  8,  9, SPRITE_SCIENTIST, SPRITEMOVEDATA_WALK_UP_DOWN, 1, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, OaksAssistant2Text, -1
 	object_event  1,  4, SPRITE_SCIENTIST, SPRITEMOVEDATA_WANDER, 1, 1, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, OaksAssistant3Text, -1
 	object_event  2,  1, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptext, OaksLabPokedexText, -1
+	object_event  8,  5, SPRITE_ARTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, CameoTraceyScript, EVENT_ANIME_CAMEOS_HIDDEN
 
 	object_const_def
 	const OAKSLAB_OAK
@@ -573,4 +575,58 @@ EeveeDollSentText:
 OaksLabPokedexText:
 	text "It's Prof.Oak's"
 	line "#dex."
+	done
+
+OaksLabAnimeCameosCallback:
+; Link Edition: the anime cameos come after the Elite Four and the Orange League
+	checkevent EVENT_BEAT_ELITE_FOUR
+	iffalsefwd .hide
+	checkevent EVENT_BEAT_DRAKE
+	iffalsefwd .hide
+	clearevent EVENT_ANIME_CAMEOS_HIDDEN
+	endcallback
+
+.hide
+	setevent EVENT_ANIME_CAMEOS_HIDDEN
+	endcallback
+
+CameoTraceyScript:
+; Link Edition: an anime cameo
+	faceplayer
+	opentext
+	writetext .IntroText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer TRACEY_T, 1
+	startbattle
+	reloadmapafterbattle
+	jumptext .AfterText
+
+.IntroText:
+	text "I'm Tracey, a"
+	line "#mon Watcher."
+	para "I help Prof.Oak"
+	line "with his research."
+	para "Can I watch your"
+	line "#mon battle?"
+	done
+
+.NoText:
+	text "That's okay. I'll"
+	line "keep sketching."
+	done
+
+.BeatenText:
+	text "What a battle!"
+	line "I have to draw"
+	cont "this!"
+	done
+
+.AfterText:
+	text "Your #mon are"
+	line "so lively!"
+	para "They're going in"
+	line "my sketchbook."
 	done

@@ -39,7 +39,6 @@ ROMX $01
 
 ROMX $02
 	"bank2"
-	"Trainer Pic Pointers"
 
 ROMX $03
 	"bank3"

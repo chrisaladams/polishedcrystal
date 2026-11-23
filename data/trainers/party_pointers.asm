@@ -157,4 +157,9 @@ TrainerGroups:
 	dba RudyGroup
 	dba LuanaGroup
 	dba DrakeGroup
+	dba AshGroup
+	dba RitchieGroup
+	dba HarrisonGroup
+	dba TraceyGroup
+	dba CaseyGroup
 	assert_table_length NUM_TRAINER_CLASSES

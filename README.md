@@ -170,6 +170,24 @@ saves don't change, and existing maps, sprites and music, so it costs under
 2 KB. `python3 utils/orange_league/test_orange_league.py SAVE.sav` checks it in
 the emulator.
 
+### Anime cameos
+
+Once you've beaten both the Elite Four and the Orange League (Drake), five
+characters from the anime show up, each ready for a battle any time you talk
+to them, with teams from the show at levels 79–84:
+
+| Who | Where | Team |
+|---|---|---|
+| Ash | Pallet Town, by Prof. Oak's lab | Bulbasaur, Pidgeot, Heracross, Snorlax, Charizard, Pikachu |
+| Tracey | Prof. Oak's lab | Venonat, Marill, Scyther |
+| Ritchie | outside Mt. Silver's Pokémon Center | Happy (Butterfree), Zippo (Charmeleon), Sparky (Pikachu) |
+| Harrison | outside Mt. Silver's Pokémon Center | Hypno, Sneasel, Steelix, Houndoom |
+| Casey | the National Park, by the fountain | Beedrill, Meganium, Electabuzz |
+
+They reuse existing trainer pictures and sprites, and share one spare event
+flag, so saves don't change. `python3 utils/orange_league/test_cameos.py
+SAVE.sav` checks them in the emulator.
+
 ### Smarter trainer AI
 
 These apply to every trainer battle, not just link play:

@@ -2167,3 +2167,28 @@ DrakeFinalPkmnText:
 	line "has never lost"
 	cont "a battle!"
 	prompt
+
+AshFinalPkmnText:
+	text "Pikachu, I choose"
+	line "you!"
+	prompt
+
+RitchieFinalPkmnText:
+	text "Sparky, it's all"
+	line "up to you!"
+	prompt
+
+HarrisonFinalPkmnText:
+	text "Just like the"
+	line "Silver Conference!"
+	prompt
+
+TraceyFinalPkmnText:
+	text "I haven't sketched"
+	line "this one yet!"
+	prompt
+
+CaseyFinalPkmnText:
+	text "Bottom of the"
+	line "ninth! Go!"
+	prompt

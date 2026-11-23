@@ -30,6 +30,11 @@ BossTrainers:
 	db WALKER
 	db LAWRENCE
 	db REI
+	db ASH_T
+	db RITCHIE_T
+	db HARRISON_T
+	db TRACEY_T
+	db CASEY_T
 JohtoGymLeaders:
 	db FALKNER
 	db WHITNEY

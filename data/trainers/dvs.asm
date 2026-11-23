@@ -157,4 +157,9 @@ TrainerClassDVsAndPersonality:
 	db 252, PERFECT_DVS,   MALE   ; rudy
 	db 252, PERFECT_DVS,   FEMALE ; luana
 	db 252, PERFECT_DVS,   MALE   ; drake
+	db 252, PERFECT_DVS,   MALE   ; ash
+	db 252, PERFECT_DVS,   MALE   ; ritchie
+	db 252, PERFECT_DVS,   MALE   ; harrison
+	db 252, PERFECT_DVS,   MALE   ; tracey
+	db 252, PERFECT_DVS,   FEMALE ; casey
 	assert_table_length NUM_TRAINER_CLASSES
