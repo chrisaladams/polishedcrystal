@@ -262,40 +262,40 @@ MiniIconPointers:
 	walking_mon Lugia
 	walking_mon HoOh
 	walking_mon Celebi
-	mini_icon Azurill
-	mini_icon Wynaut
-	mini_icon Ambipom
+	walking_mon Azurill
+	walking_mon Wynaut
+	walking_mon Ambipom
 	walking_mon Egg
 	walking_mon Egg ; $100
-	mini_icon Mismagius
-	mini_icon Honchkrow
-	mini_icon Bonsly
-	mini_icon MimeJr
-	mini_icon Happiny
-	mini_icon Munchlax
-	mini_icon Mantyke
-	mini_icon Weavile
-	mini_icon Magnezone
-	mini_icon Lickilicky
-	mini_icon Rhyperior
-	mini_icon Tangrowth
-	mini_icon Electivire
-	mini_icon Magmortar
-	mini_icon Togekiss
-	mini_icon Yanmega
-	mini_icon Leafeon
-	mini_icon Glaceon
-	mini_icon Gliscor
-	mini_icon Mamoswine
-	mini_icon PorygonZ
-	mini_icon Sylveon
+	walking_mon Mismagius
+	walking_mon Honchkrow
+	walking_mon Bonsly
+	walking_mon MimeJr
+	walking_mon Happiny
+	walking_mon Munchlax
+	walking_mon Mantyke
+	walking_mon Weavile
+	walking_mon Magnezone
+	walking_mon Lickilicky
+	walking_mon Rhyperior
+	walking_mon Tangrowth
+	walking_mon Electivire
+	walking_mon Magmortar
+	walking_mon Togekiss
+	walking_mon Yanmega
+	walking_mon Leafeon
+	walking_mon Glaceon
+	walking_mon Gliscor
+	walking_mon Mamoswine
+	walking_mon PorygonZ
+	walking_mon Sylveon
 	mini_icon Perrserker
-	mini_icon Cursola
-	mini_icon SirfetchD
-	mini_icon MrRime
+	walking_mon Cursola
+	walking_mon SirfetchD
+	walking_mon MrRime
 	mini_icon Wyrdeer
-	mini_icon Kleavor
-	mini_icon Ursaluna
+	walking_mon Kleavor
+	walking_mon Ursaluna
 	mini_icon Sneasler
 	mini_icon Overqwil
 	mini_icon DudunsparceTwoSegment
@@ -360,7 +360,7 @@ endr
 
 	mini_icon RattataAlolan
 	mini_icon RaticateAlolan
-	mini_icon RaichuAlolan
+	walking_mon RaichuAlolan
 	mini_icon SandshrewAlolan
 	mini_icon SandslashAlolan
 	mini_icon VulpixAlolan
@@ -372,30 +372,30 @@ endr
 	mini_icon GeodudeAlolan
 	mini_icon GravelerAlolan
 	mini_icon GolemAlolan
-	mini_icon GrimerAlolan
-	mini_icon MukAlolan
+	walking_mon GrimerAlolan
+	walking_mon MukAlolan
 	mini_icon ExeggutorAlolan
-	mini_icon MarowakAlolan
+	walking_mon MarowakAlolan
 
 	mini_icon MeowthGalarian
-	mini_icon PonytaGalarian
-	mini_icon RapidashGalarian
+	walking_mon PonytaGalarian
+	walking_mon RapidashGalarian
 	mini_icon SlowpokeGalarian
 	mini_icon SlowbroGalarian
-	mini_icon FarfetchDGalarian
+	walking_mon FarfetchDGalarian
 	mini_icon WeezingGalarian
-	mini_icon MrMimeGalarian
+	walking_mon MrMimeGalarian
 	mini_icon ArticunoGalarian
 	mini_icon ZapdosGalarian
 	mini_icon MoltresGalarian
 	mini_icon SlowkingGalarian
-	mini_icon CorsolaGalarian
+	walking_mon CorsolaGalarian
 
-	mini_icon GrowlitheHisuian
+	walking_mon GrowlitheHisuian
 	mini_icon ArcanineHisuian
-	mini_icon VoltorbHisuian
-	mini_icon ElectrodeHisuian
-	mini_icon TyphlosionHisuian
+	walking_mon VoltorbHisuian
+	walking_mon ElectrodeHisuian
+	walking_mon TyphlosionHisuian
 	mini_icon QwilfishHisuian
 	mini_icon SneaselHisuian
 

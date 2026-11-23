@@ -41,13 +41,23 @@ Unown sprites by FrenchOrange and LJSTAR, and the art from the follower set of
 ShockSlayer's Pokémon Crystal Clear. Surfing Pikachu and Armored Mewtwo are
 the game's own overworld sprites.
 
+43 more (most Gen 4 evolutions, Sylveon, Cursola, Sirfetch'd, Mr. Rime,
+Kleavor, Ursaluna and 13 regional forms) come from SheerSt's
+[PokéWilds](https://github.com/SheerSt/pokewilds) (`pokemon/pokemon/*/overworld.png`),
+the same art style in colour, converted by `import_sheets.py`. Its README
+credits Megaman-Omega for most of its overworld sprites, and Sadfish (Alolan
+Raichu, Mantyke), Internet_Goblin (Ambipom), betsybugaboo (Azurill, Alolan
+Marowak), LuxBeacon (Happiny, Munchlax), Invader (Honchkrow), SkwovetSquire
+(Mime Jr.) and Shaqtothefuture (Alolan Grimer and Muk, Galarian Farfetch'd,
+Sirfetch'd) among others.
+
 ## Space
 
 ROM space was the limit before: the free space in a 2 MB ROM went from 3.2 KB
 to 11.9 KB by sharing and compressing data (below). Replacing a mini and icon
 (about 220 bytes together) with a walking sprite (about 230 bytes) costs
-almost nothing, so the 279 sprites here fit with about 13 KB still free, and
-the rest will too.
+almost nothing, so the 322 sprites here fit with about 12.7 KB still free,
+and the rest will too.
 
 | Freed | Gain |
 |---|---|

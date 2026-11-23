@@ -14,6 +14,9 @@ AipomWalk:: INCBIN "gfx/followers/aipom.2bpp.lzp"
 SECTION "Alakazam Walking Sprite", ROMX
 AlakazamWalk:: INCBIN "gfx/followers/alakazam.2bpp.lzp"
 
+SECTION "Ambipom Walking Sprite", ROMX
+AmbipomWalk:: INCBIN "gfx/followers/ambipom.2bpp.lzp"
+
 SECTION "Ampharos Walking Sprite", ROMX
 AmpharosWalk:: INCBIN "gfx/followers/ampharos.2bpp.lzp"
 
@@ -32,6 +35,9 @@ ArticunoWalk:: INCBIN "gfx/followers/articuno.2bpp.lzp"
 SECTION "Azumarill Walking Sprite", ROMX
 AzumarillWalk:: INCBIN "gfx/followers/azumarill.2bpp.lzp"
 
+SECTION "Azurill Walking Sprite", ROMX
+AzurillWalk:: INCBIN "gfx/followers/azurill.2bpp.lzp"
+
 SECTION "Bayleef Walking Sprite", ROMX
 BayleefWalk:: INCBIN "gfx/followers/bayleef.2bpp.lzp"
 
@@ -49,6 +55,9 @@ BlastoiseWalk:: INCBIN "gfx/followers/blastoise.2bpp.lzp"
 
 SECTION "Blissey Walking Sprite", ROMX
 BlisseyWalk:: INCBIN "gfx/followers/blissey.2bpp.lzp"
+
+SECTION "Bonsly Walking Sprite", ROMX
+BonslyWalk:: INCBIN "gfx/followers/bonsly.2bpp.lzp"
 
 SECTION "Bulbasaur Walking Sprite", ROMX
 BulbasaurWalk:: INCBIN "gfx/followers/bulbasaur.2bpp.lzp"
@@ -95,6 +104,9 @@ CloysterWalk:: INCBIN "gfx/followers/cloyster.2bpp.lzp"
 SECTION "Corsola Walking Sprite", ROMX
 CorsolaWalk:: INCBIN "gfx/followers/corsola.2bpp.lzp"
 
+SECTION "CorsolaGalarian Walking Sprite", ROMX
+CorsolaGalarianWalk:: INCBIN "gfx/followers/corsola_galarian.2bpp.lzp"
+
 SECTION "Crobat Walking Sprite", ROMX
 CrobatWalk:: INCBIN "gfx/followers/crobat.2bpp.lzp"
 
@@ -103,6 +115,9 @@ CroconawWalk:: INCBIN "gfx/followers/croconaw.2bpp.lzp"
 
 SECTION "Cubone Walking Sprite", ROMX
 CuboneWalk:: INCBIN "gfx/followers/cubone.2bpp.lzp"
+
+SECTION "Cursola Walking Sprite", ROMX
+CursolaWalk:: INCBIN "gfx/followers/cursola.2bpp.lzp"
 
 SECTION "Cyndaquil Walking Sprite", ROMX
 CyndaquilWalk:: INCBIN "gfx/followers/cyndaquil.2bpp.lzp"
@@ -158,8 +173,14 @@ EkansWalk:: INCBIN "gfx/followers/ekans.2bpp.lzp"
 SECTION "Electabuzz Walking Sprite", ROMX
 ElectabuzzWalk:: INCBIN "gfx/followers/electabuzz.2bpp.lzp"
 
+SECTION "Electivire Walking Sprite", ROMX
+ElectivireWalk:: INCBIN "gfx/followers/electivire.2bpp.lzp"
+
 SECTION "Electrode Walking Sprite", ROMX
 ElectrodeWalk:: INCBIN "gfx/followers/electrode.2bpp.lzp"
+
+SECTION "ElectrodeHisuian Walking Sprite", ROMX
+ElectrodeHisuianWalk:: INCBIN "gfx/followers/electrode_hisuian.2bpp.lzp"
 
 SECTION "Elekid Walking Sprite", ROMX
 ElekidWalk:: INCBIN "gfx/followers/elekid.2bpp.lzp"
@@ -178,6 +199,9 @@ ExeggutorWalk:: INCBIN "gfx/followers/exeggutor.2bpp.lzp"
 
 SECTION "FarfetchD Walking Sprite", ROMX
 FarfetchDWalk:: INCBIN "gfx/followers/farfetch_d.2bpp.lzp"
+
+SECTION "FarfetchDGalarian Walking Sprite", ROMX
+FarfetchDGalarianWalk:: INCBIN "gfx/followers/farfetch_d_galarian.2bpp.lzp"
 
 SECTION "Fearow Walking Sprite", ROMX
 FearowWalk:: INCBIN "gfx/followers/fearow.2bpp.lzp"
@@ -209,8 +233,14 @@ GeodudeWalk:: INCBIN "gfx/followers/geodude.2bpp.lzp"
 SECTION "Girafarig Walking Sprite", ROMX
 GirafarigWalk:: INCBIN "gfx/followers/girafarig.2bpp.lzp"
 
+SECTION "Glaceon Walking Sprite", ROMX
+GlaceonWalk:: INCBIN "gfx/followers/glaceon.2bpp.lzp"
+
 SECTION "Gligar Walking Sprite", ROMX
 GligarWalk:: INCBIN "gfx/followers/gligar.2bpp.lzp"
+
+SECTION "Gliscor Walking Sprite", ROMX
+GliscorWalk:: INCBIN "gfx/followers/gliscor.2bpp.lzp"
 
 SECTION "Gloom Walking Sprite", ROMX
 GloomWalk:: INCBIN "gfx/followers/gloom.2bpp.lzp"
@@ -236,11 +266,20 @@ GravelerWalk:: INCBIN "gfx/followers/graveler.2bpp.lzp"
 SECTION "Grimer Walking Sprite", ROMX
 GrimerWalk:: INCBIN "gfx/followers/grimer.2bpp.lzp"
 
+SECTION "GrimerAlolan Walking Sprite", ROMX
+GrimerAlolanWalk:: INCBIN "gfx/followers/grimer_alolan.2bpp.lzp"
+
 SECTION "Growlithe Walking Sprite", ROMX
 GrowlitheWalk:: INCBIN "gfx/followers/growlithe.2bpp.lzp"
 
+SECTION "GrowlitheHisuian Walking Sprite", ROMX
+GrowlitheHisuianWalk:: INCBIN "gfx/followers/growlithe_hisuian.2bpp.lzp"
+
 SECTION "Gyarados Walking Sprite", ROMX
 GyaradosWalk:: INCBIN "gfx/followers/gyarados.2bpp.lzp"
+
+SECTION "Happiny Walking Sprite", ROMX
+HappinyWalk:: INCBIN "gfx/followers/happiny.2bpp.lzp"
 
 SECTION "Haunter Walking Sprite", ROMX
 HaunterWalk:: INCBIN "gfx/followers/haunter.2bpp.lzp"
@@ -259,6 +298,9 @@ HitmontopWalk:: INCBIN "gfx/followers/hitmontop.2bpp.lzp"
 
 SECTION "HoOh Walking Sprite", ROMX
 HoOhWalk:: INCBIN "gfx/followers/ho_oh.2bpp.lzp"
+
+SECTION "Honchkrow Walking Sprite", ROMX
+HonchkrowWalk:: INCBIN "gfx/followers/honchkrow.2bpp.lzp"
 
 SECTION "Hoothoot Walking Sprite", ROMX
 HoothootWalk:: INCBIN "gfx/followers/hoothoot.2bpp.lzp"
@@ -317,6 +359,9 @@ KingdraWalk:: INCBIN "gfx/followers/kingdra.2bpp.lzp"
 SECTION "Kingler Walking Sprite", ROMX
 KinglerWalk:: INCBIN "gfx/followers/kingler.2bpp.lzp"
 
+SECTION "Kleavor Walking Sprite", ROMX
+KleavorWalk:: INCBIN "gfx/followers/kleavor.2bpp.lzp"
+
 SECTION "Koffing Walking Sprite", ROMX
 KoffingWalk:: INCBIN "gfx/followers/koffing.2bpp.lzp"
 
@@ -332,11 +377,17 @@ LaprasWalk:: INCBIN "gfx/followers/lapras.2bpp.lzp"
 SECTION "Larvitar Walking Sprite", ROMX
 LarvitarWalk:: INCBIN "gfx/followers/larvitar.2bpp.lzp"
 
+SECTION "Leafeon Walking Sprite", ROMX
+LeafeonWalk:: INCBIN "gfx/followers/leafeon.2bpp.lzp"
+
 SECTION "Ledian Walking Sprite", ROMX
 LedianWalk:: INCBIN "gfx/followers/ledian.2bpp.lzp"
 
 SECTION "Ledyba Walking Sprite", ROMX
 LedybaWalk:: INCBIN "gfx/followers/ledyba.2bpp.lzp"
+
+SECTION "Lickilicky Walking Sprite", ROMX
+LickilickyWalk:: INCBIN "gfx/followers/lickilicky.2bpp.lzp"
 
 SECTION "Lickitung Walking Sprite", ROMX
 LickitungWalk:: INCBIN "gfx/followers/lickitung.2bpp.lzp"
@@ -365,17 +416,29 @@ MagikarpWalk:: INCBIN "gfx/followers/magikarp.2bpp.lzp"
 SECTION "Magmar Walking Sprite", ROMX
 MagmarWalk:: INCBIN "gfx/followers/magmar.2bpp.lzp"
 
+SECTION "Magmortar Walking Sprite", ROMX
+MagmortarWalk:: INCBIN "gfx/followers/magmortar.2bpp.lzp"
+
 SECTION "Magnemite Walking Sprite", ROMX
 MagnemiteWalk:: INCBIN "gfx/followers/magnemite.2bpp.lzp"
 
 SECTION "Magneton Walking Sprite", ROMX
 MagnetonWalk:: INCBIN "gfx/followers/magneton.2bpp.lzp"
 
+SECTION "Magnezone Walking Sprite", ROMX
+MagnezoneWalk:: INCBIN "gfx/followers/magnezone.2bpp.lzp"
+
+SECTION "Mamoswine Walking Sprite", ROMX
+MamoswineWalk:: INCBIN "gfx/followers/mamoswine.2bpp.lzp"
+
 SECTION "Mankey Walking Sprite", ROMX
 MankeyWalk:: INCBIN "gfx/followers/mankey.2bpp.lzp"
 
 SECTION "Mantine Walking Sprite", ROMX
 MantineWalk:: INCBIN "gfx/followers/mantine.2bpp.lzp"
+
+SECTION "Mantyke Walking Sprite", ROMX
+MantykeWalk:: INCBIN "gfx/followers/mantyke.2bpp.lzp"
 
 SECTION "Mareep Walking Sprite", ROMX
 MareepWalk:: INCBIN "gfx/followers/mareep.2bpp.lzp"
@@ -385,6 +448,9 @@ MarillWalk:: INCBIN "gfx/followers/marill.2bpp.lzp"
 
 SECTION "Marowak Walking Sprite", ROMX
 MarowakWalk:: INCBIN "gfx/followers/marowak.2bpp.lzp"
+
+SECTION "MarowakAlolan Walking Sprite", ROMX
+MarowakAlolanWalk:: INCBIN "gfx/followers/marowak_alolan.2bpp.lzp"
 
 SECTION "Meganium Walking Sprite", ROMX
 MeganiumWalk:: INCBIN "gfx/followers/meganium.2bpp.lzp"
@@ -407,8 +473,14 @@ MewtwoArmoredWalk:: INCBIN "gfx/followers/mewtwo_armored.2bpp.lzp"
 SECTION "Miltank Walking Sprite", ROMX
 MiltankWalk:: INCBIN "gfx/followers/miltank.2bpp.lzp"
 
+SECTION "MimeJr Walking Sprite", ROMX
+MimeJrWalk:: INCBIN "gfx/followers/mime_jr_.2bpp.lzp"
+
 SECTION "Misdreavus Walking Sprite", ROMX
 MisdreavusWalk:: INCBIN "gfx/followers/misdreavus.2bpp.lzp"
+
+SECTION "Mismagius Walking Sprite", ROMX
+MismagiusWalk:: INCBIN "gfx/followers/mismagius.2bpp.lzp"
 
 SECTION "Moltres Walking Sprite", ROMX
 MoltresWalk:: INCBIN "gfx/followers/moltres.2bpp.lzp"
@@ -416,8 +488,20 @@ MoltresWalk:: INCBIN "gfx/followers/moltres.2bpp.lzp"
 SECTION "MrMime Walking Sprite", ROMX
 MrMimeWalk:: INCBIN "gfx/followers/mr__mime.2bpp.lzp"
 
+SECTION "MrMimeGalarian Walking Sprite", ROMX
+MrMimeGalarianWalk:: INCBIN "gfx/followers/mr__mime_galarian.2bpp.lzp"
+
+SECTION "MrRime Walking Sprite", ROMX
+MrRimeWalk:: INCBIN "gfx/followers/mr__rime.2bpp.lzp"
+
 SECTION "Muk Walking Sprite", ROMX
 MukWalk:: INCBIN "gfx/followers/muk.2bpp.lzp"
+
+SECTION "MukAlolan Walking Sprite", ROMX
+MukAlolanWalk:: INCBIN "gfx/followers/muk_alolan.2bpp.lzp"
+
+SECTION "Munchlax Walking Sprite", ROMX
+MunchlaxWalk:: INCBIN "gfx/followers/munchlax.2bpp.lzp"
 
 SECTION "Murkrow Walking Sprite", ROMX
 MurkrowWalk:: INCBIN "gfx/followers/murkrow.2bpp.lzp"
@@ -518,11 +602,17 @@ PoliwrathWalk:: INCBIN "gfx/followers/poliwrath.2bpp.lzp"
 SECTION "Ponyta Walking Sprite", ROMX
 PonytaWalk:: INCBIN "gfx/followers/ponyta.2bpp.lzp"
 
+SECTION "PonytaGalarian Walking Sprite", ROMX
+PonytaGalarianWalk:: INCBIN "gfx/followers/ponyta_galarian.2bpp.lzp"
+
 SECTION "Porygon Walking Sprite", ROMX
 PorygonWalk:: INCBIN "gfx/followers/porygon.2bpp.lzp"
 
 SECTION "Porygon2 Walking Sprite", ROMX
 Porygon2Walk:: INCBIN "gfx/followers/porygon2.2bpp.lzp"
+
+SECTION "PorygonZ Walking Sprite", ROMX
+PorygonZWalk:: INCBIN "gfx/followers/porygon_z.2bpp.lzp"
 
 SECTION "Primeape Walking Sprite", ROMX
 PrimeapeWalk:: INCBIN "gfx/followers/primeape.2bpp.lzp"
@@ -545,11 +635,17 @@ QwilfishWalk:: INCBIN "gfx/followers/qwilfish.2bpp.lzp"
 SECTION "Raichu Walking Sprite", ROMX
 RaichuWalk:: INCBIN "gfx/followers/raichu.2bpp.lzp"
 
+SECTION "RaichuAlolan Walking Sprite", ROMX
+RaichuAlolanWalk:: INCBIN "gfx/followers/raichu_alolan.2bpp.lzp"
+
 SECTION "Raikou Walking Sprite", ROMX
 RaikouWalk:: INCBIN "gfx/followers/raikou.2bpp.lzp"
 
 SECTION "Rapidash Walking Sprite", ROMX
 RapidashWalk:: INCBIN "gfx/followers/rapidash.2bpp.lzp"
+
+SECTION "RapidashGalarian Walking Sprite", ROMX
+RapidashGalarianWalk:: INCBIN "gfx/followers/rapidash_galarian.2bpp.lzp"
 
 SECTION "Raticate Walking Sprite", ROMX
 RaticateWalk:: INCBIN "gfx/followers/raticate.2bpp.lzp"
@@ -565,6 +661,9 @@ RhydonWalk:: INCBIN "gfx/followers/rhydon.2bpp.lzp"
 
 SECTION "Rhyhorn Walking Sprite", ROMX
 RhyhornWalk:: INCBIN "gfx/followers/rhyhorn.2bpp.lzp"
+
+SECTION "Rhyperior Walking Sprite", ROMX
+RhyperiorWalk:: INCBIN "gfx/followers/rhyperior.2bpp.lzp"
 
 SECTION "Sandshrew Walking Sprite", ROMX
 SandshrewWalk:: INCBIN "gfx/followers/sandshrew.2bpp.lzp"
@@ -595,6 +694,9 @@ ShellderWalk:: INCBIN "gfx/followers/shellder.2bpp.lzp"
 
 SECTION "Shuckle Walking Sprite", ROMX
 ShuckleWalk:: INCBIN "gfx/followers/shuckle.2bpp.lzp"
+
+SECTION "SirfetchD Walking Sprite", ROMX
+SirfetchDWalk:: INCBIN "gfx/followers/sirfetch_d.2bpp.lzp"
 
 SECTION "Skarmory Walking Sprite", ROMX
 SkarmoryWalk:: INCBIN "gfx/followers/skarmory.2bpp.lzp"
@@ -665,8 +767,14 @@ SunkernWalk:: INCBIN "gfx/followers/sunkern.2bpp.lzp"
 SECTION "Swinub Walking Sprite", ROMX
 SwinubWalk:: INCBIN "gfx/followers/swinub.2bpp.lzp"
 
+SECTION "Sylveon Walking Sprite", ROMX
+SylveonWalk:: INCBIN "gfx/followers/sylveon.2bpp.lzp"
+
 SECTION "Tangela Walking Sprite", ROMX
 TangelaWalk:: INCBIN "gfx/followers/tangela.2bpp.lzp"
+
+SECTION "Tangrowth Walking Sprite", ROMX
+TangrowthWalk:: INCBIN "gfx/followers/tangrowth.2bpp.lzp"
 
 SECTION "Tauros Walking Sprite", ROMX
 TaurosWalk:: INCBIN "gfx/followers/tauros.2bpp.lzp"
@@ -680,6 +788,9 @@ TentacoolWalk:: INCBIN "gfx/followers/tentacool.2bpp.lzp"
 SECTION "Tentacruel Walking Sprite", ROMX
 TentacruelWalk:: INCBIN "gfx/followers/tentacruel.2bpp.lzp"
 
+SECTION "Togekiss Walking Sprite", ROMX
+TogekissWalk:: INCBIN "gfx/followers/togekiss.2bpp.lzp"
+
 SECTION "Togepi Walking Sprite", ROMX
 TogepiWalk:: INCBIN "gfx/followers/togepi.2bpp.lzp"
 
@@ -691,6 +802,9 @@ TotodileWalk:: INCBIN "gfx/followers/totodile.2bpp.lzp"
 
 SECTION "Typhlosion Walking Sprite", ROMX
 TyphlosionWalk:: INCBIN "gfx/followers/typhlosion.2bpp.lzp"
+
+SECTION "TyphlosionHisuian Walking Sprite", ROMX
+TyphlosionHisuianWalk:: INCBIN "gfx/followers/typhlosion_hisuian.2bpp.lzp"
 
 SECTION "Tyranitar Walking Sprite", ROMX
 TyranitarWalk:: INCBIN "gfx/followers/tyranitar.2bpp.lzp"
@@ -779,6 +893,9 @@ UnownYWalk:: INCBIN "gfx/followers/unown_y.2bpp.lzp"
 SECTION "UnownZ Walking Sprite", ROMX
 UnownZWalk:: INCBIN "gfx/followers/unown_z.2bpp.lzp"
 
+SECTION "Ursaluna Walking Sprite", ROMX
+UrsalunaWalk:: INCBIN "gfx/followers/ursaluna.2bpp.lzp"
+
 SECTION "Ursaring Walking Sprite", ROMX
 UrsaringWalk:: INCBIN "gfx/followers/ursaring.2bpp.lzp"
 
@@ -803,11 +920,17 @@ VileplumeWalk:: INCBIN "gfx/followers/vileplume.2bpp.lzp"
 SECTION "Voltorb Walking Sprite", ROMX
 VoltorbWalk:: INCBIN "gfx/followers/voltorb.2bpp.lzp"
 
+SECTION "VoltorbHisuian Walking Sprite", ROMX
+VoltorbHisuianWalk:: INCBIN "gfx/followers/voltorb_hisuian.2bpp.lzp"
+
 SECTION "Vulpix Walking Sprite", ROMX
 VulpixWalk:: INCBIN "gfx/followers/vulpix.2bpp.lzp"
 
 SECTION "Wartortle Walking Sprite", ROMX
 WartortleWalk:: INCBIN "gfx/followers/wartortle.2bpp.lzp"
+
+SECTION "Weavile Walking Sprite", ROMX
+WeavileWalk:: INCBIN "gfx/followers/weavile.2bpp.lzp"
 
 SECTION "Weedle Walking Sprite", ROMX
 WeedleWalk:: INCBIN "gfx/followers/weedle.2bpp.lzp"
@@ -827,11 +950,17 @@ WobbuffetWalk:: INCBIN "gfx/followers/wobbuffet.2bpp.lzp"
 SECTION "Wooper Walking Sprite", ROMX
 WooperWalk:: INCBIN "gfx/followers/wooper.2bpp.lzp"
 
+SECTION "Wynaut Walking Sprite", ROMX
+WynautWalk:: INCBIN "gfx/followers/wynaut.2bpp.lzp"
+
 SECTION "Xatu Walking Sprite", ROMX
 XatuWalk:: INCBIN "gfx/followers/xatu.2bpp.lzp"
 
 SECTION "Yanma Walking Sprite", ROMX
 YanmaWalk:: INCBIN "gfx/followers/yanma.2bpp.lzp"
+
+SECTION "Yanmega Walking Sprite", ROMX
+YanmegaWalk:: INCBIN "gfx/followers/yanmega.2bpp.lzp"
 
 SECTION "Zapdos Walking Sprite", ROMX
 ZapdosWalk:: INCBIN "gfx/followers/zapdos.2bpp.lzp"
