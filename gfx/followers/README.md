@@ -32,6 +32,14 @@ icon in `gfx/minis_icons.asm` and follow as its bouncing party icon.)
    `data/pokemon/mini_icon_pointers.asm` in place of their minis and icons.
 4. Credit the artist in `CREDITS.md` and below.
 
+## Testing
+
+`python3 utils/followers/test_followers.py SAVE.sav` (after `make`) checks
+in the emulator, for every species and form (394), that the follower and the
+party menu draw the right walking sprite frames from VRAM and the right light
+and dark colours, against `gfx/followers/` and
+`data/pokemon/overworld_icon_pals.asm`. It takes about six minutes.
+
 ## Credits
 
 The 277 Gen 1–2 and Unown sprites come from
