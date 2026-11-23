@@ -160,6 +160,8 @@ TrainerPicPointers::
 	dba CamperPic ; Harrison
 	dba ArtistPic ; Tracey
 	dba PicnickerPic ; Casey
+	dba MewtwoTrainerPic ; Mewtwo
+	dba BurglarPic ; Iron Mask
 	assert_table_length NUM_TRAINER_CLASSES
 	dba OmastarFossilPic
 	dba KabutopsFossilPic

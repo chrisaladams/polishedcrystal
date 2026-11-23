@@ -159,4 +159,6 @@ TrainerClassNames::
 	li "<PK><MN> Trainer" ; HARRISON_T
 	li "<PK><MN> Watcher" ; TRACEY_T
 	li "<PK><MN> Trainer" ; CASEY_T
+	li "Psychic"          ; MEWTWO_T
+	li "Iron Mask"        ; IRON_MASK_T
 	assert_list_length NUM_TRAINER_CLASSES

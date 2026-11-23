@@ -35,6 +35,8 @@ BossTrainers:
 	db HARRISON_T
 	db TRACEY_T
 	db CASEY_T
+	db MEWTWO_T
+	db IRON_MASK_T
 JohtoGymLeaders:
 	db FALKNER
 	db WHITNEY

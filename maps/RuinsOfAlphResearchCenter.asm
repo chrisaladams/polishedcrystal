@@ -4,7 +4,7 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 	scene_script RuinsOfAlphResearchCenterGetUnownDexScene, SCENE_RUINSOFALPHRESEARCHCENTER_GET_UNOWN_DEX
 
 	def_callbacks
-	callback MAPCALLBACK_OBJECTS, RuinsOfAlphResearchCenterScientistCallback
+	callback MAPCALLBACK_OBJECTS, RuinsOfAlphResearchCenterMollyCallback
 
 	def_warp_events
 	warp_event  4,  7, RUINS_OF_ALPH_OUTSIDE, 7
@@ -24,6 +24,7 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 	object_event  7,  2, SPRITE_SCIENTIST, SPRITEMOVEDATA_WANDER, 1, 2, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterScientist2Script, -1
 	object_event  4,  5, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterScientist3Script, EVENT_RUINS_OF_ALPH_RESEARCH_CENTER_SCIENTIST
 	object_event  0,  4, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterScientist4Script, -1
+	object_event  2,  2, SPRITE_TWIN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterMollyScript, EVENT_MOVIE_TRAINER_HIDDEN
 
 	object_const_def
 	const RUINSOFALPHRESEARCHCENTER_SCIENTIST1
@@ -31,6 +32,12 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 	const RUINSOFALPHRESEARCHCENTER_SCIENTIST3
 	const RUINSOFALPHRESEARCHCENTER_SCIENTIST4
 
+RuinsOfAlphResearchCenterMollyCallback:
+; Link Edition: Molly (Spell of the Unown) is here after the Elite Four
+	setevent EVENT_MOVIE_TRAINER_HIDDEN
+	checkevent EVENT_BEAT_ELITE_FOUR
+	iffalsefwd RuinsOfAlphResearchCenterScientistCallback
+	clearevent EVENT_MOVIE_TRAINER_HIDDEN
 RuinsOfAlphResearchCenterScientistCallback:
 	checkscene
 	ifequalfwd $1, .ShowScientist
@@ -540,3 +547,102 @@ RuinsOfAlphResearchCenterAcademicBooksText:
 	line "Mysteries of the"
 	cont "Ancients…"
 	done
+
+RuinsOfAlphResearchCenterMollyScript:
+; Link Edition: Spell of the Unown
+	faceplayer
+	opentext
+	checkevent EVENT_BEAT_MOLLY
+	iftruefwd .Again
+	writetext .IntroText
+	sjumpfwd .Ask
+
+.Again:
+	writetext .AgainText
+.Ask:
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	writetext .GoText
+	cry ENTEI
+	waitbutton
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer LASS, MOLLY_HALE
+	startbattle
+	reloadmapafterbattle
+	opentext
+	checkevent EVENT_BEAT_MOLLY
+	iftrue_jumpopenedtext .AfterText
+	writetext .ThanksText
+	promptbutton
+	verbosegiveitem ABILITYPATCH, iffalse_endtext
+	setevent EVENT_BEAT_MOLLY
+	jumpopenedtext .AfterText
+
+.IntroText:
+	text "I'm Molly. Papa"
+	line "went into the"
+	cont "Ruins to study"
+	cont "the Unown…"
+
+	para "…and he never"
+	line "came back."
+
+	para "But the Unown"
+	line "heard my wishes."
+
+	para "They made me new"
+	line "friends, and a"
+	cont "new Papa: Entei!"
+
+	para "Will you play"
+	line "with us?"
+	done
+
+.AgainText:
+	text "Molly: Papa's"
+	line "home now. But the"
+	cont "Unown still come"
+	cont "to play sometimes!"
+
+	para "Want to battle my"
+	line "dream team again?"
+	done
+
+.NoText:
+	text "Molly: Then don't"
+	line "come into my"
+	cont "dream!"
+	done
+
+.GoText:
+	text "Molly: Entei, my"
+	line "Papa, help me!"
+	done
+
+.BeatenText:
+	text "The Unown's spell"
+	line "is fading…"
+	done
+
+.ThanksText:
+	text "Molly: I made a"
+	line "world just for me,"
+	cont "but it was lonely."
+
+	para "Real friends are"
+	line "better than dream"
+	cont "ones. Thank you!"
+
+	para "The Unown left"
+	line "this behind."
+	cont "Take it!"
+	done
+
+.AfterText:
+	text "Molly: I'm going"
+	line "to be a #mon"
+	cont "trainer one day,"
+	cont "just like you!"
+	done
+

@@ -2192,3 +2192,13 @@ CaseyFinalPkmnText:
 	text "Bottom of the"
 	line "ninth! Go!"
 	prompt
+
+MewtwoFinalPkmnText:
+	text "The copies will"
+	line "prevail!"
+	prompt
+
+IronMaskFinalPkmnText:
+	text "Celebi! Destroy"
+	line "them all!"
+	prompt

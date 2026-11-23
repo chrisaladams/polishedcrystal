@@ -214,6 +214,27 @@ They reuse existing trainer pictures and sprites, and share one spare event
 flag, so saves don't change. `python3 utils/anime_events/test_cameos.py
 SAVE.sav` checks them in the emulator.
 
+### The movies
+
+Three events from the first movies, each a battle where the story happened:
+
+- **Mewtwo Strikes Back**, Cerulean Cave: before you can battle Mewtwo, it
+  speaks to you and sends out its clones of the Kanto starters (Venusaur,
+  Blastoise, Charizard, level 75), with its own trainer picture (cut from its
+  battle sprite) and its Stadium battle music. Then the usual Mewtwo battle.
+- **Spell of the Unown**, the Ruins of Alph Research Center (after the Elite
+  Four): Molly, waiting for her papa, battles with the friends the Unown
+  dreamed up for her and Entei (Unown, Ursaring, Donphan, Mantine, Ampharos,
+  Entei, levels 64–70). The first win gives an Ability Patch, and she'll
+  battle again any time.
+- **Celebi: Voice of the Forest**, Ilex Forest (after the Celebi time
+  travel): the Iron Mask Marauder of Team Rocket waits by the shrine with
+  Sneasel, Scizor, Tyranitar and his Dark Ball Celebi (levels 70–76). Beat
+  him once to drive him off for good and find a Big Nugget.
+
+`python3 utils/anime_events/test_movie_events.py SAVE.sav` checks them in the
+emulator.
+
 ### Smarter trainer AI
 
 These apply to every trainer battle, not just link play:

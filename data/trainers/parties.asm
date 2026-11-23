@@ -4287,6 +4287,34 @@ endc
 	tr_mon 52, AMPHAROS
 	end_trainer
 
+	; Link Edition: Spell of the Unown (the Ruins of Alph Research Center)
+	def_trainer MOLLY_HALE, "Molly"
+	tr_mon 64, UNOWN, GENDERLESS | UNOWN_M_FORM
+		tr_extra SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 252 SAt, 4 Spe
+		tr_moves HIDDEN_POWER
+	tr_mon 66, URSARING @ FLAME_ORB, FEMALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 252 Atk, 4 Spe
+		tr_moves FACADE, CRUNCH, CLOSE_COMBAT, SWORDS_DANCE
+	tr_mon 66, DONPHAN @ LEFTOVERS, FEMALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 252 Atk, 4 Def
+		tr_moves EARTHQUAKE, STONE_EDGE, RAPID_SPIN, KNOCK_OFF
+	tr_mon 66, MANTINE @ LEFTOVERS, FEMALE
+		tr_extra SDEF_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SAt, 252 SDf
+		tr_moves SCALD, AIR_SLASH, ROOST, ICE_BEAM
+	tr_mon 66, AMPHAROS @ SITRUS_BERRY, FEMALE
+		tr_extra SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 252 SAt, 4 SDf
+		tr_moves THUNDERBOLT, DRAGON_PULSE, FOCUS_BLAST, THUNDER_WAVE
+	tr_mon 70, ENTEI @ CHARCOAL, GENDERLESS
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 252 Atk, 4 Spe
+		tr_moves SACRED_FIRE, EXTREMESPEED, STONE_EDGE, CALM_MIND
+	end_trainer
+
 
 SECTION "BeautyGroup", ROMX
 BeautyGroup:
@@ -9741,4 +9769,52 @@ CaseyGroup:
 		tr_extra SPE_UP_SATK_DOWN
 		tr_evs 252 Atk, 4 Def, 252 Spe
 		tr_moves THUNDERPUNCH, FIRE_PUNCH, CROSS_CHOP, ICE_PUNCH
+	end_trainer
+
+
+; Link Edition: the movies
+
+SECTION "MewtwoGroup", ROMX
+MewtwoGroup:
+
+	def_trainer_class MEWTWO_T
+	def_trainer 1, "Mewtwo"
+	; Mewtwo Strikes Back: its clones of the Kanto starters
+	tr_mon 75, VENUSAUR @ BLACK_SLUDGE, MALE
+		tr_extra SDEF_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SAt, 252 SDf
+		tr_moves GIGA_DRAIN, SLUDGE_BOMB, LEECH_SEED, SLEEP_POWDER
+	tr_mon 75, BLASTOISE @ LEFTOVERS, MALE
+		tr_extra DEF_UP_ATK_DOWN
+		tr_evs 252 HP, 252 Def, 4 SAt
+		tr_moves SCALD, ICE_BEAM, RAPID_SPIN, AURA_SPHERE
+	tr_mon 75, CHARIZARD @ LIFE_ORB, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves FLAMETHROWER, AIR_SLASH, DRAGON_PULSE, FOCUS_BLAST
+	end_trainer
+
+
+SECTION "IronMaskGroup", ROMX
+IronMaskGroup:
+
+	def_trainer_class IRON_MASK_T
+	def_trainer 1, "Marauder"
+	; Celebi: Voice of the Forest
+	tr_mon 70, SNEASEL @ EVIOLITE, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves NIGHT_SLASH, ICE_SHARD, LOW_KICK, SWORDS_DANCE
+	tr_mon 72, SCIZOR @ CHOICE_BAND, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 252 Atk, 4 SDf
+		tr_moves BULLET_PUNCH, U_TURN, KNOCK_OFF, SWORDS_DANCE
+	tr_mon 74, TYRANITAR @ LEFTOVERS, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 252 Atk, 4 SDf
+		tr_moves STONE_EDGE, CRUNCH, EARTHQUAKE, DRAGON_DANCE
+	tr_mon 76, CELEBI @ LIFE_ORB, GENDERLESS
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves DARK_PULSE, GIGA_DRAIN, PSYCHIC_M, NASTY_PLOT
 	end_trainer

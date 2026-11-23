@@ -162,4 +162,6 @@ TrainerGroups:
 	dba HarrisonGroup
 	dba TraceyGroup
 	dba CaseyGroup
+	dba MewtwoGroup
+	dba IronMaskGroup
 	assert_table_length NUM_TRAINER_CLASSES

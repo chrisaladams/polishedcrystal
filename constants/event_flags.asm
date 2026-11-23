@@ -830,7 +830,7 @@
 	const EVENT_BEAT_BUG_CATCHER_KEN
 	const EVENT_BEAT_BUG_CATCHER_WAYNE
 	const EVENT_BEAT_BUG_CATCHER_OSCAR
-	const EVENT_LINK_SPARE_02 ; Link Edition: was EVENT_BEAT_BUG_CATCHER_DAVID, unused since 2022 or earlier
+	const EVENT_MOVIE_TRAINER_HIDDEN ; Link Edition: Molly, the Iron Mask Marauder (was EVENT_BEAT_BUG_CATCHER_DAVID, unused since 2022 or earlier)
 ; Camper
 	const EVENT_BEAT_CAMPER_TODD
 	const EVENT_BEAT_CAMPER_ROLAND
@@ -840,7 +840,7 @@
 	const EVENT_BEAT_CAMPER_DEAN
 	const EVENT_BEAT_CAMPER_SID
 	const EVENT_BEAT_CAMPER_TED
-	const EVENT_LINK_SPARE_03 ; Link Edition: was EVENT_BEAT_CAMPER_JOHN, unused since 2022 or earlier
+	const EVENT_BEAT_MOLLY ; Link Edition: Spell of the Unown (was EVENT_BEAT_CAMPER_JOHN, unused since 2022 or earlier)
 	const EVENT_BEAT_CAMPER_JERRY
 	const EVENT_BEAT_CAMPER_SPENCER
 	const EVENT_BEAT_CAMPER_QUENTIN
@@ -983,7 +983,7 @@
 	const EVENT_BEAT_ROCKET_GRUNTM_17
 	const EVENT_BEAT_ROCKET_GRUNTM_18
 	const EVENT_BEAT_ROCKET_GRUNTM_19
-	const EVENT_LINK_SPARE_04 ; Link Edition: was EVENT_BEAT_ROCKET_GRUNTM_20, unused since 2022 or earlier
+	const EVENT_BEAT_IRON_MASK_MARAUDER ; Link Edition: Celebi: Voice of the Forest (was EVENT_BEAT_ROCKET_GRUNTM_20, unused since 2022 or earlier)
 	const EVENT_LINK_SPARE_05 ; Link Edition: was EVENT_BEAT_ROCKET_GRUNTM_21, unused since 2022 or earlier
 	const EVENT_BEAT_ROCKET_GRUNTM_22
 	const EVENT_BEAT_ROCKET_GRUNTM_23

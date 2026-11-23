@@ -123,5 +123,7 @@ FinalText_SinglePhrases:
 	dw HarrisonFinalPkmnText
 	dw TraceyFinalPkmnText
 	dw CaseyFinalPkmnText
+	dw MewtwoFinalPkmnText
+	dw IronMaskFinalPkmnText
 	; all trainers between LEAF and PROF_OAK are omitted
 	assert_table_length NUM_TRAINER_CLASSES - (PROF_OAK - LEAF - 1)

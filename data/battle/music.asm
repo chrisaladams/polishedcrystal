@@ -51,6 +51,8 @@ BattleMusic_Trainers:
 	db LARRY,            MUSIC_GYM_LEADER_BATTLE_SWSH ; TODO: demix SV gym leader battle music
 	db WALKER,           MUSIC_JOHTO_GYM_LEADER_BATTLE
 	db LAWRENCE,         MUSIC_ZINNIA_BATTLE_ORAS
+	db MEWTWO_T,         MUSIC_MEWTWO_BATTLE_STADIUM
+	db IRON_MASK_T,      MUSIC_ROCKET_BATTLE
 	db -1
 
 BattleMusic_Legendaries:

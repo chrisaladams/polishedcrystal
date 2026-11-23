@@ -466,6 +466,7 @@ DEF BETA EQU __trainer_class__
 	const ALICE
 	const DUPLICA
 	const MAVIS
+	const MOLLY_HALE ; Link Edition: Spell of the Unown
 
 	trainerclass BEAUTY
 	const VICTORIA
@@ -1159,6 +1160,11 @@ DEF BETA EQU __trainer_class__
 	trainerclass TRACEY_T
 
 	trainerclass CASEY_T
+
+; Link Edition: the movies
+	trainerclass MEWTWO_T
+
+	trainerclass IRON_MASK_T
 
 DEF NUM_TRAINER_CLASSES EQU __trainer_class__ - 1
 

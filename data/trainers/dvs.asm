@@ -162,4 +162,6 @@ TrainerClassDVsAndPersonality:
 	db 252, PERFECT_DVS,   MALE   ; harrison
 	db 252, PERFECT_DVS,   MALE   ; tracey
 	db 252, PERFECT_DVS,   FEMALE ; casey
+	db 252, PERFECT_DVS,   MALE   ; mewtwo
+	db 252, PERFECT_DVS,   MALE   ; iron mask
 	assert_table_length NUM_TRAINER_CLASSES

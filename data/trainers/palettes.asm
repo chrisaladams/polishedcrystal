@@ -161,6 +161,8 @@ INCLUDE "gfx/trainers/youngster.pal" ; Ritchie
 INCLUDE "gfx/trainers/camper.pal" ; Harrison
 INCLUDE "gfx/trainers/artist.pal" ; Tracey
 INCLUDE "gfx/trainers/picnicker.pal" ; Casey
+INCLUDE "gfx/trainers/mewtwo.pal" ; Mewtwo
+INCLUDE "gfx/trainers/burglar.pal" ; Iron Mask
 INCLUDE "gfx/trainers/omastar_fossil.pal"
 INCLUDE "gfx/trainers/kabutops_fossil.pal"
 INCLUDE "gfx/trainers/aerodactyl_fossil.pal"

@@ -26,7 +26,17 @@ CeruleanCaveMewtwo:
 	writetext MewtwoText
 	cry MEWTWO
 	pause 15
+; Link Edition: Mewtwo Strikes Back
+	writetext .ClonesText
+	waitbutton
 	closetext
+	winlosstext .ClonesBeatenText, 0
+	loadtrainer MEWTWO_T, 1
+	startbattle
+	reloadmapafterbattle
+	showtext .ClonesAfterText
+	cry MEWTWO
+	pause 15
 	loadwildmon MEWTWO, 80
 	loadvar VAR_BATTLETYPE, BATTLETYPE_LEGENDARY
 	startbattle
@@ -38,6 +48,39 @@ CeruleanCaveMewtwo:
 	setflag ENGINE_PLAYER_CAUGHT_MEWTWO
 .nocatch
 	end
+
+.ClonesText:
+	text "A voice echoes"
+	line "in your mind…"
+
+	para "I am Mewtwo."
+	line "Humans made me,"
+	cont "a copy of Mew."
+
+	para "Are copies weaker"
+	line "than those they"
+	cont "were copied from?"
+
+	para "My clones will"
+	line "show you!"
+	done
+
+.ClonesBeatenText:
+	text "My clones…"
+	line "were defeated?"
+	done
+
+.ClonesAfterText:
+	text "…How one is born"
+	line "does not matter."
+
+	para "What matters is"
+	line "what one does"
+	cont "with one's life."
+
+	para "Now, show me your"
+	line "strength yourself!"
+	done
 
 MewtwoText:
 	text "Myuu!"

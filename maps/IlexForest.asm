@@ -5,7 +5,7 @@ IlexForest_MapScriptHeader:
 	scene_const SCENE_ILEXFOREST_NOOP
 
 	def_callbacks
-	callback MAPCALLBACK_OBJECTS, IlexForestFarfetchdCallback
+	callback MAPCALLBACK_OBJECTS, IlexForestIronMaskCallback
 
 	def_warp_events
 	warp_event  3,  7, ROUTE_34_ILEX_FOREST_GATE, 3
@@ -37,6 +37,7 @@ IlexForest_MapScriptHeader:
 	object_event 10, 26, SPRITE_CELEBI, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_ILEX_FOREST_CELEBI
 	object_event  9, 25, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, IlexForestLyraScript, EVENT_ILEX_FOREST_LYRA
 	object_event  9, 30, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestCharcoalApprenticeScript, EVENT_ILEX_FOREST_APPRENTICE
+	object_event 11, 25, SPRITE_BURGLAR, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IlexForestIronMaskScript, EVENT_MOVIE_TRAINER_HIDDEN
 	object_event 17, 16, SPRITE_ROCKER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestHeadbuttGuyScript, -1
 	object_event 14,  3, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 0, GenericTrainerBugCatcherWayne, -1
 	object_event  4, 16, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, IlexForestHoneyBoyText, EVENT_ROUTE_34_ILEX_FOREST_GATE_LASS
@@ -54,12 +55,22 @@ IlexForest_MapScriptHeader:
 	const ILEXFOREST_CELEBI
 	const ILEXFOREST_LYRA
 	const ILEXFOREST_YOUNGSTER
+	const ILEXFOREST_IRON_MASK
 
 IlexForestCutSceneScene:
 	sdefer IlexForestFinishCelebiEventScript
 IlexForestFarfetchdQuestScene:
 	end
 
+IlexForestIronMaskCallback:
+; Link Edition: the Iron Mask Marauder (Celebi: Voice of the Forest) waits
+; by the shrine after the time travel, until he's beaten
+	setevent EVENT_MOVIE_TRAINER_HIDDEN
+	checkevent EVENT_TIME_TRAVEL_FINISHED
+	iffalsefwd IlexForestFarfetchdCallback
+	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
+	iftruefwd IlexForestFarfetchdCallback
+	clearevent EVENT_MOVIE_TRAINER_HIDDEN
 IlexForestFarfetchdCallback:
 	checkevent EVENT_GOT_HM01_CUT
 	iftruefwd .Static
@@ -1192,3 +1203,66 @@ endc
 	line "own, so they're"
 	cont "a fair fight."
 	done
+
+IlexForestIronMaskScript:
+; Link Edition: Celebi: Voice of the Forest
+	faceplayer
+	showtext .IntroText
+	winlosstext .BeatenText, 0
+	loadtrainer IRON_MASK_T, 1
+	startbattle
+	reloadmapafterbattle
+	showtext .AfterText
+	playsound SFX_WARP_TO
+	special FadeOutPalettes
+	disappear ILEXFOREST_IRON_MASK
+	special FadeInPalettes_EnableDynNoApply
+	waitsfx
+	cry CELEBI
+	opentext
+	writetext .ForestText
+	promptbutton
+	verbosegiveitem BIG_NUGGET, iffalse_endtext
+	setevent EVENT_BEAT_IRON_MASK_MARAUDER
+	endtext
+
+.IntroText:
+	text "Heh heh heh…"
+
+	para "I am the Iron"
+	line "Mask Marauder of"
+	cont "Team Rocket!"
+
+	para "I came for the"
+	line "#mon that"
+	cont "travels through"
+	cont "time: Celebi!"
+
+	para "With my Dark Ball,"
+	line "any #mon turns"
+	cont "evil and obeys"
+	cont "only me!"
+
+	para "And you're in my"
+	line "way, kid!"
+	done
+
+.BeatenText:
+	text "No! My Dark Ball"
+	line "Celebi…!"
+	done
+
+.AfterText:
+	text "Curses! I'll be"
+	line "back for Celebi"
+	cont "one day!"
+	done
+
+.ForestText:
+	text "The forest feels"
+	line "peaceful again."
+
+	para "The Marauder"
+	line "dropped something!"
+	done
+
