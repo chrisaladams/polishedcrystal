@@ -126,7 +126,7 @@ Battle Tower and Battle Factory prize shops are unchanged.
   while you surf and in the battle and trade rooms, and changes when you
   change your lead. Turn it off under Options → Follower. The same sprites
   are the party menu, PC and Pokédex icons, so a Pokémon looks the same
-  everywhere. All but 20 of the game's Pokémon and forms have one so far;
+  everywhere. All but 16 of the game's Pokémon and forms have one so far;
   those follow as their bouncing party icon. (Rangi's own follower branch is unfinished; this
   is a smaller version built on the game's existing follow logic.)
 
