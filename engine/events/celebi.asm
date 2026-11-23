@@ -53,14 +53,14 @@ GalarianZapdosEvent:
 	farcall CopySpritePalToOBPal7
 
 	call ClearSpriteAnims
-	ld hl, ZapdosGalarianIcon
+	ld hl, ZapdosGalarianWalk
 	ld de, vTiles0 tile $84
-	lb bc, BANK(ZapdosGalarianIcon), 4 * 2
+	lb bc, BANK(ZapdosGalarianWalk), 4 * 2
 	call DecompressRequest2bpp
 
-	ld hl, ZapdosGalarianIcon
+	ld hl, ZapdosGalarianWalk
 	ld de, vTiles0 tile $8c
-	lb bc, BANK(ZapdosGalarianIcon), 4 * 2
+	lb bc, BANK(ZapdosGalarianWalk), 4 * 2
 	call DecompressRequest2bpp
 	jr DoCelebiEvent
 

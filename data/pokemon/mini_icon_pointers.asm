@@ -289,19 +289,19 @@ MiniIconPointers:
 	walking_mon Mamoswine
 	walking_mon PorygonZ
 	walking_mon Sylveon
-	mini_icon Perrserker
+	walking_mon Perrserker
 	walking_mon Cursola
 	walking_mon SirfetchD
 	walking_mon MrRime
-	mini_icon Wyrdeer
+	walking_mon Wyrdeer
 	walking_mon Kleavor
 	walking_mon Ursaluna
-	mini_icon Sneasler
+	walking_mon Sneasler
 	walking_mon Overqwil
-	mini_icon DudunsparceTwoSegment
-	mini_icon Farigiraf
-	mini_icon Clodsire
-	mini_icon Annihilape
+	walking_mon DudunsparceTwoSegment
+	walking_mon Farigiraf
+	walking_mon Clodsire
+	walking_mon Annihilape
 	assert_table_length NUM_SPECIES
 
 	walking_mon UnownB
@@ -356,13 +356,13 @@ endr
 
 	walking_mon MewtwoArmored
 
-	mini_icon DudunsparceThreeSegment
+	walking_mon DudunsparceThreeSegment
 
 	walking_mon Rattata
 	walking_mon Raticate
 	walking_mon RaichuAlolan
 	walking_mon Sandshrew
-	mini_icon SandslashAlolan
+	walking_mon SandslashAlolan
 	walking_mon Vulpix
 	walking_mon Ninetales
 	walking_mon Diglett
@@ -371,24 +371,24 @@ endr
 	walking_mon Persian
 	walking_mon Geodude
 	walking_mon Graveler
-	mini_icon GolemAlolan
+	walking_mon GolemAlolan
 	walking_mon GrimerAlolan
 	walking_mon MukAlolan
-	mini_icon ExeggutorAlolan
+	walking_mon ExeggutorAlolan
 	walking_mon MarowakAlolan
 
 	walking_mon MeowthGalarian
 	walking_mon PonytaGalarian
 	walking_mon RapidashGalarian
 	walking_mon Slowpoke
-	mini_icon SlowbroGalarian
+	walking_mon SlowbroGalarian
 	walking_mon FarfetchDGalarian
-	mini_icon WeezingGalarian
+	walking_mon WeezingGalarian
 	walking_mon MrMimeGalarian
 	walking_mon Articuno
-	mini_icon ZapdosGalarian
+	walking_mon ZapdosGalarian
 	walking_mon Moltres
-	mini_icon SlowkingGalarian
+	walking_mon SlowkingGalarian
 	walking_mon CorsolaGalarian
 
 	walking_mon GrowlitheHisuian

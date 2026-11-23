@@ -17,8 +17,8 @@ is worked out from the picture. These Pokémon are drawn in the colours of
 their overworld icon (`data/pokemon/overworld_icon_pals.asm`), so they look
 the same everywhere.
 
-A Pokémon without a walking sprite keeps its mini and icon (`gfx/minis/`,
-`gfx/icons/`) and follows as its bouncing party icon.
+Every Pokémon and form has one. (A Pokémon without one would keep a mini and
+icon in `gfx/minis_icons.asm` and follow as its bouncing party icon.)
 
 ## Adding sprites
 
@@ -47,6 +47,16 @@ Graveler; Galarian Slowpoke, Articuno and Moltres; Hisuian Arcanine, Qwilfish
 and Sneasel; Paldean Wooper and Tauros; Bloodmoon Ursaluna) use its sprite in
 their own colours (`SHARE` in `make_tables.py`).
 
+19 were drawn for the game in `utils/followers/drafts/` (text grids, made into
+sprites by `draw.py`): Overqwil, Galarian Meowth and Unown ! and ? edited from
+Qwilfish, Meowth and the Unown letters; and Perrserker, Wyrdeer, Sneasler,
+Farigiraf, Clodsire, Annihilape, both Dudunsparce, Alolan Sandslash, Golem and
+Exeggutor, and Galarian Slowbro, Slowking, Weezing and Zapdos, whose front
+view is the game's own mini of them and whose back and side come from a
+relative (Galarian Meowth, Stantler, Sneasel, Girafarig, Quagsire, Primeape,
+Dunsparce, Sandslash, Golem, Exeggutor, Slowbro, Slowking, Weezing, Zapdos).
+They're first drafts: adjust a grid and run `draw.py` and `make_tables.py`.
+
 43 more (most Gen 4 evolutions, Sylveon, Cursola, Sirfetch'd, Mr. Rime,
 Kleavor, Ursaluna and 13 regional forms) come from SheerSt's
 [PokéWilds](https://github.com/SheerSt/pokewilds) (`pokemon/pokemon/*/overworld.png`),
@@ -59,8 +69,8 @@ Sirfetch'd) among others.
 
 ## Space
 
-About 33.8 KB of the 2 MB ROM is free (two whole empty banks, 126 and 127,
-plus gaps). Count free space with the banks the map file doesn't list: an
+About 28 KB of the 2 MB ROM is free (bank 127 is empty, plus gaps), with
+every walking sprite in and the six music player songs back. Count free space with the banks the map file doesn't list: an
 entirely empty bank doesn't appear in it, which once made the free space look
 16 KB smaller than it was. Sharing and compressing data (below) freed 5.8 KB,
 and replacing a mini and icon (about 220 bytes together) with a walking
