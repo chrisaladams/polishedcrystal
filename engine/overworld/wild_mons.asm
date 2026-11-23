@@ -749,6 +749,9 @@ CheckWildMonSpot:
 	call IsWildMonTile
 	pop de
 	jr nz, .no
+	; somewhere you can get to (not, say, the rock outside a cave's walls)
+	call CheckWildMonPath
+	jr c, .no
 	; nobody there, or coming there
 	ldh a, [hMapObjectIndexBuffer]
 	push af
@@ -797,6 +800,74 @@ CheckWildMonSpot:
 	ld h, a
 	dec b
 	jr nz, .CheckObjects
+	and a
+	ret
+
+CheckWildMonPath:
+; Carry if (d, e) is walled off from you: both L-shaped paths from it to you
+; (across then up or down, or up or down then across) run into a wall.
+; Keeps de.
+	xor a
+	call .Path
+	ret nc
+	ld a, 1
+.Path:
+	push de
+	ld b, a
+.step
+	; one step towards you: across first (b = 0) or up or down first
+	ld a, b
+	and a
+	ld a, [wPlayerMapX]
+	jr nz, .y_first
+	cp d
+	jr nz, .move_x
+	jr .move_y
+.y_first
+	ld a, [wPlayerMapY]
+	cp e
+	jr z, .move_x_again
+.move_y
+	ld a, [wPlayerMapY]
+	cp e
+	jr c, .up
+	inc e
+	jr .check
+.up
+	dec e
+	jr .check
+.move_x_again
+	ld a, [wPlayerMapX]
+.move_x
+	cp d
+	jr c, .left
+	inc d
+	jr .check
+.left
+	dec d
+.check
+	; reached you?
+	ld a, [wPlayerMapX]
+	cp d
+	jr nz, .look
+	ld a, [wPlayerMapY]
+	cp e
+	jr z, .clear
+.look
+	push bc
+	push de
+	call GetCoordTileCollision
+	call GetTilePermission
+	pop de
+	pop bc
+	cp WALL_TILE
+	jr nz, .step
+	pop de
+	scf
+	ret
+
+.clear
+	pop de
 	and a
 	ret
 
