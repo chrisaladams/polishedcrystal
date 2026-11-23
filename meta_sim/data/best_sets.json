@@ -3377,10 +3377,10 @@
   "moves": [
    "FIRE_PUNCH",
    "SHADOW_CLAW",
-   "DOUBLE_EDGE",
+   "IRON_HEAD",
    "EARTHQUAKE"
   ],
-  "item": "CHOICE_BAND",
+  "item": "THICK_CLUB",
   "ability": "LIGHTNING_ROD",
   "hp_type": null
  },
@@ -4861,7 +4861,7 @@
  "sirfetch_d|physical attacker": {
   "moves": [
    "REVERSAL",
-   "DOUBLE_EDGE",
+   "RETURN",
    "POISON_JAB",
    "NIGHT_SLASH"
   ],
@@ -4874,7 +4874,7 @@
    "QUICK_ATTACK",
    "REVERSAL",
    "POISON_JAB",
-   "NIGHT_SLASH"
+   "BODY_SLAM"
   ],
   "item": "CHOICE_SCARF",
   "ability": "SCRAPPY",

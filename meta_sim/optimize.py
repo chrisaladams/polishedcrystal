@@ -128,6 +128,7 @@ def evaluate(pool, key, base, cands, n, seed, workers):
 
 
 SCREEN_KEEP = 4        # candidates kept after the first screening stage
+CONFIRM_TRIES = 2      # screened candidates tried in turn until one is confirmed
 CONFIRM_CHUNK = 100    # contexts per confirmation chunk
 CONFIRM_MIN = 200      # contexts before a change can be accepted
 
@@ -205,19 +206,29 @@ def optimise_build(pool, b, moves, args, log):
             first = evaluate(pool, b.key, cur, [{**cur, dim: o} for o in cands],
                              max(args.workers, args.screen // 3), seed, args.workers)
             order = sorted(range(len(cands)), key=lambda i: -first[i][0])
-            cands = [cands[i] for i in order[:SCREEN_KEEP]]
+            # a species' own item (Thick Club, Light Ball...) always goes on to
+            # the full screening: the first stage is too short to rule it out
+            # (it once dropped Thick Club, worth +5 points, for Alolan Marowak)
+            keep = [cands[i] for i in order[:SCREEN_KEEP]]
+            keep += [o for o in cands if dim == 'item' and o in SPECIES_ITEM.values()
+                     and o not in keep]
+            cands = keep
             seed += 1
         screened = evaluate(pool, b.key, cur, [{**cur, dim: o} for o in cands],
                             args.screen, seed, args.workers)
-        best_i = max(range(len(cands)), key=lambda i: screened[i][0])
-        if screened[best_i][0] <= 0:
-            return
-        seed += 1
-        m, se = confirm(pool, b.key, cur, {**cur, dim: cands[best_i]}, args, seed + 50000)
-        if m > 2.5 * se and m > 0.01:
-            base = {**cur, dim: cands[best_i]}
-            log(f'    {dim}: {getattr(b, dim) if dim not in cur else cur[dim]} -> '
-                f'{cands[best_i]}  (+{100 * m:.1f} pts, SE {100 * se:.1f})')
+        # confirm the best of the screening, and if it fails (screening is
+        # noisy), the runner-up
+        order = sorted(range(len(cands)), key=lambda i: -screened[i][0])
+        for best_i in order[:CONFIRM_TRIES]:
+            if screened[best_i][0] <= 0:
+                return
+            seed += 1
+            m, se = confirm(pool, b.key, cur, {**cur, dim: cands[best_i]}, args, seed + 50000)
+            if m > 2.5 * se and m > 0.01:
+                base = {**cur, dim: cands[best_i]}
+                log(f'    {dim}: {getattr(b, dim) if dim not in cur else cur[dim]} -> '
+                    f'{cands[best_i]}  (+{100 * m:.1f} pts, SE {100 * se:.1f})')
+                return
 
     round_('ability', abilities_)
     round_('item', items_)
