@@ -599,7 +599,30 @@ endr
 	dw .MovementTinyWindows          ; SPRITEMOVEFN_TINY_WINDOWS
 	dw .MovementBigHoOh              ; SPRITEMOVEFN_BIG_HO_OH
 	dw .MovementBigLugia             ; SPRITEMOVEFN_BIG_LUGIA
+	dw .WildMon                      ; SPRITEMOVEFN_WILD_MON
 	assert_table_length NUM_SPRITEMOVEFN
+
+.WildMon:
+; Link Edition: a wild Pokemon you can see wanders over its own kind of tiles,
+; and runs from you while a Repel keeps it away (engine/overworld/wild_mons.asm
+; picks the way).
+	farcall GetWildMonStep ; a = direction, or carry to wait
+	jmp c, RandomStepDuration_Fast
+	call InitStep
+	farcall CheckWildMonStepTile
+	jr c, .wild_mon_stay
+	call CanObjectMoveInDirection
+	jmp nc, .RandomWalkStep
+.wild_mon_stay
+	call EndSpriteMovement
+	call CopyCurCoordsToNextCoords
+	ld hl, OBJECT_RANGE
+	add hl, bc
+	ld a, [hl]
+	and a
+	jmp z, RandomStepDuration_Fast
+	ld a, 4 ; running from you: soon try another way
+	jmp SetRandomStepDuration
 
 .RandomWalkY:
 	call Random
@@ -1072,6 +1095,7 @@ endr
 	call InitStep
 	call CanObjectMoveInDirection
 	jr c, .NewDuration
+.RandomWalkStep:
 	call UpdateTallGrassFlags
 	ld hl, OBJECT_ACTION
 	add hl, bc
@@ -1578,7 +1602,20 @@ StepFunction_ContinueWalk:
 	dec [hl]
 	ret nz
 	call CopyNextCoordsTileToStandingCoordsTile
-	jmp RandomStepDuration_Slow
+	; Link Edition: a wild Pokemon you can see pauses less, and not at all
+	; while it runs from you (GetWildMonStep sets OBJECT_RANGE)
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp FIRST_WILD_OBJECT
+	jmp c, RandomStepDuration_Slow
+	ld hl, OBJECT_RANGE
+	add hl, bc
+	ld a, [hl]
+	and a
+	jmp z, RandomStepDuration_Fast
+	ld a, 1
+	jmp SetRandomStepDuration
 
 StepFunction_PlayerHalf2:
 	call Field1cAnonymousJumptable

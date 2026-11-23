@@ -161,6 +161,11 @@ INCLUDE "engine/overworld/follower.asm"
 INCLUDE "gfx/followers.asm"
 
 
+SECTION "Wild Mons Code", ROMX
+
+INCLUDE "engine/overworld/wild_mons.asm"
+
+
 SECTION "Random Battle", ROMX
 
 INCLUDE "engine/link/random_battle.asm"

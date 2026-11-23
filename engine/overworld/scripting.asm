@@ -1261,6 +1261,7 @@ Script_catchtutorial:
 	jr Script_reloadmap
 
 Script_reloadmapafterbattle:
+	farcall FinishWildMonBattle ; Link Edition: the wild Pokemon you saw is gone
 	ld hl, wBattleScriptFlags
 	ld d, [hl]
 	xor a

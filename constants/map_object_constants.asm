@@ -103,6 +103,27 @@ DEF NUM_OBJECTS EQU 21
 ; (engine/overworld/follower.asm)
 DEF FOLLOWER_OBJECT EQU NUM_OBJECTS - 1
 DEF PLAYER_OBJECT EQU 0
+; Link Edition: the wild Pokemon you can see use NUM_WILD_MONS more map objects
+; after those, kept outside the saved table in wWildMapObjects (see GetMapObject
+; and engine/overworld/wild_mons.asm)
+DEF NUM_WILD_MONS EQU 3
+DEF FIRST_WILD_OBJECT EQU NUM_OBJECTS
+
+; wWildMons struct members (see engine/overworld/wild_mons.asm)
+rsreset
+DEF WILDMON_SPECIES    rb ; 0 = none
+DEF WILDMON_FORM       rb
+DEF WILDMON_SHINY      rb ; SHINY_MASK or 0
+DEF WILDMON_LEVEL      rb
+DEF WILDMON_BATTLETYPE rb
+DEF WILDMON_HABITAT    rb
+DEF WILDMON_LENGTH EQU _RS
+
+; WILDMON_HABITAT values: the tiles a wild Pokemon appears and walks on
+	const_def
+	const HABITAT_GRASS ; tall or long grass
+	const HABITAT_FLOOR ; cave floor or grass
+	const HABITAT_WATER ; water
 
 ; map_object MAPOBJECT_OBJECT_STRUCT_ID values
 DEF UNASSOCIATED_MAPOBJECT EQU -1
@@ -181,6 +202,8 @@ DEF MAPOBJECT_SCREEN_HEIGHT EQU (SCREEN_HEIGHT / 2) + 2
 	const SPRITEMOVEDATA_PAGODA_RIGHT         ; 38
 	const SPRITEMOVEDATA_RADIO_DISH           ; 39
 	const SPRITEMOVEDATA_LILYPAD              ; 3a
+	const SPRITEMOVEDATA_WILD_MON             ; 3b
+	const SPRITEMOVEDATA_WILD_MON_SWIM        ; 3c
 DEF NUM_SPRITEMOVEDATA EQU const_value
 
 ; StepFunction_FromMovement.Pointers indexes (see engine/overworld/map_objects.asm)
@@ -217,6 +240,7 @@ DEF NUM_SPRITEMOVEDATA EQU const_value
 	const SPRITEMOVEFN_TINY_WINDOWS          ; 1d
 	const SPRITEMOVEFN_BIG_HO_OH             ; 1e
 	const SPRITEMOVEFN_BIG_LUGIA             ; 1f
+	const SPRITEMOVEFN_WILD_MON              ; 20
 DEF NUM_SPRITEMOVEFN EQU const_value
 
 ; _HandleStepType.StepTypesJumptable indexes (see engine/overworld/map_objects.asm)

@@ -128,6 +128,23 @@ Battle Tower and Battle Factory prize shops are unchanged.
   are the party menu, PC and Pokédex icons, so a Pokémon looks the same
   everywhere. Every Pokémon and form has one. (Rangi's own follower branch is unfinished; this
   is a smaller version built on the game's existing follow logic.)
+- **Wild Pokémon you can see.** No more random battles in the grass: up to
+  three wild Pokémon wander where you'd meet them (tall grass on routes, the
+  floor in caves, the water while you surf), drawn with their walking sprites
+  in their own colours. A shiny one shows its shiny colours. Walk into one, or
+  face it and press A, to battle it. They're chosen exactly as random
+  encounters are: the same tables and odds, time of day, swarms, roaming
+  legendaries, lead abilities, music and Cleanse Tag, and the same 1 in 4,096
+  shiny chance (3 with the Shiny Charm). Two are there when you arrive, and
+  each step brings another, while there's room, with the map's usual
+  encounter chance. One that wanders off screen is gone, making room for
+  another. While a Repel works, the ones it would have kept away run from
+  you, and run off if you walk into them. The Bug-Catching Contest's bugs work
+  the same way. Fishing, Headbutt, Rock Smash and Sweet Honey are unchanged,
+  and without the Silph Scope the Pokémon Tower's ghosts still ambush you.
+  They don't touch your save or any map's own people. To check them in the
+  emulator: `python3 utils/wild_mons/test_wild_mons.py SAVE.sav` (every map
+  with wild Pokémon, battles, Repel, sprites and colours, saving).
 
 ### Smarter trainer AI
 

@@ -81,6 +81,11 @@ GetTilePermission::
 GetMapObject::
 ; Return the location of map object a in bc.
 	ld hl, wMapObjects
+	; Link Edition: the wild Pokemon you can see are kept apart (not saved)
+	cp FIRST_WILD_OBJECT
+	jr c, .got_table
+	ld hl, wWildMapObjects - FIRST_WILD_OBJECT * MAPOBJECT_LENGTH
+.got_table
 	ld bc, MAPOBJECT_LENGTH
 	rst AddNTimes
 	ld b, h
@@ -166,19 +171,6 @@ ApplyDeletionToMapObject::
 	ret nz
 .ok
 	farjp StopFollow
-
-CopyPlayerObjectTemplate::
-	push hl
-	call GetMapObject
-	ld d, b
-	ld e, c
-	ld a, -1
-	ld [de], a
-	inc de
-	pop hl
-	ld bc, MAPOBJECT_LENGTH - 1
-	rst CopyBytes
-	ret
 
 LoadMovementDataPointer::
 ; Load the movement data pointer for person a.

@@ -162,6 +162,40 @@ TryWildEncounter::
 	cp b
 	ret
 
+TryWildSpawn:
+; Link Edition: like TryWildEncounter, for a wild Pokemon you can see
+; (engine/overworld/wild_mons.asm), without the Repel check (those run from you
+; instead). If a is nonzero, without the encounter chance either (one that's
+; already there when you arrive). Return z with the Pokemon in
+; wTempWildMonSpecies, wWildMonForm, wCurPartyLevel and wBattleType.
+	ld e, a
+	push de
+	call ChooseWildEncounter
+	pop de
+	jr nz, .no
+	push de
+	call TryWildEncounter.EncounterRate ; may choose again for lead abilities
+	pop de
+	jr c, .yes
+	inc e
+	dec e
+	jr z, .no
+.yes
+	xor a
+	ret
+
+.no
+	xor a ; BATTLETYPE_NORMAL
+	ld [wBattleType], a
+	inc a
+	ret
+
+MapHasWildMons:
+; Link Edition: carry if this map has wild Pokemon in the grass or water.
+	call _GrassWildmonLookup
+	ret c
+	jmp _WaterWildmonLookup
+
 GetMapEncounterRate:
 	call CheckOnWater
 	ld a, [wWaterEncounterRate]

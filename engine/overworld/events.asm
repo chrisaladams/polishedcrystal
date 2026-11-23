@@ -321,6 +321,11 @@ CheckTileEvent:
 	call CheckWildEncountersEnabled
 	jr z, .ok
 
+	; Link Edition: the wild Pokemon you can see take the place of random
+	; battles (engine/overworld/wild_mons.asm)
+	farcall WildMonStep
+	jr c, .ok
+
 	call RandomEncounter
 	ret c
 
@@ -510,6 +515,8 @@ CheckTimeEvents:
 OWPlayerInputAndSRAMCheck:
 	call PlayerMovement
 	ret c
+	call CheckWildMonBump ; Link Edition
+	jr c, .Action
 	and a
 	jr nz, .NoAction
 
@@ -548,6 +555,23 @@ OWPlayerInputAndSRAMCheck:
 	scf
 	ret
 
+CheckWildMonBump:
+; Link Edition: if the player just walked into a wild Pokemon you can see,
+; battle it (return carry). Otherwise keep a.
+	ld b, a
+	ld a, [wWildMonBumped]
+	and a
+	ld c, a
+	ld a, b
+	ret z ; no carry
+	xor a
+	ld [wWildMonBumped], a
+	ld a, c
+	farcall WildMonEncounter
+	ret c
+	xor a
+	ret
+
 CheckAPressOW:
 	ldh a, [hJoyPressed]
 	and PAD_A
@@ -582,6 +606,12 @@ TryObjectEvent:
 	add hl, bc
 	ld a, [hl]
 	ldh [hLastTalked], a
+
+	; Link Edition: a wild Pokemon you can see
+	cp FIRST_WILD_OBJECT
+	jr c, .not_wild_mon
+	farjp WildMonEncounter
+.not_wild_mon
 
 	call GetMapObject
 	ld hl, MAPOBJECT_TYPE
@@ -1326,13 +1356,13 @@ RandomEncounter::
 	and a
 	ret
 
-WildBattleScript:
+WildBattleScript::
 	randomwildmon
 	startbattle
 	reloadmapafterbattle
 	end
 
-RoamingSuicuneBattleScript:
+RoamingSuicuneBattleScript::
 	randomwildmon
 	startbattle
 	reloadmapafterbattle
@@ -1342,7 +1372,7 @@ RoamingSuicuneBattleScript:
 .nocatch
 	end
 
-RoamingRaikouBattleScript:
+RoamingRaikouBattleScript::
 	randomwildmon
 	startbattle
 	reloadmapafterbattle
@@ -1352,7 +1382,7 @@ RoamingRaikouBattleScript:
 .nocatch
 	end
 
-RoamingEnteiBattleScript:
+RoamingEnteiBattleScript::
 	randomwildmon
 	startbattle
 	reloadmapafterbattle
@@ -1419,6 +1449,11 @@ GetContestLocations:
 _TryWildEncounter_BugContest:
 	call TryWildEncounter_BugContest
 	ret nc
+	call ChooseBugContestMon
+	xor a
+	farjp CheckRepelEffect
+
+ChooseBugContestMon::
 ; Pick a random mon out of ContestMons.
 .loop
 	call Random
@@ -1462,10 +1497,9 @@ _TryWildEncounter_BugContest:
 	add d
 .GotLevel:
 	ld [wCurPartyLevel], a
-	xor a
-	farjp CheckRepelEffect
+	ret
 
-TryWildEncounter_BugContest:
+TryWildEncounter_BugContest::
 	ld a, [wPlayerTileCollision]
 	cp COLL_LONG_GRASS
 	ld b, 40 percent

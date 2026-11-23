@@ -138,6 +138,11 @@ GetMonSprite:
 ; Return carry if a monster sprite was loaded.
 	cp SPRITE_FOLLOWER_MON
 	jr z, .FollowerMon
+	cp SPRITE_WILD_MON_1
+	jr c, .not_wild_mon
+	cp SPRITE_WILD_MON_1 + NUM_WILD_MONS
+	jr c, .WildMon
+.not_wild_mon
 	cp SPRITE_AQUARIUM_MON
 	jr z, .MonIcon
 	cp SPRITE_MON_ICON
@@ -210,6 +215,11 @@ GetMonSprite:
 	and SPECIESFORM_MASK
 	ld e, a
 	ld a, [wFollowerSpecies]
+	jr .Mon
+
+.WildMon:
+; Link Edition: a wild Pokemon you can see
+	farcall GetWildMonSpriteSpecies ; a = species, d = shininess, e = form
 	jr .Mon
 
 .BreedMon2:
@@ -301,6 +311,15 @@ GetUsedSprite::
 	ret c
 	ldh a, [hUsedSpriteIndex]
 .not_follower
+	; Link Edition: a wild Pokemon's own sprite
+	cp SPRITE_WILD_MON_1
+	jr c, .not_wild_mon
+	cp SPRITE_WILD_MON_1 + NUM_WILD_MONS
+	jr nc, .not_wild_mon
+	farcall LoadWildMonSpriteGFX
+	ret c
+	ldh a, [hUsedSpriteIndex]
+.not_wild_mon
 	call SafeGetSprite
 	ldh a, [hUsedSpriteTile]
 	call .GetTileAddr

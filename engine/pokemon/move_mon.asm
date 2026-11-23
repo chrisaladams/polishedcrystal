@@ -267,6 +267,14 @@ endr
 	cp BATTLETYPE_GROTTO
 	jr z, .not_shiny
 
+	; Link Edition: a wild Pokemon you could see is as shiny as it looked
+	; (engine/overworld/wild_mons.asm)
+	ld a, [wWildMonForcedShiny]
+	and a
+	jr z, .shiny_check
+	dec a
+	jr .got_shininess
+
 .shiny_check
 	call Random
 	and a

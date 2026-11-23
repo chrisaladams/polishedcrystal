@@ -1562,3 +1562,31 @@ wFollowerFacingRight:: db
 wFollowerHasSprite:: db
 wFollowerSpriteBank:: db
 wFollowerSpriteAddr:: dw
+
+
+SECTION "Wild Mon RAM", WRAM0
+
+; Link Edition: the wild Pokemon you can see (engine/overworld/wild_mons.asm).
+; Their map objects, FIRST_WILD_OBJECT on (GetMapObject finds them here), are
+; not part of the save.
+wWildMapObjects::
+for n, NUM_WILD_MONS
+wWildMap{d:n}Object:: map_object wWildMap{d:n}
+endr
+; What each one is (WILDMON_* struct, species 0 if none).
+wWildMons:: ds NUM_WILD_MONS * WILDMON_LENGTH
+; 1 + which one you're battling, so it's gone afterwards.
+wWildMonBattling:: db
+; 1 + which one the player just walked into.
+wWildMonBumped:: db
+; For the battle: the Pokemon's shininess (SHINY_MASK or 0) plus 1, so it's
+; the one you saw; 0 to roll it as usual.
+wWildMonForcedShiny:: db
+; The lead's level while a Repel is working (weaker Pokemon run from you), or 0.
+wWildMonRepelLevel:: db
+; While one is brought out: how (see TrySpawnWildMon), which, and where it lives.
+wWildMonSpawnMode:: db
+wWildMonSpawnSlot:: db
+wWildMonSpawnHabitat:: db
+; Set when one was due but there was nowhere to put it (it comes next step).
+wWildMonSpawnPending:: db

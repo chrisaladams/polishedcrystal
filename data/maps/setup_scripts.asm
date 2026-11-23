@@ -44,6 +44,7 @@ MapSetupScript_Warp:
 	mapsetup LoadMapTimeOfDay
 	mapsetup LoadMapObjects
 	mapsetup SpawnFollower
+	mapsetup SpawnWildMons
 	mapsetup GrottoUpdatePlayerTallGrassFlags
 	mapsetup EnableLCD
 	mapsetup LoadMapPalettes
@@ -77,6 +78,7 @@ MapSetupScript_BadWarp:
 	mapsetup EnableLCD
 	mapsetup LoadMapObjects
 	mapsetup SpawnFollower
+	mapsetup SpawnWildMons
 	mapsetup LoadMapPalettes
 	mapsetup SpawnInFacingDown
 	mapsetup EnableDynPalUpdatesNoApply
@@ -104,6 +106,7 @@ MapSetupScript_Connection:
 	mapsetup DisableDynPalUpdates
 	mapsetup LoadMapObjects_Connection
 	mapsetup SpawnFollower
+	mapsetup SpawnWildMons
 	mapsetup FadeToMapMusic
 	mapsetup LoadMapPalettes
 	mapsetup ClearSavedObjPals
@@ -138,6 +141,7 @@ MapSetupScript_Train:
 	mapsetup EnableLCD
 	mapsetup LoadMapObjects
 	mapsetup SpawnFollower
+	mapsetup SpawnWildMons
 	mapsetup GrottoUpdatePlayerTallGrassFlags
 	mapsetup LoadMapPalettes
 	mapsetup EnableDynPalUpdatesNoApply
@@ -211,6 +215,7 @@ MapSetupScript_Continue:
 	mapsetup LoadMapPalettes
 	mapsetup EnableDynPalUpdatesNoApply
 	mapsetup SpawnFollower
+	mapsetup SpawnWildMons
 	mapsetup RefreshMapSprites
 	mapsetup PlayMapMusicBike
 	mapsetup FadeInPalettes

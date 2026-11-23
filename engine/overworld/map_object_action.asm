@@ -337,10 +337,17 @@ _GetNextStepFrame:
 	ret
 
 IsFollowerObject:
-; Link Edition: z if bc is the following Pokemon's object struct.
+; Link Edition: z if bc is the following Pokemon's object struct, or a wild
+; Pokemon's (both are drawn with walking sprites: see SetFacingFollower).
 	ld hl, OBJECT_MAP_OBJECT_INDEX
 	add hl, bc
 	ld a, [hl]
+	cp FIRST_WILD_OBJECT
+	jr c, .not_wild
+	xor a ; set z
+	ret
+
+.not_wild
 	cp FOLLOWER_OBJECT
 	ret
 
@@ -350,9 +357,15 @@ SetFacingFollower:
 ; Without one, its party icon bounces between its two frames, like in the
 ; party menu, and is mirrored while it heads right (the icons face left);
 ; heading up or down keeps the last left/right facing.
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp FIRST_WILD_OBJECT
+	jr nc, .walking ; every wild Pokemon has its walking sprite
 	ld a, [wFollowerHasSprite]
 	and a
 	jr z, .icon_only
+.walking
 	call AlternateStepFrame
 	ld d, 0
 	jr z, .frame

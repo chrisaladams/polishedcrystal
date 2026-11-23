@@ -128,10 +128,15 @@ RefreshPlayerCoords:
 	ret
 
 CopyObjectStruct::
+	; Link Edition: the wild Pokemon you can see have no mask
+	ldh a, [hMapObjectIndexBuffer]
+	cp FIRST_WILD_OBJECT
+	jr nc, .unmasked
 	call GetObjectMask
 	ld a, [hl]
 	and a
 	ret nz ; masked
+.unmasked
 	ld hl, wObjectStructs + OBJECT_LENGTH + OBJECT_MAP_OBJECT_INDEX
 	ld a, 1
 	ld de, OBJECT_LENGTH
@@ -904,4 +909,17 @@ QueueFollowerFirstStep:
 
 .same_xy
 	scf
+	ret
+
+CopyPlayerObjectTemplate:
+	push hl
+	call GetMapObject
+	ld d, b
+	ld e, c
+	ld a, -1
+	ld [de], a
+	inc de
+	pop hl
+	ld bc, MAPOBJECT_LENGTH - 1
+	rst CopyBytes
 	ret

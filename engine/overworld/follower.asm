@@ -254,7 +254,11 @@ LoadFollowerSpriteGFX::
 	ld a, [wFollowerHasSprite]
 	and a
 	ret z ; nc
+	; fallthrough
 
+LoadWalkingSpriteGFX:
+; Put the walking sprite at wFollowerSpriteBank:wFollowerSpriteAddr in the
+; tiles of the sprite being loaded (hUsedSpriteTile), and return carry.
 	call .Build
 	; copy the frames into the follower's tiles, as GetUsedSprite does
 	ldh a, [hUsedSpriteTile]

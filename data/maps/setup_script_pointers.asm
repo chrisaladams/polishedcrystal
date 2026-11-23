@@ -64,3 +64,4 @@ MapSetupCommands:
 	add_mapsetup SavePrevPalStates ; 39
 	add_mapsetup ClearSavedObjPals ; 3a
 	add_mapsetup SpawnFollower ; 3b
+	add_mapsetup SpawnWildMons ; 3c

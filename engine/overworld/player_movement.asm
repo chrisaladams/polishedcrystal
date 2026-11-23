@@ -758,6 +758,18 @@ endc
 ; Find an object struct with coordinates equal to d,e
 	farcall IsNPCAtCoord ; returns carry if there is an NPC at the coord
 	ret nc
+; Link Edition: walking into a wild Pokemon you can see battles it
+; (CheckWildMonBump)
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	cp FIRST_WILD_OBJECT
+	jr c, .not_wild_mon
+	ld [wWildMonBumped], a
+	scf
+	ret
+
+.not_wild_mon
 ; There is an object in front, so return carry, but update if it's a Strength boulder
 	ld hl, wOWState
 	bit OWSTATE_STRENGTH, [hl]

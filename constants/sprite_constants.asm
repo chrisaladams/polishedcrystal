@@ -224,8 +224,11 @@
 DEF NUM_OVERWORLD_SPRITES EQU const_value - 1
 
 ; special GetMonSprite values (see engine/overworld/overworld.asm)
-	const_next $ed
+	const_next $ea
 DEF SPRITE_POKEMON EQU const_value
+	const SPRITE_WILD_MON_1 ; ea (Link Edition: the wild Pokemon you can see)
+	const SPRITE_WILD_MON_2 ; eb
+	const SPRITE_WILD_MON_3 ; ec
 	const SPRITE_FOLLOWER_MON ; ed (Link Edition: the lead Pokemon following you)
 	const SPRITE_MON_ICON ; ee
 	const SPRITE_AQUARIUM_MON ; ef
