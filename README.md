@@ -219,9 +219,10 @@ SAVE.sav` checks them in the emulator.
 Three events from the first movies, each a battle where the story happened:
 
 - **Mewtwo Strikes Back**, Cerulean Cave: before you can battle Mewtwo, it
-  speaks to you and sends out its clones of the Kanto starters (Venusaur,
-  Blastoise, Charizard, level 75), with its own trainer picture (cut from its
-  battle sprite) and its Stadium battle music. Then the usual Mewtwo battle.
+  speaks to you and sends out clones of your own team: the same Pokémon,
+  levels, moves, items and stats, at full health even if yours are hurt. It
+  has its own trainer picture (cut from its battle sprite) and its Stadium
+  battle music. Then the usual Mewtwo battle.
 - **Spell of the Unown**, the Ruins of Alph Research Center (after the Elite
   Four): Molly, waiting for her papa, battles with the friends the Unown
   dreamed up for her and Entei (Unown, Ursaring, Donphan, Mantine, Ampharos,

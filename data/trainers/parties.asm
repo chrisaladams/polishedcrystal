@@ -9779,19 +9779,9 @@ MewtwoGroup:
 
 	def_trainer_class MEWTWO_T
 	def_trainer 1, "Mewtwo"
-	; Mewtwo Strikes Back: its clones of the Kanto starters
-	tr_mon 75, VENUSAUR @ BLACK_SLUDGE, MALE
-		tr_extra SDEF_UP_ATK_DOWN
-		tr_evs 252 HP, 4 SAt, 252 SDf
-		tr_moves GIGA_DRAIN, SLUDGE_BOMB, LEECH_SEED, SLEEP_POWDER
-	tr_mon 75, BLASTOISE @ LEFTOVERS, MALE
-		tr_extra DEF_UP_ATK_DOWN
-		tr_evs 252 HP, 252 Def, 4 SAt
-		tr_moves SCALD, ICE_BEAM, RAPID_SPIN, AURA_SPHERE
-	tr_mon 75, CHARIZARD @ LIFE_ORB, MALE
-		tr_extra SPE_UP_ATK_DOWN
-		tr_evs 252 SAt, 4 SDf, 252 Spe
-		tr_moves FLAMETHROWER, AIR_SLASH, DRAGON_PULSE, FOCUS_BLAST
+	; Mewtwo Strikes Back: its clones are copies of your own team
+	; (CopyPlayerPartyAsClones); this one is never used
+	tr_mon 75, MEWTWO
 	end_trainer
 
 

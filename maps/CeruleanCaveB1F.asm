@@ -61,8 +61,11 @@ CeruleanCaveMewtwo:
 	line "than those they"
 	cont "were copied from?"
 
-	para "My clones will"
-	line "show you!"
+	para "I have cloned"
+	line "your own #mon."
+
+	para "Now, let them"
+	line "face each other!"
 	done
 
 .ClonesBeatenText:

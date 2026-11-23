@@ -9,7 +9,9 @@
   shrine only after the time travel; his battle has his team; winning gives a
   Big Nugget and he's gone for good;
 - Mewtwo Strikes Back: talking to Mewtwo in Cerulean Cave starts a battle with
-  its clones (Psychic Mewtwo), then the wild Mewtwo battle (level 80).
+  its clones (Psychic Mewtwo): copies of your own team (not eggs; same
+  species, level, item, moves and stats) at full HP with no status, even when
+  yours are hurt; then the wild Mewtwo battle (level 80).
 
 The battles are won by setting the opposing team's HP to 0 in RAM.
 
@@ -44,12 +46,14 @@ def expected_party(cls, n):
 def main():
     save = open(sys.argv[1], 'rb').read()
     shots = sys.argv[2] if len(sys.argv) > 2 else None
-    parties = {e[0]: expected_party(e[5], e[6]) for e in EVENTS}
+    parties = {e[0]: expected_party(e[5], e[6]) for e in EVENTS if e[0] != 'Mewtwo'}
     species = sorted({sp for p in parties.values() for _, sp in p} | {'MEWTWO'})
     names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH',
                        'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MOLLY_HALE', 'EVENT_BEAT_ELITE_FOUR',
                        'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
-                       'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE']
+                       'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE',
+                       'MON_SPECIES', 'MON_ITEM', 'MON_MOVES', 'MON_LEVEL', 'MON_FORM', 'MON_IS_EGG_F',
+                       'MON_STATUS', 'MON_HP', 'MON_MAXHP', 'MON_STATS', 'MON_DVS', 'MON_EVS']
     for e in EVENTS:
         names += [e[5], 'GROUP_' + e[1], 'MAP_' + e[1]]
     K = rgbasm_values(names, None)
@@ -103,19 +107,43 @@ def main():
             g.tick(2)
         return False
 
+    def mon(prefix, i, field, n=1):
+        b = g.addr(prefix) + i * L + K[field]
+        return tuple(g.m[1, b + k] for k in range(n))
+
+    def check_clones():
+        # each non-egg mon of yours, field by field
+        mine = [i for i in range(g.rd('wPartyCount'))
+                if not (mon('wPartyMon1', i, 'MON_FORM')[0] >> K['MON_IS_EGG_F']) & 1]
+        if g.rd('wOTPartyCount') != len(mine):
+            fails.append(('Mewtwo', f'{g.rd("wOTPartyCount")} clones for {len(mine)} of yours'))
+            return
+        fields = (('MON_SPECIES', 1), ('MON_FORM', 1), ('MON_ITEM', 1), ('MON_MOVES', 4), ('MON_LEVEL', 1),
+                  ('MON_DVS', 3), ('MON_EVS', 6), ('MON_MAXHP', 2), ('MON_STATS', 10))
+        for k, i in enumerate(mine):
+            for f, n in fields:
+                if mon('wOTPartyMon1', k, f, n) != mon('wPartyMon1', i, f, n):
+                    fails.append(('Mewtwo', f'clone {k + 1} {f} {mon("wOTPartyMon1", k, f, n)}, '
+                                            f'not {mon("wPartyMon1", i, f, n)}'))
+            if mon('wOTPartyMon1', k, 'MON_HP', 2) != mon('wOTPartyMon1', k, 'MON_MAXHP', 2):
+                fails.append(('Mewtwo', f'clone {k + 1} is not at full HP'))
+            if mon('wOTPartyMon1', k, 'MON_STATUS')[0]:
+                fails.append(('Mewtwo', f'clone {k + 1} has a status'))
+
     def check_trainer(ev):
         name, cls, n = ev[0], ev[5], ev[6]
         n = K[n] if n in K else int(n)
         if g.rd('wOtherTrainerClass') != K[cls] or g.rd('wOtherTrainerID') != n:
             fails.append((name, f'battled class {g.rd("wOtherTrainerClass")} #{g.rd("wOtherTrainerID")}, '
                                 f'not {cls} #{n}'))
-        got = []
+        got, want = [], [(int(lv), K[sp]) for lv, sp in parties.get(name, [])]
         for i in range(g.rd('wOTPartyCount')):
             sp = g.rd('wOTPartyMon1Species', i * L)
             ext = g.rd('wOTPartyMon1Form', i * L) & K['EXTSPECIES_MASK']
             got.append((g.rd('wOTPartyMon1Level', i * L), sp | (0x100 if ext else 0)))
-        want = [(int(lv), K[sp]) for lv, sp in parties[name]]
-        if got != want:
+        if name == 'Mewtwo':
+            check_clones()
+        elif got != want:
             fails.append((name, f'team {got}, not {want}'))
 
     def win(shot=None):
@@ -198,9 +226,12 @@ def main():
         if visit(marauder):
             fails.append(('Marauder', 'back after leaving and returning'))
 
-    # Mewtwo and its clones
+    # Mewtwo and its clones (of your team, hurt and poisoned first)
     g.load(base)
     flag('EVENT_BEAT_ELITE_FOUR', True)
+    g.wr('wPartyMon1HP', 0)
+    g.wr('wPartyMon1HP', 1, 1)
+    g.wr('wPartyMon1Status', 1 << 3)
     if not visit(mewtwo):
         fails.append(('Mewtwo', 'not there'))
     elif not until_battle(mewtwo[4]):

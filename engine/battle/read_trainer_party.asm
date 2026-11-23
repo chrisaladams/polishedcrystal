@@ -14,6 +14,10 @@ ReadTrainerParty:
 	ld bc, PARTYMON_STRUCT_LENGTH * PARTY_LENGTH
 	rst ByteFill
 
+	ld a, [wOtherTrainerClass]
+	cp MEWTWO_T
+	jmp z, CopyPlayerPartyAsClones
+
 	call FindTrainerData
 	ld a, b
 	add l
@@ -285,6 +289,94 @@ ReadTrainerParty:
 	pop hl
 .no_stat_recalc
 	jmp .loop2
+
+CopyPlayerPartyAsClones:
+; Link Edition: Mewtwo's clones (Mewtwo Strikes Back) are copies of your own
+; team (not eggs), at full health and PP
+	xor a
+	ld [wOtherTrainerType], a
+	ld [wCurPartyMon], a
+.loop
+	ld a, [wPartyCount]
+	ld b, a
+	ld a, [wCurPartyMon]
+	cp b
+	ret nc
+	ld a, MON_IS_EGG
+	call GetPartyParamLocationAndValue
+	bit MON_IS_EGG_F, a
+	jr nz, .next
+
+	; add a mon of the same species, form and level (for its OT and name)...
+	ld a, MON_FORM
+	call GetPartyParamLocationAndValue
+	ld [wCurForm], a
+	ld a, MON_LEVEL
+	call GetPartyParamLocationAndValue
+	ld [wCurPartyLevel], a
+	ld a, MON_SPECIES
+	call GetPartyParamLocationAndValue
+	ld [wCurPartySpecies], a
+	ld a, OTPARTYMON
+	ld [wMonType], a
+	ld a, [wCurPartyMon]
+	push af
+	farcall TryAddMonToParty
+	pop af
+	ld [wCurPartyMon], a
+
+	; ...then copy yours over it
+	ld a, MON_SPECIES
+	call GetPartyParamLocationAndValue
+	push hl
+	ld a, [wOTPartyCount]
+	dec a
+	ld hl, wOTPartyMon1
+	ld bc, PARTYMON_STRUCT_LENGTH
+	rst AddNTimes
+	ld d, h
+	ld e, l
+	pop hl
+	push de
+	ld bc, PARTYMON_STRUCT_LENGTH
+	rst CopyBytes
+	pop de
+
+	; no status, full HP
+	ld hl, MON_STATUS
+	add hl, de
+	xor a
+	ld [hli], a
+	ld [hli], a
+	push hl ; MON_HP
+	inc hl
+	inc hl
+	ld a, [hli]
+	ld b, [hl]
+	pop hl
+	ld [hli], a
+	ld [hl], b
+
+	; full PP
+	ld hl, MON_PP
+	add hl, de
+	push hl
+	ld hl, MON_MOVES
+	add hl, de
+	pop de
+	ld a, [wCurPartyMon]
+	push af
+	ld a, [wOTPartyCount]
+	dec a
+	ld [wCurPartyMon], a
+	farcall _RestoreAllPP
+	pop af
+	ld [wCurPartyMon], a
+
+.next
+	ld hl, wCurPartyMon
+	inc [hl]
+	jmp .loop
 
 SetDynamicForm:
 ; Adjust form of mon in bc dynamically based on context if no form is set.
