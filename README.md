@@ -129,8 +129,9 @@ Battle Tower and Battle Factory prize shops are unchanged.
   everywhere. Every Pokémon and form has one. (Rangi's own follower branch is unfinished; this
   is a smaller version built on the game's existing follow logic.)
 - **Wild Pokémon you can see.** No more random battles in the grass: up to
-  three wild Pokémon wander where you'd meet them (tall grass on routes, the
-  floor in caves, the water while you surf), drawn with their walking sprites
+  three wild Pokémon (four when the screen isn't busy) wander where you'd
+  meet them (tall grass on routes, the floor in caves, the water while you
+  surf), drawn with their walking sprites
   in their own colours. A shiny one shows its shiny colours. Walk into one, or
   face it and press A, to battle it. They're chosen exactly as random
   encounters are: the same tables and odds, time of day, swarms, roaming

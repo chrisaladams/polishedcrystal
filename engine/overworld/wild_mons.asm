@@ -1,8 +1,8 @@
 ; Link Edition: wild Pokemon you can see in the overworld.
 ;
-; Instead of random battles, up to NUM_WILD_MONS wild Pokemon wander where you'd
-; meet them: tall grass on routes, the floor in caves, and the water while
-; you're surfing. Walk into one, or face it and press A, to battle it.
+; Instead of random battles, up to NUM_WILD_MONS wild Pokemon (3, or 4 while the
+; screen isn't busy) wander where you'd meet them: tall grass on routes, the
+; floor in caves, and the water while you're surfing. Walk into one, or face it and press A, to battle it.
 ;
 ; They're chosen just as random encounters are (ChooseWildEncounter: the same
 ; tables and odds, time of day, swarms, roaming legendaries, lead abilities,
@@ -25,6 +25,10 @@ DEF WILD_MON_PREFILL       EQU 2 ; how many are there when you arrive
 DEF WILD_MON_SPOT_TRIES    EQU 12 ; places tried for each one
 DEF WILD_MON_EDGE_TRIES    EQU 6 ; of those, just off the edge of the screen
 DEF WILD_MON_FLEE_DISTANCE EQU 4 ; how close you get before one runs (Repel)
+
+DEF WILD_MON_USUAL_MAX    EQU 3 ; more than this only while the screen isn't busy
+DEF WILD_MON_BUSY_SCREEN  EQU 7 ; objects on screen (you, your follower and
+                                ; the rest) that leave no room for another
 
 ; TrySpawnWildMon modes
 DEF SPAWN_NO_CHANCE EQU 1 ; without the encounter chance
@@ -175,6 +179,35 @@ CountWildMons:
 	ld a, b
 	ret
 
+CountVisibleObjects:
+; a = how many objects are on screen (the player included).
+	ld hl, wObjectStructs
+	ld de, OBJECT_LENGTH
+	lb bc, 0, NUM_OBJECT_STRUCTS
+.loop
+	push hl
+	ld a, [hl] ; OBJECT_SPRITE
+	and a
+	jr z, .next
+	assert OBJECT_FLAGS2 == OBJECT_FLAGS1 + 1
+	push de
+	ld de, OBJECT_FLAGS1
+	add hl, de
+	pop de
+	bit INVISIBLE_F, [hl]
+	jr nz, .next
+	inc hl
+	bit OFF_SCREEN_F, [hl]
+	jr nz, .next
+	inc b
+.next
+	pop hl
+	add hl, de
+	dec c
+	jr nz, .loop
+	ld a, b
+	ret
+
 UpdateWildMonRepelLevel:
 ; While a Repel works, the wild Pokemon below the lead's level run from you.
 	ld a, [wRepelEffect]
@@ -283,6 +316,13 @@ TrySpawnWildMon:
 	ld [wWildMonSpawnSlot], a
 
 	; leave one of the 8 object palettes free, for people coming into view
+	; (two for a 4th wild Pokemon)
+	call CountWildMons
+	cp WILD_MON_USUAL_MAX
+	ld e, 7
+	jr c, .got_pal_limit
+	dec e
+.got_pal_limit
 	ld a, [wUsedObjectPals]
 	ld c, 0
 .count_pals
@@ -295,8 +335,18 @@ TrySpawnWildMon:
 	jr .count_pals
 .counted_pals
 	ld a, c
-	cp 7
+	cp e
 	ret nc
+
+	; a 4th only while few others are on screen (the Game Boy shows 40
+	; sprites, 10 on a line, and each object here takes 4)
+	call CountWildMons
+	cp WILD_MON_USUAL_MAX
+	jr c, .room_on_screen
+	call CountVisibleObjects
+	cp WILD_MON_BUSY_SCREEN
+	ret nc
+.room_on_screen
 	ld a, [wWildMonSpawnMode]
 	and SPAWN_NO_CHANCE
 	call ChooseWildMon

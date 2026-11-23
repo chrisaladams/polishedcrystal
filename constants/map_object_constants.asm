@@ -106,7 +106,7 @@ DEF PLAYER_OBJECT EQU 0
 ; Link Edition: the wild Pokemon you can see use NUM_WILD_MONS more map objects
 ; after those, kept outside the saved table in wWildMapObjects (see GetMapObject
 ; and engine/overworld/wild_mons.asm)
-DEF NUM_WILD_MONS EQU 3
+DEF NUM_WILD_MONS EQU 4 ; (the 4th only while the screen isn't busy)
 DEF FIRST_WILD_OBJECT EQU NUM_OBJECTS
 
 ; wWildMons struct members (see engine/overworld/wild_mons.asm)
