@@ -76,11 +76,6 @@ SneaslerMini::     INCBIN "gfx/minis/sneasler.2bpp.lzp"
 SneaslerMiniMask:: INCBIN "gfx/minis/sneasler_mask.1bpp.lzp"
 SneaslerIcon::     INCBIN "gfx/icons/sneasler.2bpp.lzp"
 
-SECTION "Overqwil Mini Icon", ROMX
-OverqwilMini::     INCBIN "gfx/minis/overqwil.2bpp.lzp"
-OverqwilMiniMask:: INCBIN "gfx/minis/overqwil_mask.1bpp.lzp"
-OverqwilIcon::     INCBIN "gfx/icons/overqwil.2bpp.lzp"
-
 SECTION "DudunsparceTwoSegment Mini Icon", ROMX
 DudunsparceTwoSegmentMini::     INCBIN "gfx/minis/dudunsparce_two_segment.2bpp.lzp"
 DudunsparceTwoSegmentMiniMask:: INCBIN "gfx/minis/dudunsparce_two_segment_mask.1bpp.lzp"
@@ -102,62 +97,6 @@ AnnihilapeMiniMask:: INCBIN "gfx/minis/annihilape_mask.1bpp.lzp"
 AnnihilapeIcon::     INCBIN "gfx/icons/annihilape.2bpp.lzp"
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SECTION "UnownExclamation Mini Icon", ROMX
-UnownExclamationMini::     INCBIN "gfx/minis/unown_exclamation.2bpp.lzp"
-UnownExclamationMiniMask:: INCBIN "gfx/minis/unown_exclamation_mask.1bpp.lzp"
-UnownExclamationIcon::     INCBIN "gfx/icons/unown_exclamation.2bpp.lzp"
-
-SECTION "UnownQuestion Mini Icon", ROMX
-UnownQuestionMini::     INCBIN "gfx/minis/unown_question.2bpp.lzp"
-UnownQuestionMiniMask:: INCBIN "gfx/minis/unown_question_mask.1bpp.lzp"
-UnownQuestionIcon::     INCBIN "gfx/icons/unown_question.2bpp.lzp"
 
 SECTION "DudunsparceThreeSegment Mini Icon", ROMX
 DudunsparceThreeSegmentMini::     INCBIN "gfx/minis/dudunsparce_three_segment.2bpp.lzp"
@@ -196,11 +135,6 @@ SECTION "ExeggutorAlolan Mini Icon", ROMX
 ExeggutorAlolanMini::     INCBIN "gfx/minis/exeggutor_alolan.2bpp.lzp"
 ExeggutorAlolanMiniMask:: INCBIN "gfx/minis/exeggutor_alolan_mask.1bpp.lzp"
 ExeggutorAlolanIcon::     INCBIN "gfx/icons/exeggutor_alolan.2bpp.lzp"
-
-SECTION "MeowthGalarian Mini Icon", ROMX
-MeowthGalarianMini::     INCBIN "gfx/minis/meowth_galarian.2bpp.lzp"
-MeowthGalarianMiniMask:: INCBIN "gfx/minis/meowth_galarian_mask.1bpp.lzp"
-MeowthGalarianIcon::     INCBIN "gfx/icons/meowth_galarian.2bpp.lzp"
 
 SECTION "SlowbroGalarian Mini Icon", ROMX
 SlowbroGalarianMini::     INCBIN "gfx/minis/slowbro_galarian.2bpp.lzp"

@@ -297,7 +297,7 @@ MiniIconPointers:
 	walking_mon Kleavor
 	walking_mon Ursaluna
 	mini_icon Sneasler
-	mini_icon Overqwil
+	walking_mon Overqwil
 	mini_icon DudunsparceTwoSegment
 	mini_icon Farigiraf
 	mini_icon Clodsire
@@ -329,8 +329,8 @@ MiniIconPointers:
 	walking_mon UnownX
 	walking_mon UnownY
 	walking_mon UnownZ
-	mini_icon UnownExclamation
-	mini_icon UnownQuestion
+	walking_mon UnownExclamation
+	walking_mon UnownQuestion
 
 	walking_mon Arbok ; Kanto
 	walking_mon Arbok ; Orange
@@ -377,7 +377,7 @@ endr
 	mini_icon ExeggutorAlolan
 	walking_mon MarowakAlolan
 
-	mini_icon MeowthGalarian
+	walking_mon MeowthGalarian
 	walking_mon PonytaGalarian
 	walking_mon RapidashGalarian
 	walking_mon Slowpoke

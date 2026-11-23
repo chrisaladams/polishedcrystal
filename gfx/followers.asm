@@ -458,6 +458,9 @@ MeganiumWalk:: INCBIN "gfx/followers/meganium.2bpp.lzp"
 SECTION "Meowth Walking Sprite", ROMX
 MeowthWalk:: INCBIN "gfx/followers/meowth.2bpp.lzp"
 
+SECTION "MeowthGalarian Walking Sprite", ROMX
+MeowthGalarianWalk:: INCBIN "gfx/followers/meowth_galarian.2bpp.lzp"
+
 SECTION "Metapod Walking Sprite", ROMX
 MetapodWalk:: INCBIN "gfx/followers/metapod.2bpp.lzp"
 
@@ -547,6 +550,9 @@ OmastarWalk:: INCBIN "gfx/followers/omastar.2bpp.lzp"
 
 SECTION "Onix Walking Sprite", ROMX
 OnixWalk:: INCBIN "gfx/followers/onix.2bpp.lzp"
+
+SECTION "Overqwil Walking Sprite", ROMX
+OverqwilWalk:: INCBIN "gfx/followers/overqwil.2bpp.lzp"
 
 SECTION "Paras Walking Sprite", ROMX
 ParasWalk:: INCBIN "gfx/followers/paras.2bpp.lzp"
@@ -830,6 +836,9 @@ UnownDWalk:: INCBIN "gfx/followers/unown_d.2bpp.lzp"
 SECTION "UnownE Walking Sprite", ROMX
 UnownEWalk:: INCBIN "gfx/followers/unown_e.2bpp.lzp"
 
+SECTION "UnownExclamation Walking Sprite", ROMX
+UnownExclamationWalk:: INCBIN "gfx/followers/unown_exclamation.2bpp.lzp"
+
 SECTION "UnownF Walking Sprite", ROMX
 UnownFWalk:: INCBIN "gfx/followers/unown_f.2bpp.lzp"
 
@@ -865,6 +874,9 @@ UnownPWalk:: INCBIN "gfx/followers/unown_p.2bpp.lzp"
 
 SECTION "UnownQ Walking Sprite", ROMX
 UnownQWalk:: INCBIN "gfx/followers/unown_q.2bpp.lzp"
+
+SECTION "UnownQuestion Walking Sprite", ROMX
+UnownQuestionWalk:: INCBIN "gfx/followers/unown_question.2bpp.lzp"
 
 SECTION "UnownR Walking Sprite", ROMX
 UnownRWalk:: INCBIN "gfx/followers/unown_r.2bpp.lzp"
