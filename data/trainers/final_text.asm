@@ -113,5 +113,10 @@ FinalText_SinglePhrases:
 	dw LawrenceFinalPkmnText
 	dw ReiFinalPkmnText
 	dw NULL ; Firebreather ashes
+	dw CissyFinalPkmnText
+	dw DannyFinalPkmnText
+	dw RudyFinalPkmnText
+	dw LuanaFinalPkmnText
+	dw DrakeFinalPkmnText
 	; all trainers between LEAF and PROF_OAK are omitted
 	assert_table_length NUM_TRAINER_CLASSES - (PROF_OAK - LEAF - 1)

@@ -1138,6 +1138,17 @@ DEF BETA EQU __trainer_class__
 
 	trainerclass FIREBREATHER_ASHES
 
+; Link Edition: the Orange League (maps on the Orange Islands)
+	trainerclass CISSY_T
+
+	trainerclass DANNY_T
+
+	trainerclass RUDY_T
+
+	trainerclass LUANA_T
+
+	trainerclass DRAKE_T
+
 DEF NUM_TRAINER_CLASSES EQU __trainer_class__ - 1
 
 	trainerclass OMASTAR_FOSSIL

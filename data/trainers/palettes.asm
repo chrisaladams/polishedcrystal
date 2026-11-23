@@ -151,6 +151,11 @@ INCLUDE "gfx/trainers/imakuni.pal"
 INCLUDE "gfx/trainers/lawrence.pal"
 INCLUDE "gfx/trainers/rei.pal"
 INCLUDE "gfx/trainers/firebreather_ashes.pal"
+INCLUDE "gfx/trainers/cooltrainer_f.pal" ; Cissy
+INCLUDE "gfx/trainers/dark_sailor.pal"   ; Danny
+INCLUDE "gfx/trainers/cooltrainer_m.pal" ; Rudy
+INCLUDE "gfx/trainers/lady.pal"          ; Luana
+INCLUDE "gfx/trainers/veteran_m.pal"     ; Drake
 INCLUDE "gfx/trainers/omastar_fossil.pal"
 INCLUDE "gfx/trainers/kabutops_fossil.pal"
 INCLUDE "gfx/trainers/aerodactyl_fossil.pal"

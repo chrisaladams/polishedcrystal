@@ -24,6 +24,7 @@ BeautifulBeach_MapScriptHeader:
 	itemball_event  6, 19, LUXURY_BALL, 1, EVENT_BEAUTIFUL_BEACH_LUXURY_BALL
 	itemball_event 36, 20, FULL_RESTORE, 1, EVENT_BEAUTIFUL_BEACH_FULL_RESTORE
 	fruittree_event -2, 13, FRUITTREE_SHAMOUTI_ISLAND, FIGY_BERRY, PAL_NPC_BROWN
+	object_event 16, 18, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, OrangeCrewRudyScript, -1
 
 BeautifulBeachWelcomeSignText:
 	text "Welcome to"
@@ -174,3 +175,66 @@ GenericTrainerArtistMarlene:
 	text "They couldn't win"
 	line "a battle…"
 	done
+
+OrangeCrewRudyScript:
+; Link Edition: the Orange League
+	faceplayer
+	opentext
+	checkevent EVENT_BEAT_ORANGE_CREW_RUDY
+	iftruefwd .Rematch
+	writetext .IntroText
+	waitbutton
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer RUDY_T, 1
+	startbattle
+	reloadmapafterbattle
+	setevent EVENT_BEAT_ORANGE_CREW_RUDY
+	opentext
+	writetext .BadgeText
+	playsound SFX_GET_BADGE
+	waitsfx
+	promptbutton
+	jumpthisopenedtext
+
+	text "That's one of the"
+	line "four Orange Crew"
+	cont "badges!"
+	text_far OrangeLeagueHintText
+	text_end
+
+.Rematch:
+	farwritetext OrangeLeagueRematchText
+	yesorno
+	iffalsefwd .No
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer RUDY_T, 1
+	startbattle
+	reloadmapafterbattle
+	end
+
+.No:
+	closetext
+	end
+
+.IntroText:
+	text "I'm Rudy of the"
+	line "Orange Crew."
+	para "Battling is like"
+	line "dancing: it's all"
+	cont "about timing."
+	para "Shall we dance?"
+	done
+
+.BeatenText:
+	text "What graceful"
+	line "footwork!"
+	done
+
+.BadgeText:
+	text "<PLAYER> received"
+	line "the Spike Shell"
+	cont "Badge!"
+	done
+

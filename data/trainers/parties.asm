@@ -9411,3 +9411,151 @@ ReiGroup:
 	end_trainer
 
 ENDSECTION
+
+
+; Link Edition: the Orange League, from the anime's Orange Islands. Each
+; leader's team starts from the Pokemon they used on the show.
+
+SECTION "CissyGroup", ROMX
+CissyGroup:
+
+	def _tr_class = CISSY_T ; (FIREBREATHER_ASHES shares FirebreatherGroup)
+	def_trainer_class CISSY_T
+	def_trainer 1, "Cissy"
+	tr_mon 71, KINGDRA @ DRAGON_FANG, FEMALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SURF, DRAGON_PULSE, ICE_BEAM, RAIN_DANCE
+	tr_mon 70, STARMIE @ LIFE_ORB, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SURF, PSYCHIC_M, THUNDERBOLT, RECOVER
+	tr_mon 71, LAPRAS @ ASSAULT_VEST, FEMALE
+		tr_extra SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves SURF, ICE_BEAM, THUNDERBOLT, PSYCHIC_M
+	tr_mon 70, GOLDUCK @ WISE_GLASSES, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SCALD, PSYCHIC_M, CALM_MIND, ICE_BEAM
+	tr_mon 73, BLASTOISE @ LEFTOVERS, FEMALE
+		tr_extra SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 SAt
+		tr_moves SCALD, FLASH_CANNON, ICE_BEAM, AURA_SPHERE
+	end_trainer
+
+
+SECTION "DannyGroup", ROMX
+DannyGroup:
+
+	def_trainer_class DANNY_T
+	def_trainer 1, "Danny"
+	tr_mon 71, GOLEM @ HARD_STONE, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 Atk
+		tr_moves EARTHQUAKE, STONE_EDGE, ROCK_BLAST, EXPLOSION
+	tr_mon 71, SCYTHER @ EVIOLITE, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves X_SCISSOR, AERIAL_ACE, SWORDS_DANCE, U_TURN
+	tr_mon 70, ELECTRODE @ LIGHT_CLAY, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves THUNDERBOLT, VOLT_SWITCH, LIGHT_SCREEN, EXPLOSION
+	tr_mon 72, MACHAMP @ BLACK_BELT, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 Atk
+		tr_moves CROSS_CHOP, STONE_EDGE, BULK_UP, ICE_PUNCH
+	tr_mon 73, NIDOKING @ LIFE_ORB, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves EARTHQUAKE, SLUDGE_BOMB, ICE_BEAM, THUNDERBOLT
+	end_trainer
+
+
+SECTION "RudyGroup", ROMX
+RudyGroup:
+
+	def_trainer_class RUDY_T
+	def_trainer 1, "Rudy"
+	tr_mon 72, EXEGGUTOR @ LEFTOVERS, MALE
+		tr_extra SATK_UP_SPE_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves ENERGY_BALL, PSYCHIC_M, SLEEP_POWDER, LEECH_SEED
+	tr_mon 72, STARMIE @ LUM_BERRY, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SURF, THUNDERBOLT, ICE_BEAM, RECOVER
+	tr_mon 72, GYARADOS @ LUM_BERRY, MALE
+		tr_extra SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves DRAGON_DANCE, WATERFALL, EARTHQUAKE, STONE_EDGE
+	tr_mon 72, ARCANINE @ CHOICE_BAND, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves FLARE_BLITZ, EXTREMESPEED, WILD_CHARGE, CLOSE_COMBAT
+	tr_mon 74, ELECTIVIRE @ MUSCLE_BAND, MALE
+		tr_extra SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves THUNDERPUNCH, ICE_PUNCH, FIRE_PUNCH, CROSS_CHOP
+	end_trainer
+
+
+SECTION "LuanaGroup", ROMX
+LuanaGroup:
+
+	def_trainer_class LUANA_T
+	def_trainer 1, "Luana"
+	tr_mon 72, KANGASKHAN @ SILK_SCARF, FEMALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 Atk
+		tr_moves DOUBLE_EDGE, EARTHQUAKE, SUCKER_PUNCH, PROTECT
+	tr_mon 72, PERSIAN @ BLACKGLASSES, FEMALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves NASTY_PLOT, DARK_PULSE, HYPER_VOICE, THUNDERBOLT
+	tr_mon 73, NINETALES @ CHARCOAL, FEMALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves FLAMETHROWER, SHADOW_BALL, NASTY_PLOT, WILL_O_WISP
+	tr_mon 74, MAROWAK @ THICK_CLUB, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 Atk
+		tr_moves EARTHQUAKE, STONE_EDGE, FIRE_PUNCH, SWORDS_DANCE
+	tr_mon 75, ALAKAZAM @ LIFE_ORB, FEMALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves PSYCHIC_M, SHADOW_BALL, FOCUS_BLAST, CALM_MIND
+	end_trainer
+
+
+SECTION "DrakeGroup", ROMX
+DrakeGroup:
+
+	def_trainer_class DRAKE_T
+	def_trainer 1, "Drake"
+	tr_mon 76, DITTO @ CHOICE_SCARF, MALE
+		tr_extra NEUTRAL
+		tr_evs 252 HP, 4 Def, 252 SDf
+		tr_moves TRANSFORM
+	tr_mon 76, STEELIX @ LEFTOVERS, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 Atk
+		tr_moves EARTHQUAKE, IRON_HEAD, STONE_EDGE, CURSE
+	tr_mon 77, GENGAR @ LIFE_ORB, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SHADOW_BALL, SLUDGE_BOMB, FOCUS_BLAST, THUNDERBOLT
+	tr_mon 77, VENUSAUR @ BLACK_SLUDGE, MALE
+		tr_extra SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves GIGA_DRAIN, SLUDGE_BOMB, SLEEP_POWDER, EARTHQUAKE
+	tr_mon 76, ELECTABUZZ @ EVIOLITE, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves THUNDERBOLT, PSYCHIC_M, FOCUS_BLAST, ICE_PUNCH
+	tr_mon 79, DRAGONITE @ LUM_BERRY, MALE
+		tr_extra ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves DRAGON_DANCE, OUTRAGE, EARTHQUAKE, EXTREMESPEED
+	end_trainer

@@ -152,4 +152,9 @@ TrainerGroups:
 	dba LawrenceGroup
 	dba ReiGroup
 	dba FirebreatherGroup
+	dba CissyGroup
+	dba DannyGroup
+	dba RudyGroup
+	dba LuanaGroup
+	dba DrakeGroup
 	assert_table_length NUM_TRAINER_CLASSES

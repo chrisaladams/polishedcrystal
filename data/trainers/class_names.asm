@@ -149,4 +149,9 @@ TrainerClassNames::
 	li "Collector"        ; LAWRENCE
 	li "Shrine"           ; REI
 	li "Firebreather"     ; FIREBREATHER_ASHES
+	li "Orange Crew"      ; CISSY_T
+	li "Orange Crew"      ; DANNY_T
+	li "Orange Crew"      ; RUDY_T
+	li "Orange Crew"      ; LUANA_T
+	li "Head Leader"      ; DRAKE_T
 	assert_list_length NUM_TRAINER_CLASSES

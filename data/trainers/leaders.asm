@@ -39,6 +39,11 @@ JohtoGymLeaders:
 	db JASMINE
 	db PRYCE
 	db CLAIR
+	db CISSY_T ; Link Edition: the Orange League
+	db DANNY_T
+	db RUDY_T
+	db LUANA_T
+	db DRAKE_T
 KantoGymLeaders:
 	db BROCK
 	db MISTY

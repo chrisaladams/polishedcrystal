@@ -150,6 +150,11 @@ TrainerPicPointers::
 	dba LawrencePic
 	dba ReiPic
 	dba FirebreatherAshesPic
+	dba CooltrainerfPic ; Cissy
+	dba SailorPic       ; Danny
+	dba CooltrainermPic ; Rudy
+	dba LadyPic         ; Luana
+	dba VeteranmPic     ; Drake
 	assert_table_length NUM_TRAINER_CLASSES
 	dba OmastarFossilPic
 	dba KabutopsFossilPic

@@ -149,6 +149,27 @@ Battle Tower and Battle Factory prize shops are unchanged.
   emulator: `python3 utils/wild_mons/test_wild_mons.py SAVE.sav` (every map
   with wild Pokémon, battles, Repel, sprites and colours, saving).
 
+### The Orange League
+
+From the anime's Orange Islands, on the islands Polished Crystal already has
+(reached by the Seagallop Ferry from Vermilion City, in Kanto):
+the four Orange Crew leaders, each with a badge, and Head Leader Drake, who
+battles you once you have all four. Their teams start from the Pokémon they
+used on the show, at post-game levels (70–79), with gym leader battle music.
+
+| Leader | Where | Team | Badge |
+|---|---|---|---|
+| Cissy | Warm Beach, by the water | Kingdra, Starmie, Lapras, Golduck, Blastoise | Coral-Eye Badge |
+| Danny | Rocky Beach, on the sandy path | Golem, Scyther, Electrode, Machamp, Nidoking | Sea Ruby Badge |
+| Rudy | Beautiful Beach, where the ferry lands | Exeggutor, Starmie, Gyarados, Arcanine, Electivire | Spike Shell Badge |
+| Luana | the house on Valencia Island | Kangaskhan, Persian, Ninetales, Marowak, Alakazam | Jade Star Badge |
+| Drake | the house on Shamouti Island | Ditto, Steelix, Gengar, Venusaur, Electabuzz, Dragonite | Winner's Trophy and 3 Bottle Caps |
+
+All of them can be battled again afterwards. It uses spare event flags, so
+saves don't change, and existing maps, sprites and music, so it costs under
+2 KB. `python3 utils/orange_league/test_orange_league.py SAVE.sav` checks it in
+the emulator.
+
 ### Smarter trainer AI
 
 These apply to every trainer battle, not just link play:

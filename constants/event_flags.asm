@@ -2469,5 +2469,14 @@
 	const EVENT_BEAT_BURGLAR_PIERCE
 	const EVENT_BEAT_COUPLE_ERIK_AND_SARA
 
+; Link Edition: the Orange League (in the spare flags, so saves keep their size)
+	const EVENT_BEAT_ORANGE_CREW_CISSY
+	const EVENT_BEAT_ORANGE_CREW_DANNY
+	const EVENT_BEAT_ORANGE_CREW_RUDY
+	const EVENT_BEAT_ORANGE_CREW_LUANA
+	const EVENT_BEAT_DRAKE
+	const EVENT_GOT_ORANGE_LEAGUE_PRIZE
+	assert const_value <= $8ff, "Out of spare event flags"
+
 	const_next $8ff
 DEF NUM_EVENTS EQU const_value ; 2303

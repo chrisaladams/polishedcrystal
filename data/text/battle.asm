@@ -2137,3 +2137,33 @@ LawrenceFinalPkmnText:
 ReiFinalPkmnText:
 	text "I'm not done yet."
 	prompt
+
+CissyFinalPkmnText:
+	text "Just like the"
+	line "tide, I'm not"
+	cont "done yet!"
+	prompt
+
+DannyFinalPkmnText:
+	text "Hah! This is the"
+	line "steepest climb"
+	cont "of all!"
+	prompt
+
+RudyFinalPkmnText:
+	text "One last move,"
+	line "like a dancer's"
+	cont "final step!"
+	prompt
+
+LuanaFinalPkmnText:
+	text "A mother never"
+	line "gives up on her"
+	cont "last #mon!"
+	prompt
+
+DrakeFinalPkmnText:
+	text "My last #mon"
+	line "has never lost"
+	cont "a battle!"
+	prompt

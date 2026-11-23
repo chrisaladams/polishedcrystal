@@ -152,4 +152,9 @@ TrainerClassDVsAndPersonality:
 	db 252, PERFECT_DVS,   MALE   ; lawrence
 	db 252, $EE, $EE, $EE, FEMALE ; rei
 	db  48, $CC, $CC, $CC, MALE   ; firebreather ashes
+	db 252, PERFECT_DVS,   FEMALE ; cissy
+	db 252, PERFECT_DVS,   MALE   ; danny
+	db 252, PERFECT_DVS,   MALE   ; rudy
+	db 252, PERFECT_DVS,   FEMALE ; luana
+	db 252, PERFECT_DVS,   MALE   ; drake
 	assert_table_length NUM_TRAINER_CLASSES

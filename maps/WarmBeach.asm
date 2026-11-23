@@ -24,6 +24,7 @@ WarmBeach_MapScriptHeader:
 	object_event 17, 21, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, SLOWKING, -1, PAL_MON_PINK, OBJECTTYPE_SCRIPT, PLAIN_FORM, WarmBeachSlowkingScript, -1
 	object_event 11, 20, SPRITE_PICNICKER, SPRITEMOVEDATA_WANDER, 1, 1, -1, 0, OBJECTTYPE_SCRIPT, 0, WarmBeachLassScript, -1
 	object_event  6, 23, SPRITE_LADY, SPRITEMOVEDATA_STANDING_DOWN, 0, 2, -1, PAL_NPC_BLUE, OBJECTTYPE_COMMAND, jumptextfaceplayer, WarmBeachLadyText, -1
+	object_event  9, 21, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, OrangeCrewCissyScript, -1
 
 GenericTrainerSightseermGareth:
 	generictrainer SIGHTSEERM, GARETH, EVENT_BEAT_SIGHTSEERM_GARETH, .SeenText, .BeatenText
@@ -185,3 +186,67 @@ WarmBeachShrineText:
 	para "Guardian of the"
 	line "Seas."
 	done
+
+OrangeCrewCissyScript:
+; Link Edition: the Orange League
+	faceplayer
+	opentext
+	checkevent EVENT_BEAT_ORANGE_CREW_CISSY
+	iftruefwd .Rematch
+	writetext .IntroText
+	waitbutton
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer CISSY_T, 1
+	startbattle
+	reloadmapafterbattle
+	setevent EVENT_BEAT_ORANGE_CREW_CISSY
+	opentext
+	writetext .BadgeText
+	playsound SFX_GET_BADGE
+	waitsfx
+	promptbutton
+	jumpthisopenedtext
+
+	text "That's one of the"
+	line "four Orange Crew"
+	cont "badges!"
+	text_far OrangeLeagueHintText
+	text_end
+
+.Rematch:
+	farwritetext OrangeLeagueRematchText
+	yesorno
+	iffalsefwd .No
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer CISSY_T, 1
+	startbattle
+	reloadmapafterbattle
+	end
+
+.No:
+	closetext
+	end
+
+.IntroText:
+	text "I'm Cissy of the"
+	line "Orange Crew!"
+	para "Out here, battles"
+	line "are as wild as"
+	cont "the ocean waves."
+	para "Show me you can"
+	line "ride them!"
+	done
+
+.BeatenText:
+	text "You rode those"
+	line "waves perfectly!"
+	done
+
+.BadgeText:
+	text "<PLAYER> received"
+	line "the Coral-Eye"
+	cont "Badge!"
+	done
+

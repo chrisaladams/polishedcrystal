@@ -26,6 +26,7 @@ RockyBeach_MapScriptHeader:
 	itemball_event 32,  3, PEARL_STRING, 1, EVENT_ROCKY_BEACH_PEARL_STRING
 	object_event 20, 32, SPRITE_FAT_GUY, SPRITEMOVEDATA_SPINCLOCKWISE, 0, 0, (1 << DAY), PAL_NPC_BROWN, OBJECTTYPE_COMMAND, jumptextfaceplayer, ShamoutiIslandFisherText, -1
 	object_event 23, 32, SPRITE_FAT_GUY, SPRITEMOVEDATA_SPINCOUNTERCLOCKWISE, 0, 0, (1 << DAY), PAL_NPC_BROWN, OBJECTTYPE_COMMAND, jumptextfaceplayer, ShamoutiIslandFisherText, -1
+	object_event 23, 27, SPRITE_SAILOR, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, OrangeCrewDannyScript, -1
 
 RockyBeachSign1Text:
 	text "Rocky Beach"
@@ -198,3 +199,67 @@ RockyBeachWilhomenaScript:
 	para "Oh, what should I"
 	line "do…?"
 	done
+
+OrangeCrewDannyScript:
+; Link Edition: the Orange League
+	faceplayer
+	opentext
+	checkevent EVENT_BEAT_ORANGE_CREW_DANNY
+	iftruefwd .Rematch
+	writetext .IntroText
+	waitbutton
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer DANNY_T, 1
+	startbattle
+	reloadmapafterbattle
+	setevent EVENT_BEAT_ORANGE_CREW_DANNY
+	opentext
+	writetext .BadgeText
+	playsound SFX_GET_BADGE
+	waitsfx
+	promptbutton
+	jumpthisopenedtext
+
+	text "That's one of the"
+	line "four Orange Crew"
+	cont "badges!"
+	text_far OrangeLeagueHintText
+	text_end
+
+.Rematch:
+	farwritetext OrangeLeagueRematchText
+	yesorno
+	iffalsefwd .No
+	closetext
+	winlosstext .BeatenText, 0
+	loadtrainer DANNY_T, 1
+	startbattle
+	reloadmapafterbattle
+	end
+
+.No:
+	closetext
+	end
+
+.IntroText:
+	text "I'm Danny of the"
+	line "Orange Crew!"
+	para "I've climbed every"
+	line "peak on these"
+	cont "islands."
+	para "Let's see if you"
+	line "can keep up!"
+	done
+
+.BeatenText:
+	text "You're tougher"
+	line "than the rocks!"
+	done
+
+.BadgeText:
+	text "<PLAYER> received"
+	line "the Sea Ruby"
+	cont "Badge!"
+	done
+
