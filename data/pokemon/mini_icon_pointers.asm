@@ -358,19 +358,19 @@ endr
 
 	mini_icon DudunsparceThreeSegment
 
-	mini_icon RattataAlolan
-	mini_icon RaticateAlolan
+	walking_mon Rattata
+	walking_mon Raticate
 	walking_mon RaichuAlolan
-	mini_icon SandshrewAlolan
+	walking_mon Sandshrew
 	mini_icon SandslashAlolan
-	mini_icon VulpixAlolan
-	mini_icon NinetalesAlolan
-	mini_icon DiglettAlolan
-	mini_icon DugtrioAlolan
-	mini_icon MeowthAlolan
-	mini_icon PersianAlolan
-	mini_icon GeodudeAlolan
-	mini_icon GravelerAlolan
+	walking_mon Vulpix
+	walking_mon Ninetales
+	walking_mon Diglett
+	walking_mon Dugtrio
+	walking_mon Meowth
+	walking_mon Persian
+	walking_mon Geodude
+	walking_mon Graveler
 	mini_icon GolemAlolan
 	walking_mon GrimerAlolan
 	walking_mon MukAlolan
@@ -380,30 +380,30 @@ endr
 	mini_icon MeowthGalarian
 	walking_mon PonytaGalarian
 	walking_mon RapidashGalarian
-	mini_icon SlowpokeGalarian
+	walking_mon Slowpoke
 	mini_icon SlowbroGalarian
 	walking_mon FarfetchDGalarian
 	mini_icon WeezingGalarian
 	walking_mon MrMimeGalarian
-	mini_icon ArticunoGalarian
+	walking_mon Articuno
 	mini_icon ZapdosGalarian
-	mini_icon MoltresGalarian
+	walking_mon Moltres
 	mini_icon SlowkingGalarian
 	walking_mon CorsolaGalarian
 
 	walking_mon GrowlitheHisuian
-	mini_icon ArcanineHisuian
+	walking_mon Arcanine
 	walking_mon VoltorbHisuian
 	walking_mon ElectrodeHisuian
 	walking_mon TyphlosionHisuian
-	mini_icon QwilfishHisuian
-	mini_icon SneaselHisuian
+	walking_mon Qwilfish
+	walking_mon Sneasel
 
-	mini_icon WooperPaldean
-	mini_icon TaurosPaldean
-	mini_icon TaurosPaldeanFire
-	mini_icon TaurosPaldeanWater
+	walking_mon Wooper
+	walking_mon Tauros
+	walking_mon Tauros
+	walking_mon Tauros
 
-	mini_icon UrsalunaBloodmoon
+	walking_mon Ursaluna
 
 	assert_table_length NUM_UNIQUE_POKEMON

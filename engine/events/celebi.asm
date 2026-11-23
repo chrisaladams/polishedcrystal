@@ -9,14 +9,14 @@ GalarianArticunoEvent:
 	farcall CopySpritePalToOBPal7
 
 	call ClearSpriteAnims
-	ld hl, ArticunoGalarianIcon
+	ld hl, ArticunoWalk
 	ld de, vTiles0 tile $84
-	lb bc, BANK(ArticunoGalarianIcon), 4 * 2
+	lb bc, BANK(ArticunoWalk), 4 * 2
 	call DecompressRequest2bpp
 
-	ld hl, ArticunoGalarianIcon
+	ld hl, ArticunoWalk
 	ld de, vTiles0 tile $8c
-	lb bc, BANK(ArticunoGalarianIcon), 4 * 2
+	lb bc, BANK(ArticunoWalk), 4 * 2
 	call DecompressRequest2bpp
 	jr DoCelebiEvent
 
@@ -31,14 +31,14 @@ GalarianMoltresEvent:
 	farcall CopySpritePalToOBPal7
 
 	call ClearSpriteAnims
-	ld hl, MoltresGalarianIcon
+	ld hl, MoltresWalk
 	ld de, vTiles0 tile $84
-	lb bc, BANK(MoltresGalarianIcon), 4 * 2
+	lb bc, BANK(MoltresWalk), 4 * 2
 	call DecompressRequest2bpp
 
-	ld hl, MoltresGalarianIcon
+	ld hl, MoltresWalk
 	ld de, vTiles0 tile $8c
-	lb bc, BANK(MoltresGalarianIcon), 4 * 2
+	lb bc, BANK(MoltresWalk), 4 * 2
 	call DecompressRequest2bpp
 	jr DoCelebiEvent
 

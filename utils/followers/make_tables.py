@@ -20,7 +20,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 MINIS = os.path.join(ROOT, 'gfx', 'minis_icons.asm')
 POINTERS = os.path.join(ROOT, 'data', 'pokemon', 'mini_icon_pointers.asm')
 FOLLOWERS = os.path.join(ROOT, 'gfx', 'followers.asm')
-SHARE = {'PikachuFly': 'Pikachu'}  # its icon was Pikachu's; its mini only adds balloons
+SHARE = {
+    'PikachuFly': 'Pikachu',  # its icon was Pikachu's; its mini only adds balloons
+    # regional forms shaped like the regular form: its sprite in their own colours
+    'RattataAlolan': 'Rattata', 'RaticateAlolan': 'Raticate', 'SandshrewAlolan': 'Sandshrew',
+    'VulpixAlolan': 'Vulpix', 'NinetalesAlolan': 'Ninetales', 'DiglettAlolan': 'Diglett',
+    'DugtrioAlolan': 'Dugtrio', 'MeowthAlolan': 'Meowth', 'PersianAlolan': 'Persian',
+    'GeodudeAlolan': 'Geodude', 'GravelerAlolan': 'Graveler', 'SlowpokeGalarian': 'Slowpoke',
+    'ArticunoGalarian': 'Articuno', 'MoltresGalarian': 'Moltres', 'ArcanineHisuian': 'Arcanine',
+    'QwilfishHisuian': 'Qwilfish', 'SneaselHisuian': 'Sneasel', 'WooperPaldean': 'Wooper',
+    'TaurosPaldean': 'Tauros', 'TaurosPaldeanFire': 'Tauros', 'TaurosPaldeanWater': 'Tauros',
+    'UrsalunaBloodmoon': 'Ursaluna',
+}
 SECTION = re.compile(r'SECTION "(\w+) Mini Icon", ROMX\n(.*?)(?=\n\n|\nSECTION|\Z)', re.S)
 
 
@@ -34,13 +45,16 @@ def main():
     walking = {label for label, s in stem.items() if s in pngs}
 
     # take the walking Pokemon out of the minis
+    def shared(label):
+        return SHARE.get(label) in walking
+
     def keep(m):
         name, body = m.group(1), m.group(2)
-        if name not in walking:
+        if name not in walking and not shared(name):
             return m.group(0)
         others = []
         for label in re.findall(r'^(\w+?)(?:Mini|MiniMask|Icon)::', body, re.M):
-            if label != name and label not in walking and label not in SHARE and label not in others:
+            if label != name and label not in walking and not shared(label) and label not in others:
                 others.append(label)
         out = []
         for o in others:

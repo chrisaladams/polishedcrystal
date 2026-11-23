@@ -41,6 +41,12 @@ Unown sprites by FrenchOrange and LJSTAR, and the art from the follower set of
 ShockSlayer's Pokémon Crystal Clear. Surfing Pikachu and Armored Mewtwo are
 the game's own overworld sprites.
 
+21 regional forms shaped like their regular form (Alolan Rattata, Raticate,
+Sandshrew, Vulpix, Ninetales, Diglett, Dugtrio, Meowth, Persian, Geodude and
+Graveler; Galarian Slowpoke, Articuno and Moltres; Hisuian Arcanine, Qwilfish
+and Sneasel; Paldean Wooper and Tauros; Bloodmoon Ursaluna) use its sprite in
+their own colours (`SHARE` in `make_tables.py`).
+
 43 more (most Gen 4 evolutions, Sylveon, Cursola, Sirfetch'd, Mr. Rime,
 Kleavor, Ursaluna and 13 regional forms) come from SheerSt's
 [PokéWilds](https://github.com/SheerSt/pokewilds) (`pokemon/pokemon/*/overworld.png`),
@@ -53,11 +59,13 @@ Sirfetch'd) among others.
 
 ## Space
 
-ROM space was the limit before: the free space in a 2 MB ROM went from 3.2 KB
-to 11.9 KB by sharing and compressing data (below). Replacing a mini and icon
-(about 220 bytes together) with a walking sprite (about 230 bytes) costs
-almost nothing, so the 322 sprites here fit with about 12.7 KB still free,
-and the rest will too.
+About 33.8 KB of the 2 MB ROM is free (two whole empty banks, 126 and 127,
+plus gaps). Count free space with the banks the map file doesn't list: an
+entirely empty bank doesn't appear in it, which once made the free space look
+16 KB smaller than it was. Sharing and compressing data (below) freed 10.9 KB,
+and replacing a mini and icon (about 220 bytes together) with a walking
+sprite (about 230 bytes) costs almost nothing; forms that share their regular
+form's sprite free their mini and icon entirely.
 
 | Freed | Gain |
 |---|---|
