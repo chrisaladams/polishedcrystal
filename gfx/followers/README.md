@@ -13,9 +13,9 @@ Each `<name>.png` here is a Pokémon's walking sprite: six 16×16 frames in a
 The following Pokémon walks with all six. The first two also replace the
 Pokémon's mini and party icon: the party menu, PC, Pokédex, trades and
 Pokémon standing on maps draw them, and a mask for the PC and trade screens
-is worked out from the picture. These Pokémon are drawn in the colours of
-their overworld icon (`data/pokemon/overworld_icon_pals.asm`), so they look
-the same everywhere.
+is worked out from the picture. These Pokémon are drawn in their overworld colours
+(`data/pokemon/overworld_icon_pals.asm`), a light and a dark colour picked to
+match the real Pokémon, so they look the same everywhere.
 
 Every Pokémon and form has one. (A Pokémon without one would keep a mini and
 icon in `gfx/minis_icons.asm` and follow as its bouncing party icon.)
