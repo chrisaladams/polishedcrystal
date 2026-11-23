@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Check the Whirl Cup in the running game (PyBoy), from a save:
 
-- the official at Olivine Port (after the Hall of Fame) turns away a party
+- the official at Olivine Port is there only after Red;
+- he turns away a party
   that isn't all Water-type;
 - with an all-Water party, the three rounds are Swimmer Trinity, Sailor
   Jasper and Misty, with the teams in data/trainers/parties.asm;
@@ -39,7 +40,8 @@ def main():
     species = sorted({sp for p in parties.values() for _, sp in p} | {'SQUIRTLE'})
     names = species + [c for c, _ in ROUNDS] + [
         'PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'GROUP_OLIVINE_PORT', 'MAP_OLIVINE_PORT',
-        'EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', 'EVENT_WON_WHIRL_CUP', 'MYSTIC_WATER', 'BOTTLE_CAP']
+        'EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', 'EVENT_WON_WHIRL_CUP', 'EVENT_BEAT_RED',
+        'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MYSTIC_WATER', 'BOTTLE_CAP']
     K = rgbasm_values(names, None)
     L = K['PARTYMON_STRUCT_LENGTH']
     g = Game(save)
@@ -60,10 +62,26 @@ def main():
         return 0
 
     flag('EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', False)  # after the Hall of Fame
+
+    def official_there():
+        for i in range(K['NUM_OBJECT_STRUCTS']):
+            b = g.addr('wObjectStructs') + i * K['OBJECT_LENGTH']
+            if (g.m[1, b + K['OBJECT_SPRITE']] and g.m[1, b + K['OBJECT_MAP_X']] == 13 + 4
+                    and g.m[1, b + K['OBJECT_MAP_Y']] == 7 + 4):
+                return True
+        return False
+
+    flag('EVENT_BEAT_RED', False)
+    g.warp(K['GROUP_OLIVINE_PORT'], K['MAP_OLIVINE_PORT'], 13, 8)
+    if official_there():
+        fails.append(('before Red', 'the official is there'))
+    flag('EVENT_BEAT_RED', True)
     base = g.state()
 
     def talk():
         g.warp(K['GROUP_OLIVINE_PORT'], K['MAP_OLIVINE_PORT'], 13, 8)
+        if not official_there():
+            fails.append(('after Red', 'the official is not there'))
         g.press('up', 2, 3)
         g.tick(30)
 

@@ -4,6 +4,7 @@ OlivinePort_MapScriptHeader:
 	scene_script OlivinePortLeaveShipScene, SCENE_OLIVINEPORT_LEAVE_SHIP
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, OlivinePortWhirlCupCallback
 
 	def_warp_events
 	warp_event 14,  4, OLIVINE_CITY, 9
@@ -25,11 +26,20 @@ OlivinePort_MapScriptHeader:
 	object_event  4,  7, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OlivinePortYoungsterScript, EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME
 	object_event 11,  7, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OlivinePortCooltrainerFScript, EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME
 	object_event 16, 13, SPRITE_FLOATING_BALL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, PAL_NPC_ENV_GREEN, OBJECTTYPE_ITEMBALL, PLAYEREVENT_KEYITEMBALL, GO_GOGGLES, EVENT_OLIVINE_PORT_GO_GOGGLES
-	object_event 13,  7, SPRITE_GENTLEMAN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, WhirlCupOfficialScript, EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME
+	object_event 13,  7, SPRITE_GENTLEMAN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, WhirlCupOfficialScript, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const OLIVINEPORT_SAILOR1
 	const OLIVINEPORT_SAILOR3
+
+OlivinePortWhirlCupCallback:
+; Link Edition: the Whirl Cup is held after Red
+	setevent EVENT_POST_RED_PERSON_HIDDEN
+	checkevent EVENT_BEAT_RED
+	iffalsefwd .done
+	clearevent EVENT_POST_RED_PERSON_HIDDEN
+.done
+	endcallback
 
 OlivinePortLeaveShipScene:
 	sdefer OlivinePortLeaveShipScript

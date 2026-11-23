@@ -537,8 +537,8 @@ NationalParkTrainerTipsText:
 	done
 
 NationalParkAnimeCameosCallback:
-; Link Edition: the anime cameos come after the Elite Four and the Orange League
-	checkevent EVENT_BEAT_ELITE_FOUR
+; Link Edition: the anime cameos come after Red and the Orange League
+	checkevent EVENT_BEAT_RED
 	iffalsefwd .hide
 	checkevent EVENT_BEAT_DRAKE
 	iffalsefwd .hide

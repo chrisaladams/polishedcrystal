@@ -2,14 +2,14 @@
 """Check the movie events in the running game (PyBoy), from a save:
 
 - Spell of the Unown: Molly is in the Ruins of Alph Research Center only after
-  the Elite Four; her battle (Lass Molly) has the team in
+  Red (not just the Elite Four); her battle (Lass Molly) has the team in
   data/trainers/parties.asm; the first win gives an Ability Patch, and she can
   be battled again without giving another;
 - Celebi: Voice of the Forest: the Iron Mask Marauder is by the Ilex Forest
-  shrine only after the time travel; his battle has his team; winning gives a
+  shrine only after Red and the time travel (not after just one); his battle has his team; winning gives a
   Big Nugget and he's gone for good;
-- Mewtwo Strikes Back: talking to Mewtwo in Cerulean Cave starts a battle with
-  its clones (Psychic Mewtwo): copies of your own team (not eggs; same
+- Mewtwo Strikes Back: before Red, talking to Mewtwo in Cerulean Cave starts
+  the plain Mewtwo battle; after Red, a battle with its clones (Psychic Mewtwo): copies of your own team (not eggs; same
   species, level, item, moves and stats) at full HP with no status, even when
   yours are hurt; then the wild Mewtwo battle (level 80).
 
@@ -50,7 +50,7 @@ def main():
     species = sorted({sp for p in parties.values() for _, sp in p} | {'MEWTWO'})
     names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH',
                        'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MOLLY_HALE', 'EVENT_BEAT_ELITE_FOUR',
-                       'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
+                       'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_BEAT_RED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
                        'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE',
                        'MON_SPECIES', 'MON_ITEM', 'MON_MOVES', 'MON_LEVEL', 'MON_FORM', 'MON_IS_EGG_F',
                        'MON_STATUS', 'MON_HP', 'MON_MAXHP', 'MON_STATS', 'MON_DVS', 'MON_EVS']
@@ -83,7 +83,8 @@ def main():
                 return True
         return False
 
-    flag('EVENT_BEAT_ELITE_FOUR', False)
+    flag('EVENT_BEAT_ELITE_FOUR', True)
+    flag('EVENT_BEAT_RED', False)
     flag('EVENT_TIME_TRAVEL_FINISHED', False)
     for f in ('EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_CERULEAN_CAVE_MEWTWO'):
         flag(f, False)
@@ -176,11 +177,11 @@ def main():
     molly, marauder, mewtwo = EVENTS
     g.load(base)
     if visit(molly):
-        fails.append(('Molly', 'there before the Elite Four'))
+        fails.append(('Molly', 'there before Red'))
     g.load(base)
-    flag('EVENT_BEAT_ELITE_FOUR', True)
+    flag('EVENT_BEAT_RED', True)
     if not visit(molly):
-        fails.append(('Molly', 'not there after the Elite Four'))
+        fails.append(('Molly', 'not there after Red'))
     elif not until_battle(molly[4]):
         fails.append(('Molly', 'no battle'))
     else:
@@ -202,11 +203,15 @@ def main():
 
     # the Iron Mask Marauder
     g.load(base)
-    flag('EVENT_BEAT_ELITE_FOUR', True)
+    flag('EVENT_BEAT_RED', True)
     if visit(marauder):
         fails.append(('Marauder', 'there before the time travel'))
     g.load(base)
-    flag('EVENT_BEAT_ELITE_FOUR', True)
+    flag('EVENT_TIME_TRAVEL_FINISHED', True)
+    if visit(marauder):
+        fails.append(('Marauder', 'there before Red'))
+    g.load(base)
+    flag('EVENT_BEAT_RED', True)
     flag('EVENT_TIME_TRAVEL_FINISHED', True)
     if not visit(marauder):
         fails.append(('Marauder', 'not there after the time travel'))
@@ -226,9 +231,18 @@ def main():
         if visit(marauder):
             fails.append(('Marauder', 'back after leaving and returning'))
 
+    # before Red: just Mewtwo
+    g.load(base)
+    if not visit(mewtwo):
+        fails.append(('Mewtwo', 'not there before Red'))
+    elif not until_battle(mewtwo[4]):
+        fails.append(('Mewtwo', 'no battle before Red'))
+    elif g.rd('wBattleMode') != K['WILD_BATTLE']:
+        fails.append(('Mewtwo', 'a clone battle before Red'))
+
     # Mewtwo and its clones (of your team, hurt and poisoned first)
     g.load(base)
-    flag('EVENT_BEAT_ELITE_FOUR', True)
+    flag('EVENT_BEAT_RED', True)
     g.wr('wPartyMon1HP', 0)
     g.wr('wPartyMon1HP', 1, 1)
     g.wr('wPartyMon1Status', 1 << 3)

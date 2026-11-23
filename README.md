@@ -184,10 +184,17 @@ saves don't change, and existing maps, sprites and music, so it costs under
 2 KB. `python3 utils/anime_events/test_orange_league.py SAVE.sav` checks it in
 the emulator.
 
+### After Red: the post-post game
+
+Beating Red at the top of Mt. Silver opens the anime and movie content below
+(the Orange League itself opens after the Elite Four, as before). Until then
+none of these people are there, and Mewtwo in Cerulean Cave is the plain
+battle.
+
 ### The Whirl Cup
 
 From the anime: a Water-type tournament at Olivine Port, run by an official
-who's there after the Hall of Fame. With a team of only Water-type Pokémon,
+who's there after you beat Red. With a team of only Water-type Pokémon,
 you're healed and battle three rounds in a row: Swimmer Trinity (Seaking,
 Dewgong, Lanturn, Corsola), Sailor Jasper (Tentacruel, Octillery, Quagsire,
 Kingler), then Misty's Whirl Cup team (Psyduck, Corsola, Azumarill,
@@ -198,7 +205,7 @@ Bottle Cap every time after, so it's a way to earn them while training.
 
 ### Anime cameos
 
-Once you've beaten both the Elite Four and the Orange League (Drake), five
+Once you've beaten both Red and the Orange League (Drake), five
 characters from the anime show up, each ready for a battle any time you talk
 to them, with teams from the show at levels 79–84:
 
@@ -218,18 +225,17 @@ SAVE.sav` checks them in the emulator.
 
 Three events from the first movies, each a battle where the story happened:
 
-- **Mewtwo Strikes Back**, Cerulean Cave: before you can battle Mewtwo, it
-  speaks to you and sends out clones of your own team: the same Pokémon,
+- **Mewtwo Strikes Back**, Cerulean Cave (after Red): before you can battle
+  Mewtwo, it speaks to you and sends out clones of your own team: the same Pokémon,
   levels, moves, items and stats, at full health even if yours are hurt. It
   has its own trainer picture (cut from its battle sprite) and its Stadium
   battle music. Then the usual Mewtwo battle.
-- **Spell of the Unown**, the Ruins of Alph Research Center (after the Elite
-  Four): Molly, waiting for her papa, battles with the friends the Unown
+- **Spell of the Unown**, the Ruins of Alph Research Center (after Red): Molly, waiting for her papa, battles with the friends the Unown
   dreamed up for her and Entei (Unown, Ursaring, Donphan, Mantine, Ampharos,
   Entei, levels 64–70). The first win gives an Ability Patch, and she'll
   battle again any time.
-- **Celebi: Voice of the Forest**, Ilex Forest (after the Celebi time
-  travel): the Iron Mask Marauder of Team Rocket waits by the shrine with
+- **Celebi: Voice of the Forest**, Ilex Forest (after Red and the Celebi
+  time travel): the Iron Mask Marauder of Team Rocket waits by the shrine with
   Sneasel, Scizor, Tyranitar and his Dark Ball Celebi (levels 70–76). Beat
   him once to drive him off for good and find a Big Nugget.
 

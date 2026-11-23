@@ -26,7 +26,9 @@ CeruleanCaveMewtwo:
 	writetext MewtwoText
 	cry MEWTWO
 	pause 15
-; Link Edition: Mewtwo Strikes Back
+; Link Edition: Mewtwo Strikes Back (after Red)
+	checkevent EVENT_BEAT_RED
+	iffalsefwd .NoClones
 	writetext .ClonesText
 	waitbutton
 	closetext
@@ -37,6 +39,11 @@ CeruleanCaveMewtwo:
 	showtext .ClonesAfterText
 	cry MEWTWO
 	pause 15
+	sjumpfwd .Battle
+
+.NoClones:
+	closetext
+.Battle:
 	loadwildmon MEWTWO, 80
 	loadvar VAR_BATTLETYPE, BATTLETYPE_LEGENDARY
 	startbattle

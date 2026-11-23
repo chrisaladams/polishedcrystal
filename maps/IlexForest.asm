@@ -37,7 +37,7 @@ IlexForest_MapScriptHeader:
 	object_event 10, 26, SPRITE_CELEBI, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_ILEX_FOREST_CELEBI
 	object_event  9, 25, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, IlexForestLyraScript, EVENT_ILEX_FOREST_LYRA
 	object_event  9, 30, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestCharcoalApprenticeScript, EVENT_ILEX_FOREST_APPRENTICE
-	object_event 11, 25, SPRITE_BURGLAR, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IlexForestIronMaskScript, EVENT_MOVIE_TRAINER_HIDDEN
+	object_event 11, 25, SPRITE_BURGLAR, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IlexForestIronMaskScript, EVENT_POST_RED_PERSON_HIDDEN
 	object_event 17, 16, SPRITE_ROCKER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestHeadbuttGuyScript, -1
 	object_event 14,  3, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 0, GenericTrainerBugCatcherWayne, -1
 	object_event  4, 16, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, IlexForestHoneyBoyText, EVENT_ROUTE_34_ILEX_FOREST_GATE_LASS
@@ -64,13 +64,15 @@ IlexForestFarfetchdQuestScene:
 
 IlexForestIronMaskCallback:
 ; Link Edition: the Iron Mask Marauder (Celebi: Voice of the Forest) waits
-; by the shrine after the time travel, until he's beaten
-	setevent EVENT_MOVIE_TRAINER_HIDDEN
+; by the shrine after Red and the time travel, until he's beaten
+	setevent EVENT_POST_RED_PERSON_HIDDEN
+	checkevent EVENT_BEAT_RED
+	iffalsefwd IlexForestFarfetchdCallback
 	checkevent EVENT_TIME_TRAVEL_FINISHED
 	iffalsefwd IlexForestFarfetchdCallback
 	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
 	iftruefwd IlexForestFarfetchdCallback
-	clearevent EVENT_MOVIE_TRAINER_HIDDEN
+	clearevent EVENT_POST_RED_PERSON_HIDDEN
 IlexForestFarfetchdCallback:
 	checkevent EVENT_GOT_HM01_CUT
 	iftruefwd .Static

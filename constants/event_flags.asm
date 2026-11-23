@@ -830,7 +830,7 @@
 	const EVENT_BEAT_BUG_CATCHER_KEN
 	const EVENT_BEAT_BUG_CATCHER_WAYNE
 	const EVENT_BEAT_BUG_CATCHER_OSCAR
-	const EVENT_MOVIE_TRAINER_HIDDEN ; Link Edition: Molly, the Iron Mask Marauder (was EVENT_BEAT_BUG_CATCHER_DAVID, unused since 2022 or earlier)
+	const EVENT_POST_RED_PERSON_HIDDEN ; Link Edition: people there after Red (each map's callback sets or clears it) (was EVENT_BEAT_BUG_CATCHER_DAVID, unused since 2022 or earlier)
 ; Camper
 	const EVENT_BEAT_CAMPER_TODD
 	const EVENT_BEAT_CAMPER_ROLAND

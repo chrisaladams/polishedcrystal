@@ -24,7 +24,7 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 	object_event  7,  2, SPRITE_SCIENTIST, SPRITEMOVEDATA_WANDER, 1, 2, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterScientist2Script, -1
 	object_event  4,  5, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterScientist3Script, EVENT_RUINS_OF_ALPH_RESEARCH_CENTER_SCIENTIST
 	object_event  0,  4, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterScientist4Script, -1
-	object_event  2,  2, SPRITE_TWIN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterMollyScript, EVENT_MOVIE_TRAINER_HIDDEN
+	object_event  2,  2, SPRITE_TWIN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, RuinsOfAlphResearchCenterMollyScript, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const RUINSOFALPHRESEARCHCENTER_SCIENTIST1
@@ -33,11 +33,11 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 	const RUINSOFALPHRESEARCHCENTER_SCIENTIST4
 
 RuinsOfAlphResearchCenterMollyCallback:
-; Link Edition: Molly (Spell of the Unown) is here after the Elite Four
-	setevent EVENT_MOVIE_TRAINER_HIDDEN
-	checkevent EVENT_BEAT_ELITE_FOUR
+; Link Edition: Molly (Spell of the Unown) is here after Red
+	setevent EVENT_POST_RED_PERSON_HIDDEN
+	checkevent EVENT_BEAT_RED
 	iffalsefwd RuinsOfAlphResearchCenterScientistCallback
-	clearevent EVENT_MOVIE_TRAINER_HIDDEN
+	clearevent EVENT_POST_RED_PERSON_HIDDEN
 RuinsOfAlphResearchCenterScientistCallback:
 	checkscene
 	ifequalfwd $1, .ShowScientist

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Check the anime cameos in the running game (PyBoy), from a save:
 
-- before the Elite Four and the Orange League (Drake) are both beaten, none
-  of them is there (with only the Elite Four beaten, too);
+- before Red and the Orange League (Drake) are both beaten, none of them is
+  there (with only one of them beaten, or the Elite Four and Drake, too);
 - after both, each is there, and talking to them (yes to a battle) starts a
   battle with their trainer class and the team in data/trainers/parties.asm,
   which can be won and fought again.
@@ -41,7 +41,7 @@ def main():
     save = open(sys.argv[1], 'rb').read()
     parties = expected_parties()
     species = sorted({sp for c in CAMEOS for _, sp in parties[c[5]]})
-    names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE',
+    names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_BEAT_RED',
                        'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE']
     for c in CAMEOS:
         names += [c[5], 'GROUP_' + c[1], 'MAP_' + c[1]]
@@ -66,9 +66,10 @@ def main():
                 return True
         return False
 
-    def visit(cameo, e4, drake):
+    def visit(cameo, red, drake, e4=None):
         g.load(base)
-        setflag('EVENT_BEAT_ELITE_FOUR', e4)
+        setflag('EVENT_BEAT_ELITE_FOUR', red if e4 is None else e4)
+        setflag('EVENT_BEAT_RED', red)
         setflag('EVENT_BEAT_DRAKE', drake)
         g.warp(K['GROUP_' + cameo[1]], K['MAP_' + cameo[1]], *cameo[3])
         g.tick(30)
@@ -107,11 +108,15 @@ def main():
     for cameo in CAMEOS:
         name, cls = cameo[0], cameo[5]
         if visit(cameo, False, False):
-            fails.append((name, 'there before either league'))
+            fails.append((name, 'there before Red and Drake'))
         if visit(cameo, True, False):
             fails.append((name, 'there before the Orange League'))
+        if visit(cameo, False, True):
+            fails.append((name, 'there before Red'))
+        if visit(cameo, False, True, e4=True):
+            fails.append((name, 'there after the Elite Four and Drake, before Red'))
         if not visit(cameo, True, True):
-            fails.append((name, 'not there after both leagues'))
+            fails.append((name, 'not there after Red and Drake'))
             continue
         if not talk(cameo[4]):
             fails.append((name, 'no battle'))
