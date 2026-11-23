@@ -1,7 +1,7 @@
 if DEF(FAITHFUL)
 	bst 377,  52,  90,  55,  58,  62,  60
 else
-	bst 431,  70,  98,  65,  58,  66,  74
+	bst 454,  70, 110,  65,  58,  66,  85 ; Link Edition: Atk 98 -> 110, Speed 74 -> 85
 endc
 	;   bst   hp  atk  def  sat  sdf  spe
 

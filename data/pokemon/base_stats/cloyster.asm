@@ -1,4 +1,8 @@
+if DEF(FAITHFUL)
 	bst 525,  50,  95, 180,  85,  45,  70
+else
+	bst 545,  60,  95, 180,  85,  55,  70 ; Link Edition: HP 50 -> 60, Sp.Def 45 -> 55
+endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
 	db WATER, ICE ; type

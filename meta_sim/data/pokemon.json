@@ -1083,14 +1083,14 @@
 "cloyster": {
 "id": "cloyster",
 "stats": {
-"hp": 50,
+"hp": 60,
 "atk": 95,
 "defe": 180,
 "spe": 70,
 "spa": 85,
-"spd": 45
+"spd": 55
 },
-"bst": 525,
+"bst": 545,
 "types": [
 "WATER",
 "ICE"
@@ -3931,13 +3931,13 @@
 "id": "raticate_plain",
 "stats": {
 "hp": 60,
-"atk": 100,
+"atk": 110,
 "defe": 60,
 "spe": 108,
 "spa": 50,
 "spd": 70
 },
-"bst": 448,
+"bst": 458,
 "types": [
 "NORMAL"
 ],
@@ -4348,11 +4348,11 @@
 "hp": 85,
 "atk": 85,
 "defe": 80,
-"spe": 130,
+"spe": 120,
 "spa": 70,
 "spd": 80
 },
-"bst": 530,
+"bst": 520,
 "types": [
 "POISON",
 "FLYING"
@@ -4522,10 +4522,10 @@
 "atk": 60,
 "defe": 110,
 "spe": 85,
-"spa": 130,
+"spa": 120,
 "spd": 95
 },
-"bst": 545,
+"bst": 535,
 "types": [
 "ICE"
 ],
@@ -5920,13 +5920,13 @@
 "id": "farfetch_d_plain",
 "stats": {
 "hp": 70,
-"atk": 98,
+"atk": 110,
 "defe": 65,
-"spe": 74,
+"spe": 85,
 "spa": 58,
 "spd": 66
 },
-"bst": 431,
+"bst": 454,
 "types": [
 "NORMAL",
 "FLYING"
@@ -6686,10 +6686,10 @@
 "atk": 65,
 "defe": 60,
 "spe": 65,
-"spa": 110,
+"spa": 100,
 "spd": 95
 },
-"bst": 525,
+"bst": 515,
 "types": [
 "WATER"
 ],
@@ -8089,10 +8089,10 @@
 "atk": 70,
 "defe": 115,
 "spe": 60,
-"spa": 110,
+"spa": 100,
 "spd": 90
 },
-"bst": 515,
+"bst": 505,
 "types": [
 "ELECTRIC",
 "STEEL"

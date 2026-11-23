@@ -16,6 +16,15 @@ A pass at tightening up the meta for L50 link battles:
   - **Trimmed:** Beedrill (Atk 100→90, Spe 115→100), Gliscor (Atk 95→85, Def 120→110), Magnezone (Sp. Atk 130→120), Overqwil (Sp. Def 90→75), Annihilape (Atk 100→95).
   - **Buffed:** Clefable (Def 73→80, Sp. Atk 85→95), Wigglytuff (Def 55→65, Sp. Def 65→75), Hypno (Def 70→80, Sp. Atk 73→83).
 
+  - **Then, with the family's real stats** (the meta test now gives every mon
+    DV 8 and EV 64, as read from the family's saves) and every build's set
+    re-optimised: **trimmed** Crobat (Spe 130→120), Glaceon (Sp. Atk
+    130→120), Magnezone (Sp. Atk 110→100) and Vaporeon (Sp. Atk 110→100);
+    **buffed** Farfetch'd (Atk 98→110, Spe 74→85), Cloyster (HP 50→60,
+    Sp. Def 45→55) and Raticate (Atk 100→110). The strongest build now adds
+    about 13 points of win rate over an average teammate (16 before), and the
+    weakest (other than Unown) loses about 5 (9 before).
+
   These only apply to the normal build; `make faithful` keeps canon base stats.
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes). The restriction check used to wipe the attacking move's power, so every hit on an Eviolite holder did 1 damage; that's fixed.
 - **Moody removed.**

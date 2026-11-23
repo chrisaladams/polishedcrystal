@@ -1,7 +1,7 @@
 if DEF(FAITHFUL)
 	bst 535,  70,  70, 115, 130,  90,  60
 else
-	bst 515,  70,  70, 115, 110,  90,  60
+	bst 505,  70,  70, 115, 100,  90,  60 ; Link Edition: Sp.Atk 110 -> 100
 endc
 	;   bst   hp  atk  def  sat  sdf  spe
 
