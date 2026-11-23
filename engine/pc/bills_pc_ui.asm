@@ -698,7 +698,7 @@ WriteIconPaletteData:
 	ld a, [wTempMonForm]
 	ld b, a
 	ld a, [wTempMonShiny]
-	farcall GetMonPalInBCDE
+	farcall GetMiniColorsInBCDE
 	ld h, b
 	ld l, c
 	pop bc

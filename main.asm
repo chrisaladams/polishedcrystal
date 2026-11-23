@@ -157,7 +157,6 @@ INCLUDE "engine/link/link_failsafe.asm"
 SECTION "Follower Code", ROMX
 
 INCLUDE "engine/overworld/follower.asm"
-INCLUDE "data/pokemon/follower_sprites.asm"
 
 INCLUDE "gfx/followers.asm"
 

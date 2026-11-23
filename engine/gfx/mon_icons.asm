@@ -67,7 +67,7 @@ SetTradeMiniIconColor:
 	ld c, a
 	ld a, [wCurIconForm]
 	ld b, a
-	farcall GetMonPalInBCDE
+	call GetMiniColorsInBCDE
 	ldh a, [rWBK]
 	push af
 	ld a, BANK(wOBPals1)
@@ -406,6 +406,20 @@ _LoadMonMini:
 	farcall LoadTempMonPalette
 
 .palette_done
+	; a walking sprite uses its overworld colors
+	ld a, [wCurPartySpecies]
+	ld c, a
+	ld a, [wCurIconForm]
+	ld b, a
+	ld a, [wMonType]
+	cp TEMPMON
+	ld a, [wTempMonShiny]
+	jr z, .got_shiny
+	ld a, MON_SHINY
+	call GetPartyParamLocationAndValue
+.got_shiny
+	ld de, wOBPals1 palette 1 + 2
+	call SetWalkingMiniPal
 	ld a, 1
 	ld hl, wShadowOAMSprite00Attributes
 	ld de, OBJ_SIZE
@@ -516,6 +530,255 @@ SetPartyMonMiniAnimSpeed:
 .speeds
 	db $00, $40, $80
 
+GetFollowerWalkingSprite::
+; Set wFollowerHasSprite, and wFollowerSpriteBank and wFollowerSpriteAddr to
+; the walking sprite of the Pokemon in wCurIconSpecies and wCurIconForm.
+; A walking_mon entry has a mask pointer of 0 and its icon is the sprite.
+	call LoadOverworldMonIcon ; b:de = icon, hl = its pointer's high byte
+	ld a, b
+	ld [wFollowerSpriteBank], a
+	ld a, e
+	ld [wFollowerSpriteAddr], a
+	ld a, d
+	ld [wFollowerSpriteAddr + 1], a
+	dec hl
+	dec hl
+	ld a, [hld]
+	or [hl]
+	ld a, FALSE
+	jr nz, .done
+	inc a
+.done
+	ld [wFollowerHasSprite], a
+	ret
+
+IsWalkingMon:
+; Return z if species c, form b has a walking sprite (a walking_mon entry,
+; with a mask pointer of 0). Clobbers a and hl.
+	push bc
+	call GetCosmeticSpeciesAndFormIndex
+	ld hl, MiniIconPointers + 3
+rept 7
+	add hl, bc
+endr
+	pop bc
+	ld a, [hli]
+	or [hl]
+	ret
+
+GetMiniColorsInBCDE::
+; Like GetMonPalInBCDE: bcde = the two colors for species c, form b's mini
+; (a = shininess). A walking sprite is drawn for its overworld icon colors (the
+; main colors of its light and dark overworld palettes, by day); other minis
+; use the battle palette.
+	push hl
+	push af
+	call IsWalkingMon
+	jr z, .walking
+	pop af
+	pop hl
+	farjp GetMonPalInBCDE
+
+.walking
+	pop af
+	and SHINY_MASK
+	push af
+	push bc
+	call GetCosmeticSpeciesAndFormIndex
+	sla c
+	rl b
+	ld hl, OverworldMonIconColors
+	add hl, bc
+	pop bc
+	pop af
+	jr z, .normal
+	inc hl
+.normal
+	ld a, [hl]
+	dec a ; remove the +1 encoding: high nybble light, low nybble dark
+	push af
+	and $f
+	ld c, 2
+	call .GetOWPalColor
+	pop af
+	push de ; dark color
+	ld b, a
+	swap a
+	and $f
+	ld c, a ; light palette
+	ld a, b
+	and $f
+	cp c
+	ld a, c
+	ld c, 2
+	jr nz, .two_palettes
+	dec c ; one palette: its colors 1 and 2
+.two_palettes
+	call .GetOWPalColor
+	ld b, d
+	ld c, e
+	pop de
+	pop hl
+	ret
+
+.GetOWPalColor:
+; de = color c of overworld palette a, by day.
+	push hl
+	cp NUM_OW_TIME_OF_DAY_PALS
+	jr c, .time_of_day
+	sub NUM_OW_TIME_OF_DAY_PALS
+	ld hl, SingleObjectPals
+	jr .got_table
+.time_of_day
+	add DAY * NUM_OW_TIME_OF_DAY_PALS
+	ld hl, MapObjectPals
+.got_table
+	push bc
+	ld b, 0
+	sla c
+	add hl, bc
+	ld c, a
+rept 1 palettes
+	add hl, bc
+endr
+	pop bc
+	assert BANK(MapObjectPals) == BANK(SingleObjectPals)
+	ld a, BANK(MapObjectPals)
+	call GetFarWord
+	ld d, h
+	ld e, l
+	pop hl
+	ret
+
+SetWalkingMiniPal:
+; If species c, form b (a = shininess) has a walking sprite, write its mini
+; colors to colors 1 and 2 at de (in wOBPals1's WRAM bank).
+	push af
+	call IsWalkingMon
+	jr z, .walking
+	pop af
+	ret
+
+.walking
+	pop af
+	push de
+	call GetMiniColorsInBCDE
+	pop hl
+	ld a, BANK(wOBPals1)
+	call StackCallInWRAMBankA
+	ld a, c
+	ld [hli], a
+	ld a, b
+	ld [hli], a
+	ld a, e
+	ld [hli], a
+	ld [hl], d
+	ret
+
+SetPartyWalkingMiniPals::
+; After InitPartyMenuOBPals: party members with walking sprites get their
+; overworld colors.
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld hl, wPartyMon1
+	ld de, wOBPals1 palette 2 + 2
+.loop
+	push af
+	push de
+	push hl
+	; b = form
+	ld bc, MON_FORM
+	add hl, bc
+	ld a, [hl]
+	and SPECIESFORM_MASK
+	ld b, a
+	; c = species, or EGG
+	assert MON_IS_EGG == MON_FORM
+	bit MON_IS_EGG_F, [hl]
+	pop hl
+	ld c, EGG
+	jr nz, .got_species
+	assert MON_SPECIES == 0
+	ld c, [hl]
+.got_species
+	; a = shininess
+	push hl
+	push bc
+	ld bc, MON_SHINY
+	add hl, bc
+	ld a, [hl]
+	pop bc
+	call SetWalkingMiniPal
+	pop hl
+	ld bc, PARTYMON_STRUCT_LENGTH
+	add hl, bc
+	pop de
+	push hl
+	ld hl, 1 palettes
+	add hl, de
+	ld d, h
+	ld e, l
+	pop hl
+	pop af
+	dec a
+	jr nz, .loop
+	ret
+
+MakeMiniMaskInWRA6:
+	call RunFunctionInWRA6
+MakeMiniMask:
+; Turn c 2bpp tiles at wDecompressScratch into 1bpp masks in place: each row
+; is solid from its leftmost to its rightmost drawn pixel. For walking
+; sprites, which have no mask of their own.
+	ld hl, wDecompressScratch
+	ld d, h
+	ld e, l
+	ld a, c
+	add a
+	add a
+	add a
+	ld b, a ; rows
+.row
+	ld a, [hli]
+	or [hl]
+	inc hl
+	ld [de], a ; the drawn pixels
+	; a = every pixel right of the leftmost one
+	ld c, a
+	srl a
+	or c
+	ld c, a
+	srl a
+	srl a
+	or c
+	ld c, a
+	swap a
+	and $0f
+	or c
+	push af
+	; a = every pixel left of the rightmost one
+	ld a, [de]
+	ld c, a
+	add a
+	or c
+	ld c, a
+	add a
+	add a
+	or c
+	ld c, a
+	swap a
+	and $f0
+	or c
+	ld c, a
+	pop af
+	and c
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .row
+	ret
+
 FlyFunction_GetMonIcon:
 ; Fly is in the overworld so it uses overworld icons
 	push de
@@ -584,7 +847,15 @@ endr
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
+	or h
+	jr nz, .decompress_mask
+	; a walking sprite: make the mask from the frames still in the scratch
+	ld c, 8
+	call MakeMiniMask
+	jr .got_mask
+.decompress_mask
 	call FarDecompressInB
+.got_mask
 	ld hl, vTiles0 tile $6a
 	ld de, wDecompressScratch
 	lb bc, BANK(wDecompressScratch), 8
@@ -678,14 +949,27 @@ endr
 	; b = gfx bank
 	ld a, [hli]
 	ld b, a
-	; skip mini
-	inc hl
-	inc hl
+	; de = mini pointer
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
 	; hl = mask pointer
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
+	or h
+	jr nz, .got_mask
+	; a walking sprite: make the mask from its first frame
+	ld h, d
+	ld l, e
 	call FarDecompressWRA6InB
+	ld c, 4
+	call MakeMiniMaskInWRA6
+	jr .masked
+.got_mask
+	call FarDecompressWRA6InB
+.masked
 	pop hl
 	ld c, 4
 	ld de, wDecompressScratch

@@ -2,264 +2,271 @@ MACRO mini_icon
 	dbas \1Mini, \1MiniMask, \1Icon
 ENDM
 
+MACRO walking_mon
+; A walking sprite (gfx/followers.asm): its first two frames are the mini and
+; the icon, and the mask is made from it (a mask pointer of 0).
+	db BANK(\1Walk)
+	dw \1Walk, 0, \1Walk
+ENDM
+
 MiniIconPointers:
 	table_width 7
-	mini_icon Bulbasaur
-	mini_icon Ivysaur
-	mini_icon Venusaur
-	mini_icon Charmander
-	mini_icon Charmeleon
-	mini_icon Charizard
-	mini_icon Squirtle
-	mini_icon Wartortle
-	mini_icon Blastoise
-	mini_icon Caterpie
-	mini_icon Metapod
-	mini_icon Butterfree
-	mini_icon Weedle
-	mini_icon Kakuna
-	mini_icon Beedrill
-	mini_icon Pidgey
-	mini_icon Pidgeotto
-	mini_icon Pidgeot
-	mini_icon Rattata
-	mini_icon Raticate
-	mini_icon Spearow
-	mini_icon Fearow
-	mini_icon Ekans
-	mini_icon Arbok
-	mini_icon Pikachu
-	mini_icon Raichu
-	mini_icon Sandshrew
-	mini_icon Sandslash
-	mini_icon NidoranF
-	mini_icon Nidorina
-	mini_icon Nidoqueen
-	mini_icon NidoranM
-	mini_icon Nidorino
-	mini_icon Nidoking
-	mini_icon Clefairy
-	mini_icon Clefable
-	mini_icon Vulpix
-	mini_icon Ninetales
-	mini_icon Jigglypuff
-	mini_icon Wigglytuff
-	mini_icon Zubat
-	mini_icon Golbat
-	mini_icon Oddish
-	mini_icon Gloom
-	mini_icon Vileplume
-	mini_icon Paras
-	mini_icon Parasect
-	mini_icon Venonat
-	mini_icon Venomoth
-	mini_icon Diglett
-	mini_icon Dugtrio
-	mini_icon Meowth
-	mini_icon Persian
-	mini_icon Psyduck
-	mini_icon Golduck
-	mini_icon Mankey
-	mini_icon Primeape
-	mini_icon Growlithe
-	mini_icon Arcanine
-	mini_icon Poliwag
-	mini_icon Poliwhirl
-	mini_icon Poliwrath
-	mini_icon Abra
-	mini_icon Kadabra
-	mini_icon Alakazam
-	mini_icon Machop
-	mini_icon Machoke
-	mini_icon Machamp
-	mini_icon Bellsprout
-	mini_icon Weepinbell
-	mini_icon Victreebel
-	mini_icon Tentacool
-	mini_icon Tentacruel
-	mini_icon Geodude
-	mini_icon Graveler
-	mini_icon Golem
-	mini_icon Ponyta
-	mini_icon Rapidash
-	mini_icon Slowpoke
-	mini_icon Slowbro
-	mini_icon Magnemite
-	mini_icon Magneton
-	mini_icon FarfetchD
-	mini_icon Doduo
-	mini_icon Dodrio
-	mini_icon Seel
-	mini_icon Dewgong
-	mini_icon Grimer
-	mini_icon Muk
-	mini_icon Shellder
-	mini_icon Cloyster
-	mini_icon Gastly
-	mini_icon Haunter
-	mini_icon Gengar
-	mini_icon Onix
-	mini_icon Drowzee
-	mini_icon Hypno
-	mini_icon Krabby
-	mini_icon Kingler
-	mini_icon Voltorb
-	mini_icon Electrode
-	mini_icon Exeggcute
-	mini_icon Exeggutor
-	mini_icon Cubone
-	mini_icon Marowak
-	mini_icon Hitmonlee
-	mini_icon Hitmonchan
-	mini_icon Lickitung
-	mini_icon Koffing
-	mini_icon Weezing
-	mini_icon Rhyhorn
-	mini_icon Rhydon
-	mini_icon Chansey
-	mini_icon Tangela
-	mini_icon Kangaskhan
-	mini_icon Horsea
-	mini_icon Seadra
-	mini_icon Goldeen
-	mini_icon Seaking
-	mini_icon Staryu
-	mini_icon Starmie
-	mini_icon MrMime
-	mini_icon Scyther
-	mini_icon Jynx
-	mini_icon Electabuzz
-	mini_icon Magmar
-	mini_icon Pinsir
-	mini_icon Tauros
-	mini_icon Magikarp
-	mini_icon Gyarados
-	mini_icon Lapras
-	mini_icon Ditto
-	mini_icon Eevee
-	mini_icon Vaporeon
-	mini_icon Jolteon
-	mini_icon Flareon
-	mini_icon Porygon
-	mini_icon Omanyte
-	mini_icon Omastar
-	mini_icon Kabuto
-	mini_icon Kabutops
-	mini_icon Aerodactyl
-	mini_icon Snorlax
-	mini_icon Articuno
-	mini_icon Zapdos
-	mini_icon Moltres
-	mini_icon Dratini
-	mini_icon Dragonair
-	mini_icon Dragonite
-	mini_icon Mewtwo
-	mini_icon Mew
-	mini_icon Chikorita
-	mini_icon Bayleef
-	mini_icon Meganium
-	mini_icon Cyndaquil
-	mini_icon Quilava
-	mini_icon Typhlosion
-	mini_icon Totodile
-	mini_icon Croconaw
-	mini_icon Feraligatr
-	mini_icon Sentret
-	mini_icon Furret
-	mini_icon Hoothoot
-	mini_icon Noctowl
-	mini_icon Ledyba
-	mini_icon Ledian
-	mini_icon Spinarak
-	mini_icon Ariados
-	mini_icon Crobat
-	mini_icon Chinchou
-	mini_icon Lanturn
-	mini_icon Pichu
-	mini_icon Cleffa
-	mini_icon Igglybuff
-	mini_icon Togepi
-	mini_icon Togetic
-	mini_icon Natu
-	mini_icon Xatu
-	mini_icon Mareep
-	mini_icon Flaaffy
-	mini_icon Ampharos
-	mini_icon Bellossom
-	mini_icon Marill
-	mini_icon Azumarill
-	mini_icon Sudowoodo
-	mini_icon Politoed
-	mini_icon Hoppip
-	mini_icon Skiploom
-	mini_icon Jumpluff
-	mini_icon Aipom
-	mini_icon Sunkern
-	mini_icon Sunflora
-	mini_icon Yanma
-	mini_icon Wooper
-	mini_icon Quagsire
-	mini_icon Espeon
-	mini_icon Umbreon
-	mini_icon Murkrow
-	mini_icon Slowking
-	mini_icon Misdreavus
-	mini_icon UnownA
-	mini_icon Wobbuffet
-	mini_icon Girafarig
-	mini_icon Pineco
-	mini_icon Forretress
-	mini_icon Dunsparce
-	mini_icon Gligar
-	mini_icon Steelix
-	mini_icon Snubbull
-	mini_icon Granbull
-	mini_icon Qwilfish
-	mini_icon Scizor
-	mini_icon Shuckle
-	mini_icon Heracross
-	mini_icon Sneasel
-	mini_icon Teddiursa
-	mini_icon Ursaring
-	mini_icon Slugma
-	mini_icon Magcargo
-	mini_icon Swinub
-	mini_icon Piloswine
-	mini_icon Corsola
-	mini_icon Remoraid
-	mini_icon Octillery
-	mini_icon Delibird
-	mini_icon Mantine
-	mini_icon Skarmory
-	mini_icon Houndour
-	mini_icon Houndoom
-	mini_icon Kingdra
-	mini_icon Phanpy
-	mini_icon Donphan
-	mini_icon Porygon2
-	mini_icon Stantler
-	mini_icon Smeargle
-	mini_icon Tyrogue
-	mini_icon Hitmontop
-	mini_icon Smoochum
-	mini_icon Elekid
-	mini_icon Magby
-	mini_icon Miltank
-	mini_icon Blissey
-	mini_icon Raikou
-	mini_icon Entei
-	mini_icon Suicune
-	mini_icon Larvitar
-	mini_icon Pupitar
-	mini_icon Tyranitar
-	mini_icon Lugia
-	mini_icon HoOh
-	mini_icon Celebi
+	walking_mon Bulbasaur
+	walking_mon Ivysaur
+	walking_mon Venusaur
+	walking_mon Charmander
+	walking_mon Charmeleon
+	walking_mon Charizard
+	walking_mon Squirtle
+	walking_mon Wartortle
+	walking_mon Blastoise
+	walking_mon Caterpie
+	walking_mon Metapod
+	walking_mon Butterfree
+	walking_mon Weedle
+	walking_mon Kakuna
+	walking_mon Beedrill
+	walking_mon Pidgey
+	walking_mon Pidgeotto
+	walking_mon Pidgeot
+	walking_mon Rattata
+	walking_mon Raticate
+	walking_mon Spearow
+	walking_mon Fearow
+	walking_mon Ekans
+	walking_mon Arbok
+	walking_mon Pikachu
+	walking_mon Raichu
+	walking_mon Sandshrew
+	walking_mon Sandslash
+	walking_mon NidoranF
+	walking_mon Nidorina
+	walking_mon Nidoqueen
+	walking_mon NidoranM
+	walking_mon Nidorino
+	walking_mon Nidoking
+	walking_mon Clefairy
+	walking_mon Clefable
+	walking_mon Vulpix
+	walking_mon Ninetales
+	walking_mon Jigglypuff
+	walking_mon Wigglytuff
+	walking_mon Zubat
+	walking_mon Golbat
+	walking_mon Oddish
+	walking_mon Gloom
+	walking_mon Vileplume
+	walking_mon Paras
+	walking_mon Parasect
+	walking_mon Venonat
+	walking_mon Venomoth
+	walking_mon Diglett
+	walking_mon Dugtrio
+	walking_mon Meowth
+	walking_mon Persian
+	walking_mon Psyduck
+	walking_mon Golduck
+	walking_mon Mankey
+	walking_mon Primeape
+	walking_mon Growlithe
+	walking_mon Arcanine
+	walking_mon Poliwag
+	walking_mon Poliwhirl
+	walking_mon Poliwrath
+	walking_mon Abra
+	walking_mon Kadabra
+	walking_mon Alakazam
+	walking_mon Machop
+	walking_mon Machoke
+	walking_mon Machamp
+	walking_mon Bellsprout
+	walking_mon Weepinbell
+	walking_mon Victreebel
+	walking_mon Tentacool
+	walking_mon Tentacruel
+	walking_mon Geodude
+	walking_mon Graveler
+	walking_mon Golem
+	walking_mon Ponyta
+	walking_mon Rapidash
+	walking_mon Slowpoke
+	walking_mon Slowbro
+	walking_mon Magnemite
+	walking_mon Magneton
+	walking_mon FarfetchD
+	walking_mon Doduo
+	walking_mon Dodrio
+	walking_mon Seel
+	walking_mon Dewgong
+	walking_mon Grimer
+	walking_mon Muk
+	walking_mon Shellder
+	walking_mon Cloyster
+	walking_mon Gastly
+	walking_mon Haunter
+	walking_mon Gengar
+	walking_mon Onix
+	walking_mon Drowzee
+	walking_mon Hypno
+	walking_mon Krabby
+	walking_mon Kingler
+	walking_mon Voltorb
+	walking_mon Electrode
+	walking_mon Exeggcute
+	walking_mon Exeggutor
+	walking_mon Cubone
+	walking_mon Marowak
+	walking_mon Hitmonlee
+	walking_mon Hitmonchan
+	walking_mon Lickitung
+	walking_mon Koffing
+	walking_mon Weezing
+	walking_mon Rhyhorn
+	walking_mon Rhydon
+	walking_mon Chansey
+	walking_mon Tangela
+	walking_mon Kangaskhan
+	walking_mon Horsea
+	walking_mon Seadra
+	walking_mon Goldeen
+	walking_mon Seaking
+	walking_mon Staryu
+	walking_mon Starmie
+	walking_mon MrMime
+	walking_mon Scyther
+	walking_mon Jynx
+	walking_mon Electabuzz
+	walking_mon Magmar
+	walking_mon Pinsir
+	walking_mon Tauros
+	walking_mon Magikarp
+	walking_mon Gyarados
+	walking_mon Lapras
+	walking_mon Ditto
+	walking_mon Eevee
+	walking_mon Vaporeon
+	walking_mon Jolteon
+	walking_mon Flareon
+	walking_mon Porygon
+	walking_mon Omanyte
+	walking_mon Omastar
+	walking_mon Kabuto
+	walking_mon Kabutops
+	walking_mon Aerodactyl
+	walking_mon Snorlax
+	walking_mon Articuno
+	walking_mon Zapdos
+	walking_mon Moltres
+	walking_mon Dratini
+	walking_mon Dragonair
+	walking_mon Dragonite
+	walking_mon Mewtwo
+	walking_mon Mew
+	walking_mon Chikorita
+	walking_mon Bayleef
+	walking_mon Meganium
+	walking_mon Cyndaquil
+	walking_mon Quilava
+	walking_mon Typhlosion
+	walking_mon Totodile
+	walking_mon Croconaw
+	walking_mon Feraligatr
+	walking_mon Sentret
+	walking_mon Furret
+	walking_mon Hoothoot
+	walking_mon Noctowl
+	walking_mon Ledyba
+	walking_mon Ledian
+	walking_mon Spinarak
+	walking_mon Ariados
+	walking_mon Crobat
+	walking_mon Chinchou
+	walking_mon Lanturn
+	walking_mon Pichu
+	walking_mon Cleffa
+	walking_mon Igglybuff
+	walking_mon Togepi
+	walking_mon Togetic
+	walking_mon Natu
+	walking_mon Xatu
+	walking_mon Mareep
+	walking_mon Flaaffy
+	walking_mon Ampharos
+	walking_mon Bellossom
+	walking_mon Marill
+	walking_mon Azumarill
+	walking_mon Sudowoodo
+	walking_mon Politoed
+	walking_mon Hoppip
+	walking_mon Skiploom
+	walking_mon Jumpluff
+	walking_mon Aipom
+	walking_mon Sunkern
+	walking_mon Sunflora
+	walking_mon Yanma
+	walking_mon Wooper
+	walking_mon Quagsire
+	walking_mon Espeon
+	walking_mon Umbreon
+	walking_mon Murkrow
+	walking_mon Slowking
+	walking_mon Misdreavus
+	walking_mon UnownA
+	walking_mon Wobbuffet
+	walking_mon Girafarig
+	walking_mon Pineco
+	walking_mon Forretress
+	walking_mon Dunsparce
+	walking_mon Gligar
+	walking_mon Steelix
+	walking_mon Snubbull
+	walking_mon Granbull
+	walking_mon Qwilfish
+	walking_mon Scizor
+	walking_mon Shuckle
+	walking_mon Heracross
+	walking_mon Sneasel
+	walking_mon Teddiursa
+	walking_mon Ursaring
+	walking_mon Slugma
+	walking_mon Magcargo
+	walking_mon Swinub
+	walking_mon Piloswine
+	walking_mon Corsola
+	walking_mon Remoraid
+	walking_mon Octillery
+	walking_mon Delibird
+	walking_mon Mantine
+	walking_mon Skarmory
+	walking_mon Houndour
+	walking_mon Houndoom
+	walking_mon Kingdra
+	walking_mon Phanpy
+	walking_mon Donphan
+	walking_mon Porygon2
+	walking_mon Stantler
+	walking_mon Smeargle
+	walking_mon Tyrogue
+	walking_mon Hitmontop
+	walking_mon Smoochum
+	walking_mon Elekid
+	walking_mon Magby
+	walking_mon Miltank
+	walking_mon Blissey
+	walking_mon Raikou
+	walking_mon Entei
+	walking_mon Suicune
+	walking_mon Larvitar
+	walking_mon Pupitar
+	walking_mon Tyranitar
+	walking_mon Lugia
+	walking_mon HoOh
+	walking_mon Celebi
 	mini_icon Azurill
 	mini_icon Wynaut
 	mini_icon Ambipom
-	mini_icon Egg
-	mini_icon Egg ; $100
+	walking_mon Egg
+	walking_mon Egg ; $100
 	mini_icon Mismagius
 	mini_icon Honchkrow
 	mini_icon Bonsly
@@ -297,57 +304,57 @@ MiniIconPointers:
 	mini_icon Annihilape
 	assert_table_length NUM_SPECIES
 
-	mini_icon UnownB
-	mini_icon UnownC
-	mini_icon UnownD
-	mini_icon UnownE
-	mini_icon UnownF
-	mini_icon UnownG
-	mini_icon UnownH
-	mini_icon UnownI
-	mini_icon UnownJ
-	mini_icon UnownK
-	mini_icon UnownL
-	mini_icon UnownM
-	mini_icon UnownN
-	mini_icon UnownO
-	mini_icon UnownP
-	mini_icon UnownQ
-	mini_icon UnownR
-	mini_icon UnownS
-	mini_icon UnownT
-	mini_icon UnownU
-	mini_icon UnownV
-	mini_icon UnownW
-	mini_icon UnownX
-	mini_icon UnownY
-	mini_icon UnownZ
+	walking_mon UnownB
+	walking_mon UnownC
+	walking_mon UnownD
+	walking_mon UnownE
+	walking_mon UnownF
+	walking_mon UnownG
+	walking_mon UnownH
+	walking_mon UnownI
+	walking_mon UnownJ
+	walking_mon UnownK
+	walking_mon UnownL
+	walking_mon UnownM
+	walking_mon UnownN
+	walking_mon UnownO
+	walking_mon UnownP
+	walking_mon UnownQ
+	walking_mon UnownR
+	walking_mon UnownS
+	walking_mon UnownT
+	walking_mon UnownU
+	walking_mon UnownV
+	walking_mon UnownW
+	walking_mon UnownX
+	walking_mon UnownY
+	walking_mon UnownZ
 	mini_icon UnownExclamation
 	mini_icon UnownQuestion
 
-	mini_icon Arbok ; Kanto
-	mini_icon Arbok ; Orange
-	mini_icon Arbok ; Koga
-	mini_icon Arbok ; Agatha
-	mini_icon Arbok ; Ariana
+	walking_mon Arbok ; Kanto
+	walking_mon Arbok ; Orange
+	walking_mon Arbok ; Koga
+	walking_mon Arbok ; Agatha
+	walking_mon Arbok ; Ariana
 
-	mini_icon PikachuFly ; Fly
-	mini_icon PikachuSurf ; Surf
-	mini_icon Pikachu ; Pika
-	mini_icon Pikachu ; Chuchu
-	mini_icon Pikachu ; Spark
+	walking_mon Pikachu ; Fly
+	walking_mon PikachuSurf ; Surf
+	walking_mon Pikachu ; Pika
+	walking_mon Pikachu ; Chuchu
+	walking_mon Pikachu ; Spark
 
-	mini_icon Pichu ; Spiky
+	walking_mon Pichu ; Spiky
 
 rept NUM_MAGIKARP - 1
-	mini_icon Magikarp
+	walking_mon Magikarp
 endr
 
 	assert_table_length NUM_SPECIES + NUM_COSMETIC_FORMS
 
-	mini_icon Gyarados ; Red
+	walking_mon Gyarados ; Red
 
-	mini_icon MewtwoArmored
+	walking_mon MewtwoArmored
 
 	mini_icon DudunsparceThreeSegment
 

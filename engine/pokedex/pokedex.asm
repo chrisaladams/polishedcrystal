@@ -335,7 +335,7 @@ Pokedex_GetMonIconPalette:
 	ld a, [wCurIconForm]
 	ld b, a
 	ld a, [wPokedex_Shiny]
-	farcall GetMonPalInBCDE
+	farcall GetMiniColorsInBCDE
 	ld hl, wBGPals1 palette 2 + 5
 	ld a, d
 	ld [hld], a
@@ -779,7 +779,7 @@ endc
 	push af
 	push hl
 	ld a, [wPokedex_Shiny]
-	farcall GetMonPalInBCDE
+	farcall GetMiniColorsInBCDE
 	pop hl
 	pop af
 	push af

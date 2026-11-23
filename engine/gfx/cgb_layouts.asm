@@ -684,6 +684,7 @@ _CGB_PartyMenu:
 	call LoadOnePalette
 
 	call InitPartyMenuOBPals
+	farcall SetPartyWalkingMiniPals
 
 	hlcoord 10, 2, wAttrmap
 	lb bc, 11, 1
