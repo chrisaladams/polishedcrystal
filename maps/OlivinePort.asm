@@ -25,6 +25,7 @@ OlivinePort_MapScriptHeader:
 	object_event  4,  7, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OlivinePortYoungsterScript, EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME
 	object_event 11,  7, SPRITE_ACE_TRAINER_F, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OlivinePortCooltrainerFScript, EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME
 	object_event 16, 13, SPRITE_FLOATING_BALL, SPRITEMOVEDATA_POKEMON, 0, 0, -1, PAL_NPC_ENV_GREEN, OBJECTTYPE_ITEMBALL, PLAYEREVENT_KEYITEMBALL, GO_GOGGLES, EVENT_OLIVINE_PORT_GO_GOGGLES
+	object_event 13,  7, SPRITE_GENTLEMAN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, WhirlCupOfficialScript, EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME
 
 	object_const_def
 	const OLIVINEPORT_SAILOR1
@@ -349,4 +350,151 @@ OlivinePortSailorBeforeHOFText:
 
 	para "sea, so you're not"
 	line "allowed in."
+	done
+
+WhirlCupOfficialScript:
+; Link Edition: the Whirl Cup, from the anime: three Water-type battles in a
+; row (Trinity, Jasper, then Misty). The first win gives the Mystic Water,
+; each one after a Bottle Cap.
+	faceplayer
+	opentext
+	writetext .WelcomeText
+	promptbutton
+	callasm WhirlCupCheckParty
+	iffalse_jumpopenedtext .WaterOnlyText
+	writetext .EnterText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	special HealParty
+	writetext .Round1Text
+	waitbutton
+	closetext
+	winlosstext .WinText, .LossText
+	loadtrainer SWIMMERF, 33
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	opentext
+	writetext .Round2Text
+	waitbutton
+	closetext
+	winlosstext .WinText, .LossText
+	loadtrainer SAILOR, 17
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	opentext
+	writetext .FinalText
+	waitbutton
+	closetext
+	winlosstext .MistyWinText, .LossText
+	loadtrainer MISTY, 3
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	special HealParty
+	opentext
+	writetext .ChampionText
+	playsound SFX_GET_BADGE
+	waitsfx
+	promptbutton
+	checkevent EVENT_WON_WHIRL_CUP
+	iftruefwd .Again
+	writetext .MysticWaterText
+	promptbutton
+	verbosegiveitem MYSTIC_WATER, iffalse_endtext
+	setevent EVENT_WON_WHIRL_CUP
+	jumpopenedtext .ComeBackText
+
+.Again:
+	verbosegiveitem BOTTLE_CAP, iffalse_endtext
+	jumpopenedtext .ComeBackText
+
+.Lost:
+	special HealParty
+	jumptext .OutText
+
+.WelcomeText:
+	text "Welcome to the"
+	line "Whirl Cup!"
+
+	para "Three Water-type"
+	line "battles in a row."
+	cont "Win them all to"
+	cont "take the cup!"
+	done
+
+.WaterOnlyText:
+	text "Sorry, only Water-"
+	line "type #mon may"
+	cont "enter."
+
+	para "Come back with an"
+	line "all-Water team!"
+	done
+
+.EnterText:
+	text "Will you enter?"
+	done
+
+.NoText:
+	text "The waves will"
+	line "wait for you!"
+	done
+
+.Round1Text:
+	text "Your #mon are"
+	line "healed. Round one:"
+	cont "Swimmer Trinity!"
+	done
+
+.Round2Text:
+	text "On to the semi-"
+	line "final: Sailor"
+	cont "Jasper!"
+	done
+
+.FinalText:
+	text "The final! Your"
+	line "opponent: Misty!"
+	done
+
+.WinText:
+	text "What a splash!"
+	done
+
+.MistyWinText:
+	text "You beat me fair"
+	line "and square!"
+	done
+
+.LossText:
+	text "Swept away…"
+	done
+
+.ChampionText:
+	text "<PLAYER> won the"
+	line "Whirl Cup!"
+	done
+
+.MysticWaterText:
+	text "Here's the prize:"
+	line "Mystic Water!"
+	done
+
+.ComeBackText:
+	text "Come back and"
+	line "defend the cup"
+	cont "anytime!"
+	done
+
+.OutText:
+	text "That's the end of"
+	line "the line for now."
+
+	para "Your #mon are"
+	line "healed. Try again!"
 	done

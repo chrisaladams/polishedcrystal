@@ -12,7 +12,7 @@ The battles are won by setting the opposing team's HP to 0 in RAM, so this
 checks the scripts, not the battles themselves.
 
 Usage (from the repository root, after make):
-  python3 utils/orange_league/test_orange_league.py SAVE.sav
+  python3 utils/anime_events/test_orange_league.py SAVE.sav
 """
 import os
 import re

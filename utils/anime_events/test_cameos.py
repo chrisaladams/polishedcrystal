@@ -10,7 +10,7 @@
 The battles are won by setting the opposing team's HP to 0 in RAM.
 
 Usage (from the repository root, after make):
-  python3 utils/orange_league/test_cameos.py SAVE.sav
+  python3 utils/anime_events/test_cameos.py SAVE.sav
 """
 import os
 import re

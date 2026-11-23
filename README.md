@@ -181,8 +181,20 @@ used on the show, at post-game levels (70–79), with gym leader battle music.
 
 All of them can be battled again afterwards. It uses spare event flags, so
 saves don't change, and existing maps, sprites and music, so it costs under
-2 KB. `python3 utils/orange_league/test_orange_league.py SAVE.sav` checks it in
+2 KB. `python3 utils/anime_events/test_orange_league.py SAVE.sav` checks it in
 the emulator.
+
+### The Whirl Cup
+
+From the anime: a Water-type tournament at Olivine Port, run by an official
+who's there after the Hall of Fame. With a team of only Water-type Pokémon,
+you're healed and battle three rounds in a row: Swimmer Trinity (Seaking,
+Dewgong, Lanturn, Corsola), Sailor Jasper (Tentacruel, Octillery, Quagsire,
+Kingler), then Misty's Whirl Cup team (Psyduck, Corsola, Azumarill,
+Politoed, Gyarados, Starmie), at levels 68–74. Losing a round just ends the
+run (no blacking out). Winning gives the Mystic Water the first time and a
+Bottle Cap every time after, so it's a way to earn them while training.
+`python3 utils/anime_events/test_whirl_cup.py SAVE.sav` checks it.
 
 ### Anime cameos
 
@@ -199,7 +211,7 @@ to them, with teams from the show at levels 79–84:
 | Casey | the National Park, by the fountain | Beedrill, Meganium, Electabuzz |
 
 They reuse existing trainer pictures and sprites, and share one spare event
-flag, so saves don't change. `python3 utils/orange_league/test_cameos.py
+flag, so saves don't change. `python3 utils/anime_events/test_cameos.py
 SAVE.sav` checks them in the emulator.
 
 ### Smarter trainer AI

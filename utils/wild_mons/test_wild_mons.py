@@ -467,12 +467,17 @@ def main():
     b = struct_of(x['slot'])
     py = g.rd('wPlayerMapY')
     start = abs(sget(b, 'OBJECT_MAP_X') - g.rd('wPlayerMapX')) + abs(sget(b, 'OBJECT_MAP_Y') - py)
-    g.tick(240)
-    b = struct_of(x['slot'])
-    if b is not None:
-        now = abs(sget(b, 'OBJECT_MAP_X') - g.rd('wPlayerMapX')) + abs(sget(b, 'OBJECT_MAP_Y') - py)
-        if now <= start:
-            fails.append(('Repel', f'a weaker one did not run (distance {start} -> {now})'))
+    furthest = start
+    for _ in range(48):  # (its first try may be into the trees)
+        g.tick(10)
+        b = struct_of(x['slot'])
+        if b is None:  # ran off the screen
+            furthest = 99
+            break
+        furthest = max(furthest, abs(sget(b, 'OBJECT_MAP_X') - g.rd('wPlayerMapX'))
+                       + abs(sget(b, 'OBJECT_MAP_Y') - py))
+    if furthest <= start:
+        fails.append(('Repel', f'a weaker one did not run (distance {start}, at most {furthest})'))
     g.load(route29)
     g.wr('wRepelEffect', 200)
     x = wild()[0]

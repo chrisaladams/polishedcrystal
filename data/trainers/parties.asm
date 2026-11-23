@@ -1017,6 +1017,33 @@ MistyGroup:
 		tr_moves ICE_BEAM, PSYCHIC_M, THUNDERBOLT, SURF
 	end_trainer
 
+	def_trainer 3, "Misty" ; Link Edition: the Whirl Cup final
+	tr_mon 72, PSYDUCK @ EVIOLITE, FEMALE
+		tr_extra CLOUD_NINE, SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves SCALD, PSYCHIC_M, ICE_BEAM, CALM_MIND
+	tr_mon 72, CORSOLA @ EVIOLITE, FEMALE
+		tr_extra NATURAL_CURE, DEF_UP_ATK_DOWN
+		tr_evs 252 HP, 252 Def, 4 SDf
+		tr_moves SCALD, POWER_GEM, RECOVER, TOXIC
+	tr_mon 73, AZUMARILL @ CHOICE_BAND, FEMALE
+		tr_extra HUGE_POWER, ATK_UP_SATK_DOWN
+		tr_evs 252 HP, 4 Def, 252 Atk
+		tr_moves AQUA_JET, PLAY_ROUGH, WATERFALL, KNOCK_OFF
+	tr_mon 73, POLITOED @ DAMP_ROCK, FEMALE
+		tr_extra DRIZZLE, SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves SURF, ICE_BEAM, FOCUS_BLAST, HYPNOSIS
+	tr_mon 73, GYARADOS @ LUM_BERRY, FEMALE
+		tr_extra INTIMIDATE, SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves DRAGON_DANCE, WATERFALL, EARTHQUAKE, STONE_EDGE
+	tr_mon 74, STARMIE @ LIFE_ORB
+		tr_extra NATURAL_CURE, SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SURF, PSYCHIC_M, THUNDERBOLT, RECOVER
+	end_trainer
+
 
 SECTION "LtSurgeGroup", ROMX
 LtSurgeGroup:
@@ -5475,6 +5502,25 @@ SailorGroup:
 	tr_mon LEVEL_FROM_BADGES + 2, MACHOKE
 	end_trainer
 
+	def_trainer 17, "Jasper" ; Link Edition: the Whirl Cup, round 2
+	tr_mon 70, TENTACRUEL @ BLACK_SLUDGE, MALE
+		tr_extra CLEAR_BODY, SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SURF, SLUDGE_BOMB, ICE_BEAM, TOXIC_SPIKES
+	tr_mon 70, OCTILLERY @ WISE_GLASSES, MALE
+		tr_extra SNIPER, SATK_UP_SPE_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves SURF, ICE_BEAM, FLAMETHROWER, FOCUS_BLAST
+	tr_mon 70, QUAGSIRE @ LEFTOVERS, MALE
+		tr_extra UNAWARE, DEF_UP_SPE_DOWN
+		tr_evs 252 HP, 4 SAt, 252 Def
+		tr_moves EARTHQUAKE, SCALD, RECOVER, TOXIC
+	tr_mon 71, KINGLER @ LIFE_ORB, MALE
+		tr_extra SHEER_FORCE, SPE_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 SDf, 252 Spe
+		tr_moves CRABHAMMER, X_SCISSOR, ROCK_SLIDE, SWORDS_DANCE
+	end_trainer
+
 
 SECTION "SwimmerMGroup", ROMX
 SwimmerMGroup:
@@ -5813,6 +5859,25 @@ SwimmerFGroup:
 	tr_mon 63, GOLDUCK
 	tr_mon 63, LANTURN
 	tr_mon 63, GYARADOS
+	end_trainer
+
+	def_trainer 33, "Trinity" ; Link Edition: the Whirl Cup, round 1
+	tr_mon 68, SEAKING @ MYSTIC_WATER, FEMALE
+		tr_extra SWIFT_SWIM, ATK_UP_SATK_DOWN
+		tr_evs 252 Atk, 4 Def, 252 Spe
+		tr_moves WATERFALL, MEGAHORN, POISON_JAB, AGILITY
+	tr_mon 68, DEWGONG @ LEFTOVERS, FEMALE
+		tr_extra THICK_FAT, DEF_UP_ATK_DOWN
+		tr_evs 252 HP, 252 Def, 4 SDf
+		tr_moves SURF, ICE_BEAM, REST, SLEEP_TALK
+	tr_mon 69, LANTURN @ SITRUS_BERRY, FEMALE
+		tr_extra VOLT_ABSORB, SATK_UP_ATK_DOWN
+		tr_evs 252 HP, 4 SDf, 252 SAt
+		tr_moves SURF, THUNDERBOLT, ICE_BEAM, THUNDER_WAVE
+	tr_mon 69, CORSOLA @ EVIOLITE, FEMALE
+		tr_extra NATURAL_CURE, DEF_UP_ATK_DOWN
+		tr_evs 252 HP, 252 Def, 4 SDf
+		tr_moves SCALD, POWER_GEM, RECOVER, TOXIC
 	end_trainer
 
 
