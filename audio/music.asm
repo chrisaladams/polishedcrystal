@@ -336,6 +336,9 @@ INCLUDE "audio/music/rse/championbattle.asm"
 SECTION "Song - rse/evergrandecity", ROMX
 INCLUDE "audio/music/rse/evergrandecity.asm"
 
+SECTION "Song - rse/dewfordtown", ROMX
+INCLUDE "audio/music/rse/dewfordtown.asm"
+
 SECTION "Song - rse/frontierbrainbattle", ROMX
 INCLUDE "audio/music/rse/frontierbrainbattle.asm"
 
@@ -508,6 +511,9 @@ INCLUDE "audio/music/xy/titlescreen.asm"
 SECTION "Song - xy/scaryhouse", ROMX
 INCLUDE "audio/music/xy/scaryhouse.asm"
 
+SECTION "Song - xy/legendarybattle", ROMX
+INCLUDE "audio/music/xy/legendarybattle.asm"
+
 SECTION "Song - oras/wallybattle", ROMX
 INCLUDE "audio/music/oras/wallybattle.asm"
 
@@ -534,6 +540,18 @@ INCLUDE "audio/music/sm/wildbattle.asm"
 
 SECTION "Song - swsh/gymleaderbattle", ROMX
 INCLUDE "audio/music/swsh/gymleaderbattle.asm"
+
+SECTION "Song - prism/wildbattle", ROMX
+INCLUDE "audio/music/prism/wildbattle.asm"
+
+SECTION "Song - prism/trainerbattle", ROMX
+INCLUDE "audio/music/prism/trainerbattle.asm"
+
+SECTION "Song - prism/gymleaderbattle", ROMX
+INCLUDE "audio/music/prism/gymleaderbattle.asm"
+
+SECTION "Song - prism/palettebattle", ROMX
+INCLUDE "audio/music/prism/palettebattle.asm"
 
 SECTION "Song - go/wildbattle", ROMX
 INCLUDE "audio/music/go/wildbattle.asm"

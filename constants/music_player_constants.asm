@@ -40,6 +40,7 @@ DEF NUM_MP_EDIT_FIELDS EQU const_value
 	const ORIGIN_STADIUM ; 0e
 	const ORIGIN_GO      ; 0f
 	const ORIGIN_M02     ; 10
+	const ORIGIN_PRISM   ; 11
 DEF NUM_SONG_ORIGINS EQU const_value
 
 ; SongArtists indexes (see data/music_player/song_artists.asm)
@@ -65,6 +66,11 @@ DEF NUM_SONG_ORIGINS EQU const_value
 	const COMPOSER_TRITEHEXAGON                  ; 12
 	const COMPOSER_PIGU_PIKALAXALT               ; 13
 	const COMPOSER_GACT_PIGU                     ; 14
+	const COMPOSER_LEVUSBEVUS                    ; 15
+	const COMPOSER_GACT                          ; 16
+	const COMPOSER_GRONNOC                       ; 17
+	const COMPOSER_CAT333POKEMON                 ; 18
+	const COMPOSER_NOTFROGGESTSPIRIT             ; 19
 	const COMPOSER_SHINKONETCAVY_SHOCKSLAYER     ; 1a
 	const COMPOSER_COSMIC_ANGEL                  ; 1b
 DEF NUM_SONG_ARTISTS EQU const_value

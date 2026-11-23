@@ -189,4 +189,10 @@ Music:
 	dba Music_PostCredits
 	dba Music_Printer
 	dba Music_TitleScreenXY
+	dba Music_DewfordTownRSE
+	dba Music_LegendaryBattleXY
+	dba Music_WildBattlePrism
+	dba Music_TrainerBattlePrism
+	dba Music_GymLeaderBattlePrism
+	dba Music_PaletteBattlePrism
 	assert_table_length NUM_MUSIC_SONGS

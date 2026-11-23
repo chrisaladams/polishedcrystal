@@ -62,7 +62,7 @@ Sirfetch'd) among others.
 About 33.8 KB of the 2 MB ROM is free (two whole empty banks, 126 and 127,
 plus gaps). Count free space with the banks the map file doesn't list: an
 entirely empty bank doesn't appear in it, which once made the free space look
-16 KB smaller than it was. Sharing and compressing data (below) freed 10.9 KB,
+16 KB smaller than it was. Sharing and compressing data (below) freed 5.8 KB,
 and replacing a mini and icon (about 220 bytes together) with a walking
 sprite (about 230 bytes) costs almost nothing; forms that share their regular
 form's sprite free their mini and icon entirely.
@@ -71,7 +71,6 @@ form's sprite free their mini and icon entirely.
 |---|---|
 | Identical icons and minis shared | 684 B |
 | Text repeated in map and phone scripts shared with `text_far` (100 copies) | 1.2 KB |
-| The 6 songs only the music player played | 5.1 KB |
 | Fonts stored compressed, unpacked when needed | 2.0 KB |
 | Duplicate graphics shared (two back sprites, three mini masks) | 735 B |
 | Random Battle sets: each type profile stored once | 653 B |
@@ -86,6 +85,7 @@ form's sprite free their mini and icon entirely.
 | Unown letters B–Z, ! and ? in battle (every Unown looks like A there) | 9.6 KB |
 | Pokédex footprints (the small footprint box on each Pokédex page) | 5.2 KB |
 | Six of the eight font choices in Options | ~3.9 KB |
+| The 6 songs only the music player plays (cut once, then put back) | 5.1 KB |
 | Pikachu's Fly and Chuchu forms | 2.4 KB |
 | Game Boy Printer support | 2.0 KB |
 | The second title-screen song (X/Y title, after the Hall of Fame) | 1.1 KB |
