@@ -1,5 +1,5 @@
 ; Perrserker: drawn in the Meowth line's style after its pokeemerald-expansion
-; sprite: spiked iron helmet with glowing eye slits, big beard, short sturdy limbs
+; sprite: spiked iron helmet, glowing eye slits, starburst beard, short sturdy limbs
 .......##.......
 ..#...#xx#...#..
 ..##.#xxxx#.##..
@@ -8,14 +8,14 @@
 ##xxxxxxxxxxxx##
 .#x#oo#xx#oo#x#.
 ..#xxxxxxxxxx#..
-.##oooooooooo##.
-#x#oooooooooo#x#
-#x#ooxooooxoo#x#
-.#.#oxooooxo#.#.
-...#oxooooxo#...
-...##oooooo##...
+##oooooooooooo##
+.#oooooooooooo#.
+##ooxooooooxoo##
+.#oxooooooooxo#.
+..#oooooooooo#..
+..#o#oo##oo#o#..
 ...#x#....#x#...
-...##......##...
+...###....###...
 
 .......##.......
 ..#...#xx#...#..
@@ -25,12 +25,12 @@
 ##xxxxxxxxxxxx##
 .#x#oo#xx#oo#x#.
 ..#xxxxxxxxxx#..
-.##oooooooooo##.
-#x#oooooooooo#x#
-#x#ooxooooxoo#x#
-.#.#oxooooxo#.#.
-...#oxooooxo#...
-...##oooooo##...
+##oooooooooooo##
+.#oooooooooooo#.
+##ooxooooooxoo##
+.#oxooooooooxo#.
+..#oooooooooo#..
+..#o#oo##oo#o#..
 ...#x#.....##...
 ...##...........
 
@@ -42,14 +42,14 @@
 ##xxxxxxxxxxxx##
 .#xxxxxxxxxxxx#.
 ..#xxxxxxxxxx#..
-.##xoooooooox##.
-#x#oooooooooo#x#
-#x#oooooooooo#x#
-.#.#oooooooo#.#.
-...#oooooooo#...
-...##oooooo##...
+##oooooooooooo##
+.#oooooooooooo#.
+##oooooooooooo##
+.#oooooooooooo#.
+..#oooooooooo#..
+..#o#oo##oo#o#..
 ...#x#....#x#...
-...##......##...
+...###....###...
 
 .......##.......
 ..#...#xx#...#..
@@ -59,12 +59,12 @@
 ##xxxxxxxxxxxx##
 .#xxxxxxxxxxxx#.
 ..#xxxxxxxxxx#..
-.##xoooooooox##.
-#x#oooooooooo#x#
-#x#oooooooooo#x#
-.#.#oooooooo#.#.
-...#oooooooo#...
-...##oooooo##...
+##oooooooooooo##
+.#oooooooooooo#.
+##oooooooooooo##
+.#oooooooooooo#.
+..#oooooooooo#..
+..#o#oo##oo#o#..
 ...##.....#x#...
 ...........##...
 
