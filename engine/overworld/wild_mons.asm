@@ -309,13 +309,19 @@ TrySpawnWildMon:
 	ld a, c
 	cp NUM_WILD_MONS
 	jr c, .find_slot
-	; all out: a roaming legendary on this map still comes as often as it
-	; would in a random battle, in place of the one furthest from you
+.no_room
+	; no room for another (every slot out, or no more allowed on this screen):
+	; a roaming legendary on this map still comes as often as it would in a
+	; random battle, in place of the one furthest from you
 	ld a, [wWildMonSpawnMode]
 	and a
 	ret nz
 	farcall TryRoamerSpawn
+	jr z, .special
+	; or today's rare Pokemon (TV news), on its map
+	call TrySightingWhenFull
 	ret nz
+.special
 	call IsSameRoamerOut
 	ret z
 	call FurthestOrdinaryWildMon ; a = which, or carry if none
@@ -362,7 +368,7 @@ TrySpawnWildMon:
 .counted_pals
 	ld a, c
 	cp e
-	ret nc
+	jr nc, .no_room
 
 	; a 4th only while few others are on screen (the Game Boy shows 40
 	; sprites, 10 on a line, and each object here takes 4)
@@ -371,7 +377,7 @@ TrySpawnWildMon:
 	jr c, .room_on_screen
 	call CountVisibleObjects
 	cp WILD_MON_BUSY_SCREEN
-	ret nc
+	jmp nc, .no_room
 .room_on_screen
 	ld a, [wWildMonSpawnMode]
 	and SPAWN_NO_CHANCE
@@ -380,6 +386,7 @@ TrySpawnWildMon:
 	ld a, [wTempWildMonSpecies]
 	and a
 	ret z
+	call ApplyTodaysSighting
 
 	; at most one of each roaming legendary
 	call IsSameRoamerOut
@@ -505,7 +512,8 @@ IsSameRoamerOut:
 
 FurthestOrdinaryWildMon:
 ; a = the wild Pokemon furthest from the player that isn't a roaming
-; legendary (to make room for one), or carry if there's none.
+; legendary or today's rare Pokemon (to make room for one), or carry if
+; there's none.
 	ld a, -1
 	ld [wWildMonSpawnSlot], a
 	ld e, 0 ; furthest so far
@@ -515,6 +523,8 @@ FurthestOrdinaryWildMon:
 	call GetWildMonSlot
 	ld a, [hl]
 	and a
+	jr z, .next
+	call IsTodaysSighting
 	jr z, .next
 	ld bc, WILDMON_BATTLETYPE
 	add hl, bc
@@ -1206,3 +1216,181 @@ LoadWildMonSpriteGFX::
 	and a
 	ret z ; no carry
 	farjp LoadWalkingSpriteGFX
+
+; Today's rare Pokemon (the TV news): each day one of these is out on its
+; map, among the wild Pokemon you can see. A quarter of the ones that come
+; there (on land) are it, at the level the one it replaces would have had,
+; one at a time; like a roaming legendary, it takes the place of the one
+; furthest from you if every slot is full. The day comes from the clock's day
+; count (wRTCDayLo, 0-139), so nothing is saved.
+DEF NUM_SIGHTINGS EQU 14 ; (140 days divide evenly, so the order never skips)
+DEF SIGHTING_CHANCE EQU 25 percent
+
+Sightings:
+	table_width 3
+	map_id ROUTE_29
+	db EEVEE
+	map_id ROUTE_32
+	db CHANSEY
+	map_id ROUTE_35
+	db SCYTHER
+	map_id ROUTE_36
+	db PINSIR
+	map_id ROUTE_38
+	db SNORLAX
+	map_id ROUTE_43
+	db HERACROSS
+	map_id ROUTE_45
+	db LARVITAR
+	map_id ROUTE_1
+	db PIKACHU
+	map_id ROUTE_10_NORTH
+	db ELECTABUZZ
+	map_id ROUTE_13
+	db KANGASKHAN
+	map_id ROUTE_15
+	db TAUROS
+	map_id ROUTE_24
+	db SMEARGLE
+	map_id ROUTE_26
+	db SKARMORY
+	map_id ROUTE_46
+	db PHANPY
+	assert_table_length NUM_SIGHTINGS
+
+GetTodaysSighting:
+; hl = today's Sightings entry.
+	ld a, [wRTCDayLo]
+.mod
+	sub NUM_SIGHTINGS
+	jr nc, .mod
+	add NUM_SIGHTINGS
+	ld hl, Sightings
+	ld bc, 3
+	rst AddNTimes
+	ret
+
+IsOnSightingMap:
+; Return z, with hl at the species, if the player is on land on today's
+; rare Pokemon's map.
+	call GetPlayerStandingTile
+	dec a ; cp WATER_TILE
+	jr z, .no
+	call GetTodaysSighting
+	ld a, [wMapGroup]
+	cp [hl]
+	ret nz
+	inc hl
+	ld a, [wMapNumber]
+	cp [hl]
+	ret nz
+	inc hl
+	ret
+
+.no
+	or 1
+	ret
+
+IsTodaysSighting:
+; Return z if species a is today's rare Pokemon and the player is on its map.
+; Preserves bc, de and hl.
+	push hl
+	push bc
+	ld b, a
+	call IsOnSightingMap
+	jr nz, .done
+	ld a, [hl]
+	cp b
+.done
+	pop bc
+	pop hl
+	ret
+
+IsSpeciesOut:
+; Return z if a wild Pokemon of species a is out.
+	ld b, a
+	ld hl, wWildMons
+	ld de, WILDMON_LENGTH
+	ld c, NUM_WILD_MONS
+.loop
+	ld a, [hl]
+	cp b
+	ret z
+	add hl, de
+	dec c
+	jr nz, .loop
+	or 1
+	ret
+
+ApplyTodaysSighting:
+; The wild Pokemon just chosen may be today's rare one instead.
+	ld a, [wBattleType]
+	cp BATTLETYPE_ROAMING
+	ret z
+	call IsOnSightingMap
+	ret nz
+	ld a, [hl]
+	call IsSpeciesOut
+	ret z ; one at a time
+	call Random
+	cp SIGHTING_CHANCE
+	ret nc
+.it
+	call IsOnSightingMap
+	ld a, [hl]
+	ld [wTempWildMonSpecies], a
+	xor a ; plain form (all of them are below 256)
+	ld [wWildMonForm], a
+	ret
+
+TrySightingWhenFull:
+; Every slot is out: return z with today's rare Pokemon chosen if it comes now
+; (when a random encounter would have, a quarter of the time).
+	call IsOnSightingMap
+	ret nz
+	ld a, [hl]
+	call IsSpeciesOut
+	jr z, .no
+	xor a ; with the encounter chance
+	farcall TryWildSpawn
+	ret nz
+	call Random
+	cp SIGHTING_CHANCE
+	jr nc, .no
+	xor a ; BATTLETYPE_NORMAL
+	ld [wBattleType], a
+	call ApplyTodaysSighting.it
+	xor a
+	ret
+
+.no
+	or 1
+	ret
+
+GetTodaysSightingNames::
+; For the TV news: today's rare Pokemon's name in wStringBuffer3, and where
+; it's been spotted in wStringBuffer4.
+	call GetTodaysSighting
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld c, a
+	ld a, [hl]
+	ld [wNamedObjectIndex], a
+	xor a
+	ld [wNamedObjectIndex + 1], a
+	push bc
+	call GetPokemonName
+	ld hl, wStringBuffer1
+	ld de, wStringBuffer3
+	ld bc, MON_NAME_LENGTH
+	rst CopyBytes
+	pop bc
+	call GetWorldMapLocation
+	ld e, a
+	farcall GetLandmarkName
+	ld hl, wStringBuffer1
+	ld de, wStringBuffer4
+	ld bc, STRING_BUFFER_LENGTH
+	rst CopyBytes
+	ret

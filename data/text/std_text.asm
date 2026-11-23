@@ -212,7 +212,21 @@ WindowText:
 	done
 
 TVText:
-	text "It's a TV."
+	text "It's the #mon"
+	line "news!"
+	text_far TVNewsText
+	text_end
+
+TVNewsText::
+; Link Edition: today's rare Pokemon (GetTodaysSightingNames)
+	para "A rare"
+	line ""
+	text_ram wStringBuffer3
+	text " has"
+	cont "been spotted on"
+	cont ""
+	text_ram wStringBuffer4
+	text "!"
 	done
 
 WrongSideText:

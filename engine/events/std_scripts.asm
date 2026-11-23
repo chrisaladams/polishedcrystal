@@ -244,6 +244,7 @@ WindowScript:
 TVScript:
 	readvar VAR_FACING
 	ifnotequal UP, WrongSideScript
+	callasm GetTodaysSightingNames ; Link Edition: the news
 	farjumptext TVText
 
 WrongSideScript:

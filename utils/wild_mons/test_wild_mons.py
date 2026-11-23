@@ -13,6 +13,9 @@ In the emulator (PyBoy), from a save:
   and pressing A;
 - a roaming legendary on the map still comes when every slot is full (in
   place of the one furthest away), never twice, and battles as one;
+- today's rare Pokemon (the TV news; day 0 in the emulator: Eevee on Route
+  29) comes there, one at a time, also when every slot is full, and not on
+  another route; the TV names it;
 - with a Repel, a weaker one runs from you and runs off if you walk into it,
   and a stronger one still battles;
 - saving with some out, then Continue, leaves no stale ones;
@@ -133,6 +136,10 @@ def main():
     for t in list(grass.values()) + list(water.values()):
         species_names |= t
     species_names |= contest | {'RAIKOU', 'ENTEI', 'SUICUNE'}
+    # today's rare Pokemon (TV news): map -> species
+    src = open(os.path.join(ROOT, 'engine', 'overworld', 'wild_mons.asm')).read()
+    sightings = dict(re.findall(r'map_id (\w+)\n\tdb (\w+)', src))
+    species_names |= set(sightings.values())
     names = sorted(species_names) + [p + mp for mp in maps + ['NATIONAL_PARK_BUG_CONTEST']
                                      for p in ('GROUP_', 'MAP_')]
     names += ['NUM_WILD_MONS', 'WILDMON_LENGTH', 'MAPOBJECT_LENGTH', 'FIRST_WILD_OBJECT',
@@ -142,7 +149,8 @@ def main():
               'COLL_WATER', 'COLL_TALL_GRASS', 'COLL_LONG_GRASS', 'COLL_FLOOR', 'HABITAT_GRASS',
               'HABITAT_FLOOR', 'HABITAT_WATER', 'EXTSPECIES_MASK', 'SHINY_MASK',
               'BATTLETYPE_ROAMING', 'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'OBJECT_FLAGS1',
-              'OBJECT_FLAGS2', 'NUM_OBJECTS']
+              'OBJECT_FLAGS2', 'NUM_OBJECTS', 'EEVEE', 'GROUP_ROUTE_30', 'MAP_ROUTE_30',
+              'GROUP_PLAYERS_HOUSE_1F', 'MAP_PLAYERS_HOUSE_1F']
     K = rgbasm_values(names, None)
     by_value = {K[n]: n for n in species_names}
     save = open(args.save, 'rb').read()
@@ -195,10 +203,13 @@ def main():
     def run_from_battle():
         g.tick(900)
         g.press('a', 400)
-        for b in ('down', 'right', 'a'):
-            g.press(b, 30)
-        for _ in range(40):
-            g.press('b', 40)
+        for _ in range(10):  # running can fail ("Can't escape!"): try again
+            for b in ('down', 'right', 'a'):
+                g.press(b, 30)
+            for _ in range(40):
+                g.press('b', 40)
+                if not g.rd('wBattleMode'):
+                    break
             if not g.rd('wBattleMode'):
                 break
         g.tick(400)
@@ -236,7 +247,8 @@ def main():
                 for x in found:
                     checked += 1
                     where = f'{mp} ({kind}): {x["name"]}'
-                    if x['name'] not in table[mp] and x['battletype'] != K['BATTLETYPE_ROAMING']:
+                    if (x['name'] not in table[mp] and x['battletype'] != K['BATTLETYPE_ROAMING']
+                            and sightings.get(mp) != x['name']):
                         fails.append((where, 'not in its table'))
                     if not (4 <= x['x'] < 4 + 2 * w and 4 <= x['y'] < 4 + 2 * h):
                         fails.append((where, f'outside the map at {x["x"]},{x["y"]}'))
@@ -394,6 +406,58 @@ def main():
             fails.append(('roaming legendaries', f'walking into {roamer["name"]} started no battle'))
         elif (g.rd('wBattleType'), g.rd('wTempWildMonSpecies')) != (K['BATTLETYPE_ROAMING'], roamer['sp']):
             fails.append(('roaming legendaries', f'{roamer["name"]} did not battle as a roaming legendary'))
+
+    # 3c. today's rare Pokemon: the emulator's clock is at day 0, Eevee on Route 29
+    def rare_walk(group, number, x, y, steps, only_when_full=False):
+        g.load(base)
+        if only_when_full:
+            # it comes the usual way most of the time, and then stays: to see
+            # it come when every slot is full, that's the only way it can come
+            ab, aa = sym['ApplyTodaysSighting']
+
+            def skip(_):
+                rf = g.pb.register_file
+                sp = rf.SP
+                rf.SP = sp + 2
+                rf.PC = g.m[sp] | (g.m[sp + 1] << 8)
+            g.pb.hook_register(ab, aa, skip, None)
+        g.warp(group, number, x, y)
+        seen = most = while_full = 0
+        for i in range(steps):
+            for j in range(K['NUM_OBJECT_STRUCTS']):
+                b = g.addr('wObjectStructs') + j * K['OBJECT_LENGTH']
+                if 1 <= g.m[1, b + K['OBJECT_MAP_OBJECT_INDEX']] < K['NUM_OBJECTS'] - 1:
+                    g.m[1, b + K['OBJECT_FLAGS1']] |= 1
+            before = [x['sp'] for x in wild()]
+            g.wr('wGrassEncounterRate', 255)
+            g.press(['up', 'up', 'down', 'down'][i % 4], 6, 16)
+            n = [x['sp'] for x in wild()].count(K['EEVEE'])
+            seen += n > 0
+            most = max(most, n)
+            while_full += (n > 0 and len(before) == K['NUM_WILD_MONS'] and K['EEVEE'] not in before)
+        if only_when_full:
+            g.pb.hook_deregister(ab, aa)
+        return seen, most, while_full
+    if g.rd('wRTCDayLo') % 14 == 0:
+        seen, most, _ = rare_walk(K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'], 16, 5, 120)
+        if not seen:
+            fails.append(("today's rare Pokemon", 'no Eevee on Route 29'))
+        seen2, most2, while_full = rare_walk(K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'], 16, 5, 200, True)
+        if max(most, most2) > 1:
+            fails.append(("today's rare Pokemon", 'two Eevee out at once'))
+        if not while_full or seen2 and not while_full:
+            fails.append(("today's rare Pokemon", 'never came while every slot was full'))
+        if rare_walk(K['GROUP_ROUTE_30'], K['MAP_ROUTE_30'], 10, 30, 40)[0]:
+            fails.append(("today's rare Pokemon", 'Eevee on Route 30'))
+        g.load(base)
+        g.warp(K['GROUP_PLAYERS_HOUSE_1F'], K['MAP_PLAYERS_HOUSE_1F'], 6, 2)
+        g.press('up', 2, 3)
+        g.tick(20)
+        g.press('a', 60)
+        if g.rd('wNamedObjectIndex') != K['EEVEE']:
+            fails.append(("today's rare Pokemon", 'the TV did not report Eevee'))
+    else:
+        print("(skipped today's rare Pokemon: the clock isn't at day 0)")
 
     # 4. Repel
     g.load(route29)

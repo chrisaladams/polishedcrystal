@@ -126,6 +126,7 @@ PlayersHouse1FStoveText:
 	done
 
 PlayersHouse1FTVScript:
+	callasm GetTodaysSightingNames ; Link Edition: then the news
 	jumpthistext
 
 	text "There's a movie on"
@@ -134,9 +135,10 @@ PlayersHouse1FTVScript:
 	para "sky as two boys"
 	line "ride on a train…"
 
-	para "I'd better get"
-	line "rolling too!"
-	done
+	para "Then the #mon"
+	line "news comes on."
+	text_far TVNewsText
+	text_end
 
 MomScript:
 	faceplayer

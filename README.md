@@ -148,8 +148,13 @@ Battle Tower and Battle Factory prize shops are unchanged.
   shiny chance (3 with the Shiny Charm). Two are there when you arrive, and
   each step brings another, while there's room, with the map's usual
   encounter chance. A roaming legendary on your map comes just as often as
-  it did: if every slot is full, it takes the place of the wild Pokémon
-  furthest from you. One that wanders off screen is gone, making room for
+  it did: if there's no room for another, it takes the place of the wild
+  Pokémon furthest from you. **Every TV has the Pokémon news**: each day a
+  rare Pokémon (Eevee, Chansey, Scyther, Pinsir, Snorlax, Heracross,
+  Larvitar, Pikachu, Electabuzz, Kangaskhan, Tauros, Smeargle, Skarmory or
+  Phanpy, in turn) is spotted on one route, where a quarter of the wild
+  Pokémon that come are it, one at a time, at that route's levels. It takes a
+  slot the same way a roaming legendary does. One that wanders off screen is gone, making room for
   another. While a Repel works, the ones it would have kept away run from
   you, and run off if you walk into them. The Bug-Catching Contest's bugs work
   the same way. Fishing, Headbutt, Rock Smash and Sweet Honey are unchanged,
