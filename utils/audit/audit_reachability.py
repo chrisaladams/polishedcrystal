@@ -7,12 +7,10 @@ maps is where a player can use it, from a save:
   a coord event, can be walked up to and talked to from an entrance of the
   map, and doesn't cut any entrance off from another;
 - with --wild, on every map with wild Pokemon, that none can appear out of
-  reach: no tile of theirs (grass, cave floor, water) that can't be reached
-  from an entrance is one the game would pick as a spot for one while you
-  stand somewhere you can get to (in range, and in reach of you by the flood
-  fill in ComputeWildMonReach); and, in the game itself, that the ones that
-  appear where you arrive (at five places on the map, on land and surfing)
-  are all where you can get to.
+  reach: a tile of theirs (grass, cave floor, water) that can't be reached
+  from an entrance, but that the game would pick as a spot for one while you
+  stand somewhere you can get to (in range, and not walled off from you by
+  the check in CheckWildMonPath).
 
 The walkable tiles come from the map as loaded (blocks and the tileset's
 collision, after the map's callbacks), and CollisionPermissionTable. The
@@ -45,8 +43,13 @@ ADDED = (
     ('OlivinePort', 13, 7), ('RuinsOfAlphResearchCenter', 2, 2),
     ('IlexForest', 11, 25), ('CeruleanCaveB1F', 7, 13),
 )
+# The actual standing positions used to interact with each new story clue.
+STORY_STOPS = (
+    ('OaksLab', 2, 2, 'field book'), ('RuinsOfAlphInnerChamber', 5, 14, 'Hale statue'),
+    ('OaksLab', 5, 1, 'championship sketch'),
+)
 # flags that make them all appear
-SHOW = ('EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_BEAT_RED')
+SHOW = ('EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_GOT_MYSTICTICKET_FROM_RED')
 HIDE = ('EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', 'EVENT_CERULEAN_CAVE_MEWTWO',
         'EVENT_BEAT_IRON_MASK_MARAUDER')
 
@@ -141,26 +144,24 @@ class MapGrid:
                 continue
             yield n
 
-    def window_reach(self, p, left=7, up=6):
-        """ComputeWildMonReach: the tiles in the window around p you can walk to
-        within it, over tiles of the kind p is (land or water)"""
-        kind = self.kind(p)
-        seen = {p}
-        q = deque([p])
-        while q:
-            c = q.popleft()
-            for d, (dx, dy) in DIRS.items():
-                n = (c[0] + dx, c[1] + dy)
-                if (n in seen or n not in self.coll or not -left <= n[0] - p[0] <= left
-                        or not -up <= n[1] - p[1] <= up):
-                    continue
-                if d in EDGE_WALLS.get(self.coll[c], '') or OPPOSITE[d] in EDGE_WALLS.get(self.coll[n], ''):
-                    continue
-                if self.kind(n) != kind:
-                    continue
-                seen.add(n)
-                q.append(n)
-        return seen
+    def lpath_clear(self, s, p, blocked=()):
+        """CheckWildMonPath: ordinary tiles of one medium, without objects."""
+        for x_first in (True, False):
+            x, y = s
+            ok = True
+            while (x, y) != p:
+                if (x_first and x != p[0]) or (not x_first and y == p[1]):
+                    x += 1 if p[0] > x else -1
+                else:
+                    y += 1 if p[1] > y else -1
+                c = self.coll.get((x, y), 0xff)
+                if (((x, y) != p and (x, y) in blocked) or self.kind((x, y)) != self.kind(s)
+                        or c >= 0x60 or c in (0x23, 0x24) or 0x30 <= c < 0x40):
+                    ok = False
+                    break
+            if ok:
+                return True
+        return False
 
     def reach(self, starts, blocked, warps):
         seen = set(s for s in starts if s in self.coll)
@@ -197,10 +198,12 @@ def main():
     ap.add_argument('--wild', action='store_true')
     ap.add_argument('--shots')
     args = ap.parse_args()
+    if args.shots:
+        os.makedirs(args.shots, exist_ok=True)
 
     consts = map_consts()
     conns = connections()
-    labels = sorted({a[0] for a in ADDED})
+    labels = sorted({a[0] for a in ADDED + STORY_STOPS})
     grass, water = wild_tables('grass'), wild_tables('water')
     wild_maps = sorted(set(grass) | set(water)) if args.wild else []
     by_const = {v: k for k, v in consts.items()}
@@ -280,9 +283,10 @@ def main():
         if (ox, oy) in warps or (ox, oy) in coords:
             fails.append((where, 'stands on a warp or coord event'))
         ents = entrances(grid, label, warps, conns)
-        alone = grid.reach(ents, blockers, set(warps))
+        # The player must reach a talking position while the NPC is there.
+        alone = grid.reach(ents, blockers | {(ox, oy)}, set(warps))
         talk = [(ox + dx, oy + dy) for dx, dy in DIRS.values()]
-        if not any(t in alone and t not in blockers for t in talk):
+        if not any(t in alone and t not in blockers and t not in warps for t in talk):
             fails.append((where, 'nowhere reachable to talk to them from'))
         # cut off: an entrance that reaches another without them, but not with
         for e in sorted(ents):
@@ -293,8 +297,16 @@ def main():
                 fails.append((where, f'blocks the way from {e} to {sorted(lost)[:3]}'))
                 break
 
+    for label, x, y, clue in STORY_STOPS:
+        warps, _, people = map_events(label)
+        grid = load(consts[label], x, y)
+        blockers = {(px, py) for px, py, mv in shown(people)
+                    if 'STANDING' in mv or 'SPIN' in mv or 'POKEMON' in mv or 'STILL' in mv}
+        reached = grid.reach(entrances(grid, label, warps, conns), blockers, set(warps))
+        if (x, y) not in reached or (x, y) in warps:
+            fails.append((clue, f'no walking route to {label} ({x},{y})'))
+
     # 2. wild Pokemon tiles out of reach
-    report = []
     for mc in wild_maps:
         label = by_const.get(mc)
         if not label:
@@ -308,6 +320,11 @@ def main():
             fails.append((mc, 'could not get there'))
             continue
         still = {(x, y) for x, y, mv in shown(people) if 'STANDING' in mv or 'SPIN' in mv}
+        # CheckWildMonObjects rejects reserved object coordinates, including
+        # hidden objects and item balls. They cannot be candidate spawn tiles.
+        src = open(os.path.join(ROOT, 'maps', label + '.asm')).read()
+        occupied = {(int(x), int(y)) for x, y in re.findall(
+            r'(?:object|itemball|cuttree|smashrock|strengthboulder)_event +(\d+), +(\d+),', src)}
         ents = entrances(grid, label, warps, conns)
         r = grid.reach(ents, still, set(warps))
         kinds = set()
@@ -321,18 +338,13 @@ def main():
             habitat |= {p for p, c in grid.coll.items() if c == K['COLL_FLOOR']}  # caves
         stands = {p for p in r if grid.kind(p) != 'wall'}
         bad = []
-        windows = {}
-        for s in sorted(habitat - r):
-            for dx in range(-6, 6):
+        for s in sorted(habitat - r - occupied):
+            for dx in range(-5, 7):
                 for dy in range(-5, 6):
                     if -2 <= dx <= 2 and -2 <= dy <= 2:
                         continue
                     pl = (s[0] - dx, s[1] - dy)
-                    if pl not in stands:
-                        continue
-                    if pl not in windows:
-                        windows[pl] = grid.window_reach(pl)
-                    if s in windows[pl]:
+                    if pl in stands and grid.lpath_clear(s, pl, occupied):
                         bad.append((s, pl))
                         break
                 else:
@@ -341,8 +353,14 @@ def main():
         # and in the game: the ones there when you arrive
         w, h = sizes[mc]
         for surf in ((False, True) if mc in water else (False,)):
+            candidates = {p for p in stands - occupied - ents
+                          if grid.kind(p) == ('water' if surf else 'land') and grid.coll[p] not in WARP_COLLS}
+            if not candidates:
+                continue
             for fx, fy in ((0.5, 0.5), (0.25, 0.5), (0.75, 0.5), (0.5, 0.25), (0.5, 0.75)):
-                load(mc, int(w * 2 * fx), int(h * 2 * fy), surf)
+                cx, cy = int(w * 2 * fx), int(h * 2 * fy)
+                arrival = min(candidates, key=lambda p: (abs(p[0] - cx) + abs(p[1] - cy), p))
+                load(mc, *arrival, surf=surf)
                 for k in range(K['NUM_WILD_MONS']):
                     if not g.rd('wWildMons', k * K['WILDMON_LENGTH']):
                         continue

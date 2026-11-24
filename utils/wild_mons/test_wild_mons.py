@@ -79,6 +79,15 @@ class Game:
         self.pb.button_release(b)
         self.tick(wait)
 
+    def face(self, direction):
+        """Turn without walking; wait out any remaining map/battle input delay."""
+        facing = {'down': 0, 'up': 4, 'left': 8, 'right': 12}[direction]
+        for _ in range(8):
+            if self.rd('wPlayerDirection') & 12 == facing:
+                return
+            self.press(direction, 30, 1)
+        raise AssertionError(f'could not face {direction} after loading the map')
+
     def addr(self, name, k=0):
         return self.sym[name][1] + k
 

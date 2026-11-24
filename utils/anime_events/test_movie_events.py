@@ -11,7 +11,10 @@
 - Mewtwo Strikes Back: before Red, talking to Mewtwo in Cerulean Cave starts
   the plain Mewtwo battle; after Red, a battle with its clones (Psychic Mewtwo): copies of your own team (not eggs; same
   species, level, item, moves and stats) at full HP with no status, even when
-  yours are hurt; then the wild Mewtwo battle (level 80).
+  yours are hurt; then the wild Mewtwo battle (level 80). A psychic echo
+  provides the clone challenge if Mewtwo was already caught or defeated;
+  winning it never starts another wild battle, and completion is permanent.
+  These unlocks survive Leaf clearing the Red rematch flag.
 
 The battles are won by setting the opposing team's HP to 0 in RAM.
 
@@ -50,8 +53,11 @@ def main():
     species = sorted({sp for p in parties.values() for _, sp in p} | {'MEWTWO'})
     names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH',
                        'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MOLLY_HALE', 'EVENT_BEAT_ELITE_FOUR',
-                       'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_BEAT_RED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
+                       'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_GOT_MYSTICTICKET_FROM_RED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
                        'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE',
+                       'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_BEAT_MEWTWO_CLONES',
+                       'PLAYER_CAUGHT_MEWTWO_F', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING',
+                       'EVENT_RESCUED_PROF_HALE', 'GROUP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAP_RUINS_OF_ALPH_INNER_CHAMBER', 'AUTOSAVE_OFF_F', 'MAX_ITEMS', 'MAX_ITEM_STACK',
                        'MON_SPECIES', 'MON_ITEM', 'MON_MOVES', 'MON_LEVEL', 'MON_FORM', 'MON_IS_EGG_F',
                        'MON_STATUS', 'MON_HP', 'MON_MAXHP', 'MON_STATS', 'MON_DVS', 'MON_EVS']
     for e in EVENTS:
@@ -84,9 +90,15 @@ def main():
         return False
 
     flag('EVENT_BEAT_ELITE_FOUR', True)
+    flag('EVENT_RESCUED_PROF_HALE', False)
+    # After Leaf, the permanent Red milestone remains but his rematch flag
+    # is false. All positive cases below deliberately use that state.
     flag('EVENT_BEAT_RED', False)
+    flag('EVENT_BEAT_LEAF', True)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', False)
     flag('EVENT_TIME_TRAVEL_FINISHED', False)
-    for f in ('EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_CERULEAN_CAVE_MEWTWO'):
+    for f in ('EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_CERULEAN_CAVE_MEWTWO',
+              'EVENT_BEAT_MEWTWO_CLONES', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING'):
         flag(f, False)
     base = g.state()
 
@@ -96,7 +108,7 @@ def main():
         return present(ev[2])
 
     def until_battle(facing, presses=24):
-        g.press(facing, 2, 3)
+        g.face(facing)
         g.tick(30)
         for _ in range(presses):
             g.press('a', 40)
@@ -173,13 +185,27 @@ def main():
                 if not g.rd('wScriptRunning'):
                     return
 
+    def continue_save():
+        """Let the real autosave run, then boot a separate emulator from SRAM."""
+        nonlocal g
+        g.wr('wOptions3', g.rd('wOptions3') & ~(1 << K['AUTOSAVE_OFF_F']))
+        g.wr('wOverworldDelayTimer', 0)
+        g.tick(180)
+        saved = g.sram() + save[0x8000:]
+        g.pb.stop(save=False)
+        g = Game(saved)
+        g.boot()
+        # The generic Continue button sequence can also examine the nearby
+        # reward. Close that dialogue before issuing another test warp.
+        settle()
+
     # Molly
     molly, marauder, mewtwo = EVENTS
     g.load(base)
     if visit(molly):
         fails.append(('Molly', 'there before Red'))
     g.load(base)
-    flag('EVENT_BEAT_RED', True)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
     if not visit(molly):
         fails.append(('Molly', 'not there after Red'))
     elif not until_battle(molly[4]):
@@ -193,6 +219,14 @@ def main():
             fails.append(('Molly', f'Ability Patch {before} -> {items("ABILITYPATCH")}, not +1'))
         if not flag('EVENT_BEAT_MOLLY'):
             fails.append(('Molly', 'the win was not recorded'))
+        # Follow her clue to the actual statue and return to her.
+        g.warp(K['GROUP_RUINS_OF_ALPH_INNER_CHAMBER'], K['MAP_RUINS_OF_ALPH_INNER_CHAMBER'], 5, 14)
+        g.face('up')
+        g.press('a', 60)
+        settle()
+        if not flag('EVENT_RESCUED_PROF_HALE'):
+            fails.append(('Molly', 'the statue did not release her father'))
+        visit(molly)
         if not until_battle(molly[4]):
             fails.append(('Molly', 'no battle again afterwards'))
         else:
@@ -203,7 +237,7 @@ def main():
 
     # the Iron Mask Marauder
     g.load(base)
-    flag('EVENT_BEAT_RED', True)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
     if visit(marauder):
         fails.append(('Marauder', 'there before the time travel'))
     g.load(base)
@@ -211,7 +245,7 @@ def main():
     if visit(marauder):
         fails.append(('Marauder', 'there before Red'))
     g.load(base)
-    flag('EVENT_BEAT_RED', True)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
     flag('EVENT_TIME_TRAVEL_FINISHED', True)
     if not visit(marauder):
         fails.append(('Marauder', 'not there after the time travel'))
@@ -231,6 +265,42 @@ def main():
         if visit(marauder):
             fails.append(('Marauder', 'back after leaving and returning'))
 
+    # A full reward stack must not resurrect the Marauder or lose his prize.
+    g.load(base)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
+    flag('EVENT_TIME_TRAVEL_FINISHED', True)
+    # Items may occupy multiple stacks, so fill the whole pocket.
+    g.wr('wNumItems', K['MAX_ITEMS'])
+    for i in range(K['MAX_ITEMS']):
+        g.wr('wItems', K['BIG_NUGGET'], i * 2)
+        g.wr('wItems', K['MAX_ITEM_STACK'], i * 2 + 1)
+    g.wr('wItems', 0xff, K['MAX_ITEMS'] * 2)
+    visit(marauder)
+    if not until_battle(marauder[4]):
+        fails.append(('Marauder full bag', 'no battle'))
+    else:
+        win()
+        settle()
+        if not flag('EVENT_BEAT_IRON_MASK_MARAUDER') or not flag('EVENT_MARAUDER_REWARD_PENDING'):
+            fails.append(('Marauder full bag', 'defeat or pending prize was lost'))
+        continue_save()
+        if not flag('EVENT_MARAUDER_REWARD_PENDING'):
+            fails.append(('Marauder full bag', 'pending reward lost after Continue'))
+        if visit(marauder):
+            fails.append(('Marauder full bag', 'returned after Continue'))
+        # Make room and examine the place where he stood.
+        g.wr('wItems', K['MAX_ITEM_STACK'] - 1, 1)
+        g.face('left')
+        g.press('a', 40)
+        settle()
+        if flag('EVENT_MARAUDER_REWARD_PENDING') or items('BIG_NUGGET') != K['MAX_ITEM_STACK']:
+            fails.append(('Marauder full bag', 'could not collect the dropped reward'))
+        g.wr('wItems', K['MAX_ITEM_STACK'] - 1, 1)
+        g.press('a', 40)
+        settle()
+        if items('BIG_NUGGET') != K['MAX_ITEM_STACK'] - 1:
+            fails.append(('Marauder full bag', 'reward could be collected twice'))
+
     # before Red: just Mewtwo
     g.load(base)
     if not visit(mewtwo):
@@ -242,7 +312,7 @@ def main():
 
     # Mewtwo and its clones (of your team, hurt and poisoned first)
     g.load(base)
-    flag('EVENT_BEAT_RED', True)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
     g.wr('wPartyMon1HP', 0)
     g.wr('wPartyMon1HP', 1, 1)
     g.wr('wPartyMon1Status', 1 << 3)
@@ -272,6 +342,70 @@ def main():
             got = (g.rd('wEnemyMonSpecies'), g.rd('wEnemyMonLevel'))
             if got != (K['MEWTWO'], 80):
                 fails.append(('Mewtwo', f'wild battle with species {got[0]} level {got[1]}, not Mewtwo 80'))
+        if not flag('EVENT_BEAT_MEWTWO_CLONES'):
+            fails.append(('Mewtwo', 'clone victory was not recorded'))
+
+    # Existing saves: Mewtwo is already gone. Its old location must still
+    # offer the clone story after Red, even after Leaf, without another catch.
+    for after_red in (False, True):
+        g.load(base)
+        flag('EVENT_CERULEAN_CAVE_MEWTWO', True)
+        g.wr('wPlayerCaught2', g.rd('wPlayerCaught2') | (1 << K['PLAYER_CAUGHT_MEWTWO_F']))
+        flag('EVENT_GOT_MYSTICTICKET_FROM_RED', after_red)
+        if visit(mewtwo):
+            fails.append(('echo', 'Mewtwo reappeared after being removed'))
+        echo_ready = g.state()
+        started = until_battle(mewtwo[4], presses=40)
+        if not after_red:
+            if started:
+                fails.append(('echo', 'clone challenge available before Red'))
+            continue
+        if not started:
+            fails.append(('echo', 'no clone challenge for an existing save'))
+            continue
+        check_clones()
+        if g.rd('wOtherTrainerClass') != K['MEWTWO_T']:
+            fails.append(('echo', 'wrong trainer'))
+        win('echo.png')
+        settle()
+        if not flag('EVENT_BEAT_MEWTWO_CLONES'):
+            fails.append(('echo', 'victory not recorded'))
+        if g.rd('wBattleMode'):
+            fails.append(('echo', 'another battle started after the clones'))
+        if not flag('EVENT_CERULEAN_CAVE_MEWTWO'):
+            fails.append(('echo', 'Mewtwo removal flag was lost'))
+        continue_save()
+        if not flag('EVENT_BEAT_MEWTWO_CLONES') or not flag('EVENT_GOT_MYSTICTICKET_FROM_RED'):
+            fails.append(('echo', 'story completion or unlock lost after Continue'))
+        if not g.rd('wPlayerCaught2') & (1 << K['PLAYER_CAUGHT_MEWTWO_F']):
+            fails.append(('echo', 'caught Mewtwo flag lost after Continue'))
+        visit(mewtwo)
+        if until_battle(mewtwo[4]):
+            fails.append(('echo', 'completed challenge repeats after reentering'))
+
+        # Losing the echo must leave it available for another attempt.
+        g.load(echo_ready)
+        if not until_battle(mewtwo[4], presses=40):
+            fails.append(('echo loss', 'could not start the challenge'))
+            continue
+        g.tick(400)
+        for i in range(g.rd('wPartyCount')):
+            g.wr('wPartyMon1HP', 0, i * L)
+            g.wr('wPartyMon1HP', 0, i * L + 1)
+        g.wr('wBattleMonHP', 0)
+        g.wr('wBattleMonHP', 1, 1)
+        g.wr('wEnemyMonHP', 3)
+        g.wr('wEnemyMonHP', 0xe7, 1)
+        for _ in range(300):
+            g.press('a', 30)
+            if not g.rd('wBattleMode'):
+                break
+        settle()
+        if flag('EVENT_BEAT_MEWTWO_CLONES'):
+            fails.append(('echo loss', 'loss counted as a victory'))
+        visit(mewtwo)
+        if not until_battle(mewtwo[4], presses=40):
+            fails.append(('echo loss', 'challenge could not be retried'))
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

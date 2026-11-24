@@ -56,9 +56,10 @@ def load_symbols(path):
 
 
 class Harness:
-    def __init__(self, rom, symbols, boot_frames=900):
+    def __init__(self, rom, symbols, boot_frames=900, stack=STACK):
         from pyboy import PyBoy
         self.symbols = symbols
+        self.stack = stack
         self.pyboy = PyBoy(rom, window='null')
         # Boot far enough that the MBC and WRAM banking are in a sane state.
         for _ in range(boot_frames):
@@ -105,9 +106,9 @@ class Harness:
         self.mem[TRAP] = 0x18         # jr -2
         self.mem[TRAP + 1] = 0xfe
 
-        self.mem[STACK] = TRAP & 0xff
-        self.mem[STACK + 1] = (TRAP >> 8) & 0xff
-        self.reg.SP = STACK
+        self.mem[self.stack] = TRAP & 0xff
+        self.mem[self.stack + 1] = (TRAP >> 8) & 0xff
+        self.reg.SP = self.stack
         self.reg.HL = hl
         self.reg.A = a
         self.reg.PC = entry

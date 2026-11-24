@@ -33,7 +33,7 @@ MtSilverSignText:
 
 SilverCaveOutsideAnimeCameosCallback:
 ; Link Edition: the anime cameos come after Red and the Orange League
-	checkevent EVENT_BEAT_RED
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd .hide
 	checkevent EVENT_BEAT_DRAKE
 	iffalsefwd .hide

@@ -1,0 +1,3 @@
+pyboy==2.9.0
+Pillow>=10
+numpy>=2

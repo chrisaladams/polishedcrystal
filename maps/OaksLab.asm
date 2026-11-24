@@ -24,7 +24,7 @@ OaksLab_MapScriptHeader:
 	bg_event  8,  7, BGEVENT_JUMPSTD, difficultbookshelf
 	bg_event  9,  7, BGEVENT_JUMPSTD, difficultbookshelf
 	bg_event  4,  0, BGEVENT_JUMPTEXT, OaksLabPoster1Text
-	bg_event  5,  0, BGEVENT_JUMPTEXT, OaksLabPoster2Text
+	bg_event  5,  0, BGEVENT_READ, OaksLabPoster
 	bg_event  0,  1, BGEVENT_JUMPTEXT, OaksLabPCText
 
 	def_object_events
@@ -33,7 +33,7 @@ OaksLab_MapScriptHeader:
 	object_event  1,  8, SPRITE_AROMA_LADY, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, OaksAssistant1Text, -1
 	object_event  8,  9, SPRITE_SCIENTIST, SPRITEMOVEDATA_WALK_UP_DOWN, 1, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, OaksAssistant2Text, -1
 	object_event  1,  4, SPRITE_SCIENTIST, SPRITEMOVEDATA_WANDER, 1, 1, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, OaksAssistant3Text, -1
-	object_event  2,  1, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptext, OaksLabPokedexText, -1
+	object_event  2,  1, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, OaksLabBookOnTable, -1
 	object_event  8,  5, SPRITE_ARTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, CameoTraceyScript, EVENT_ANIME_CAMEOS_HIDDEN
 
 	object_const_def
@@ -501,6 +501,21 @@ OaksLabPoster1Text:
 	line "open the Menu."
 	done
 
+OaksLabPoster:
+	checkevent EVENT_WON_PALLET_INVITATIONAL
+	iffalse_jumptext OaksLabPoster2Text
+	jumptext .Sketch
+
+.Sketch:
+	text "A pencil sketch of"
+	line "the Pallet final."
+	para "Your team is in"
+	line "the middle. Ash is"
+	cont "holding Pikachu up"
+	cont "to fit the frame."
+	para "Signed: Tracey."
+	done
+
 OaksLabPoster2Text:
 	text "The Save option is"
 	line "on the Menu."
@@ -572,14 +587,9 @@ EeveeDollSentText:
 	done
 
 
-OaksLabPokedexText:
-	text "It's Prof.Oak's"
-	line "#dex."
-	done
-
 OaksLabAnimeCameosCallback:
 ; Link Edition: the anime cameos come after Red and the Orange League
-	checkevent EVENT_BEAT_RED
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd .hide
 	checkevent EVENT_BEAT_DRAKE
 	iffalsefwd .hide
@@ -614,8 +624,10 @@ CameoTraceyScript:
 	done
 
 .NoText:
-	text "That's okay. I'll"
-	line "keep sketching."
+	text "Take a look at the"
+	line "book on the table."
+	para "Oak writes beside"
+	line "my sketches."
 	done
 
 .BeatenText:
@@ -629,4 +641,117 @@ CameoTraceyScript:
 	line "so lively!"
 	para "They're going in"
 	line "my sketchbook."
+	done
+
+OaksLabBookOnTable:
+	farsjump ReadFieldBook
+
+OaksLabFieldBook:
+	; Next stop after Red. The book is already open.
+	checkevent EVENT_BEAT_DRAKE
+	iffalse_jumpopenedtext .Crew
+	checkevent EVENT_BEAT_MOLLY
+	iffalse_jumpopenedtext .Alph
+	checkevent EVENT_RESCUED_PROF_HALE
+	iffalse_jumpopenedtext .Hale
+	checkevent EVENT_TIME_TRAVEL_FINISHED
+	iffalse_jumpopenedtext .Shrine
+	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
+	iffalse_jumpopenedtext .Mask
+	checkevent EVENT_BEAT_MEWTWO_CLONES
+	iffalse_jumpopenedtext .Echo
+	checkevent EVENT_WON_WHIRL_CUP
+	iffalse_jumpopenedtext .Cup
+	checkevent EVENT_WON_PALLET_INVITATIONAL
+	iffalse_jumpopenedtext .Final
+	jumpopenedtext .Champion
+
+.Champion:
+	text "Tracey's last page"
+	line "is a sketch of you"
+	cont "beside Ash."
+	para "Oak wrote one word"
+	line "below: Champion."
+	done
+
+.Crew:
+	text "Field book: Drake"
+	para "The Crew is taking"
+	line "challengers. Take"
+	cont "the ferry from"
+	cont "Vermilion."
+	para "Warm Beach, Rocky"
+	line "Beach, Beautiful"
+	cont "Beach, Valencia."
+	para "Then find Drake in"
+	line "his Shamouti home."
+	done
+
+.Alph:
+	text "Field book: Alph"
+	para "Molly heard"
+	line "her father calling"
+	cont "from a statue."
+	para "Meet her at the"
+	line "research center in"
+	cont "the Ruins of Alph."
+	done
+
+.Hale:
+	text "Hale's last note:"
+	para "I can see the"
+	line "ladder. There are"
+	cont "two statues left"
+	cont "of it."
+	para "My lantern is"
+	line "in the nearer one."
+	done
+
+.Shrine:
+	text "Hale's next page"
+	line "shows the shrine"
+	cont "in Ilex Forest."
+	para "A margin note:"
+	line "Wonder Trade in"
+	cont "Goldenrod. Ask"
+	cont "Kurt about the"
+	cont "GS Ball."
+	para "Bring Celebi back"
+	line "to the shrine."
+	done
+
+.Mask:
+	text "A man in a mask"
+	line "is waiting east"
+	cont "of Ilex shrine."
+	para "He carries a black"
+	line "ball. Celebi won't"
+	cont "leave his side."
+	done
+
+.Echo:
+	text "A voice is calling"
+	line "from the depths"
+	cont "of Cerulean Cave."
+	para "Examine the place"
+	line "where Mewtwo stood"
+	cont "if it has gone."
+	done
+
+.Cup:
+	text "A page from Misty"
+	line "smells of sea air."
+	para "Olivine Whirl Cup"
+	para "Take a Water team"
+	line "to the port. Win"
+	cont "all three rounds."
+	done
+
+.Final:
+	text "Ash taped a ticket"
+	line "inside the cover."
+	para "Pallet finals"
+	line "Outside Oak's lab."
+	cont "Two rounds. One"
+	cont "team."
 	done

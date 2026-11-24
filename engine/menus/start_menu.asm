@@ -10,12 +10,14 @@
 	const STARTMENUITEM_POKEGEAR ; 7
 	const STARTMENUITEM_QUIT     ; 8
 	const STARTMENUITEM_BOXES    ; 9 (Link Edition)
+	const STARTMENUITEM_FIELD_BOOK
+
+DEF FIELD_BOOK_MENU_LEFT EQU 7
 
 StartMenu::
 
 	call ClearWindowData
 	call BackupSprites
-	call ClearSpritesUnderStartMenu
 
 	ld de, SFX_MENU
 	call PlaySFX
@@ -24,16 +26,21 @@ StartMenu::
 
 	ld hl, wStatusFlags2
 	bit STATUSFLAGS2_BUG_CONTEST_TIMER_F, [hl]
-	ld hl, .MenuDataHeader
-	jr z, .GotMenuData
 	ld hl, .ContestMenuDataHeader
+	jr nz, .GotMenuData
+	ld a, [wLinkMode]
+	and a
+	ld hl, .MenuDataHeader
+	jr nz, .GotMenuData
+	ld hl, .FieldBookMenuHeader
 .GotMenuData:
 
 	call LoadMenuHeader
 	call .SetUpMenuItems
+	call ClearSpritesUnderStartMenu
 	ld a, [wBattleMenuCursorBuffer]
 	ld [wMenuCursorBuffer], a
-	call DrawVariableLengthMenuBox
+	call .DrawMenuBox
 	call .DrawBugContestStatusBox
 	call SafeUpdateSprites
 	call BGMapAnchorTopLeft
@@ -45,10 +52,10 @@ StartMenu::
 .Reopen:
 	call RestoreSprites
 	farcall LoadWeatherPal
+	call .SetUpMenuItems
 	call ClearSpritesUnderStartMenu
 	call UpdateSprites
 	call UpdateTimePals
-	call .SetUpMenuItems
 	ld a, [wBattleMenuCursorBuffer]
 	ld [wMenuCursorBuffer], a
 
@@ -95,7 +102,7 @@ StartMenu::
 	xor a
 	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
-	call SetUpMenu
+	call .SetUpMenu
 	ld a, $ff
 	ld [wMenuSelection], a
 .loop
@@ -137,11 +144,65 @@ StartMenu::
 	call ClearBGPalettes
 	call ExitMenu
 	call ReloadTilesetAndPalettes
-	call DrawVariableLengthMenuBox
+	call .DrawMenuBox
 	call .DrawBugContestStatus
 	call UpdateSprites
 	call FinishExitMenu
 	jmp .Reopen
+
+; The book adds a ninth action to a fully unlocked menu. Use one tile
+; per row in that layout so the cursor and every action fit on screen.
+.DrawMenuBox:
+	ld a, [wMenuBorderLeftCoord]
+	cp FIELD_BOOK_MENU_LEFT
+	jmp nz, DrawVariableLengthMenuBox
+	call CopyMenuData2
+	call GetMenuIndexSet
+	ld a, [wMenuDataItems]
+	inc a ; one row per item, then the bottom border
+	ld [wMenuBorderBottomCoord], a
+	jmp MenuBox
+
+.SetUpMenu:
+	ld a, [wMenuBorderLeftCoord]
+	cp FIELD_BOOK_MENU_LEFT
+	jmp nz, SetUpMenu
+	call .DrawMenuBox
+	hlcoord FIELD_BOOK_MENU_LEFT + 2, 1
+	ld de, wMenuItemsList + 1
+.row
+	ld a, [de]
+	cp -1
+	jr z, .cursor
+	ld [wMenuSelection], a
+	push de
+	push hl
+	ld d, h
+	ld e, l
+	call .MenuString
+	pop hl
+	ld bc, SCREEN_WIDTH
+	add hl, bc
+	pop de
+	inc de
+	jr .row
+.cursor
+	call SafeUpdateSprites
+	call ApplyTilemap
+	call InitMenuCursorAndButtonPermissions
+	ld hl, w2DMenuCursorInitY
+	dec [hl] ; the first row sits just inside the top border
+	ln a, 1, 0
+	ld [w2DMenuCursorOffsets], a
+	ld hl, w2DMenuFlags1
+	set 7, [hl]
+	ret
+
+.FieldBookMenuHeader:
+	db MENU_BACKUP_TILES
+	menu_coords FIELD_BOOK_MENU_LEFT, 0, 19, 11
+	dw .MenuData
+	db 1
 
 .MenuDataHeader:
 	db MENU_BACKUP_TILES
@@ -173,6 +234,7 @@ StartMenu::
 	dw StartMenu_Pokegear, .PokegearString
 	dw StartMenu_Quit,     .QuitString
 	dw StartMenu_Boxes,    .BoxesString
+	dw StartMenu_FieldBook, .FieldBookString
 
 .PokedexString:  db "#dex@"
 .PartyString:    db "#mon@"
@@ -184,6 +246,7 @@ StartMenu::
 .PokegearString: db "<PO><KE>gear@"
 .QuitString:     db "Quit@"
 .BoxesString:    db "Boxes@"
+.FieldBookString: db "Field Book@"
 
 .OpenMenu:
 	ld a, [wMenuSelection]
@@ -257,6 +320,12 @@ endr
 	call .AppendMenuList
 .no_pokegear
 
+	ld a, [wMenuBorderLeftCoord]
+	cp FIELD_BOOK_MENU_LEFT
+	jr nz, .no_book
+	ld a, STARTMENUITEM_FIELD_BOOK
+	call .AppendMenuList
+.no_book
 	ld a, STARTMENUITEM_STATUS
 	call .AppendMenuList
 
@@ -323,6 +392,13 @@ SavingAllowed:
 	scf
 	ret nz
 	xor a
+	ret
+
+StartMenu_FieldBook:
+	ld a, BANK(ReadFieldBook)
+	ld hl, ReadFieldBook
+	call FarQueueScript
+	ld a, 3 ; close the Start menu and run the book's map script
 	ret
 
 StartMenu_Exit:
@@ -473,21 +549,32 @@ StartMenu_Pokemon:
 	ret
 
 ClearSpritesUnderStartMenu:
+	ld b, 10 * TILE_WIDTH
+	ld a, [wMenuBorderLeftCoord]
+	cp FIELD_BOOK_MENU_LEFT
+	ld a, $ff ; the original layout covers the full height
+	jr nz, .bounds
+	ld b, FIELD_BOOK_MENU_LEFT * TILE_WIDTH
+	ld a, [wMenuItemsList]
+	add 2 ; top and bottom borders
+	add a
+	add a
+	add a
+	add 16 ; OAM Y coordinates start 16 pixels above the visible screen
+.bounds
+	ld h, a
 	ld de, wShadowOAMSprite00XCoord
-	ld h, d
-	ld l, e
 	ld c, OAM_COUNT
 .loop
-	; Check if XCoord >= 10 * TILE_WIDTH,
-	; which is the starting x-coord of the start menu.
-	ld a, [hl]
-	cp 10 * TILE_WIDTH
+	; Hide sprites underneath the chosen menu.
+	ld a, [de]
+	cp b
 	jr nc, .clear_sprite
 ; fallthrough
 .next
-	ld hl, OBJ_SIZE
-	add hl, de
-	ld e, l
+	ld a, e
+	add OBJ_SIZE
+	ld e, a
 	dec c
 	jr nz, .loop
 	ldh a, [hOAMUpdate]
@@ -500,7 +587,12 @@ ClearSpritesUnderStartMenu:
 	ret
 
 .clear_sprite
-	dec l
-	ld [hl], OAM_YCOORD_HIDDEN
-	inc l
+	dec e
+	ld a, [de]
+	cp h
+	jr nc, .keep
+	ld a, OAM_YCOORD_HIDDEN
+	ld [de], a
+.keep
+	inc e
 	jr .next

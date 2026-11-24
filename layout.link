@@ -246,8 +246,6 @@ WRAMX $2
 	"Sound Stack"
 	"Pic Animations RAM"
 	"Sprites Backup"
-	align 8
-	"Wild Mon Reach"
 
 WRAMX $3
 	org $d000

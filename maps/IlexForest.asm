@@ -17,6 +17,7 @@ IlexForest_MapScriptHeader:
 	coord_event  9, 31, SCENE_ILEXFOREST_NOOP, IlexForestApprenticeTrigger
 
 	def_bg_events
+	bg_event 11, 25, BGEVENT_READ, IlexForestMarauderPrizeScript
 	bg_event  5, 19, BGEVENT_JUMPTEXT, IlexForestSignpost
 	bg_event 17, 33, BGEVENT_JUMPTEXT, IlexForestTrainerTips
 	bg_event 13,  9, BGEVENT_ITEM + ETHER, EVENT_ILEX_FOREST_HIDDEN_ETHER
@@ -66,7 +67,7 @@ IlexForestIronMaskCallback:
 ; Link Edition: the Iron Mask Marauder (Celebi: Voice of the Forest) waits
 ; by the shrine after Red and the time travel, until he's beaten
 	setevent EVENT_POST_RED_PERSON_HIDDEN
-	checkevent EVENT_BEAT_RED
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd IlexForestFarfetchdCallback
 	checkevent EVENT_TIME_TRAVEL_FINISHED
 	iffalsefwd IlexForestFarfetchdCallback
@@ -1214,6 +1215,8 @@ IlexForestIronMaskScript:
 	loadtrainer IRON_MASK_T, 1
 	startbattle
 	reloadmapafterbattle
+	setevent EVENT_BEAT_IRON_MASK_MARAUDER
+	setevent EVENT_MARAUDER_REWARD_PENDING
 	showtext .AfterText
 	playsound SFX_WARP_TO
 	special FadeOutPalettes
@@ -1221,12 +1224,23 @@ IlexForestIronMaskScript:
 	special FadeInPalettes_EnableDynNoApply
 	waitsfx
 	cry CELEBI
-	opentext
-	writetext .ForestText
-	promptbutton
-	verbosegiveitem BIG_NUGGET, iffalse_endtext
-	setevent EVENT_BEAT_IRON_MASK_MARAUDER
-	endtext
+	checkevent EVENT_BEAT_MEWTWO_CLONES
+	iftrue IlexForestMarauderPrizeScript
+	showtext .Vision
+	sjump IlexForestMarauderPrizeScript
+
+.Vision:
+	text "In Celebi's eyes"
+	line "you see a cave."
+	para "Your team stands"
+	line "by the water. The"
+	cont "ripples spread…"
+	para "Across the water,"
+	line "another you looks"
+	cont "back."
+	para "A voice whispers:"
+	line "“Cerulean.”"
+	done
 
 .IntroText:
 	text "Heh heh heh…"
@@ -1267,4 +1281,18 @@ IlexForestIronMaskScript:
 	para "The Marauder"
 	line "dropped something!"
 	done
+
+IlexForestMarauderPrizeScript:
+; If the bag was full, the reward stays where he dropped it. His defeat
+; stays recorded, including after reloading the map or continuing a save.
+	checkevent EVENT_MARAUDER_REWARD_PENDING
+	iffalsefwd .Done
+	opentext
+	writetext IlexForestIronMaskScript.ForestText
+	promptbutton
+	verbosegiveitem BIG_NUGGET, iffalse_endtext
+	clearevent EVENT_MARAUDER_REWARD_PENDING
+	endtext
+.Done:
+	end
 

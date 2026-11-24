@@ -163,6 +163,31 @@ Battle Tower and Battle Factory prize shops are unchanged.
   emulator: `python3 utils/wild_mons/test_wild_mons.py SAVE.sav` (every map
   with wild Pokémon, battles, Repel, sprites and colours, saving).
 
+### Field Book
+
+Choose **Start → Field Book → Next stop** for directions from New Bark Town
+through Johto, Kanto and Mt. Silver. The book checks the badges you hold
+and the quests you have completed. **Side quests** offers leads for Kenya's
+mail, Moomoo Farm and Copycat's doll as they become available. The book
+on the table in Prof. Oak's lab opens the same guide.
+
+### After Red (the post-post game)
+
+When you first beat Red on Mt. Silver, the Field Book opens its Orange
+League and movie chapters. Tracey's sketches and letters point you to the
+next unfinished chapter. The book recognizes earlier wins, including
+progress from before this update. Red's MysticTicket keeps the season open when you begin
+alternating Red and Leaf rematches.
+
+The suggested route takes you through the Orange League, the Ruins of Alph,
+Ilex Forest, Cerulean Cave and the Whirl Cup. The movie events and the Cup
+can also be played in a different order after Red. Once Drake is beaten
+and all four stories are complete, speak to Ash outside Oak's lab for the
+Pallet Invitational. Drake and Ash use their existing teams in back-to-back
+matches. You start healed and carry your team's condition into round two.
+After a loss you can retry in Pallet. Win both rounds to see Tracey's
+sketch on the lab wall. Ash then offers his friendly rematch again.
+
 ### The Orange League
 
 From the anime's Orange Islands, on the islands Polished Crystal already has
@@ -179,17 +204,9 @@ used on the show, at post-game levels (70–79), with gym leader battle music.
 | Luana | the house on Valencia Island | Kangaskhan, Persian, Ninetales, Marowak, Alakazam | Jade Star Badge |
 | Drake | the house on Shamouti Island | Ditto, Steelix, Gengar, Venusaur, Electabuzz, Dragonite | Winner's Trophy and 3 Bottle Caps |
 
-All of them can be battled again afterwards. It uses spare event flags, so
-saves don't change, and existing maps, sprites and music, so it costs under
-2 KB. `python3 utils/anime_events/test_orange_league.py SAVE.sav` checks it in
+The season opens after Red, and all five offer rematches. The league uses
+existing maps, sprites, music and spare save flags. `python3 utils/anime_events/test_orange_league.py SAVE.sav` checks it in
 the emulator.
-
-### After Red: the post-post game
-
-Beating Red at the top of Mt. Silver opens the anime and movie content below
-(the Orange League itself opens after the Elite Four, as before). Until then
-none of these people are there, and Mewtwo in Cerulean Cave is the plain
-battle.
 
 ### The Whirl Cup
 
@@ -200,7 +217,8 @@ Dewgong, Lanturn, Corsola), Sailor Jasper (Tentacruel, Octillery, Quagsire,
 Kingler), then Misty's Whirl Cup team (Psyduck, Corsola, Azumarill,
 Politoed, Gyarados, Starmie), at levels 68–74. Losing a round just ends the
 run (no blacking out). Winning gives the Mystic Water the first time and a
-Bottle Cap every time after, so it's a way to earn them while training.
+Bottle Cap on repeat wins. If your bag is full on your first win, the
+official keeps the Mystic Water for you and the win counts immediately.
 `python3 utils/anime_events/test_whirl_cup.py SAVE.sav` checks it.
 
 ### Anime cameos
@@ -229,18 +247,52 @@ Three events from the first movies, each a battle where the story happened:
   Mewtwo, it speaks to you and sends out clones of your own team: the same Pokémon,
   levels, moves, items and stats, at full health even if yours are hurt. It
   has its own trainer picture (cut from its battle sprite) and its Stadium
-  battle music. Then the usual Mewtwo battle.
+  battle music. Then the usual Mewtwo battle. If you already caught or
+  defeated Mewtwo, examine its former spot on the lowest floor to face a
+  psychic echo of the clone challenge. A boy in Cerulean City points you
+  there. The echo never gives another catch, and the clone story is recorded
+  once you win, including across saves and rematches.
 - **Spell of the Unown**, the Ruins of Alph Research Center (after Red): Molly, waiting for her papa, battles with the friends the Unown
   dreamed up for her and Entei (Unown, Ursaring, Donphan, Mantine, Ampharos,
-  Entei, levels 64–70). The first win gives an Ability Patch, and she'll
-  battle again any time.
+  Entei, levels 64–70). Listen to Molly after the battle, then follow the
+  knocking to the statue near the ladder in the inner chamber. Help her
+  father home to unlock her friendly rematch. If your bag is full, Molly
+  holds your Ability Patch and the rescue can still go ahead.
 - **Celebi: Voice of the Forest**, Ilex Forest (after Red and the Celebi
   time travel): the Iron Mask Marauder of Team Rocket waits by the shrine with
   Sneasel, Scizor, Tyranitar and his Dark Ball Celebi (levels 70–76). Beat
-  him once to drive him off for good and find a Big Nugget.
+  him once to drive him off for good and find a Big Nugget. If the Items
+  pocket is full, make room and examine where he stood to collect it later;
+  he stays defeated and the unclaimed reward survives saving.
 
 `python3 utils/anime_events/test_movie_events.py SAVE.sav` checks them in the
 emulator.
+
+### Checking the postgame
+
+Set up an isolated emulator environment and run the checks from the project
+root, using a compatible save with a healthy party:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r utils/anime_events/requirements.txt
+.venv/bin/python utils/anime_events/run_checks.py /path/to/SAVE.sav --full --shots /tmp/postgame-shots
+```
+
+The runner checks the Johto, Kanto and optional quest pages against staged
+progress, then follows the field book from Red through the Pallet finale
+on one in-memory save. It also checks the Orange League, cameos, Whirl Cup and
+movie events, and audits the 14 added character placements. It also executes
+the ROM's spawn-path routine against walls, ledges, warps, water and objects.
+With `--full`, it sweeps every wild encounter map; without it, it runs the
+quicker encounter checks. Save data is loaded into memory, and the supplied
+save file is not overwritten. Movie checks include continuing an in-memory
+save after the echo and after leaving an unclaimed Marauder reward.
+
+The placement audit assumes every HM is available. Battle victories are
+forced to exercise scripts and rewards, so these checks do not assess
+difficulty or replace a natural playthrough. The new characters still use
+the existing portraits and overworld sprites listed above.
 
 ### Smarter trainer AI
 

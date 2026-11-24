@@ -35,7 +35,7 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 RuinsOfAlphResearchCenterMollyCallback:
 ; Link Edition: Molly (Spell of the Unown) is here after Red
 	setevent EVENT_POST_RED_PERSON_HIDDEN
-	checkevent EVENT_BEAT_RED
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd RuinsOfAlphResearchCenterScientistCallback
 	clearevent EVENT_POST_RED_PERSON_HIDDEN
 RuinsOfAlphResearchCenterScientistCallback:
@@ -552,17 +552,26 @@ RuinsOfAlphResearchCenterMollyScript:
 ; Link Edition: Spell of the Unown
 	faceplayer
 	opentext
+	checkevent EVENT_MOLLY_PATCH_PENDING
+	iftruefwd .Patch
 	checkevent EVENT_BEAT_MOLLY
 	iftruefwd .Again
 	writetext .IntroText
 	sjumpfwd .Ask
 
 .Again:
+	checkevent EVENT_RESCUED_PROF_HALE
+	iffalse_jumpopenedtext .FindPapa
 	writetext .AgainText
+	yesorno
+	iffalse_jumpopenedtext .Later
+	writetext .Play
+	sjumpfwd .Battle
 .Ask:
 	yesorno
 	iffalse_jumpopenedtext .NoText
 	writetext .GoText
+.Battle:
 	cry ENTEI
 	waitbutton
 	closetext
@@ -573,11 +582,16 @@ RuinsOfAlphResearchCenterMollyScript:
 	opentext
 	checkevent EVENT_BEAT_MOLLY
 	iftrue_jumpopenedtext .AfterText
+	setevent EVENT_BEAT_MOLLY
+	setevent EVENT_MOLLY_PATCH_PENDING
+	writetext .FindPapa
+	promptbutton
+.Patch:
 	writetext .ThanksText
 	promptbutton
 	verbosegiveitem ABILITYPATCH, iffalse_endtext
-	setevent EVENT_BEAT_MOLLY
-	jumpopenedtext .AfterText
+	clearevent EVENT_MOLLY_PATCH_PENDING
+	endtext
 
 .IntroText:
 	text "I'm Molly. Papa"
@@ -600,13 +614,23 @@ RuinsOfAlphResearchCenterMollyScript:
 	done
 
 .AgainText:
-	text "Molly: Papa's"
-	line "home now. But the"
-	cont "Unown still come"
-	cont "to play sometimes!"
+	text "Molly: Last night"
+	line "Papa knocked on my"
+	cont "door. Three times."
+	para "I knocked back."
+	line "We both laughed."
 
 	para "Want to battle my"
 	line "dream team again?"
+	done
+
+.Later:
+	text "Come play again!"
+	done
+
+.Play:
+	text "Molly: Entei!"
+	line "Come play!"
 	done
 
 .NoText:
@@ -646,3 +670,11 @@ RuinsOfAlphResearchCenterMollyScript:
 	cont "just like you!"
 	done
 
+.FindPapa:
+	text "Molly: Listen! The"
+	line "knocking is real!"
+	para "In the big chamber"
+	line "by the ladder, try"
+	cont "the nearer statue"
+	cont "on its left!"
+	done

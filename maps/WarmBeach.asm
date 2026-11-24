@@ -191,6 +191,10 @@ OrangeCrewCissyScript:
 ; Link Edition: the Orange League
 	faceplayer
 	opentext
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iftruefwd .SeasonOpen
+	farsjump OrangeLeagueClosed
+.SeasonOpen:
 	checkevent EVENT_BEAT_ORANGE_CREW_CISSY
 	iftruefwd .Rematch
 	writetext .IntroText

@@ -44,23 +44,22 @@ def main():
     save = open(sys.argv[1], 'rb').read()
     parties = expected_parties()
     species = sorted({sp for c, _, _, _, _, c2, _ in LEADERS + (DRAKE,) for _, sp in parties[c2]})
-    names = species + ['PARTYMON_STRUCT_LENGTH', 'BOTTLE_CAP', 'EVENT_GOT_ORANGE_LEAGUE_PRIZE', 'EXTSPECIES_MASK']
+    names = species + ['EVENT_GOT_MYSTICTICKET_FROM_RED', 'PARTYMON_STRUCT_LENGTH', 'BOTTLE_CAP', 'EVENT_GOT_ORANGE_LEAGUE_PRIZE', 'EXTSPECIES_MASK']
     for leader in LEADERS + (DRAKE,):
         names += [leader[5], leader[6], 'GROUP_' + leader[1], 'MAP_' + leader[1]]
     K = rgbasm_values(names, None)
     L = K['PARTYMON_STRUCT_LENGTH']
     g = Game(save)
     g.boot()
-    base = g.state()
     fails = []
 
     def flag(name):
         n = K[name]
         return (g.rd('wEventFlags', n // 8) >> (n % 8)) & 1
 
-    def setflag(name):
+    def setflag(name, on=True):
         n = K[name]
-        g.wr('wEventFlags', g.rd('wEventFlags', n // 8) | (1 << (n % 8)), n // 8)
+        g.wr('wEventFlags', (g.rd('wEventFlags', n // 8) & ~(1 << (n % 8))) | (int(on) << (n % 8)), n // 8)
 
     def bottle_caps():
         for i in range(g.rd('wNumItems')):
@@ -71,7 +70,7 @@ def main():
     def talk(leader):
         tag, mp, x, y, facing, cls, ev = leader
         g.warp(K['GROUP_' + mp], K['MAP_' + mp], x, y)
-        g.press(facing, 2, 3)
+        g.face(facing)
         g.tick(30)
         for _ in range(12):
             g.press('a', 40)
@@ -96,9 +95,16 @@ def main():
             g.press('a', 30)
             if not g.rd('wBattleMode'):
                 break
-        for _ in range(20):  # the badge and hint texts (not a rematch: B, not A)
+        # The badge and island hints can outlast a fixed 20-button delay.
+        # Do not warp again while the reward script is still running.
+        for _ in range(120):
             g.tick(60)
             g.press('b', 10)
+            if not g.rd('wScriptRunning') and not g.rd('wBattleMode'):
+                g.tick(60)
+                if not g.rd('wScriptRunning'):
+                    return
+        raise AssertionError('Orange League reward dialogue did not finish')
 
     def check_party(tag, cls):
         if g.rd('wOtherTrainerClass') != K[cls]:
@@ -113,30 +119,36 @@ def main():
         if got != want:
             fails.append((tag, f'team {got}, not {want}'))
 
-    # each leader: battle, badge
+    # Play all four gyms and Drake on one continuous save.
+    for trainer in LEADERS + (DRAKE,):
+        setflag(trainer[6], False)
+    setflag('EVENT_GOT_ORANGE_LEAGUE_PRIZE', False)
+    setflag('EVENT_GOT_MYSTICTICKET_FROM_RED', False)
+    locked = g.state()
+    for trainer in LEADERS + (DRAKE,):
+        g.load(locked)
+        if talk(trainer):
+            fails.append((trainer[0], 'battle before Red'))
+    g.load(locked)
+    setflag('EVENT_GOT_MYSTICTICKET_FROM_RED')
+    caps = bottle_caps()
+    season = g.state()
+    if talk(DRAKE):
+        fails.append(('Drake', 'battled without the four badges'))
+    g.load(season)
     for leader in LEADERS:
         tag, cls, ev = leader[0], leader[5], leader[6]
-        g.load(base)
         if not talk(leader):
             fails.append((tag, 'talking to them started no battle'))
             continue
         check_party(tag, cls)
         win()
-        if g.rd('wBattleMode'):
-            fails.append((tag, 'the battle did not end'))
-        elif not flag(ev):
+        if not flag(ev):
             fails.append((tag, 'no badge after winning'))
+        earned = g.state()
         if not talk(leader):
             fails.append((tag, 'no rematch'))
-
-    # Drake: not before the four badges
-    g.load(base)
-    caps = bottle_caps()
-    if talk(DRAKE):
-        fails.append(('Drake', 'battled without the four badges'))
-    g.load(base)
-    for leader in LEADERS:
-        setflag(leader[6])
+        g.load(earned)
     if not talk(DRAKE):
         fails.append(('Drake', 'no battle with the four badges'))
     else:

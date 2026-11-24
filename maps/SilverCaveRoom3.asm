@@ -52,6 +52,8 @@ Red:
 	iftruefwd .AlreadyHaveMysticTicket
 	verbosegivekeyitem MYSTICTICKET
 	setevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	writetext .Note
+	waitbutton
 .AlreadyHaveMysticTicket
 	closetext
 	special Special_FadeBlackQuickly
@@ -75,3 +77,12 @@ Red:
 .Text2: ; text > text
 	text_far CeruleanCityCooltrainerFText3
 	text_end
+
+.Note:
+	text "A note is tucked"
+	line "inside the ticket."
+	para "Orange Crew season"
+	line "is open. Press"
+	cont "Start and read"
+	cont "Oak's Field Book."
+	done

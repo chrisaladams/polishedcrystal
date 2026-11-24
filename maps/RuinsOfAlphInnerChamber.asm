@@ -32,7 +32,7 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	bg_event 14,  8, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
 	bg_event 17,  8, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
 	bg_event  2, 13, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
-	bg_event  5, 13, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
+	bg_event  5, 13, BGEVENT_READ, HaleStatueScript
 	bg_event 14, 13, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
 	bg_event 17, 13, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
 	bg_event  2, 18, BGEVENT_JUMPTEXT, RuinsofAlphStatueText
@@ -113,4 +113,44 @@ RuinsOfAlphInnerChamberScientistText:
 
 	para "but it's not clear"
 	line "yet…"
+	done
+
+HaleStatueScript:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumptext RuinsofAlphStatueText
+	checkevent EVENT_BEAT_MOLLY
+	iffalse_jumptext RuinsofAlphStatueText
+	checkevent EVENT_RESCUED_PROF_HALE
+	iftrue_jumptext .Empty
+	playsound SFX_EMBER
+	earthquake 12
+	showtext .Rescue
+	setevent EVENT_RESCUED_PROF_HALE
+	jumptext .Note
+
+.Rescue:
+	text "Three knocks come"
+	line "from the stone."
+	para "You knock back."
+	line "A seam opens and"
+	cont "you take his hand."
+	para "Hale: The Unown"
+	line "kept spelling my"
+	cont "daughter's name."
+	para "You heard me! I"
+	line "can go home now."
+	done
+
+.Note:
+	text "Hale slips you a"
+	line "page for Oak."
+	para "There's a sketch"
+	line "of Ilex shrine and"
+	cont "a black # Ball."
+	done
+
+.Empty:
+	text "A warm lantern"
+	line "lights the empty"
+	cont "niche."
 	done

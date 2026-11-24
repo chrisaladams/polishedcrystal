@@ -40,7 +40,8 @@ def main():
     species = sorted({sp for p in parties.values() for _, sp in p} | {'SQUIRTLE'})
     names = species + [c for c, _ in ROUNDS] + [
         'PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'GROUP_OLIVINE_PORT', 'MAP_OLIVINE_PORT',
-        'EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', 'EVENT_WON_WHIRL_CUP', 'EVENT_BEAT_RED',
+        'EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', 'EVENT_WON_WHIRL_CUP', 'EVENT_GOT_MYSTICTICKET_FROM_RED',
+        'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_WHIRL_CUP_PRIZE_PENDING',
         'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MYSTIC_WATER', 'BOTTLE_CAP']
     K = rgbasm_values(names, None)
     L = K['PARTYMON_STRUCT_LENGTH']
@@ -62,6 +63,10 @@ def main():
         return 0
 
     flag('EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', False)  # after the Hall of Fame
+    flag('EVENT_BEAT_RED', False)  # Leaf's rematch transition must not lock the cup
+    flag('EVENT_BEAT_LEAF', True)
+    flag('EVENT_WON_WHIRL_CUP', False)
+    flag('EVENT_WHIRL_CUP_PRIZE_PENDING', False)
 
     def official_there():
         for i in range(K['NUM_OBJECT_STRUCTS']):
@@ -71,18 +76,18 @@ def main():
                 return True
         return False
 
-    flag('EVENT_BEAT_RED', False)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', False)
     g.warp(K['GROUP_OLIVINE_PORT'], K['MAP_OLIVINE_PORT'], 13, 8)
     if official_there():
         fails.append(('before Red', 'the official is there'))
-    flag('EVENT_BEAT_RED', True)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
     base = g.state()
 
     def talk():
         g.warp(K['GROUP_OLIVINE_PORT'], K['MAP_OLIVINE_PORT'], 13, 8)
         if not official_there():
             fails.append(('after Red', 'the official is not there'))
-        g.press('up', 2, 3)
+        g.face('up')
         g.tick(30)
 
     def until_battle(presses=20):

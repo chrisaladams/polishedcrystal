@@ -35,7 +35,7 @@ OlivinePort_MapScriptHeader:
 OlivinePortWhirlCupCallback:
 ; Link Edition: the Whirl Cup is held after Red
 	setevent EVENT_POST_RED_PERSON_HIDDEN
-	checkevent EVENT_BEAT_RED
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd .done
 	clearevent EVENT_POST_RED_PERSON_HIDDEN
 .done
@@ -368,6 +368,8 @@ WhirlCupOfficialScript:
 ; each one after a Bottle Cap.
 	faceplayer
 	opentext
+	checkevent EVENT_WHIRL_CUP_PRIZE_PENDING
+	iftruefwd .FirstPrize
 	writetext .WelcomeText
 	promptbutton
 	callasm WhirlCupCheckParty
@@ -413,10 +415,13 @@ WhirlCupOfficialScript:
 	promptbutton
 	checkevent EVENT_WON_WHIRL_CUP
 	iftruefwd .Again
+	setevent EVENT_WON_WHIRL_CUP
+	setevent EVENT_WHIRL_CUP_PRIZE_PENDING
+.FirstPrize:
 	writetext .MysticWaterText
 	promptbutton
 	verbosegiveitem MYSTIC_WATER, iffalse_endtext
-	setevent EVENT_WON_WHIRL_CUP
+	clearevent EVENT_WHIRL_CUP_PRIZE_PENDING
 	jumpopenedtext .ComeBackText
 
 .Again:
@@ -499,6 +504,9 @@ WhirlCupOfficialScript:
 	text "Come back and"
 	line "defend the cup"
 	cont "anytime!"
+	para "Misty: I sent Oak"
+	line "the results."
+	cont "Check the book!"
 	done
 
 .OutText:

@@ -116,6 +116,13 @@ CeruleanCityFisherScript:
 	jumptextfaceplayer CeruleanCityFisherText
 
 CeruleanCityYoungsterScript:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalsefwd .Itemfinder
+	checkevent EVENT_CERULEAN_CAVE_MEWTWO
+	iffalsefwd .Itemfinder
+	checkevent EVENT_BEAT_MEWTWO_CLONES
+	iffalse_jumptextfaceplayer CeruleanCityPsychicEchoHintText
+.Itemfinder:
 	checkevent EVENT_FOUND_BERSERK_GENE_IN_CERULEAN_CITY
 	iftrue_jumptextfaceplayer CeruleanCityYoungsterText
 	faceplayer
@@ -202,6 +209,16 @@ CeruleanCityYoungsterText1:
 	line "here with scary-"
 	cont "powerful #mon"
 	cont "in it."
+	done
+
+CeruleanCityPsychicEchoHintText:
+	text "They say Mewtwo's"
+	line "voice still echoes"
+	cont "deep in the cave."
+
+	para "Try examining the"
+	line "spot where it"
+	cont "once stood!"
 	done
 
 

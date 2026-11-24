@@ -18,6 +18,10 @@ OrangeLeagueDrakeScript:
 ; Link Edition: the Orange League's Head Leader
 	faceplayer
 	opentext
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iftruefwd .SeasonOpen
+	farsjump OrangeLeagueClosed
+.SeasonOpen:
 	checkevent EVENT_BEAT_DRAKE
 	iftruefwd .Beaten
 	checkevent EVENT_BEAT_ORANGE_CREW_CISSY
@@ -51,9 +55,11 @@ OrangeLeagueDrakeScript:
 .GotPrize:
 	jumpthisopenedtext
 
-	text "The Orange League"
-	line "will remember"
-	cont "your name!"
+	text "Oak sent word from"
+	line "Pallet Town."
+	para "Look for his field"
+	line "book on the table"
+	cont "in his lab."
 	done
 
 .Beaten:
@@ -136,4 +142,14 @@ OrangeLeagueHintText::
 OrangeLeagueRematchText::
 	text "Want to battle"
 	line "again?"
+	done
+
+OrangeLeagueClosed::
+	jumpthisopenedtext
+
+	text "The Crew is still"
+	line "training."
+	para "The season opens"
+	line "once you beat Red"
+	cont "on Mt.Silver."
 	done

@@ -82,7 +82,7 @@ BluesHouseSignText:
 
 PalletTownAnimeCameosCallback:
 ; Link Edition: the anime cameos come after Red and the Orange League
-	checkevent EVENT_BEAT_RED
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd .hide
 	checkevent EVENT_BEAT_DRAKE
 	iffalsefwd .hide
@@ -97,6 +97,17 @@ CameoAshScript:
 ; Link Edition: an anime cameo
 	faceplayer
 	opentext
+	checkevent EVENT_WON_PALLET_INVITATIONAL
+	iftruefwd .Friendly
+	checkevent EVENT_RESCUED_PROF_HALE
+	iffalsefwd .Friendly
+	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
+	iffalsefwd .Friendly
+	checkevent EVENT_BEAT_MEWTWO_CLONES
+	iffalsefwd .Friendly
+	checkevent EVENT_WON_WHIRL_CUP
+	iftruefwd .Invite
+.Friendly:
 	writetext .IntroText
 	yesorno
 	iffalse_jumpopenedtext .NoText
@@ -132,4 +143,73 @@ CameoAshScript:
 	cont "training."
 	para "We'll beat you"
 	line "next time!"
+	done
+
+.Invite:
+	writetext .InviteText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	closetext
+	special HealParty
+	winlosstext .DrakeBeaten, .Loss
+	loadtrainer DRAKE_T, 1
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Retry
+	showtext .AshFinal
+	winlosstext .BeatenText, .Loss
+	loadtrainer ASH_T, 1
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Retry
+	special HealParty
+	setevent EVENT_WON_PALLET_INVITATIONAL
+	jumptext .Finish
+
+.Retry:
+	special HealParty
+	jumpthistext
+
+	text "Ash: Same place"
+	line "tomorrow? Or we"
+	cont "can try again now!"
+	done
+
+.DrakeBeaten:
+	text "Drake: Well done."
+	line "Ash, you're up!"
+	done
+
+.Loss:
+	text "Good match!"
+	done
+
+.InviteText:
+	text "Ash: Your name's"
+	line "on every page of"
+	cont "Tracey's book!"
+	para "Drake's here from"
+	line "the islands. He's"
+	cont "up first, then me."
+	para "Two battles. One"
+	line "team. Ready?"
+	done
+
+.AshFinal:
+	text "Drake steps aside."
+	line "Pikachu jumps off"
+	cont "Ash's shoulder."
+	para "Ash: Our turn!"
+	done
+
+.Finish:
+	text "Tracey sketches"
+	line "the winning team."
+	para "Ash: That one's"
+	line "going on the wall"
+	cont "at Oak's lab!"
+	para "Pallet finals"
+	line "Champion: <PLAYER>!"
 	done

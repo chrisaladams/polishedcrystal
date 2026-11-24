@@ -41,7 +41,8 @@ def main():
     save = open(sys.argv[1], 'rb').read()
     parties = expected_parties()
     species = sorted({sp for c in CAMEOS for _, sp in parties[c[5]]})
-    names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_BEAT_RED',
+    names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_GOT_MYSTICTICKET_FROM_RED',
+                       'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_RESCUED_PROF_HALE',
                        'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE']
     for c in CAMEOS:
         names += [c[5], 'GROUP_' + c[1], 'MAP_' + c[1]]
@@ -69,14 +70,18 @@ def main():
     def visit(cameo, red, drake, e4=None):
         g.load(base)
         setflag('EVENT_BEAT_ELITE_FOUR', red if e4 is None else e4)
-        setflag('EVENT_BEAT_RED', red)
+        setflag('EVENT_GOT_MYSTICTICKET_FROM_RED', red)
+        # Leaf clears the rematch flag; it must not hide any cameo.
+        setflag('EVENT_BEAT_RED', False)
+        setflag('EVENT_BEAT_LEAF', red)
         setflag('EVENT_BEAT_DRAKE', drake)
+        setflag('EVENT_RESCUED_PROF_HALE', False)  # Ash offers the friendly match here
         g.warp(K['GROUP_' + cameo[1]], K['MAP_' + cameo[1]], *cameo[3])
         g.tick(30)
         return present(cameo[2])
 
     def talk(facing):
-        g.press(facing, 2, 3)
+        g.face(facing)
         g.tick(30)
         for _ in range(14):
             g.press('a', 40)
