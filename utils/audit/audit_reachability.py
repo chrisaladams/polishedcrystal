@@ -7,10 +7,12 @@ maps is where a player can use it, from a save:
   a coord event, can be walked up to and talked to from an entrance of the
   map, and doesn't cut any entrance off from another;
 - with --wild, on every map with wild Pokemon, that none can appear out of
-  reach: a tile of theirs (grass, cave floor, water) that can't be reached
-  from an entrance, but that the game would pick as a spot for one while you
-  stand somewhere you can get to (in range, and not walled off from you by
-  the check in CheckWildMonPath).
+  reach: no tile of theirs (grass, cave floor, water) that can't be reached
+  from an entrance is one the game would pick as a spot for one while you
+  stand somewhere you can get to (in range, and in reach of you by the flood
+  fill in ComputeWildMonReach); and, in the game itself, that the ones that
+  appear where you arrive (at five places on the map, on land and surfing)
+  are all where you can get to.
 
 The walkable tiles come from the map as loaded (blocks and the tileset's
 collision, after the map's callbacks), and CollisionPermissionTable. The
@@ -139,22 +141,26 @@ class MapGrid:
                 continue
             yield n
 
-    def lpath_clear(self, s, p):
-        """CheckWildMonPath: is either L-shaped path from s to p free of walls?"""
-        for x_first in (True, False):
-            x, y = s
-            ok = True
-            while (x, y) != p:
-                if (x_first and x != p[0]) or (not x_first and y == p[1]):
-                    x += 1 if p[0] > x else -1
-                else:
-                    y += 1 if p[1] > y else -1
-                if (x, y) != p and self.kind((x, y)) == 'wall':
-                    ok = False
-                    break
-            if ok:
-                return True
-        return False
+    def window_reach(self, p, left=7, up=6):
+        """ComputeWildMonReach: the tiles in the window around p you can walk to
+        within it, over tiles of the kind p is (land or water)"""
+        kind = self.kind(p)
+        seen = {p}
+        q = deque([p])
+        while q:
+            c = q.popleft()
+            for d, (dx, dy) in DIRS.items():
+                n = (c[0] + dx, c[1] + dy)
+                if (n in seen or n not in self.coll or not -left <= n[0] - p[0] <= left
+                        or not -up <= n[1] - p[1] <= up):
+                    continue
+                if d in EDGE_WALLS.get(self.coll[c], '') or OPPOSITE[d] in EDGE_WALLS.get(self.coll[n], ''):
+                    continue
+                if self.kind(n) != kind:
+                    continue
+                seen.add(n)
+                q.append(n)
+        return seen
 
     def reach(self, starts, blocked, warps):
         seen = set(s for s in starts if s in self.coll)
@@ -200,7 +206,8 @@ def main():
     by_const = {v: k for k, v in consts.items()}
     names = ['LAND_TILE', 'WATER_TILE', 'WALL_TILE', 'COLL_TALL_GRASS', 'COLL_LONG_GRASS', 'COLL_FLOOR',
              'COLL_WATER', 'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y',
-             'OBJECT_SPRITE', 'PLAYER_SURF'] + list(SHOW) + list(HIDE)
+             'OBJECT_SPRITE', 'PLAYER_SURF', 'NUM_WILD_MONS', 'WILDMON_LENGTH',
+             'MAPOBJECT_LENGTH', 'MAPOBJECT_X_COORD', 'MAPOBJECT_Y_COORD'] + list(SHOW) + list(HIDE)
     for mc in [consts[lb] for lb in labels] + wild_maps:
         names += ['GROUP_' + mc, 'MAP_' + mc]
     K = rgbasm_values(names, None)
@@ -314,18 +321,36 @@ def main():
             habitat |= {p for p, c in grid.coll.items() if c == K['COLL_FLOOR']}  # caves
         stands = {p for p in r if grid.kind(p) != 'wall'}
         bad = []
+        windows = {}
         for s in sorted(habitat - r):
             for dx in range(-6, 6):
                 for dy in range(-5, 6):
                     if -2 <= dx <= 2 and -2 <= dy <= 2:
                         continue
                     pl = (s[0] - dx, s[1] - dy)
-                    if pl in stands and grid.lpath_clear(s, pl):
+                    if pl not in stands:
+                        continue
+                    if pl not in windows:
+                        windows[pl] = grid.window_reach(pl)
+                    if s in windows[pl]:
                         bad.append((s, pl))
                         break
                 else:
                     continue
                 break
+        # and in the game: the ones there when you arrive
+        w, h = sizes[mc]
+        for surf in ((False, True) if mc in water else (False,)):
+            for fx, fy in ((0.5, 0.5), (0.25, 0.5), (0.75, 0.5), (0.5, 0.25), (0.5, 0.75)):
+                load(mc, int(w * 2 * fx), int(h * 2 * fy), surf)
+                for k in range(K['NUM_WILD_MONS']):
+                    if not g.rd('wWildMons', k * K['WILDMON_LENGTH']):
+                        continue
+                    mo = g.addr('wWildMapObjects') + k * K['MAPOBJECT_LENGTH']
+                    at = (g.m[mo + K['MAPOBJECT_X_COORD']] - 4, g.m[mo + K['MAPOBJECT_Y_COORD']] - 4)
+                    if at not in r:
+                        fails.append((mc, f'a wild Pokemon appeared out of reach at {at}'
+                                          f'{" (surfing)" if surf else ""}'))
         if bad:
             fails.append((mc, f'{len(bad)} tiles a wild Pokemon can appear on out of reach, '
                               f'e.g. {bad[:3]} (tile, from where you stand)'))

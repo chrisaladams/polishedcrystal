@@ -1667,6 +1667,19 @@ wPokeDB2UsedEntries:: flag_array MONDB_ENTRIES
 wPokeDB2UsedEntriesEnd::
 
 
+SECTION "Wild Mon Reach", WRAMX, ALIGN[8]
+
+; Link Edition: where you can walk to in the window around you
+; (ComputeWildMonReach, engine/overworld/wild_mons.asm)
+wWildReachPermissions:: ds 256 ; a copy of CollisionPermissionTable
+; each tile in the window, a row at a time: WILD_REACH_*_F and EDGE_* bits
+wWildMonReach:: ds WILD_REACH_WIDTH * WILD_REACH_HEIGHT
+	ds 256 - WILD_REACH_WIDTH * WILD_REACH_HEIGHT
+; the tiles still to walk out from (their places in wWildMonReach)
+wWildMonReachQueue:: ds WILD_REACH_WIDTH * WILD_REACH_HEIGHT
+wWildMonReachWrite:: db
+
+
 SECTION "Sprites Backup", WRAMX
 
 wShadowOAMBackup::

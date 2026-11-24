@@ -109,6 +109,18 @@ DEF PLAYER_OBJECT EQU 0
 DEF NUM_WILD_MONS EQU 4 ; (the 4th only while the screen isn't busy)
 DEF FIRST_WILD_OBJECT EQU NUM_OBJECTS
 
+; the window around you that ComputeWildMonReach looks at (you're at
+; WILD_REACH_LEFT, WILD_REACH_UP in it); new wild Pokemon go only where you
+; can walk to within it
+DEF WILD_REACH_LEFT   EQU 7
+DEF WILD_REACH_UP     EQU 6
+DEF WILD_REACH_WIDTH  EQU WILD_REACH_LEFT * 2 + 1
+DEF WILD_REACH_HEIGHT EQU WILD_REACH_UP * 2 + 1
+	const_def 6
+	const WILD_REACH_WALKABLE_F ; the same kind of tile as yours (land or water)
+	const WILD_REACH_REACHED_F
+; (bits 0-3: the sides with a wall along them, EDGE_*)
+
 ; wWildMons struct members (see engine/overworld/wild_mons.asm)
 rsreset
 DEF WILDMON_SPECIES    rb ; 0 = none

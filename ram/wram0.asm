@@ -1590,3 +1590,11 @@ wWildMonSpawnSlot:: db
 wWildMonSpawnHabitat:: db
 ; Set when one was due but there was nowhere to put it (it comes next step).
 wWildMonSpawnPending:: db
+; Copied for ComputeWildMonReach, which runs in another WRAM bank.
+wWildReachPlayerX:: db
+wWildReachPlayerY:: db
+wWildReachMapWidth:: db ; in tiles
+wWildReachMapHeight:: db ; in tiles
+wWildReachBlockRow:: db ; wMapWidth + 6 (with the border)
+wWildReachKind:: db ; LAND_TILE or WATER_TILE, what you're on
+wWildReachHalf:: db ; 2 in a block's bottom half

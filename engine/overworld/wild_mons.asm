@@ -22,6 +22,17 @@
 ; The Pokemon Tower's ghosts, without the Silph Scope, are still met at random.
 
 DEF WILD_MON_PREFILL       EQU 2 ; how many are there when you arrive
+; sides of a tile with a wall along them
+	const_def
+	const EDGE_RIGHT_F
+	const EDGE_LEFT_F
+	const EDGE_UP_F
+	const EDGE_DOWN_F
+DEF EDGE_RIGHT EQU 1 << EDGE_RIGHT_F
+DEF EDGE_LEFT  EQU 1 << EDGE_LEFT_F
+DEF EDGE_UP    EQU 1 << EDGE_UP_F
+DEF EDGE_DOWN  EQU 1 << EDGE_DOWN_F
+
 DEF WILD_MON_SPOT_TRIES    EQU 12 ; places tried for each one
 DEF WILD_MON_EDGE_TRIES    EQU 6 ; of those, just off the edge of the screen
 DEF WILD_MON_FLEE_DISTANCE EQU 4 ; how close you get before one runs (Repel)
@@ -644,6 +655,7 @@ RollWildMonShininess:
 
 FindWildMonSpot:
 ; Return carry and a free spot (x, y) in de for a new wild Pokemon near you.
+	call ComputeWildMonReach
 	ld b, WILD_MON_SPOT_TRIES
 .loop
 	push bc
@@ -749,9 +761,9 @@ CheckWildMonSpot:
 	call IsWildMonTile
 	pop de
 	jr nz, .no
-	; somewhere you can get to (not, say, the rock outside a cave's walls)
-	call CheckWildMonPath
-	jr c, .no
+	; somewhere you can walk to (not, say, the rock outside a cave's walls)
+	call IsWildMonSpotReached
+	jr nc, .no
 	; nobody there, or coming there
 	ldh a, [hMapObjectIndexBuffer]
 	push af
@@ -803,73 +815,306 @@ CheckWildMonSpot:
 	and a
 	ret
 
-CheckWildMonPath:
-; Carry if (d, e) is walled off from you: both L-shaped paths from it to you
-; (across then up or down, or up or down then across) run into a wall.
-; Keeps de.
-	xor a
-	call .Path
-	ret nc
-	ld a, 1
-.Path:
-	push de
-	ld b, a
-.step
-	; one step towards you: across first (b = 0) or up or down first
-	ld a, b
-	and a
+ComputeWildMonReach:
+; Mark which tiles in the window around you (WILD_REACH_*) you can walk to
+; without leaving it: over tiles of the kind you're on (land or water), and
+; not across a wall along a tile's side (as at a cave's edges).
 	ld a, [wPlayerMapX]
-	jr nz, .y_first
-	cp d
-	jr nz, .move_x
-	jr .move_y
-.y_first
+	ld [wWildReachPlayerX], a
 	ld a, [wPlayerMapY]
-	cp e
-	jr z, .move_x_again
-.move_y
-	ld a, [wPlayerMapY]
-	cp e
-	jr c, .up
-	inc e
-	jr .check
-.up
-	dec e
-	jr .check
-.move_x_again
-	ld a, [wPlayerMapX]
-.move_x
-	cp d
-	jr c, .left
-	inc d
-	jr .check
-.left
-	dec d
-.check
-	; reached you?
-	ld a, [wPlayerMapX]
-	cp d
-	jr nz, .look
-	ld a, [wPlayerMapY]
-	cp e
-	jr z, .clear
-.look
+	ld [wWildReachPlayerY], a
+	ld a, [wMapWidth]
+	add a
+	ld [wWildReachMapWidth], a
+	srl a
+	add 6
+	ld [wWildReachBlockRow], a
+	ld a, [wMapHeight]
+	add a
+	ld [wWildReachMapHeight], a
+	call GetPlayerStandingTile
+	ld [wWildReachKind], a
+	ld a, BANK(wWildMonReach)
+	call StackCallInWRAMBankA
+
+.Function:
+	ld hl, CollisionPermissionTable
+	ld de, wWildReachPermissions
+	ld bc, 256
+	ld a, BANK(CollisionPermissionTable)
+	call FarCopyBytes
+
+	; each tile: whether you could walk on it, and the walls along its sides
+	ld hl, wWildMonReach
+	ld a, [wWildReachPlayerY]
+	sub 4 + WILD_REACH_UP
+	ld e, a ; map y (from 0)
+	ld c, WILD_REACH_HEIGHT
+.row
 	push bc
+	ld a, [wWildReachMapHeight]
+	ld b, a
+	ld a, e
+	cp b
+	jr c, .in_map
+	ld b, WILD_REACH_WIDTH
+	xor a
+.nothing
+	ld [hli], a
+	dec b
+	jr nz, .nothing
+	jmp .next_row
+
+.in_map
+	and 1
+	add a
+	ld [wWildReachHalf], a
 	push de
-	call GetCoordTileCollision
-	call GetTilePermission
+	push hl
+	; de = the block at the row's first column
+	ld a, [wWildReachBlockRow]
+	ld c, a
+	ld b, 0
+	ld hl, wOverworldMapBlocks + 3
+	ld a, e
+	srl a
+	add 3 ; the border
+.block_row
+	add hl, bc
+	dec a
+	jr nz, .block_row
+	ld a, [wWildReachPlayerX]
+	sub 4 + WILD_REACH_LEFT
+	ld c, a ; map x (from 0; may be "negative")
+	sra a
+	ld e, a
+	add a
+	sbc a
+	ld d, a
+	add hl, de
+	ld d, h
+	ld e, l
+	pop hl
+	ld b, WILD_REACH_WIDTH
+.col
+	ld a, [wWildReachMapWidth]
+	cp c
+	jr c, .off_map
+	jr z, .off_map
+	push hl
+	ld a, [de] ; the block
+	ld l, a
+	ld h, 0
+	add hl, hl
+	add hl, hl
+	ld a, [wWildReachHalf]
+	bit 0, c
+	jr z, .left_half
+	inc a
+.left_half
+	add l
+	ld l, a
+	ld a, h
+	add HIGH(wDecompressedCollisions)
+	ld h, a
+	assert LOW(wDecompressedCollisions) == 0
+	ld a, BANK(wDecompressedCollisions)
+	ldh [rWBK], a
+	ld l, [hl] ; its collision
+	ld a, BANK(wWildMonReach)
+	ldh [rWBK], a
+	ld h, HIGH(wWildReachPermissions)
+	assert LOW(wWildReachPermissions) == 0
+	ld a, [hl]
+	and $f ; as GetTilePermission
+	ld h, a
+	ld a, [wWildReachKind]
+	cp h
+	ld h, 0
+	jr nz, .got_kind
+	ld h, 1 << WILD_REACH_WALKABLE_F
+.got_kind
+	ld a, l
+	sub COLL_RIGHT_WALL
+	cp EdgeWallSides.End - EdgeWallSides
+	jr nc, .no_walls
+	push de
+	ld e, a
+	ld d, 0
+	ld a, h
+	ld hl, EdgeWallSides
+	add hl, de
+	or [hl]
+	ld h, a
 	pop de
+.no_walls
+	ld a, h
+	pop hl
+	ld [hli], a
+	jr .next_col
+
+.off_map
+	xor a
+	ld [hli], a
+.next_col
+	bit 0, c
+	jr z, .same_block
+	inc de
+.same_block
+	inc c
+	dec b
+	jr nz, .col
+	pop de
+.next_row
 	pop bc
-	cp WALL_TILE
-	jr nz, .step
+	inc e
+	dec c
+	jmp nz, .row
+
+	; the window's own edges are walls too
+	ld hl, wWildMonReach
+	ld de, wWildMonReach + (WILD_REACH_HEIGHT - 1) * WILD_REACH_WIDTH
+	ld b, WILD_REACH_WIDTH
+.top_bottom
+	set EDGE_UP_F, [hl]
+	inc hl
+	ld a, [de]
+	or EDGE_DOWN
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .top_bottom
+	ld hl, wWildMonReach
+	ld de, WILD_REACH_WIDTH
+	ld b, WILD_REACH_HEIGHT
+.sides
+	set EDGE_LEFT_F, [hl]
+	add hl, de
+	dec hl
+	set EDGE_RIGHT_F, [hl]
+	inc hl
+	dec b
+	jr nz, .sides
+
+	; walk out from you
+	ld a, WILD_REACH_UP * WILD_REACH_WIDTH + WILD_REACH_LEFT
+	ld [wWildMonReachQueue], a
+	ld h, HIGH(wWildMonReach)
+	ld l, a
+	set WILD_REACH_REACHED_F, [hl]
+	ld a, 1
+	ld [wWildMonReachWrite], a
+	ld de, wWildMonReachQueue ; e: the next one to take
+	assert LOW(wWildMonReachQueue) == 0
+.walk
+	ld a, [wWildMonReachWrite]
+	cp e
+	ret z ; nowhere left to look
+	ld a, [de]
+	inc e
+	ld b, a ; its place
+	ld l, a
+	ld c, [hl] ; its walls
+	bit EDGE_RIGHT_F, c
+	jr nz, .no_right
+	ld l, b
+	inc l
+	ld a, EDGE_LEFT
+	call .Try
+.no_right
+	bit EDGE_LEFT_F, c
+	jr nz, .no_left
+	ld l, b
+	dec l
+	ld a, EDGE_RIGHT
+	call .Try
+.no_left
+	bit EDGE_DOWN_F, c
+	jr nz, .no_down
+	ld a, b
+	add WILD_REACH_WIDTH
+	ld l, a
+	ld a, EDGE_UP
+	call .Try
+.no_down
+	bit EDGE_UP_F, c
+	jr nz, .walk
+	ld a, b
+	sub WILD_REACH_WIDTH
+	ld l, a
+	ld a, EDGE_DOWN
+	call .Try
+	jr .walk
+
+.Try:
+; Reach tile l, coming in by side a, if you can.
+	or (1 << WILD_REACH_REACHED_F) | (1 << WILD_REACH_WALKABLE_F)
+	and [hl]
+	cp 1 << WILD_REACH_WALKABLE_F
+	ret nz
+	set WILD_REACH_REACHED_F, [hl]
+	ld a, [wWildMonReachWrite]
+	push de
+	ld e, a
+	ld a, l
+	ld [de], a
+	inc e
+	ld a, e
+	ld [wWildMonReachWrite], a
 	pop de
-	scf
 	ret
 
-.clear
-	pop de
-	and a
+.Index::
+; hl = the tile at (b, c) in the window. Keeps bc and de.
+	assert WILD_REACH_WIDTH == 15 && WILD_REACH_HEIGHT < 16
+	ld a, c
+	swap a
+	sub c
+	add b
+	ld l, a
+	ld h, HIGH(wWildMonReach)
+	assert LOW(wWildMonReach) == 0
 	ret
+
+IsWildMonSpotReached:
+; Carry if ComputeWildMonReach reached (d, e). Keeps de.
+	ld a, [wPlayerMapX]
+	sub WILD_REACH_LEFT
+	ld b, a
+	ld a, d
+	sub b
+	cp WILD_REACH_WIDTH
+	ret nc
+	ld b, a
+	ld a, [wPlayerMapY]
+	sub WILD_REACH_UP
+	ld c, a
+	ld a, e
+	sub c
+	cp WILD_REACH_HEIGHT
+	ret nc
+	ld c, a
+	call ComputeWildMonReach.Index
+	ld a, BANK(wWildMonReach)
+	call GetFarWRAMByte
+	add a ; WILD_REACH_REACHED_F into carry
+	assert WILD_REACH_REACHED_F == 7
+	ret
+
+EdgeWallSides:
+; the sides of each tile collision from COLL_RIGHT_WALL with a wall along them
+	db EDGE_RIGHT              ; COLL_RIGHT_WALL
+	db EDGE_LEFT               ; COLL_LEFT_WALL
+	db EDGE_UP                 ; COLL_TOP_WALL
+	db EDGE_DOWN               ; COLL_BOTTOM_WALL
+	db EDGE_DOWN | EDGE_RIGHT  ; COLL_BOTTOM_RIGHT_WALL
+	db EDGE_DOWN | EDGE_LEFT   ; COLL_BOTTOM_LEFT_WALL
+	db EDGE_UP | EDGE_RIGHT    ; COLL_TOP_RIGHT_WALL
+	db EDGE_UP | EDGE_LEFT     ; COLL_TOP_LEFT_WALL
+	db EDGE_RIGHT              ; COLL_RIGHT_WALL_GLOW
+	db EDGE_LEFT               ; COLL_LEFT_WALL_GLOW
+.End:
+	assert COLL_LEFT_WALL_GLOW == COLL_RIGHT_WALL + .End - EdgeWallSides - 1
 
 IsOutsideMap:
 ; Carry if (d, e) isn't in the map itself (but a neighbor's, past a
