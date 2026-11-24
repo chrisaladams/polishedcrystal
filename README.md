@@ -160,7 +160,9 @@ Battle Tower and Battle Factory prize shops are unchanged.
 - **Wild Pokémon you can see.** No more random battles in the grass: up to
   three wild Pokémon (four when the screen isn't busy) wander where you'd
   meet them (tall grass on routes, the floor in caves, the water while you
-  surf), drawn with their walking sprites
+  surf), but only where you could walk to them and back from where you
+  stand (around trees and corners, but not across ice, currents, ledges or
+  warps, or past someone in the way), drawn with their walking sprites
   in their own colours. A shiny one shows its shiny colours. Walk into one, or
   face it and press A, to battle it. They're chosen exactly as random
   encounters are: the same tables and odds, time of day, swarms, roaming

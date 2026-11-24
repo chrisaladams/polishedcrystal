@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Execute the ROM's spawn path check on controlled collision maps.
 
-These cases cover barriers that the permission table calls walkable, but
-which cannot establish a reversible path to a visible wild Pokemon.
+A new wild Pokemon may appear only where you can walk to and back: the
+flood fill (ComputeWildMonReach) goes around walls, but not through tiles
+with special movement (which the permission table calls walkable), across
+a wall along a tile's side, or through someone standing in the way.
 """
 from pathlib import Path
 import sys
@@ -79,20 +81,43 @@ class SpawnPathTests(unittest.TestCase):
         self.assertEqual((h.reg.D, h.reg.E), (spawn[0] + 4, spawn[1] + 4))
         return bool(h.reg.F & 0x10)
 
+    def wall_with_gap(self, x=6, gap=8, gap_collision=0):
+        """A wall down column x, all the way across the map, but for one tile."""
+        for y in range(16):
+            self.tile(x, y, self.K['COLL_WALL'] if y != gap else gap_collision)
+
     def test_open_floor(self):
         self.assertFalse(self.blocked())
 
-    def test_barriers_between_player_and_spawn(self):
-        for collision in (0x07, 0x23, 0x24, 0x29, 0x33, 0x38, 0x60, 0x72, 0xa0, 0xb2):
+    def test_only_ordinary_tiles_make_a_way(self):
+        # Through a gap in a wall: ordinary floor, yes; anything with special
+        # movement (ice, whirlpool, water on land, waterfall, current, hole,
+        # stairs, ledge) can't prove a way back.
+        self.wall_with_gap()
+        self.assertFalse(self.blocked())
+        for collision in (0x07, 0x23, 0x24, 0x29, 0x33, 0x38, 0x60, 0x72, 0xa0):
             with self.subTest(collision=hex(collision)):
-                self.tile(6, 8, collision)
+                self.wall_with_gap(gap_collision=collision)
                 self.assertTrue(self.blocked())
 
-    def test_second_path_can_go_around_wall(self):
-        self.tile(6, 4, 0x07)
-        self.assertFalse(self.blocked(player=(8, 8), spawn=(4, 4)))
-        self.tile(4, 6, 0x07)
-        self.assertTrue(self.blocked(player=(8, 8), spawn=(4, 4)))
+    def test_walls_along_one_side(self):
+        # Crossing the gap from right to left: a wall along its right side
+        # blocks, one along its top doesn't.
+        self.wall_with_gap(gap_collision=0xb0)  # COLL_RIGHT_WALL
+        self.assertTrue(self.blocked())
+        self.wall_with_gap(gap_collision=0xb2)  # COLL_TOP_WALL
+        self.assertFalse(self.blocked())
+
+    def test_walks_around_a_wall(self):
+        # One wall on the straight line doesn't hide a spot you can walk
+        # around to; a wall all the way around it does.
+        self.tile(6, 8, 0x07)
+        self.assertFalse(self.blocked())
+        for x in range(3, 6):
+            for y in range(7, 10):
+                if (x, y) != (4, 8):
+                    self.tile(x, y, 0x07)
+        self.assertTrue(self.blocked())
 
     def test_water_stays_connected_by_water(self):
         self.h.mem[self.h.addr('wWildMonSpawnHabitat')] = self.K['HABITAT_WATER']
@@ -102,17 +127,21 @@ class SpawnPathTests(unittest.TestCase):
         self.tile(6, 8, 0)
         self.assertTrue(self.blocked())
 
-    def test_player_on_ledge_cannot_prove_a_return_path(self):
-        self.tile(8, 8, 0xb2)
+    def test_ledges_cannot_prove_a_way_back(self):
+        for y in range(16):
+            self.tile(6, y, 0xa0)  # COLL_LEDGE_RIGHT
         self.assertTrue(self.blocked())
 
     def test_character_blocks_narrow_path(self):
         h, K = self.h, self.K
+        self.wall_with_gap()
         addr = h.addr('wMapObjects') + K['MAPOBJECT_LENGTH']
         h.mem[addr + K['MAPOBJECT_SPRITE']] = 1
         h.mem[addr + K['MAPOBJECT_X_COORD']] = 6 + 4
         h.mem[addr + K['MAPOBJECT_Y_COORD']] = 8 + 4
         self.assertTrue(self.blocked())
+        h.mem[addr + K['MAPOBJECT_SPRITE']] = 0
+        self.assertFalse(self.blocked())
 
     def wild(self, species, profile, pos, *, slot=0, home=None, habitat='HABITAT_FLOOR'):
         slot_addr = self.h.addr('wWildMons') + slot * self.K['WILDMON_LENGTH']

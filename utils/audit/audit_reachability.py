@@ -10,7 +10,7 @@ maps is where a player can use it, from a save:
   reach: a tile of theirs (grass, cave floor, water) that can't be reached
   from an entrance, but that the game would pick as a spot for one while you
   stand somewhere you can get to (in range, and not walled off from you by
-  the check in CheckWildMonPath).
+  the flood fill in ComputeWildMonReach).
 
 The walkable tiles come from the map as loaded (blocks and the tileset's
 collision, after the map's callbacks), and CollisionPermissionTable. The
@@ -148,24 +148,30 @@ class MapGrid:
                 continue
             yield n
 
-    def lpath_clear(self, s, p, blocked=()):
-        """CheckWildMonPath: ordinary tiles of one medium, without objects."""
-        for x_first in (True, False):
-            x, y = s
-            ok = True
-            while (x, y) != p:
-                if (x_first and x != p[0]) or (not x_first and y == p[1]):
-                    x += 1 if p[0] > x else -1
-                else:
-                    y += 1 if p[1] > y else -1
-                c = self.coll.get((x, y), 0xff)
-                if (((x, y) != p and (x, y) in blocked) or self.kind((x, y)) != self.kind(s)
-                        or c >= 0x60 or c in (0x23, 0x24) or 0x30 <= c < 0x40):
-                    ok = False
-                    break
-            if ok:
-                return True
-        return False
+    def window_reach(self, p, kind, blocked=(), left=7, up=6):
+        """ComputeWildMonReach: the tiles in the window around p you can walk to
+        and back within it: ordinary tiles of the Pokemon's kind ('land' or
+        'water'), not across a wall along a side, not through anyone."""
+        def ordinary(c):
+            if 0xb0 <= c <= 0xb9:
+                return True  # (a wall along one side: blocked by direction)
+            return not (c >= 0x60 or c in (0x23, 0x24) or 0x30 <= c < 0x40)
+        seen = {p}
+        q = deque([p])
+        while q:
+            c = q.popleft()
+            for d, (dx, dy) in DIRS.items():
+                n = (c[0] + dx, c[1] + dy)
+                if (n in seen or n not in self.coll or n in blocked
+                        or not -left <= n[0] - p[0] <= left or not -up <= n[1] - p[1] <= up):
+                    continue
+                if d in EDGE_WALLS.get(self.coll[c], '') or OPPOSITE[d] in EDGE_WALLS.get(self.coll[n], ''):
+                    continue
+                if self.kind(n) != kind or not ordinary(self.coll[n]):
+                    continue
+                seen.add(n)
+                q.append(n)
+        return seen
 
     def reach(self, starts, blocked, warps):
         seen = set(s for s in starts if s in self.coll)
@@ -342,13 +348,19 @@ def main():
             habitat |= {p for p, c in grid.coll.items() if c == K['COLL_FLOOR']}  # caves
         stands = {p for p in r if grid.kind(p) != 'wall'}
         bad = []
+        windows = {}
         for s in sorted(habitat - r - occupied):
             for dx in range(-5, 7):
                 for dy in range(-5, 6):
                     if -2 <= dx <= 2 and -2 <= dy <= 2:
                         continue
                     pl = (s[0] - dx, s[1] - dy)
-                    if pl in stands and grid.lpath_clear(s, pl, occupied):
+                    if pl not in stands:
+                        continue
+                    kind = 'water' if grid.coll[s] == K['COLL_WATER'] else 'land'
+                    if (pl, kind) not in windows:
+                        windows[pl, kind] = grid.window_reach(pl, kind, occupied)
+                    if s in windows[pl, kind]:
                         bad.append((s, pl))
                         break
                 else:
