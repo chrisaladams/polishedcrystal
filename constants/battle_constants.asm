@@ -150,6 +150,7 @@ DEF STAT_SKIPTEXT  EQU 1 << STAT_SKIPTEXT_F
 
 	; constants below this is assumed to be unfleeable
 	const BATTLETYPE_TRAP
+	const BATTLETYPE_SHADOW ; Link Edition: can't be caught (a corrupted or illusory Pokemon)
 	const BATTLETYPE_FORCEITEM
 	const BATTLETYPE_NEVER_SHINY
 	const BATTLETYPE_LEGENDARY

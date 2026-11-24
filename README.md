@@ -316,11 +316,16 @@ Three events from the first movies, each a battle where the story happened:
 - **Spell of the Unown**, the Ruins of Alph Research Center (after Red): Molly, waiting for her papa, battles with the friends the Unown
   dreamed up for her and Entei (Unown, Ursaring, Donphan, Mantine, Ampharos,
   Entei, levels 64–70). Listen to Molly after the battle, then follow the
-  knocking to the statue near the ladder in the inner chamber. Help her
+  knocking to the statue near the ladder in the inner chamber, where two of
+  the Unown's illusions (Teddiursa and Phanpy, level 62, that no ball can
+  catch) guard it until her father is free. Help her
   father home to unlock her friendly rematch. If your bag is full, Molly
   holds your Ability Patch and the rescue can still go ahead.
 - **Celebi: Voice of the Forest**, Ilex Forest (after Red and the Celebi
-  time travel): the Iron Mask Marauder of Team Rocket waits by the shrine with
+  time travel): three forest Pokémon his black ball holds (Beedrill, Ariados,
+  Noctowl, levels 64–66) guard the shrine until he's beaten; no ball can
+  catch them, and each one you beat is freed. The Iron Mask Marauder of Team
+  Rocket waits by the shrine with
   Sneasel, Scizor, Tyranitar and his Dark Ball Celebi (levels 70–76). Beat
   him once to drive him off for good and find a Big Nugget. If the Items
   pocket is full, make room and examine where he stood to collect it later;

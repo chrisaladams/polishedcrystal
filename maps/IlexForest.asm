@@ -40,6 +40,9 @@ IlexForest_MapScriptHeader:
 	object_event  9, 30, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestCharcoalApprenticeScript, EVENT_ILEX_FOREST_APPRENTICE
 	object_event 11, 25, SPRITE_BURGLAR, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IlexForestIronMaskScript, EVENT_POST_RED_PERSON_HIDDEN
 	object_event 11, 25, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_ILEX_FOREST_SAMMY
+	object_event  8, 25, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, BEEDRILL, -1, PAL_MON_YELLOW, OBJECTTYPE_SCRIPT, PLAIN_FORM, IlexForestShadowBeedrillScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4
+	object_event  9, 25, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, ARIADOS, -1, PAL_MON_RED, OBJECTTYPE_SCRIPT, PLAIN_FORM, IlexForestShadowAriadosScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_5
+	object_event 11, 26, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, NOCTOWL, -1, PAL_MON_BROWN, OBJECTTYPE_SCRIPT, PLAIN_FORM, IlexForestShadowNoctowlScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_6
 	object_event 17, 16, SPRITE_ROCKER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestHeadbuttGuyScript, -1
 	object_event 14,  3, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 0, GenericTrainerBugCatcherWayne, -1
 	object_event  4, 16, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, IlexForestHoneyBoyText, EVENT_ROUTE_34_ILEX_FOREST_GATE_LASS
@@ -59,6 +62,9 @@ IlexForest_MapScriptHeader:
 	const ILEXFOREST_YOUNGSTER
 	const ILEXFOREST_IRON_MASK
 	const ILEXFOREST_SAMMY
+	const ILEXFOREST_SHADOW_BEEDRILL
+	const ILEXFOREST_SHADOW_ARIADOS
+	const ILEXFOREST_SHADOW_NOCTOWL
 
 IlexForestCutSceneScene:
 	sdefer IlexForestFinishCelebiEventScript
@@ -71,12 +77,20 @@ IlexForestIronMaskCallback:
 	setevent EVENT_ILEX_FOREST_SAMMY ; (Sammy is only there in the scene after)
 	setevent EVENT_POST_RED_PERSON_HIDDEN
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
-	iffalsefwd IlexForestFarfetchdCallback
+	iffalsefwd .NoMarauder
 	checkevent EVENT_TIME_TRAVEL_FINISHED
-	iffalsefwd IlexForestFarfetchdCallback
+	iffalsefwd .NoMarauder
 	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
-	iftruefwd IlexForestFarfetchdCallback
+	iftruefwd .NoMarauder
 	clearevent EVENT_POST_RED_PERSON_HIDDEN
+	sjumpfwd IlexForestFarfetchdCallback
+
+.NoMarauder:
+	; the forest Pokemon his ball holds are only here while he is (each one
+	; freed stays gone until you come back)
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_5
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_6
 IlexForestFarfetchdCallback:
 	checkevent EVENT_GOT_HM01_CUT
 	iftruefwd .Static
@@ -1336,6 +1350,39 @@ IlexForestIronMaskScript:
 
 	para "The Marauder"
 	line "dropped something!"
+	done
+
+IlexForestShadowBeedrillScript:
+	loadwildmon BEEDRILL, 64
+	sjumpfwd IlexForestShadowBattle
+
+IlexForestShadowAriadosScript:
+	loadwildmon ARIADOS, 65
+	sjumpfwd IlexForestShadowBattle
+
+IlexForestShadowNoctowlScript:
+	loadwildmon NOCTOWL, 66
+IlexForestShadowBattle:
+; Link Edition: forest Pokemon held by the Marauder's black ball. They
+; can't be caught or fled from; beating one frees it.
+	showtext .Text
+	loadvar VAR_BATTLETYPE, BATTLETYPE_SHADOW
+	startbattle
+	disappear LAST_TALKED
+	reloadmapafterbattle
+	jumptext .FreedText
+
+.Text:
+	text "Its eyes glint"
+	line "like the black"
+	cont "ball. It attacks!"
+	done
+
+.FreedText:
+	text "The glint fades"
+	line "from its eyes. It"
+	cont "flees into the"
+	cont "trees."
 	done
 
 IlexForestSammyScene:

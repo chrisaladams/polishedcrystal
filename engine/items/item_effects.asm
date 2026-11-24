@@ -93,6 +93,9 @@ PokeBallEffect:
 	ld a, [wBattleType]
 	cp BATTLETYPE_GHOST
 	jmp z, Ball_MonCantBeCaughtMessage
+	; or corrupted or illusory Pokemon
+	cp BATTLETYPE_SHADOW
+	jmp z, Ball_MonCantBeCaughtMessage
 
 	; Everything below this are regular wild battles
 

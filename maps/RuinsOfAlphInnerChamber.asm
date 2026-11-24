@@ -56,6 +56,8 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	object_event  7, 11, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_COMMAND, jumptextfaceplayer, RuinsOfAlphInnerChamberScientistText, EVENT_RUINS_OF_ALPH_INNER_CHAMBER_TOURISTS
 	object_event  4, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_STILL, 0, ENTEI, -1, PAL_MON_RED, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
 	object_event  6, 12, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	object_event  4, 14, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, TEDDIURSA, -1, PAL_MON_BROWN, OBJECTTYPE_SCRIPT, PLAIN_FORM, AlphIllusionTeddiursaScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4
+	object_event  6, 14, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, PHANPY, -1, PAL_MON_BLUE, OBJECTTYPE_SCRIPT, PLAIN_FORM, AlphIllusionPhanpyScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_5
 
 	object_const_def
 	const_skip 4
@@ -65,7 +67,51 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 HideAlphRescueActors:
 	disappear ALPH_DREAM_ENTEI
 	disappear ALPH_PROF_HALE
+	; Link Edition: the Unown's illusions guard the statue after Molly's
+	; battle, until her father is free (each one broken stays gone until you
+	; come back)
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalsefwd .NoIllusions
+	checkevent EVENT_BEAT_MOLLY
+	iffalsefwd .NoIllusions
+	checkevent EVENT_RESCUED_PROF_HALE
+	iffalsefwd .Done
+.NoIllusions:
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_5
+.Done:
 	endcallback
+
+AlphIllusionTeddiursaScript:
+	loadwildmon TEDDIURSA, 62
+	sjumpfwd AlphIllusionBattle
+
+AlphIllusionPhanpyScript:
+	loadwildmon PHANPY, 62
+AlphIllusionBattle:
+; Link Edition: Spell of the Unown: one of the friends the Unown dreamed up
+; for Molly. It can't be caught or fled from.
+	showtext .Text
+	loadvar VAR_BATTLETYPE, BATTLETYPE_SHADOW
+	startbattle
+	disappear LAST_TALKED
+	reloadmapafterbattle
+	jumptext .BrokenText
+
+.Text:
+	text "Its outline"
+	line "flickers like"
+	cont "Unown letters…"
+
+	para "It's one of the"
+	line "Unown's dreams!"
+	done
+
+.BrokenText:
+	text "It breaks apart"
+	line "into rows of tiny"
+	cont "letters."
+	done
 
 RuinsOfAlphInnerChamberStrangePresenceScene:
 	sdefer .Script
