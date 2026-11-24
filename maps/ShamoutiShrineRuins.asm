@@ -2,6 +2,7 @@ ShamoutiShrineRuins_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, ShamoutiShrineLawrenceCallback
 
 	def_warp_events
 	warp_event  2, 18, NOISY_FOREST, 3
@@ -14,14 +15,31 @@ ShamoutiShrineRuins_MapScriptHeader:
 
 	def_object_events
 	object_event  8, 11, SPRITE_LAWRENCE, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ShamoutiShrineRuinsLawrenceScript, EVENT_LAWRENCE_SHAMOUTI_SHRINE_RUINS
-	object_event 10, 17, SPRITE_GRAMPS, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, ShamoutiShrineRuinsGrampsText, -1
-	object_event 14, 13, SPRITE_LADY, SPRITEMOVEDATA_WALK_UP_DOWN, 2, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_COMMAND, jumptextfaceplayer, ShamoutiShrineRuinsLadyText, -1
+	object_event 10, 17, SPRITE_GRAMPS, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ShamoutiShrineKeeper, -1
+	object_event 14, 13, SPRITE_LADY, SPRITEMOVEDATA_WALK_UP_DOWN, 2, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, ShamoutiShrineMelody, -1
 	itemball_event  4, 27, RARE_CANDY, 1, EVENT_SHAMOUTI_SHRINE_RUINS_RARE_CANDY
 
 	object_const_def
 	const SHAMOUTISHRINERUINS_LAWRENCE
 
+ShamoutiShrineLawrenceCallback:
+	checkevent EVENT_BEAT_LAWRENCE
+	iftruefwd .Hide
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalsefwd .Done
+	appear SHAMOUTISHRINERUINS_LAWRENCE
+.Done:
+	endcallback
+.Hide:
+	disappear SHAMOUTISHRINERUINS_LAWRENCE
+	endcallback
+
 ShamoutiShrineRuinsLawrenceScript:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalsefwd .Battle
+	scall ShamoutiCheckBeacons
+	iffalse_jumptextfaceplayer .Waiting
+.Battle:
 	special Special_FadeOutMusic
 	pause 15
 	playmusic MUSIC_ZINNIA_ENCOUNTER_ORAS
@@ -37,9 +55,7 @@ ShamoutiShrineRuinsLawrenceScript:
 	opentext
 	writetext .AfterText
 	promptbutton
-	verbosegivekeyitem SILVER_WING
-	writetext .SilverWingText
-	waitbutton
+	scall ShamoutiGiveSilverWing
 	closetext
 	readvar VAR_FACING
 	ifequalfwd UP, .up
@@ -67,7 +83,17 @@ ShamoutiShrineRuinsLawrenceScript:
 	special Special_FadeInQuickly
 	setevent EVENT_BEAT_LAWRENCE
 	playmapmusic
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iftrue ShamoutiRestoreBeacons
 	end
+
+.Waiting:
+	text "Lawrence: The sea"
+	line "won't answer."
+	para "Help the keeper"
+	line "light the towers."
+	cont "Then talk to me."
+	done
 
 .SeenText:
 	text "Lawrence: I sought"
@@ -96,59 +122,180 @@ ShamoutiShrineRuinsLawrenceScript:
 	done
 
 .AfterText:
-	text "Lawrence: Your"
-	line "#mon aren't"
-
-	para "just a collection"
-	line "to you, are they?"
-
-	para "You treat them"
-	line "almost like"
-	cont "friends."
-
-	para "Could that be how"
-	line "you defeated my"
-	cont "legendary #mon?"
-
-	para "Well, I think you"
-	line "earned this."
-	done
-
-.SilverWingText:
-	text "That Silver Wing"
-	line "feather comes from"
-
-	para "the guardian of"
-	line "the sea."
-
-	para "The scent should"
-	line "attract it, but"
-
-	para "only if you've"
-	line "mastered the three"
-
-	para "winged mirages--"
-	line "the birds of fire,"
-
-	para "ice, and light-"
-	line "ning."
-
-	para "Or so the legends"
-	line "say."
+	text "Lawrence: I rang"
+	line "each beacon alone"
+	cont "to lure each bird."
+	para "Ships lost their"
+	line "way. I blamed the"
+	cont "storm until now."
+	para "Your team listened"
+	line "even when it could"
+	cont "have walked away."
+	para "I can't collect"
+	line "that, can I?"
 	done
 
 .GoodbyeText:
-	text "My dream was to"
-	line "own that #mon,"
+	text "I'm going to the"
+	line "harbor. I owe a"
+	cont "few people there"
+	cont "an explanation."
+	done
 
-	para "but you've proven"
-	line "yourself worthy."
-	cont "Take it."
+ShamoutiGiveSilverWing:
+	checkkeyitem SILVER_WING
+	iftrue DoNothingScript
+	verbosegivekeyitem SILVER_WING
+	writetext .WingText
+	promptbutton
+	end
 
-	para "I'll begin my"
-	line "collection anew."
+.WingText:
+	text "That's a feather"
+	line "from the guardian."
+	para "Bring it to the"
+	line "Whirl Islands if"
+	cont "you wish to meet."
+	done
 
-	para "Farewell."
+ShamoutiShrineKeeper:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumptextfaceplayer ShamoutiShrineRuinsGrampsText
+	faceplayer
+	checkevent EVENT_RESTORED_SHAMOUTI_BEACONS
+	iftrue_jumptext .Calm
+	checkevent EVENT_HEARD_SHAMOUTI_BEACONS
+	iftruefwd .Check
+	setevent EVENT_HEARD_SHAMOUTI_BEACONS
+	callasm SetCurrentWeather
+	jumptext .Start
+.Check:
+	scall ShamoutiCheckBeacons
+	iffalse_jumptext .Pending
+	checkevent EVENT_BEAT_LAWRENCE
+	iftrue ShamoutiRestoreBeacons
+	jumptext .Lawrence
+
+.Start:
+	text "The old ferry"
+	line "lights went dark."
+	para "Melody says all"
+	line "three must shine"
+	cont "to calm this sea."
+	para "Surf along the"
+	line "coast. On each"
+	cont "peak is a tower."
+	para "Fire, Ice and"
+	line "Lightning. Start"
+	cont "with any of them."
+	done
+.Pending:
+	text "I can see some of"
+	line "the colors. The"
+	cont "rest are dark."
+	para "Your map shows"
+	line "which towers need"
+	cont "a visit."
+	done
+.Lawrence:
+	text "All three lights!"
+	line "Lawrence is by"
+	cont "the upper steps."
+	para "Ask him why he"
+	line "put them out."
+	done
+.Calm:
+	text "The first ferry"
+	line "back sounded its"
+	cont "horn all the way."
+	done
+
+ShamoutiShrineMelody:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumptextfaceplayer ShamoutiShrineRuinsLadyText
+	checkevent EVENT_RESTORED_SHAMOUTI_BEACONS
+	iftrue_jumptextfaceplayer .After
+	jumpthistextfaceplayer
+
+	text "I'm Melody. See"
+	line "the three marks"
+	cont "on the old shrine?"
+	para "Three lights make"
+	line "one channel. Out"
+	cont "there, that means"
+	cont "the way home."
+	para "The guardian only"
+	line "hears our song if"
+	cont "the lights meet."
+	para "Ask the keeper"
+	line "where to look."
+	done
+.After:
+	text "Melody: That's the"
+	line "first song I ever"
+	cont "finished without"
+	cont "losing my breath."
+	done
+
+ShamoutiCheckBeacons:
+	checkevent EVENT_TUNED_FIRE_BEACON
+	iffalse DoNothingScript
+	checkevent EVENT_TUNED_ICE_BEACON
+	iffalse DoNothingScript
+	checkevent EVENT_TUNED_LIGHTNING_BEACON
+	end
+
+ShamoutiBeaconHandoff:
+	scall ShamoutiCheckBeacons
+	iftrue_jumptext .Return
+	end
+
+.Return:
+	text "All three beams"
+	line "meet over the sea."
+	para "Return to the"
+	line "Shamouti shrine."
+	done
+
+ShamoutiSilentBeaconText:
+	text "An unlit beacon."
+	para "Three symbols are"
+	line "cut into its base."
+	done
+
+ShamoutiTunedBeaconText:
+	text "The beacon sends"
+	line "a steady beam over"
+	cont "the water."
+	done
+
+ShamoutiRestoreBeacons:
+	setevent EVENT_RESTORED_SHAMOUTI_BEACONS
+	callasm SetCurrentWeather
+	playmusic MUSIC_LUGIAS_SONG_2000
+	showtext .Song
+	cry LUGIA
+	waitsfx
+	showtext .Calm
+	opentext
+	scall ShamoutiGiveSilverWing
+	closetext
+	playmapmusic
+	end
+
+.Song:
+	text "Melody's song"
+	line "carries out where"
+	cont "the lights meet."
+	para "Something huge"
+	line "passes underneath."
+	done
+.Calm:
+	text "The waves settle."
+	para "A ferry sounds its"
+	line "horn beyond the"
+	cont "reef, then turns"
+	cont "toward the lights."
 	done
 
 ShamoutiShrineRuinsGrampsText:

@@ -15,7 +15,8 @@ def main(path):
     goal_names = re.findall(r'^\s*map_goal (\w+),', (root / 'data/events/quest_map_goals.asm').read_text(), re.M)
     k = rgbasm_values(flags | {'POKEGEAR_MAP_CARD_F', 'POKEGEAR_OBTAINED_F', 'SPAWN_GOLDENROD',
                                 'SPAWN_OLIVINE', 'SPROUT_TOWER', 'DARK_CAVE', 'RUINS_OF_ALPH',
-                                'OLIVINE_CITY', 'CERULEAN_CAVE', 'WARM_BEACH','SHAMOUTI_ISLAND',
+                                'OLIVINE_CITY', 'CERULEAN_CAVE', 'CINNABAR_ISLAND', 'WARM_BEACH',
+                                'SHAMOUTI_ISLAND', 'SHRINE_RUINS', 'ICE_ISLAND', 'LIGHTNING_ISLAND',
                                 'ROUTE_31','ROUTE_39','CERULEAN_CITY','VERMILION_CITY','NEW_BARK_TOWN',
                                 'SPAWN_AZALEA','SPAWN_VIOLET','GROUP_VIOLET_POKECENTER_1F','MAP_VIOLET_POKECENTER_1F'}, None)
     def bit(var, n, on=True):
@@ -120,20 +121,37 @@ def main(path):
         bit('wVisitedSpawns', k['SPAWN_OLIVINE'])
         late = g.state()
         leads = open_map()
-        assert set(leads) == set('Alph Mask Echo Cup Cissy Danny Rudy Luana Deliver Berries Copycat'.split()), leads
+        assert set(leads) == set('Alph Mask CloneReport Cup Cissy Danny Rudy Luana Deliver Berries Copycat'.split()), leads
         pin('RUINS_OF_ALPH', 0xec)
         pin('OLIVINE_CITY', 0x9f)
         pin('ROUTE_31', 0x9f)
         pin('ROUTE_39', 0x9f)
         browse()
-        select(leads, 'Echo')
+        select(leads, 'CloneReport')
         assert g.rd('wQuestMapRegion') == 1
-        pin('CERULEAN_CAVE', 0xec)
+        pin('CINNABAR_ISLAND', 0xec)
         select(leads, 'Cissy')
         assert g.rd('wQuestMapRegion') == 2
         pin('WARM_BEACH', 0xec)
         g.press('b', 55)
         pin('RUINS_OF_ALPH', 0xec)
+        g.load(late)
+        event('GOT_ORANGE_TICKET')
+        event('READ_CINNABAR_CLONE_REPORT')
+        leads = open_map()
+        assert 'ShoreKeeper' in leads and 'Echo' in leads and 'CloneReport' not in leads, leads
+        browse()
+        select(leads, 'ShoreKeeper')
+        pin('SHRINE_RUINS', 0xec)
+        g.load(late)
+        event('HEARD_SHAMOUTI_BEACONS')
+        event('TUNED_FIRE_BEACON')
+        leads = open_map()
+        assert {'IceBeacon', 'LightningBeacon'} <= set(leads) and 'FireBeacon' not in leads, leads
+        browse()
+        select(leads, 'IceBeacon')
+        pin('ICE_ISLAND', 0xec)
+        pin('LIGHTNING_ISLAND', 0x9f)
         g.load(late)
         event('BEAT_MOLLY')
         event('BEAT_ORANGE_CREW_CISSY')

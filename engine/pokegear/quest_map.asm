@@ -288,7 +288,16 @@ QuestMapPostRedLeads:
 .forest
 	call AddQuestMapLead
 .cave
-	map_pending_event EVENT_BEAT_MEWTWO_CLONES, Echo
+	eventflagcheck EVENT_BEAT_MEWTWO_CLONES
+	jr nz, .islands
+	eventflagcheck EVENT_READ_CINNABAR_CLONE_REPORT
+	ld a, QMAP_CloneReport
+	jr z, .clone_lead
+	ld a, QMAP_Echo
+.clone_lead
+	call AddQuestMapLead
+.islands
+	call QuestMapShamoutiLeads
 	map_pending_event EVENT_WON_WHIRL_CUP, Cup
 	eventflagcheck EVENT_BEAT_DRAKE
 	ret nz ; the book already includes Pallet when all the stories are finished
@@ -306,6 +315,31 @@ QuestMapPostRedLeads:
 	ret z
 	ld a, QMAP_Drake
 	jmp AddQuestMapLead
+
+QuestMapShamoutiLeads:
+	eventflagcheck EVENT_RESTORED_SHAMOUTI_BEACONS
+	jr nz, .guardian
+	eventflagcheck EVENT_HEARD_SHAMOUTI_BEACONS
+	jr nz, .beacons
+	eventflagcheck EVENT_GOT_ORANGE_TICKET
+	ret z
+	ld a, QMAP_ShoreKeeper
+	jmp AddQuestMapLead
+.beacons
+	map_pending_event EVENT_TUNED_FIRE_BEACON, FireBeacon
+	map_pending_event EVENT_TUNED_ICE_BEACON, IceBeacon
+	map_pending_event EVENT_TUNED_LIGHTNING_BEACON, LightningBeacon
+	eventflagcheck EVENT_TUNED_FIRE_BEACON
+	ret z
+	eventflagcheck EVENT_TUNED_ICE_BEACON
+	ret z
+	eventflagcheck EVENT_TUNED_LIGHTNING_BEACON
+	ret z
+	ld a, QMAP_ShoreReturn
+	jmp AddQuestMapLead
+.guardian
+	map_pending_event EVENT_FOUGHT_LUGIA, SeaGuardian
+	ret
 
 ; Return HL at the caption and E at its landmark. Until the Valencia ferry
 ; opens, Luana's actionable first stop is Ivy at Shamouti's Pokémon Center.

@@ -252,6 +252,9 @@ FieldBookRoute:
 	book_event EVENT_RESCUED_PROF_HALE, Hale
 	book_event EVENT_TIME_TRAVEL_FINISHED, Shrine
 	book_event EVENT_BEAT_IRON_MASK_MARAUDER, Mask
+	book_skip EVENT_BEAT_MEWTWO_CLONES, .Echo
+	book_event EVENT_READ_CINNABAR_CLONE_REPORT, CloneReport
+.Echo:
 	book_event EVENT_BEAT_MEWTWO_CLONES, Echo
 	book_skip EVENT_BEAT_DRAKE, .Drake
 	book_event EVENT_BEAT_ORANGE_CREW_CISSY, Cissy
@@ -266,6 +269,11 @@ FieldBookRoute:
 	dw 0 ; end of itinerary
 
 FieldBookSideQuests:
+	checkevent EVENT_HEARD_SHAMOUTI_BEACONS
+	iffalsefwd .Errands
+	checkevent EVENT_RESTORED_SHAMOUTI_BEACONS
+	iffalsefwd .Beacons
+.Errands:
 	; Favor an errand the player has already accepted.
 	checkevent EVENT_GAVE_KENYA
 	iftruefwd .KenyaReward
@@ -292,10 +300,31 @@ FieldBookSideQuests:
 	iffalse_jumpopenedtext FieldBookNotes.Berries
 .Gate:
 	checkflag ENGINE_FLYPOINT_GOLDENROD
-	iffalse_jumpopenedtext FieldBookNotes.Later
+	iffalsefwd .Shamouti
 	checkevent EVENT_GOT_HP_UP_FROM_RANDY
 	iffalse_jumpopenedtext FieldBookNotes.Kenya
+.Shamouti:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalsefwd .Early
+	checkevent EVENT_GOT_ORANGE_TICKET
+	iffalsefwd .Early
+	checkevent EVENT_RESTORED_SHAMOUTI_BEACONS
+	iffalse_jumpopenedtext FieldBookNotes.ShoreKeeper
+	checkevent EVENT_FOUGHT_LUGIA
+	iffalse_jumpopenedtext FieldBookNotes.SeaGuardian
 	jumpopenedtext FieldBookNotes.NoLeads
+.Early:
+	checkflag ENGINE_FLYPOINT_GOLDENROD
+	iffalse_jumpopenedtext FieldBookNotes.Later
+	jumpopenedtext FieldBookNotes.NoLeads
+.Beacons:
+	checkevent EVENT_TUNED_FIRE_BEACON
+	iffalse_jumpopenedtext FieldBookNotes.FireBeacon
+	checkevent EVENT_TUNED_ICE_BEACON
+	iffalse_jumpopenedtext FieldBookNotes.IceBeacon
+	checkevent EVENT_TUNED_LIGHTNING_BEACON
+	iffalse_jumpopenedtext FieldBookNotes.LightningBeacon
+	jumpopenedtext FieldBookNotes.ShoreReturn
 
 FieldBookNotes:
 
@@ -827,18 +856,12 @@ FieldBookNotes:
 
 .Shrine:
 	text "Ilex Forest"
-	para "Bring Celebi to"
-	line "the shrine west"
-	cont "of Azalea."
-	para "Need Celebi? Try"
-	line "Wonder Trade in"
-	cont "Goldenrod for the"
-	cont "GS Ball. Give it"
-	cont "to Kurt in Azalea."
-	para "Return to Kurt the"
-	line "next day. Use the"
-	cont "ball at the shrine"
-	cont "to meet Celebi."
+	para "Lyra left a note"
+	line "on a forest sign."
+	para "Check the shrine"
+	line "west of Azalea."
+	cont "Call back if you"
+	cont "hear a voice."
 	done
 
 .Mask:
@@ -850,6 +873,15 @@ FieldBookNotes:
 	cont "leave his side."
 	done
 
+.CloneReport:
+	text "Cinnabar Mansion"
+	para "Oak wants the old"
+	line "lab's flight log."
+	para "In the basement,"
+	line "look for the diary"
+	cont "west of the steps."
+	done
+
 .Echo:
 	text "A voice is calling"
 	line "from the depths"
@@ -857,6 +889,49 @@ FieldBookNotes:
 	para "Examine the place"
 	line "where Mewtwo stood"
 	cont "if it has gone."
+	done
+
+.ShoreKeeper:
+	text "Shamouti shrine"
+	para "Find the keeper"
+	line "past Noisy Forest."
+	cont "The coastal ferry"
+	cont "lights went out."
+	done
+.FireBeacon:
+	text "Fire Island"
+	para "Surf to the first"
+	line "island along the"
+	cont "Shamouti Coast."
+	para "Check the beacon"
+	line "at the summit."
+	done
+.IceBeacon:
+	text "Ice Island"
+	para "Surf to the middle"
+	line "island along the"
+	cont "Shamouti Coast."
+	para "Check the beacon"
+	line "at the summit."
+	done
+.LightningBeacon:
+	text "Lightning Island"
+	para "Surf to the far"
+	line "end of Shamouti"
+	cont "Coast. The beacon"
+	cont "is at the summit."
+	done
+.ShoreReturn:
+	text "Shamouti shrine"
+	para "All three are lit."
+	line "See Lawrence or"
+	cont "the shrine keeper."
+	done
+.SeaGuardian:
+	text "Whirl Islands"
+	para "The Silver Wing"
+	line "may draw Lugia out"
+	cont "in the deep cave."
 	done
 
 .Cup:
@@ -1283,6 +1358,12 @@ FieldBookRecap:
 	cont "shrine."
 	done
 
+.CloneReport:
+	text "You recovered the"
+	line "flight log from"
+	cont "Cinnabar Mansion."
+	done
+
 .Echo:
 	text "You faced copies"
 	line "of your own team"
@@ -1383,6 +1464,7 @@ GiveNextStoryLead:
 	dw FieldBookNotes.Hale, .Father
 	dw FieldBookNotes.Shrine, .Celebi
 	dw FieldBookNotes.Mask, .MaskedMan
+	dw FieldBookNotes.CloneReport, .Research
 	dw FieldBookNotes.Echo, .Mewtwo
 	dw FieldBookNotes.Cissy, .Cissy
 	dw FieldBookNotes.Danny, .Danny
@@ -1410,14 +1492,23 @@ GiveNextStoryLead:
 .Celebi:
 	text "Those marks match"
 	line "the shrine west of"
-	cont "Azalea. Take"
-	cont "Celebi there."
+	cont "Azalea. Someone"
+	cont "left a note there."
 	done
 .MaskedMan:
 	text "Someone stood just"
 	line "east of the Ilex"
 	cont "shrine. I remember"
 	cont "his iron mask."
+	done
+.Research:
+	text "Oak left a note."
+	para "Look in Cinnabar"
+	line "Mansion."
+	para "A diary in the"
+	line "basement may tell"
+	cont "us where Mewtwo"
+	cont "went when it fled."
 	done
 .Mewtwo:
 	text "Go to the depths"

@@ -1,4 +1,6 @@
 SetCurrentWeather::
+	call ShamoutiStoryStorm
+	jr c, .set_weather
 	farcall GetOvercastIndex
 	and a
 	jr z, .not_raining
@@ -123,3 +125,29 @@ SetCurrentWeather::
 	assert OW_WEATHER_NONE == 0
 	xor a
 	jmp .set_weather
+
+ShamoutiStoryStorm:
+	ld a, [wMapGroup]
+	cp GROUP_SHAMOUTI_COAST
+	jr z, .coast
+	cp GROUP_SHAMOUTI_SHRINE_RUINS
+	jr nz, .ordinary
+	ld a, [wMapNumber]
+	cp MAP_SHAMOUTI_SHRINE_RUINS
+	jr z, .check
+	jr .ordinary
+.coast
+	ld a, [wMapNumber]
+	cp MAP_SHAMOUTI_COAST
+	jr nz, .ordinary
+.check
+	eventflagcheck EVENT_HEARD_SHAMOUTI_BEACONS
+	jr z, .ordinary
+	eventflagcheck EVENT_RESTORED_SHAMOUTI_BEACONS
+	jr nz, .ordinary
+	ld a, OW_WEATHER_THUNDERSTORM
+	scf
+	ret
+.ordinary
+	and a
+	ret

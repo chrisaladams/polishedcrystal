@@ -405,6 +405,7 @@ TryLoadSaveFile:
 	call LoadPokemonData
 	farcall NormalizePartyMagikarp
 	call RestoreGameClock
+	call InitCampaignFlags
 
 	; If a mid-save was aborted but main save data is good, finish it.
 	call WasMidSaveAborted
@@ -424,6 +425,7 @@ TryLoadSaveFile:
 	call LoadBackupPokemonData
 	farcall NormalizePartyMagikarp
 	call RestoreGameClock
+	call InitCampaignFlags
 	farcall RestorePartyMonMail
 	call LoadStorageSystem
 	call SaveGameData
@@ -440,6 +442,20 @@ TryLoadSaveFile:
 	pop af
 	ld [wOptions1], a
 	scf
+	ret
+
+InitCampaignFlags:
+	; Some older saves used these bits to show Valerie's rotating books.
+	; Reset them once, then keep any progress that players make in the new stories.
+	eventflagcheck EVENT_CAMPAIGN_FLAGS_INITIALIZED
+	ret nz
+	eventflagreset EVENT_READ_CINNABAR_CLONE_REPORT
+	eventflagreset EVENT_HEARD_SHAMOUTI_BEACONS
+	eventflagreset EVENT_TUNED_FIRE_BEACON
+	eventflagreset EVENT_TUNED_ICE_BEACON
+	eventflagreset EVENT_TUNED_LIGHTNING_BEACON
+	eventflagreset EVENT_RESTORED_SHAMOUTI_BEACONS
+	eventflagset EVENT_CAMPAIGN_FLAGS_INITIALIZED
 	ret
 
 TryLoadSaveData:

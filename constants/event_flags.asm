@@ -2018,12 +2018,13 @@
 	const EVENT_FLORIA_AT_FLOWER_SHOP
 	const EVENT_FLORIA_AT_SUDOWOODO
 	const EVENT_GOLDENROD_CITY_MOVE_TUTOR
-	const_skip ; EVENT_RED_FAIRY_BOOK
-	const_skip ; EVENT_BLUE_FAIRY_BOOK
-	const_skip ; EVENT_GREEN_FAIRY_BOOK
-	const_skip ; EVENT_BROWN_FAIRY_BOOK
-	const_skip ; EVENT_VIOLET_FAIRY_BOOK
-	const_skip ; EVENT_PINK_FAIRY_BOOK
+	; Retired Valerie book flags. The save loader clears them once on upgrade.
+	const EVENT_READ_CINNABAR_CLONE_REPORT ; formerly EVENT_RED_FAIRY_BOOK
+	const EVENT_HEARD_SHAMOUTI_BEACONS ; formerly EVENT_BLUE_FAIRY_BOOK
+	const EVENT_TUNED_FIRE_BEACON ; formerly EVENT_GREEN_FAIRY_BOOK
+	const EVENT_TUNED_ICE_BEACON ; formerly EVENT_BROWN_FAIRY_BOOK
+	const EVENT_TUNED_LIGHTNING_BEACON ; formerly EVENT_VIOLET_FAIRY_BOOK
+	const EVENT_RESTORED_SHAMOUTI_BEACONS ; formerly EVENT_PINK_FAIRY_BOOK
 	const_skip ; EVENT_YELLOW_FAIRY_BOOK
 	const EVENT_ROUTE_48_JESSIE
 	const EVENT_ROUTE_48_JAMES
@@ -2479,7 +2480,10 @@
 ; set while the anime cameos stay hidden (until the Elite Four and Drake are
 ; beaten: their maps' callbacks keep it up to date)
 	const EVENT_ANIME_CAMEOS_HIDDEN
+
 	assert const_value <= $8ff, "Out of spare event flags"
 
 	const_next $8ff
-DEF NUM_EVENTS EQU const_value ; 2303
+	const EVENT_CAMPAIGN_FLAGS_INITIALIZED ; uses the last bit of the existing array
+DEF NUM_EVENTS EQU const_value ; 2304
+	assert (NUM_EVENTS + 7) / 8 == ($8ff + 7) / 8, "Event flags must keep their save size"

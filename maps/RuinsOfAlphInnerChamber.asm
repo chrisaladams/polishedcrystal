@@ -4,6 +4,7 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	scene_script RuinsOfAlphInnerChamberStrangePresenceScene, SCENE_RUINSOFALPHINNERCHAMBER_STRANGE_PRESENCE
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, HideAlphRescueActors
 
 	def_warp_events
 	warp_event 10, 13, RUINS_OF_ALPH_ENTRANCE_CHAMBER, 3
@@ -53,6 +54,18 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	object_event 14, 14, SPRITE_POKEFAN_F, SPRITEMOVEDATA_WANDER, 1, 1, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, RuinsOfAlphInnerChamberTeacherText, EVENT_RUINS_OF_ALPH_INNER_CHAMBER_TOURISTS
 	object_event 11, 19, SPRITE_GRAMPS, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, RuinsOfAlphInnerChamberGrampsText, EVENT_RUINS_OF_ALPH_INNER_CHAMBER_TOURISTS
 	object_event  7, 11, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_COMMAND, jumptextfaceplayer, RuinsOfAlphInnerChamberScientistText, EVENT_RUINS_OF_ALPH_INNER_CHAMBER_TOURISTS
+	object_event  4, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_STILL, 0, ENTEI, -1, PAL_MON_RED, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
+	object_event  6, 12, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+
+	object_const_def
+	const_skip 4
+	const ALPH_DREAM_ENTEI
+	const ALPH_PROF_HALE
+
+HideAlphRescueActors:
+	disappear ALPH_DREAM_ENTEI
+	disappear ALPH_PROF_HALE
+	endcallback
 
 RuinsOfAlphInnerChamberStrangePresenceScene:
 	sdefer .Script
@@ -122,9 +135,29 @@ HaleStatueScript:
 	iffalse_jumptext RuinsofAlphStatueText
 	checkevent EVENT_RESCUED_PROF_HALE
 	iftrue_jumptext .Empty
-	playsound SFX_EMBER
+	showtext .Knocks
+	playsound SFX_PROTECT
+	special Special_FadeBlackQuickly
+	; The alternate statue and floor blocks have identical collisions.
+	changeblock 4, 12, $0f
+	changeblock 6, 12, $2b
+	refreshmap
+	appear ALPH_DREAM_ENTEI
+	special Special_ReloadSpritesNoPalettes
+	special Special_FadeInQuickly
+	cry ENTEI
 	earthquake 12
+	showtext .Illusion
+	special Special_FadeBlackQuickly
+	disappear ALPH_DREAM_ENTEI
+	changeblock 4, 12, $18
+	changeblock 6, 12, $0d
+	refreshmap
+	appear ALPH_PROF_HALE
+	special Special_ReloadSpritesNoPalettes
+	special Special_FadeInQuickly
 	showtext .Rescue
+	disappear ALPH_PROF_HALE
 	setevent EVENT_RESCUED_PROF_HALE
 	opentext
 	writetext .Note
@@ -132,17 +165,29 @@ HaleStatueScript:
 	farscall GiveNextStoryLead
 	endtext
 
-.Rescue:
+.Knocks:
 	text "Three knocks come"
 	line "from the stone."
 	para "You knock back."
-	line "A seam opens and"
-	cont "you take his hand."
-	para "Hale: The Unown"
-	line "kept spelling my"
-	cont "daughter's name."
-	para "You heard me! I"
-	line "can go home now."
+	done
+
+.Illusion:
+	text "Entei's shadow"
+	line "breaks into rows"
+	cont "of tiny letters."
+	para "Behind them, a man"
+	line "knocks on stone."
+	done
+
+.Rescue:
+	text "Hale: Molly used"
+	line "to knock like that"
+	cont "on my study door."
+	para "I was calling her."
+	line "The Unown must've"
+	cont "heard us both."
+	para "Let's tell her I'm"
+	line "coming home."
 	done
 
 .Note:

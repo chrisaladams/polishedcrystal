@@ -18,7 +18,7 @@ IlexForest_MapScriptHeader:
 
 	def_bg_events
 	bg_event 11, 25, BGEVENT_READ, IlexForestMarauderPrizeScript
-	bg_event  5, 19, BGEVENT_JUMPTEXT, IlexForestSignpost
+	bg_event  5, 19, BGEVENT_READ, IlexForestTrailSign
 	bg_event 17, 33, BGEVENT_JUMPTEXT, IlexForestTrainerTips
 	bg_event 13,  9, BGEVENT_ITEM + ETHER, EVENT_ILEX_FOREST_HIDDEN_ETHER
 	bg_event 24, 16, BGEVENT_ITEM + SUPER_POTION, EVENT_ILEX_FOREST_HIDDEN_SUPER_POTION
@@ -478,8 +478,28 @@ IlexForestShrineScript:
 	iftruefwd .DontDoGiovanniEvent
 	checkpoke CELEBI
 	iftruefwd .StartGiovanniEvent
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iftruefwd .ForestDisturbance
 .DontDoGiovanniEvent
 	jumptext Text_IlexForestShrine
+
+.ForestDisturbance:
+	opentext
+	writetext .TrailText
+	yesorno
+	iffalse_endtext
+	closetext
+	sjumpfwd .StartGiovanniEvent
+
+.TrailText:
+	text "Tracks run up to"
+	line "the shrine, then"
+	cont "repeat in reverse."
+	para "A traveler calls"
+	line "for help from the"
+	cont "other side."
+	para "Call back?"
+	done
 
 .AskCelebiEvent:
 	opentext
@@ -1011,6 +1031,21 @@ Text_IlexForestMossRock:
 	line "ly cool."
 	done
 
+IlexForestTrailSign:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumptext IlexForestSignpost
+	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
+	iftrue_jumptext IlexForestSignpost
+	jumpthistext
+
+	text "Fresh scratches:"
+	line "The same footsteps"
+	cont "keep passing me."
+	para "If you're here"
+	line "today, meet me at"
+	cont "the shrine. -Lyra"
+	done
+
 IlexForestSignpost:
 	text "Ilex Forest is"
 	line "so overgrown with"
@@ -1210,6 +1245,8 @@ endc
 IlexForestIronMaskScript:
 ; Link Edition: Celebi: Voice of the Forest
 	faceplayer
+	playsound SFX_PROTECT
+	earthquake 10
 	showtext .IntroText
 	winlosstext .BeatenText, 0
 	loadtrainer IRON_MASK_T, 1
@@ -1224,6 +1261,7 @@ IlexForestIronMaskScript:
 	special FadeInPalettes_EnableDynNoApply
 	waitsfx
 	cry CELEBI
+	showtext .ForestCalm
 	checkevent EVENT_RESCUED_PROF_HALE
 	iffalsefwd .AnotherLead
 	checkevent EVENT_BEAT_MEWTWO_CLONES
@@ -1243,8 +1281,9 @@ IlexForestIronMaskScript:
 	para "Across the water,"
 	line "another you looks"
 	cont "back."
-	para "A voice whispers:"
-	line "“Cerulean.”"
+	para "The reflection"
+	line "changes to a diary"
+	cont "marked Cinnabar."
 	done
 
 .IntroText:
@@ -1259,13 +1298,14 @@ IlexForestIronMaskScript:
 	cont "travels through"
 	cont "time: Celebi!"
 
-	para "With my Dark Ball,"
-	line "any #mon turns"
-	cont "evil and obeys"
-	cont "only me!"
-
-	para "And you're in my"
-	line "way, kid!"
+	para "My ball makes the"
+	line "forest's #mon"
+	cont "obey me. Watch"
+	cont "their eyes."
+	para "With Celebi I can"
+	line "go back and win"
+	cont "every fight I ever"
+	cont "lost. Start here."
 	done
 
 .BeatenText:
@@ -1274,9 +1314,17 @@ IlexForestIronMaskScript:
 	done
 
 .AfterText:
-	text "Curses! I'll be"
-	line "back for Celebi"
-	cont "one day!"
+	text "The ball cracked?"
+	line "No. Stay with me!"
+	done
+
+.ForestCalm:
+	text "One by one, the"
+	line "#mon step back"
+	cont "into the trees."
+	para "A bird calls once."
+	line "This time its song"
+	cont "doesn't repeat."
 	done
 
 .ForestText:

@@ -56,6 +56,7 @@ def main():
                        'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_GOT_MYSTICTICKET_FROM_RED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
                        'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE',
                        'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_BEAT_MEWTWO_CLONES',
+                       'EVENT_READ_CINNABAR_CLONE_REPORT',
                        'PLAYER_CAUGHT_MEWTWO_F', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING',
                        'EVENT_RESCUED_PROF_HALE', 'GROUP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAX_ITEMS', 'MAX_ITEM_STACK',
                        'MON_SPECIES', 'MON_ITEM', 'MON_MOVES', 'MON_LEVEL', 'MON_FORM', 'MON_IS_EGG_F',
@@ -98,7 +99,8 @@ def main():
     flag('EVENT_GOT_MYSTICTICKET_FROM_RED', False)
     flag('EVENT_TIME_TRAVEL_FINISHED', False)
     for f in ('EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_CERULEAN_CAVE_MEWTWO',
-              'EVENT_BEAT_MEWTWO_CLONES', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING'):
+              'EVENT_BEAT_MEWTWO_CLONES', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING',
+              'EVENT_READ_CINNABAR_CLONE_REPORT'):
         flag(f, False)
     base = g.state()
 
@@ -308,9 +310,16 @@ def main():
     elif g.rd('wBattleMode') != K['WILD_BATTLE']:
         fails.append(('Mewtwo', 'a clone battle before Red'))
 
+    # The living encounter also points to Cinnabar until the diary is read.
+    g.load(base)
+    flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
+    if visit(mewtwo) and until_battle(mewtwo[4], presses=12):
+        fails.append(('Mewtwo', 'started a battle before the Cinnabar diary'))
+
     # Mewtwo and its clones (of your team, hurt and poisoned first)
     g.load(base)
     flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
+    flag('EVENT_READ_CINNABAR_CLONE_REPORT', True)
     g.wr('wPartyMon1HP', 0)
     g.wr('wPartyMon1HP', 1, 1)
     g.wr('wPartyMon1Status', 1 << 3)
@@ -350,6 +359,7 @@ def main():
         flag('EVENT_CERULEAN_CAVE_MEWTWO', True)
         g.wr('wPlayerCaught2', g.rd('wPlayerCaught2') | (1 << K['PLAYER_CAUGHT_MEWTWO_F']))
         flag('EVENT_GOT_MYSTICTICKET_FROM_RED', after_red)
+        flag('EVENT_READ_CINNABAR_CLONE_REPORT', True)
         if visit(mewtwo):
             fails.append(('echo', 'Mewtwo reappeared after being removed'))
         echo_ready = g.state()

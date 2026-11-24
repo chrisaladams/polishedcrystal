@@ -47,6 +47,10 @@ ADDED = (
 STORY_STOPS = (
     ('OaksLab', 2, 2, 'field book'), ('RuinsOfAlphInnerChamber', 5, 14, 'Hale statue'),
     ('OaksLab', 5, 1, 'championship sketch'),
+    ('PokemonMansionB1F', 18, 21, 'Cinnabar flight log'),
+    ('ShamoutiShrineRuins', 10, 18, 'shrine keeper'), ('ShamoutiShrineRuins', 8, 12, 'Lawrence'),
+    ('FireIslandRoof', 5, 4, 'Fire beacon'), ('IceIslandRoof', 5, 4, 'Ice beacon'),
+    ('LightningIslandRoof', 5, 4, 'Lightning beacon'),
 )
 # flags that make them all appear
 SHOW = ('EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_GOT_MYSTICTICKET_FROM_RED')

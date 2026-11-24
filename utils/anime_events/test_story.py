@@ -16,12 +16,13 @@ from test_wild_mons import Game, rgbasm_values
 
 
 def main(save):
-    maps = {'SILVER_CAVE_ROOM_3', 'OAKS_LAB', 'RUINS_OF_ALPH_INNER_CHAMBER',
+    maps = {'SILVER_CAVE_ROOM_3', 'OAKS_LAB', 'RUINS_OF_ALPH_INNER_CHAMBER', 'POKEMON_MANSION_B1F',
             'OLIVINE_PORT', 'PALLET_TOWN', *(entry[1] for entry in LEADERS + (DRAKE,)),
             *(entry[1] for entry in EVENTS)}
     flags = ['EVENT_GOT_MYSTICTICKET_FROM_RED', 'EVENT_BEAT_RED', 'EVENT_BEAT_DRAKE',
              'EVENT_GOT_ORANGE_LEAGUE_PRIZE', 'EVENT_BEAT_MOLLY', 'EVENT_RESCUED_PROF_HALE',
-             'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_BEAT_MEWTWO_CLONES', 'EVENT_WON_WHIRL_CUP',
+             'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_READ_CINNABAR_CLONE_REPORT',
+             'EVENT_BEAT_MEWTWO_CLONES', 'EVENT_WON_WHIRL_CUP',
              'EVENT_WON_PALLET_INVITATIONAL', 'EVENT_MOLLY_PATCH_PENDING', 'EVENT_WHIRL_CUP_PRIZE_PENDING',
              'EVENT_MARAUDER_REWARD_PENDING', *(entry[6] for entry in LEADERS)]
     names = flags + [prefix + m for m in maps for prefix in ('GROUP_', 'MAP_')]
@@ -171,12 +172,15 @@ def main(save):
         flag('EVENT_TIME_TRAVEL_FINISHED', False)
         book('Shrine', 'Hale', 'Mask')
         flag('EVENT_TIME_TRAVEL_FINISHED', True)
-        book('Mask', 'Shrine', 'Echo')
+        book('Mask', 'Shrine', 'CloneReport')
         visit(mask[1], *mask[3], mask[4])
         battle(mask[5])
         settle()
         assert g.sym['IlexForestIronMaskScript.Vision'] in texts
-        book('Echo', 'Mask', 'Cissy')
+        book('CloneReport', 'Mask', 'Echo')
+        read('POKEMON_MANSION_B1F', 18, 21, 'down', 'PokemonMansionDiary.Report')
+        assert flag('EVENT_READ_CINNABAR_CLONE_REPORT') and g.sym['GiveNextStoryLead.Mewtwo'] in texts
+        book('Echo', 'CloneReport', 'Cissy')
         # Resume from cartridge save data with no emulator state or menu history.
         g.manual_save()
         continued = g.sram() + save_data[0x8000:]
@@ -185,7 +189,8 @@ def main(save):
         g.boot()
         settle()
         g.pb.hook_register(*g.sym['MapTextbox'], record_text, None)
-        menu_book('FieldBookNotes.Echo', recap=('Mask', 'Cissy'))
+        assert flag('EVENT_READ_CINNABAR_CLONE_REPORT')
+        menu_book('FieldBookNotes.Echo', recap=('CloneReport', 'Cissy'))
         print('Continued a cartridge save and recovered all three catch-up pages.')
         visit(echo[1], *echo[3], echo[4])
         battle(echo[5])

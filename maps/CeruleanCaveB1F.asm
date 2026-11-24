@@ -33,6 +33,8 @@ CeruleanCaveMewtwo:
 	iffalsefwd .NoClones
 	checkevent EVENT_BEAT_MEWTWO_CLONES
 	iftruefwd .NoClones
+	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
+	iffalse_jumpopenedtext MewtwoResearchHint
 	closetext
 	scall CeruleanCaveCloneBattle
 	showtext .ChallengeText
@@ -70,6 +72,8 @@ CeruleanCavePsychicEcho:
 	iffalsefwd .Quiet
 	checkevent EVENT_BEAT_MEWTWO_CLONES
 	iftruefwd .Quiet
+	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
+	iffalse_jumptext MewtwoResearchHint
 	opentext
 	writetext .EchoText
 	yesorno
@@ -116,19 +120,18 @@ CeruleanCaveCloneBattle:
 	text "A voice echoes"
 	line "in your mind…"
 
-	para "I am Mewtwo."
-	line "Humans made me,"
-	cont "a copy of Mew."
-
-	para "Are copies weaker"
-	line "than those they"
-	cont "were copied from?"
-
-	para "I have cloned"
-	line "your own #mon."
-
-	para "Now, let them"
-	line "face each other!"
+	para "The log says I"
+	line "refused an order."
+	cont "It leaves out why."
+	para "She brought me"
+	line "food. They wanted"
+	cont "me to hurt her."
+	para "I copied your team"
+	line "in the pool. Look."
+	para "They have the same"
+	line "strength. I want"
+	cont "to see what your"
+	cont "friends choose."
 	done
 
 .ClonesBeatenText:
@@ -137,13 +140,23 @@ CeruleanCaveCloneBattle:
 	done
 
 .ClonesAfterText:
-	text "…How one is born"
-	line "does not matter."
+	text "You called them"
+	line "back when they"
+	cont "were hurt."
+	para "No one called me"
+	line "back that way."
+	para "The copies can go."
+	line "They heard me say"
+	cont "it this time."
+	done
 
-	para "What matters is"
-	line "what one does"
-	cont "with one's life."
-
+MewtwoResearchHint:
+	text "A locked door and"
+	line "a lab diary flash"
+	cont "through your mind."
+	para "The diary is in"
+	line "the basement of"
+	cont "Cinnabar Mansion."
 	done
 
 MewtwoText:

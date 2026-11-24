@@ -9,7 +9,33 @@ LightningIslandRoof_MapScriptHeader:
 	def_coord_events
 
 	def_bg_events
+	bg_event  5,  3, BGEVENT_READ, LightningIslandBeacon
 
 	def_object_events
 
 	object_const_def
+
+LightningIslandBeacon:
+	checkevent EVENT_HEARD_SHAMOUTI_BEACONS
+	iffalsefwd .Silent
+	checkevent EVENT_TUNED_LIGHTNING_BEACON
+	iftruefwd .Tuned
+	setevent EVENT_TUNED_LIGHTNING_BEACON
+	cry ZAPDOS
+	showtext .Heard
+	farsjump ShamoutiBeaconHandoff
+.Silent:
+	farjumptext ShamoutiSilentBeaconText
+.Tuned:
+	farjumptext ShamoutiTunedBeaconText
+
+.Heard:
+	text "A loose wire taps"
+	line "against the tower."
+	para "You fasten it. The"
+	line "beacon steadies to"
+	cont "a yellow beam."
+	para "The answer sounds"
+	line "like Zapdos. It"
+	cont "comes from Kanto."
+	done

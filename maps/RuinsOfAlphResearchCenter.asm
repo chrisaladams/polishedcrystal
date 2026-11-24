@@ -13,7 +13,7 @@ RuinsOfAlphResearchCenter_MapScriptHeader:
 	def_coord_events
 
 	def_bg_events
-	bg_event  8,  5, BGEVENT_JUMPTEXT, RuinsOfAlphResearchCenterAcademicBooksText
+	bg_event  8,  5, BGEVENT_READ, RuinsOfAlphResearchCenterHaleNotes
 	bg_event  5,  4, BGEVENT_READ, MapRuinsofAlphResearchCenterSignpost1Script
 	bg_event  9,  1, BGEVENT_JUMPTEXT, RuinsOfAlphResearchCenterPrinterText_DoesntWork
 	bg_event  7,  0, BGEVENT_JUMPTEXT, RuinsOfAlphResearchCenterProfSilktreePhotoText
@@ -575,6 +575,11 @@ RuinsOfAlphResearchCenterMollyScript:
 	cry ENTEI
 	waitbutton
 	closetext
+	checkevent EVENT_BEAT_MOLLY
+	iftruefwd .StartBattle
+	playsound SFX_PROTECT
+	earthquake 12
+.StartBattle:
 	winlosstext .BeatenText, 0
 	loadtrainer LASS, MOLLY_HALE
 	startbattle
@@ -601,13 +606,14 @@ RuinsOfAlphResearchCenterMollyScript:
 
 	para "…and he never"
 	line "came back."
-
-	para "But the Unown"
-	line "heard my wishes."
-
-	para "They made me new"
-	line "friends, and a"
-	cont "new Papa: Entei!"
+	para "His notebook said"
+	line "the Unown listen"
+	cont "when you dream."
+	para "I asked for him."
+	line "They sent Entei."
+	para "He says I can stay"
+	line "in the dream."
+	cont "Everyone stays."
 
 	para "Will you play"
 	line "with us?"
@@ -677,4 +683,18 @@ RuinsOfAlphResearchCenterMollyScript:
 	line "by the ladder, try"
 	cont "the nearer statue"
 	cont "on its left!"
+	done
+
+RuinsOfAlphResearchCenterHaleNotes:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumptext RuinsOfAlphResearchCenterAcademicBooksText
+	jumpthistext
+
+	text "Hale's field notes"
+	para "The letters gather"
+	line "around sounds: my"
+	cont "pen, my footsteps."
+	para "They copied three"
+	line "knocks today. Only"
+	cont "Molly knows those."
 	done

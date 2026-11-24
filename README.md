@@ -209,8 +209,15 @@ through Johto, Kanto and Mt. Silver. The book checks the badges you hold
 and the quests you have completed. **Catch me up** recalls a milestone you
 have reached, shows your current destination, then previews the next
 unfinished step. It works when continuing an existing save. **Side quests**
-offers leads for Kenya's mail, Moomoo Farm and Copycat's doll as they become
-available. The book on the table in Prof. Oak's lab opens the same guide.
+offers leads for Kenya's mail, Moomoo Farm, Copycat's doll, and the Shamouti
+beacons as they become available. The book on the table in Prof. Oak's lab
+opens the same guide.
+
+After Red, Molly's search at the Ruins of Alph leads into the disturbance
+at Ilex Shrine. Oak's investigation takes you to the old Cinnabar Mansion
+and then to Cerulean Cave. At Shamouti, the shrine keeper needs your help
+relighting three island beacons. Visit them in any order and use the map
+to see which still need attention.
 
 The **Pokégear Map Card** and wall maps also show quest destinations. **★**
 marks the Field Book's next stop and **!** marks other available leads in
