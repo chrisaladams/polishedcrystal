@@ -322,7 +322,11 @@ Three events from the first movies, each a battle where the story happened:
   Sneasel, Scizor, Tyranitar and his Dark Ball Celebi (levels 70–76). Beat
   him once to drive him off for good and find a Big Nugget. If the Items
   pocket is full, make room and examine where he stood to collect it later;
-  he stays defeated and the unclaimed reward survives saving.
+  he stays defeated and the unclaimed reward survives saving. Once he's gone,
+  the hurt Celebi heals at the shrine, and the traveler who kept calling from
+  the other side steps out: Sammy, a boy from decades ago, who goes home with
+  it. The Field Book then points to Pallet Town, where Prof. Oak reveals he
+  was Sammy and gives you a Master Ball.
 
 `python3 utils/anime_events/test_movie_events.py SAVE.sav` checks them in the
 emulator.

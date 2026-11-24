@@ -43,6 +43,21 @@ OaksLab_MapScriptHeader:
 Oak:
 	faceplayer
 	opentext
+	; Link Edition: Celebi: Voice of the Forest
+	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
+	iffalsefwd .NotSammy
+	checkevent EVENT_OAK_WAS_SAMMY
+	iftruefwd .NotSammy
+	writetext OakWasSammyText
+	promptbutton
+	verbosegiveitem MASTER_BALL, iffalse_endtext
+	setevent EVENT_OAK_WAS_SAMMY
+	writetext OakWasSammyThanksText
+	waitbutton
+	closetext
+	end
+
+.NotSammy:
 	checkevent EVENT_OPENED_MT_SILVER
 	iftruefwd .GiveStarter
 	checkevent EVENT_TALKED_TO_OAK_IN_KANTO
@@ -645,3 +660,43 @@ CameoTraceyScript:
 
 OaksLabBookOnTable:
 	farsjump ReadFieldBook
+
+OakWasSammyText:
+; Link Edition: Celebi: Voice of the Forest
+	text "Oak: <PLAYER>,"
+	line "you look like"
+	cont "you've seen a"
+	cont "ghost!"
+
+	para "…A boy called"
+	line "Sammy, with a"
+	cont "Celebi, in Ilex"
+	cont "Forest?"
+
+	para "Ha! So it was you!"
+
+	para "When I was a boy,"
+	line "everyone called me"
+	cont "Sammy."
+
+	para "A Celebi took me"
+	line "decades into the"
+	cont "future, and a"
+	cont "young trainer"
+	cont "saved it."
+
+	para "I've wondered who"
+	line "that was all my"
+	cont "life! Here, with"
+	cont "my thanks!"
+	done
+
+OakWasSammyThanksText:
+	text "That day is why I"
+	line "became a #mon"
+	cont "researcher."
+
+	para "Thank you,"
+	line "<PLAYER>!"
+	done
+

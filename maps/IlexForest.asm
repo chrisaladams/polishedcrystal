@@ -39,6 +39,7 @@ IlexForest_MapScriptHeader:
 	object_event  9, 25, SPRITE_LYRA, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, IlexForestLyraScript, EVENT_ILEX_FOREST_LYRA
 	object_event  9, 30, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestCharcoalApprenticeScript, EVENT_ILEX_FOREST_APPRENTICE
 	object_event 11, 25, SPRITE_BURGLAR, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IlexForestIronMaskScript, EVENT_POST_RED_PERSON_HIDDEN
+	object_event 11, 25, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_ILEX_FOREST_SAMMY
 	object_event 17, 16, SPRITE_ROCKER, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, IlexForestHeadbuttGuyScript, -1
 	object_event 14,  3, SPRITE_BUG_CATCHER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_GENERICTRAINER, 0, GenericTrainerBugCatcherWayne, -1
 	object_event  4, 16, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_SPINRANDOM_SLOW, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, IlexForestHoneyBoyText, EVENT_ROUTE_34_ILEX_FOREST_GATE_LASS
@@ -57,6 +58,7 @@ IlexForest_MapScriptHeader:
 	const ILEXFOREST_LYRA
 	const ILEXFOREST_YOUNGSTER
 	const ILEXFOREST_IRON_MASK
+	const ILEXFOREST_SAMMY
 
 IlexForestCutSceneScene:
 	sdefer IlexForestFinishCelebiEventScript
@@ -66,6 +68,7 @@ IlexForestFarfetchdQuestScene:
 IlexForestIronMaskCallback:
 ; Link Edition: the Iron Mask Marauder (Celebi: Voice of the Forest) waits
 ; by the shrine after Red and the time travel, until he's beaten
+	setevent EVENT_ILEX_FOREST_SAMMY ; (Sammy is only there in the scene after)
 	setevent EVENT_POST_RED_PERSON_HIDDEN
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd IlexForestFarfetchdCallback
@@ -1256,12 +1259,12 @@ IlexForestIronMaskScript:
 	setevent EVENT_MARAUDER_REWARD_PENDING
 	showtext .AfterText
 	playsound SFX_WARP_TO
-	special FadeOutPalettes
+	callasm BlindingFlash
 	disappear ILEXFOREST_IRON_MASK
-	special FadeInPalettes_EnableDynNoApply
 	waitsfx
 	cry CELEBI
 	showtext .ForestCalm
+	scall IlexForestSammyScene
 	checkevent EVENT_RESCUED_PROF_HALE
 	iffalsefwd .AnotherLead
 	checkevent EVENT_BEAT_MEWTWO_CLONES
@@ -1333,6 +1336,88 @@ IlexForestIronMaskScript:
 
 	para "The Marauder"
 	line "dropped something!"
+	done
+
+IlexForestSammyScene:
+; Link Edition: the traveler who kept calling from the other side of the
+; shrine is Sammy, a boy from decades ago. The Dark Ball hurt Celebi; the
+; shrine heals it, and it takes him home. (Prof. Oak tells the rest.)
+	moveobject ILEXFOREST_CELEBI, 10, 25
+	appear ILEXFOREST_CELEBI
+	playsound SFX_BALL_POOF
+	waitsfx
+	cry CELEBI
+	showtext .HurtText
+	playsound SFX_GAME_FREAK_LOGO_GS
+	callasm BlindingFlash
+	callasm BlindingFlash
+	waitsfx
+	applymovement ILEXFOREST_CELEBI, MovementData_CelebiDance
+	cry CELEBI
+	showtext .HealedText
+	playsound SFX_WARP_FROM
+	appear ILEXFOREST_SAMMY
+	waitsfx
+	showemote EMOTE_SHOCK, ILEXFOREST_SAMMY, 15
+	showtext .SammyText
+	turnobject ILEXFOREST_SAMMY, LEFT
+	cry CELEBI
+	pause 15
+	playsound SFX_WARP_TO
+	callasm BlindingFlash
+	disappear ILEXFOREST_SAMMY
+	disappear ILEXFOREST_CELEBI
+	waitsfx
+	showtext .GoneText
+	end
+
+.HurtText:
+	text "Celebi drifts out"
+	line "of the shrine."
+
+	para "Its glow is dim."
+	line "The Dark Ball hurt"
+	cont "it."
+	done
+
+.HealedText:
+	text "The shrine's water"
+	line "shines. Celebi's"
+	cont "glow comes back!"
+	done
+
+.SammyText:
+	text "You can hear me"
+	line "now? I'm Sammy!"
+
+	para "A man in an iron"
+	line "mask was hunting"
+	cont "this Celebi."
+
+	para "It pulled me"
+	line "through time to"
+	cont "get away, and the"
+	cont "forest kept going"
+	cont "around in circles."
+
+	para "I called and"
+	line "called. You broke"
+	cont "the loop!"
+
+	para "Celebi can take me"
+	line "home now. When I"
+	cont "grow up, I want to"
+	cont "study #mon in"
+	cont "Pallet Town!"
+
+	para "Thank you. I'll"
+	line "never forget you!"
+	done
+
+.GoneText:
+	text "Sammy and Celebi"
+	line "vanish into the"
+	cont "light."
 	done
 
 IlexForestMarauderPrizeScript:

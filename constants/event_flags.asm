@@ -1604,9 +1604,9 @@
 ; Anabel
 	const EVENT_BEAT_ANABEL
 ; Darach
-	const EVENT_LINK_SPARE_11 ; Link Edition: was EVENT_BEAT_DARACH, unused since 2022 or earlier
+	const EVENT_ILEX_FOREST_SAMMY ; Link Edition: Celebi: Voice of the Forest (was EVENT_BEAT_DARACH, unused since 2022 or earlier)
 ; Caitlin
-	const EVENT_LINK_SPARE_12 ; Link Edition: was EVENT_BEAT_CAITLIN, unused since 2022 or earlier
+	const EVENT_OAK_WAS_SAMMY ; Link Edition: Celebi: Voice of the Forest (was EVENT_BEAT_CAITLIN, unused since 2022 or earlier)
 ; Candela
 	const EVENT_BEAT_CANDELA
 ; Blanche

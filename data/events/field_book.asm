@@ -274,6 +274,12 @@ FieldBookSideQuests:
 	checkevent EVENT_RESTORED_SHAMOUTI_BEACONS
 	iffalsefwd .Beacons
 .Errands:
+	; Sammy talked about Pallet Town until you tell Prof. Oak.
+	checkevent EVENT_BEAT_IRON_MASK_MARAUDER
+	iffalsefwd .NoSammy
+	checkevent EVENT_OAK_WAS_SAMMY
+	iffalse_jumpopenedtext FieldBookNotes.Sammy
+.NoSammy:
 	; Favor an errand the player has already accepted.
 	checkevent EVENT_GAVE_KENYA
 	iftruefwd .KenyaReward
@@ -327,6 +333,15 @@ FieldBookSideQuests:
 	jumpopenedtext FieldBookNotes.ShoreReturn
 
 FieldBookNotes:
+
+.Sammy:
+	text "Pallet Town"
+	para "Sammy, the boy"
+	line "from Ilex, wanted"
+	cont "to study #mon in"
+	cont "Pallet. Ask Prof."
+	cont "Oak about him."
+	done
 
 .Starter:
 	text "New Bark Town"

@@ -7,7 +7,8 @@
   be battled again without giving another;
 - Celebi: Voice of the Forest: the Iron Mask Marauder is by the Ilex Forest
   shrine only after Red and the time travel (not after just one); his battle has his team; winning gives a
-  Big Nugget and he's gone for good;
+  Big Nugget and he's gone for good, and so are Celebi and Sammy after their
+  scene; then Prof. Oak (who was Sammy) gives a Master Ball, once;
 - Mewtwo Strikes Back: before Red, talking to Mewtwo in Cerulean Cave starts
   the plain Mewtwo battle; after Red, a battle with its clones (Psychic Mewtwo): copies of your own team (not eggs; same
   species, level, item, moves and stats) at full HP with no status, even when
@@ -54,7 +55,8 @@ def main():
     names = species + ['PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH',
                        'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MOLLY_HALE', 'EVENT_BEAT_ELITE_FOUR',
                        'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_GOT_MYSTICTICKET_FROM_RED', 'EVENT_BEAT_MOLLY', 'EVENT_BEAT_IRON_MASK_MARAUDER',
-                       'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE',
+                       'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE', 'MASTER_BALL', 'EVENT_OAK_WAS_SAMMY',
+                       'GROUP_OAKS_LAB', 'MAP_OAKS_LAB',
                        'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_BEAT_MEWTWO_CLONES',
                        'EVENT_READ_CINNABAR_CLONE_REPORT',
                        'PLAYER_CAUGHT_MEWTWO_F', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING',
@@ -77,9 +79,10 @@ def main():
         g.wr('wEventFlags', v | (1 << (n % 8)) if value else v & ~(1 << (n % 8)), n // 8)
 
     def items(item):
-        for i in range(g.rd('wNumItems')):
-            if g.rd('wItems', 2 * i) == K[item]:
-                return g.rd('wItems', 2 * i + 1)
+        for pocket in ('Items', 'Balls'):
+            for i in range(g.rd('wNum' + pocket)):
+                if g.rd('w' + pocket, 2 * i) == K[item]:
+                    return g.rd('w' + pocket, 2 * i + 1)
         return 0
 
     def present(xy):
@@ -261,9 +264,24 @@ def main():
         if not flag('EVENT_BEAT_IRON_MASK_MARAUDER'):
             fails.append(('Marauder', 'the win was not recorded'))
         if present(marauder[2]):
-            fails.append(('Marauder', 'still there after losing'))
+            fails.append(('Marauder', 'still there (or Sammy is) after the scene'))
+        if present((10, 25)):
+            fails.append(('Marauder', 'Celebi is still there after the scene'))
         if visit(marauder):
             fails.append(('Marauder', 'back after leaving and returning'))
+        # Sammy grew up to be Prof. Oak
+        before = items('MASTER_BALL')
+        for _ in range(2):
+            g.warp(K['GROUP_OAKS_LAB'], K['MAP_OAKS_LAB'], 4, 3)
+            g.press('up', 2, 3)
+            g.tick(30)
+            for _ in range(10):
+                g.press('a', 40)
+            settle()
+        if items('MASTER_BALL') != before + 1:
+            fails.append(('Oak', f'Master Ball {before} -> {items("MASTER_BALL")} after talking twice, not +1'))
+        if not flag('EVENT_OAK_WAS_SAMMY'):
+            fails.append(('Oak', 'telling him about Sammy was not recorded'))
 
     # A full reward stack must not resurrect the Marauder or lose his prize.
     g.load(base)
