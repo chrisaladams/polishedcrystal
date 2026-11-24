@@ -5,6 +5,7 @@
 	const CUP_RISING_STAR ; National Park: 3 at level 30
 	const CUP_WHIRL       ; Olivine Port: 3-6 Water types at level 50
 	const CUP_KIMONO      ; Ecruteak Dance Theatre: 3 of today's type at level 50
+	const CUP_DRAGON      ; Blackthorn: 3-6 with a Dragon type at level 50
 DEF NUM_CUPS EQU const_value
 
 ; how a cup's team is chosen

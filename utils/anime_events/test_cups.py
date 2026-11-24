@@ -21,6 +21,14 @@ The Kimono Cup (Ecruteak Dance Theatre):
   records it, each one after a Big Pearl; it works for the type with the
   fewest sets (Dragon) too.
 
+The Dragon Masters Cup (Blackthorn, the dragon house), after the Rising
+Badge:
+- the whole party enters (at least one Dragon type) at level 50; a party
+  without one is turned away;
+- the rounds are Dragon Tamers Erick and Aegon, then Clair (her gym team),
+  their own teams at level 50;
+- the first win gives a Dragon Scale and records it, each one after a PP Up.
+
 The choice in the Battle Tower's party menu is made by a hook (the first
 three of the party, or as given), and the battles are won or lost by setting
 HP in RAM.
@@ -369,6 +377,61 @@ def main():
     kimono_talk(water_day, 'RATTATA')
     if until_battle(14):
         fails.append(('kimono', 'a Normal team entered on a Water day'))
+    settle()
+
+    # the Dragon Masters Cup
+    KD = rgbasm_values(['DRAGON_TAMER', 'ERICK', 'AEGON', 'CLAIR', 'GROUP_BLACKTHORN_DRAGON_SPEECH_HOUSE',
+                        'MAP_BLACKTHORN_DRAGON_SPEECH_HOUSE', 'DRAGON_SCALE', 'PP_UP', 'CUPWON_DRAGON_F'], None)
+    K.update(KD)
+    DRAGON_ROUNDS = (('DRAGON_TAMER', 'ERICK'), ('DRAGON_TAMER', 'AEGON'), ('CLAIR', 1))
+
+    def dragon_talk(species, badge=True):
+        g.wr('wJohtoBadges', 0xff if badge else 0x7f)  # (the Rising Badge is the last)
+        for i in range(g.rd('wPartyCount')):
+            g.wr('wPartyMon1Species', K[species[i] if i < len(species) else 'RATTATA'], i * L)
+            g.wr('wPartyMon1Form', g.rd('wPartyMon1Form', i * L) & ~K['EXTSPECIES_MASK'], i * L)
+        g.warp(K['GROUP_BLACKTHORN_DRAGON_SPEECH_HOUSE'], K['MAP_BLACKTHORN_DRAGON_SPEECH_HOUSE'], 5, 3)
+        g.press('up', 2, 3)
+        g.tick(30)
+
+    def dragon_run(prize):
+        before = items(prize)
+        party = party_block()
+        dragon_talk(['DRATINI'])
+        for k, (cls, tid) in enumerate(DRAGON_ROUNDS):
+            where = f'dragon round {k + 1}'
+            if not until_battle(30 if k == 0 else 20):
+                fails.append((where, 'did not start'))
+                return
+            want = (K[cls], K[tid] if isinstance(tid, str) else tid)
+            if (g.rd('wOtherTrainerClass'), g.rd('wOtherTrainerID')) != want:
+                fails.append((where, f'battled class {g.rd("wOtherTrainerClass")} #{g.rd("wOtherTrainerID")}'))
+            theirs = [g.rd('wOTPartyMon1Level', i * L) for i in range(g.rd('wOTPartyCount'))]
+            ours = [g.rd('wPartyMon1Level', i * L) for i in range(g.rd('wPartyCount'))]
+            if set(theirs) != {50} or set(ours) != {50} or len(ours) != len(before_mons):
+                fails.append((where, f'levels: theirs {theirs}, yours {ours}'))
+            finish(True)
+        settle()
+        if items(prize) != before + 1:
+            fails.append(('dragon', f'{prize}: {before} -> {items(prize)}, not +1'))
+        return party
+
+    g.load(base)
+    dragon_run('DRAGON_SCALE')
+    if not (g.rd('wCupRecords') >> K['CUPWON_DRAGON_F']) & 1:
+        fails.append(('dragon', 'the win was not recorded'))
+    dragon_run('PP_UP')
+
+    g.load(base)
+    dragon_talk([])
+    if until_battle(14):
+        fails.append(('dragon', 'a party without a Dragon type entered'))
+    settle()
+
+    g.load(base)
+    dragon_talk(['DRATINI'], badge=False)
+    if until_battle(14):
+        fails.append(('dragon', 'entered without the Rising Badge'))
     settle()
 
     g.pb.stop(save=False)

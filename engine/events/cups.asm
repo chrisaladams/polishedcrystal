@@ -10,6 +10,7 @@ CupRules:
 	db 30, 3, 3, CUPPICK_THREE, CUPRULE_ANY,      0     ; CUP_RISING_STAR
 	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_ALL_TYPE, WATER ; CUP_WHIRL
 	db 50, 3, 3, CUPPICK_THREE, CUPRULE_ALL_TYPE, CUPTYPE_TODAY ; CUP_KIMONO
+	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_HAS_TYPE, DRAGON ; CUP_DRAGON
 .End:
 	rsreset
 DEF CUPRULE_LEVEL rb
@@ -26,6 +27,7 @@ CupRecordMasks:
 	db 1 << CUPWON_RISING_STAR_F ; CUP_RISING_STAR
 	db 0                         ; CUP_WHIRL (EVENT_WON_WHIRL_CUP)
 	db 0                         ; CUP_KIMONO (a bit for each type)
+	db 1 << CUPWON_DRAGON_F      ; CUP_DRAGON
 .End:
 	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
 

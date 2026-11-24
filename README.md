@@ -289,10 +289,14 @@ no items or experience in its battles, and come back exactly as they were
   Random Battle sets. The first win with each type gives its item (Silk
   Scarf, Black Belt, ... Fairy Feather) and counts toward all 18; each win
   after a Big Pearl.
+- **Dragon Masters Cup**, in Blackthorn's dragon house, once you hold the
+  Rising Badge: your whole party enters (three to six, at least one of them
+  a Dragon type) at level 50 against Dragon Tamers Erick and Aegon, then
+  Clair. The first win gives a Dragon Scale, each one after a PP Up.
 
 Everyone in a cup battles at its level, the cup's trainers too.
-`python3 utils/anime_events/test_cups.py SAVE.sav` checks the Rising Star
-and Kimono Cups.
+`python3 utils/anime_events/test_cups.py SAVE.sav` checks the Rising Star,
+Kimono and Dragon Masters Cups.
 
 ### The Whirl Cup
 
