@@ -176,6 +176,7 @@ def main():
     # today's rare Pokemon (TV news): map -> species
     src = open(os.path.join(ROOT, 'engine', 'overworld', 'wild_mons.asm')).read()
     sightings = dict(re.findall(r'map_id (\w+)\n\tdb (\w+)', src))
+    usual_max = int(re.search(r'DEF WILD_MON_USUAL_MAX +EQU (\d+)', src).group(1))
     species_names |= set(sightings.values())
     names = sorted(species_names) + [p + mp for mp in maps + ['NATIONAL_PARK_BUG_CONTEST']
                                      for p in ('GROUP_', 'MAP_')]
@@ -511,7 +512,9 @@ def main():
             n = [x['sp'] for x in wild()].count(K['EEVEE'])
             seen += n > 0
             most = max(most, n)
-            while_full += (n > 0 and len(before) == K['NUM_WILD_MONS'] and K['EEVEE'] not in before)
+            # (with the usual way skipped, it can only come when there's no
+            # room: every slot out, or as many as the screen allows)
+            while_full += (n > 0 and len(before) >= usual_max and K['EEVEE'] not in before)
         if only_when_full:
             g.pb.hook_deregister(ab, aa)
         return seen, most, while_full

@@ -346,7 +346,10 @@ def main():
         if mc in grass and not any(grid.coll[p] in (K['COLL_TALL_GRASS'], K['COLL_LONG_GRASS'])
                                    for p in grid.coll):
             habitat |= {p for p, c in grid.coll.items() if c == K['COLL_FLOOR']}  # caves
-        stands = {p for p in r if grid.kind(p) != 'wall'}
+        # (you can't stand on a warp tile you walk onto: it takes you away;
+        # only on the ones you arrive at)
+        stands = {p for p in r if grid.kind(p) != 'wall'
+                  and (grid.coll[p] not in WARP_COLLS or p in ents)}
         bad = []
         windows = {}
         for s in sorted(habitat - r - occupied):
