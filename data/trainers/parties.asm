@@ -2494,6 +2494,13 @@ BugCatcherGroup:
 	tr_mon LEVEL_FROM_BADGES + 5, SCYTHER
 	end_trainer
 
+	; Link Edition: the Rising Star Cup, round 1
+	def_trainer RS_ELLIS, "Ellis"
+	tr_mon 30, BUTTERFREE @ SILVERPOWDER
+	tr_mon 30, BEEDRILL @ POISON_BARB
+	tr_mon 30, YANMA
+	end_trainer
+
 
 SECTION "CamperGroup", ROMX
 CamperGroup:
@@ -2795,6 +2802,13 @@ endc
 	tr_mon 54, JOLTEON
 	tr_mon 53, RAICHU
 	tr_mon 55, ELECTIVIRE
+	end_trainer
+
+	; Link Edition: the Rising Star Cup, round 2
+	def_trainer RS_RUTH, "Ruth"
+	tr_mon 30, FLAAFFY @ MAGNET
+	tr_mon 30, MARILL @ MYSTIC_WATER
+	tr_mon 30, SKIPLOOM @ MIRACLE_SEED
 	end_trainer
 
 SECTION "TwinsGroup", ROMX
@@ -7013,6 +7027,13 @@ CooltrainerMGroup:
 	tr_mon 54, PORYGON_Z
 	tr_mon 53, SLOWKING
 	tr_mon 55, GLACEON
+	end_trainer
+
+	; Link Edition: the Rising Star Cup, final round
+	def_trainer RS_REX, "Rex"
+	tr_mon 30, MAGMAR @ CHARCOAL
+	tr_mon 30, GRAVELER @ HARD_STONE
+	tr_mon 30, GYARADOS @ LEFTOVERS
 	end_trainer
 
 

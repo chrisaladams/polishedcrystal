@@ -169,6 +169,11 @@ INCLUDE "engine/overworld/follower.asm"
 INCLUDE "gfx/followers.asm"
 
 
+SECTION "Cup Code", ROMX
+
+INCLUDE "engine/events/cups.asm"
+
+
 SECTION "Whirl Cup Code", ROMX
 
 INCLUDE "engine/events/whirl_cup.asm"

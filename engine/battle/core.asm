@@ -4436,6 +4436,10 @@ BattleMenu_SafariBall:
 	and a
 	jr nz, .ItemsCantBeUsed
 
+	ld a, [wCupLevel] ; (no items in cup battles)
+	and a
+	jr nz, .ItemsCantBeUsed
+
 	call LoadStandardMenuHeader
 
 	ld a, [wBattleType]
@@ -6468,12 +6472,16 @@ FinishBattleAnim:
 
 GiveExperiencePoints:
 ; Give experience.
-; Don't give experience if linked or in the Battle Tower.
+; Don't give experience if linked or in the Battle Tower (or a cup).
 	ld a, [wLinkMode]
 	and a
 	ret nz
 
 	ld a, [wInBattleTowerBattle]
+	and a
+	ret nz
+
+	ld a, [wCupLevel]
 	and a
 	ret nz
 

@@ -1827,7 +1827,7 @@
 	const EVENT_LYRA_ROUTE_34
 	const EVENT_LYRA_DAYCARE
 	const EVENT_LYRA_ROUTE_42
-	const EVENT_LINK_SPARE_13 ; Link Edition: was EVENT_GRANDPA_ROUTE_34, unused since 2022 or earlier
+	const EVENT_RISING_STAR_PRIZE_PENDING ; Link Edition: the first win's prize, if the bag was full (was EVENT_GRANDPA_ROUTE_34, unused since 2022 or earlier)
 	const EVENT_RIVAL_NEW_BARK_TOWN
 	const EVENT_RIVAL_CHERRYGROVE_CITY
 	const EVENT_RIVAL_AZALEA_TOWN

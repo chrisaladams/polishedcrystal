@@ -1,0 +1,39 @@
+; Link Edition: regional cups (engine/events/cups.asm)
+
+; cup ids (CupRules)
+	const_def
+	const CUP_RISING_STAR ; National Park: 3 at level 30
+	const CUP_WHIRL       ; Olivine Port: 3-6 Water types at level 50
+DEF NUM_CUPS EQU const_value
+
+; how a cup's team is chosen
+	const_def
+	const CUPPICK_THREE ; three, in the Battle Tower's party menu
+	const CUPPICK_PARTY ; the whole party (eggs aside)
+
+; what a cup asks of its team
+	const_def
+	const CUPRULE_ANY
+	const CUPRULE_ALL_TYPE ; every one has the type
+	const CUPRULE_HAS_TYPE ; at least one has the type
+
+; CupSelectTeam results (hScriptVar)
+	const_def
+	const CUPTEAM_OK
+	const CUPTEAM_CANCEL ; backed out of choosing
+	const CUPTEAM_SIZE   ; too few or too many
+	const CUPTEAM_TYPE   ; doesn't meet the type rule
+
+; wCupRecords: first wins (byte 0); Kimono Cup wins by type (bytes 1-3)
+	const_def
+	const CUPWON_RISING_STAR_F
+	const CUPWON_DRAGON_F
+	const CUPWON_RENTAL_F
+	const CUPWON_WORLD_F
+DEF CUP_RECORDS_LENGTH EQU 5
+; (in the two bytes after them, once set up)
+DEF CUP_RECORDS_MAGIC_1 EQU $4c
+DEF CUP_RECORDS_MAGIC_2 EQU $45
+
+; your party while you're in a cup (WRAMX bank 2)
+DEF CUP_BACKUP_LENGTH EQU 1 + 7 + PARTY_LENGTH * (PARTYMON_STRUCT_LENGTH + PLAYER_NAME_LENGTH + 3 + MON_NAME_LENGTH)

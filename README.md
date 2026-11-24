@@ -269,6 +269,21 @@ The season opens after Red, and all five offer rematches. The league uses
 existing maps, sprites, music and spare save flags. `python3 utils/anime_events/test_orange_league.py SAVE.sav` checks it in
 the emulator.
 
+### Regional cups
+
+Cups are free to enter, as often as you like, and losing costs nothing: no
+blacking out, no money. Your Pokémon battle at the cup's level, healed, with
+no items or experience in its battles, and come back exactly as they were
+(healed) when it's over, win or lose.
+
+- **Rising Star Cup**, in the Route 36 gate to the National Park, open from
+  the start: choose three Pokémon (as at the Battle Tower: no two of a
+  species or holding the same item) to battle at level 30 against Bug Catcher
+  Ellis, Picnicker Ruth and Cooltrainer Rex. The first win gives Leftovers,
+  each one after a Rare Candy.
+
+`python3 utils/anime_events/test_cups.py SAVE.sav` checks them.
+
 ### The Whirl Cup
 
 From the anime: a Water-type tournament at Olivine Port, run by an official

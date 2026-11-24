@@ -248,6 +248,7 @@ WRAMX $2
 	"Sprites Backup"
 	align 8
 	"Wild Mon Reach"
+	"Cup Party Backup"
 
 WRAMX $3
 	org $d000

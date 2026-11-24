@@ -1504,7 +1504,11 @@ wPokemonData::
 
 wPartyCount::   db ; number of Pokémon in party
 
-	ds 7 ; unused
+; Link Edition: cup records (CUPWON_* and the Kimono Cup's types), then
+; CUP_RECORDS_MAGIC once they're set up (older saves may have an old party
+; species list here; see CupCheckRecords)
+wCupRecords:: ds CUP_RECORDS_LENGTH
+wCupRecordsMagic:: dw
 
 wPartyMons::
 for n, 1, PARTY_LENGTH + 1
@@ -1676,6 +1680,12 @@ wWildMonReach:: ds WILD_REACH_WIDTH * WILD_REACH_HEIGHT
 ; the tiles still to walk out from (their places in wWildMonReach)
 wWildMonReachQueue:: ds WILD_REACH_WIDTH * WILD_REACH_HEIGHT
 wWildMonReachWrite:: db
+
+
+SECTION "Cup Party Backup", WRAMX
+
+; Link Edition: your party while you're in a cup (engine/events/cups.asm)
+wCupPartyBackup:: ds CUP_BACKUP_LENGTH
 
 
 SECTION "Sprites Backup", WRAMX

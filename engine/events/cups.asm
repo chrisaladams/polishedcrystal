@@ -1,0 +1,364 @@
+; Link Edition: regional cups. A cup's script calls these with callasm:
+; CupSelectTeam (with wCupId set), then CupBegin, its battles (losable, at
+; the cup's level), CupHealTeam between them, CupEnd, and CupWin for a win.
+; Your party is kept aside in WRAMX bank 2 meanwhile and comes back exactly
+; as it was (then healed); the battles give no experience and allow no
+; items (wCupLevel).
+
+CupRules:
+; level, fewest, most, how they're chosen, rule, type
+	db 30, 3, 3, CUPPICK_THREE, CUPRULE_ANY,      0     ; CUP_RISING_STAR
+	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_ALL_TYPE, WATER ; CUP_WHIRL
+.End:
+	rsreset
+DEF CUPRULE_LEVEL rb
+DEF CUPRULE_FEWEST rb
+DEF CUPRULE_MOST rb
+DEF CUPRULE_PICK rb
+DEF CUPRULE_RULE rb
+DEF CUPRULE_TYPE rb
+DEF CUP_RULES_LENGTH EQU _RS
+	assert CupRules.End - CupRules == NUM_CUPS * CUP_RULES_LENGTH
+
+CupRecordMasks:
+; the wCupRecords bit for each cup's first win (0: kept elsewhere)
+	db 1 << CUPWON_RISING_STAR_F ; CUP_RISING_STAR
+	db 0                         ; CUP_WHIRL (EVENT_WON_WHIRL_CUP)
+.End:
+	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
+
+GetCupRules:
+; hl = cup wCupId's CupRules entry + c. Keeps de.
+	ld a, [wCupId]
+	ld b, 0
+	ld hl, CupRules
+	add hl, bc
+	ld bc, CUP_RULES_LENGTH
+	rst AddNTimes
+	ret
+
+CupSelectTeam::
+; Choose the team for cup wCupId and check it against the rules: hScriptVar
+; = CUPTEAM_*. The team is left in wOTParty, in order, for CupBegin.
+	ld c, CUPRULE_PICK
+	call GetCupRules
+	ld a, [hl]
+	cp CUPPICK_THREE
+	jr nz, .whole_party
+	; three, in the Battle Tower's party menu (no eggs or banned Pokemon,
+	; nor two of a species or two holding the same item)
+	xor a
+	ld [wBT_PartySelectCounter], a
+	farcall BT_PartySelect
+	ld a, CUPTEAM_CANCEL
+	jr c, .done
+	jr .stage
+
+.whole_party
+	; every Pokemon but eggs, in party order
+	xor a
+	ld [wBT_PartySelectCounter], a
+	ld a, [wPartyCount]
+	and a
+	jr z, .stage
+	ld b, a
+	ld c, 0
+	ld hl, wPartyMon1IsEgg
+.party_loop
+	bit MON_IS_EGG_F, [hl]
+	jr nz, .egg
+	push hl
+	ld a, [wBT_PartySelectCounter]
+	ld e, a
+	ld d, 0
+	ld hl, wBT_PartySelections
+	add hl, de
+	ld [hl], c
+	inc a
+	ld [wBT_PartySelectCounter], a
+	pop hl
+.egg
+	push bc
+	ld bc, PARTYMON_STRUCT_LENGTH
+	add hl, bc
+	pop bc
+	inc c
+	dec b
+	jr nz, .party_loop
+
+.stage
+	call CupStageTeam
+	; how many
+	ld c, CUPRULE_FEWEST
+	call GetCupRules
+	ld a, [wOTPartyCount]
+	cp [hl]
+	ld a, CUPTEAM_SIZE
+	jr c, .done
+	inc hl
+	assert CUPRULE_MOST == CUPRULE_FEWEST + 1
+	ld a, [hl]
+	ld b, a
+	ld a, [wOTPartyCount]
+	dec a
+	cp b
+	ld a, CUPTEAM_SIZE
+	jr nc, .done
+	; and of what type
+	ld c, CUPRULE_RULE
+	call GetCupRules
+	ld a, [hli]
+	assert CUPRULE_TYPE == CUPRULE_RULE + 1
+	and a
+	assert CUPRULE_ANY == 0
+	jr z, .ok
+	push af
+	ld d, [hl]
+	call CupCountType ; e = how many have it
+	pop af
+	cp CUPRULE_HAS_TYPE
+	jr z, .has_type
+	; every one
+	ld a, [wOTPartyCount]
+	cp e
+	ld a, CUPTEAM_TYPE
+	jr nz, .done
+	jr .ok
+
+.has_type
+	ld a, e
+	and a
+	ld a, CUPTEAM_TYPE
+	jr z, .done
+.ok
+	ld a, CUPTEAM_OK
+.done
+	ldh [hScriptVar], a
+	ret
+
+CupStageTeam:
+; Copy the chosen Pokemon (wBT_PartySelections) to wOTParty, in order.
+	ld a, [wBT_PartySelectCounter]
+	ld [wOTPartyCount], a
+	and a
+	ret z
+	ld c, 0
+.loop
+	ld hl, wBT_PartySelections
+	ld b, 0
+	add hl, bc
+	ld b, [hl] ; which of yours
+	ld hl, wPartyMons
+	ld de, wOTPartyMons
+	ld a, PARTYMON_STRUCT_LENGTH
+	call .Entry
+	ld hl, wPartyMonNicknames
+	ld de, wOTPartyMonNicknames
+	ld a, MON_NAME_LENGTH
+	call .Entry
+	ld hl, wPartyMonOTs
+	ld de, wOTPartyMonOTs
+	ld a, NAME_LENGTH
+	call .Entry
+	inc c
+	ld a, [wBT_PartySelectCounter]
+	cp c
+	jr nz, .loop
+	ret
+
+.Entry:
+; Copy entry b of table hl to entry c of table de, a bytes each. Keeps bc.
+	push bc
+	push de
+	push af
+	ld e, a
+	ld d, 0
+	ld a, b
+	call .Times
+	pop af
+	pop de
+	push hl
+	push af
+	ld h, d
+	ld l, e
+	ld e, a
+	ld d, 0
+	ld a, c
+	call .Times
+	ld d, h
+	ld e, l
+	pop af
+	pop hl
+	ld c, a
+	ld b, 0
+	rst CopyBytes
+	pop bc
+	ret
+
+.Times:
+; hl += a * de
+	and a
+	ret z
+.times
+	add hl, de
+	dec a
+	jr nz, .times
+	ret
+
+CupCountType:
+; e = how many Pokemon in wOTParty have type d.
+	ld e, 0
+	ld a, [wOTPartyCount]
+	and a
+	ret z
+	ld b, a
+	ld hl, wOTPartyMon1
+.loop
+	push bc
+	push de
+	push hl
+	ld bc, MON_FORM
+	add hl, bc
+	ld a, [hl]
+	and SPECIESFORM_MASK
+	ld [wCurForm], a
+	pop hl
+	push hl
+	ld a, [hl] ; MON_SPECIES
+	ld [wCurSpecies], a
+	call GetBaseData
+	pop hl
+	pop de
+	ld a, [wBaseType1]
+	cp d
+	jr z, .has
+	ld a, [wBaseType2]
+	cp d
+	jr nz, .next
+.has
+	inc e
+.next
+	ld bc, PARTYMON_STRUCT_LENGTH
+	add hl, bc
+	pop bc
+	dec b
+	jr nz, .loop
+	ret
+
+CupBegin::
+; Keep your party aside, and bring out the team from CupSelectTeam at the
+; cup's level, healed.
+	call CupBackupParty
+	assert wPartyMonNicknamesEnd - wPartyCount == CUP_BACKUP_LENGTH
+	ld hl, wOTPartyCount
+	ld de, wPartyCount
+	ld bc, CUP_BACKUP_LENGTH
+	rst CopyBytes
+	ld c, CUPRULE_LEVEL
+	call GetCupRules
+	ld a, [hl]
+	ld [wCupLevel], a
+	farcall BT_SetLevel
+	farjp HealParty
+
+CupHealTeam::
+	farjp HealParty
+
+CupEnd::
+; Your party back as it was, healed.
+	call CupRestoreParty
+	xor a
+	ld [wCupLevel], a
+	farjp HealParty
+
+CupWin::
+; Record a win in cup wCupId: hScriptVar = TRUE if it's the first.
+	call CupCheckRecords
+	ld a, [wCupId]
+	ld e, a
+	ld d, 0
+	ld hl, CupRecordMasks
+	add hl, de
+	ld b, [hl]
+	ld a, [wCupRecords]
+	ld c, a
+	or b
+	ld [wCupRecords], a
+	ld a, c
+	and b
+	ld a, TRUE
+	jr z, .first
+	xor a ; FALSE
+.first
+	ldh [hScriptVar], a
+	ret
+
+CupCheckRecords::
+; Older saves may have an old party species list where wCupRecords are:
+; clear them the first time.
+	ld a, [wCupRecordsMagic]
+	cp CUP_RECORDS_MAGIC_1
+	jr nz, .reset
+	ld a, [wCupRecordsMagic + 1]
+	cp CUP_RECORDS_MAGIC_2
+	ret z
+.reset
+	ld hl, wCupRecords
+	ld bc, CUP_RECORDS_LENGTH
+	xor a
+	rst ByteFill
+	ld a, CUP_RECORDS_MAGIC_1
+	ld [wCupRecordsMagic], a
+	ld a, CUP_RECORDS_MAGIC_2
+	ld [wCupRecordsMagic + 1], a
+	ret
+
+CupBackupParty:
+; wPartyCount... (WRAMX bank 1) to wCupPartyBackup (bank 2).
+	ldh a, [rWBK]
+	push af
+	ld hl, wPartyCount
+	ld de, wCupPartyBackup
+	ld bc, CUP_BACKUP_LENGTH
+.loop
+	ld a, BANK(wPartyCount)
+	ldh [rWBK], a
+	ld a, [hli]
+	push af
+	ld a, BANK(wCupPartyBackup)
+	ldh [rWBK], a
+	pop af
+	ld [de], a
+	inc de
+	dec bc
+	ld a, b
+	or c
+	jr nz, .loop
+	pop af
+	ldh [rWBK], a
+	ret
+
+CupRestoreParty:
+; wCupPartyBackup (WRAMX bank 2) back to wPartyCount... (bank 1).
+	ldh a, [rWBK]
+	push af
+	ld hl, wCupPartyBackup
+	ld de, wPartyCount
+	ld bc, CUP_BACKUP_LENGTH
+.loop
+	ld a, BANK(wCupPartyBackup)
+	ldh [rWBK], a
+	ld a, [hli]
+	push af
+	ld a, BANK(wPartyCount)
+	ldh [rWBK], a
+	pop af
+	ld [de], a
+	inc de
+	dec bc
+	ld a, b
+	or c
+	jr nz, .loop
+	pop af
+	ldh [rWBK], a
+	ret

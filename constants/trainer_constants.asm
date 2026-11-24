@@ -160,6 +160,7 @@ DEF BETA EQU __trainer_class__
 	const KEN
 	const WAYNE
 	const OSCAR
+	const RS_ELLIS ; Link Edition: the Rising Star Cup
 
 	trainerclass CAMPER
 	const TODD1
@@ -218,6 +219,7 @@ DEF BETA EQU __trainer_class__
 	const CHEYENNE
 	const ADRIAN
 	const ZANE
+	const RS_RUTH ; Link Edition: the Rising Star Cup
 
 	trainerclass TWINS
 	const AMYANDMIMI1
@@ -985,6 +987,7 @@ DEF BETA EQU __trainer_class__
 	const COOLTRAINERM_RAYMOND
 	const FERGUS
 	const DARIC
+	const RS_REX ; Link Edition: the Rising Star Cup
 
 	trainerclass COOLTRAINERF
 	const BETH1

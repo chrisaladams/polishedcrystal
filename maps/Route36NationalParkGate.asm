@@ -32,6 +32,7 @@ Route36NationalParkGate_MapScriptHeader:
 	object_event  6,  7, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, BugCatchingContestant9BScript, EVENT_BUG_CATCHING_CONTESTANT_9B
 	object_event  6,  6, SPRITE_YOUNGSTER, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, BugCatchingContestant10BScript, EVENT_BUG_CATCHING_CONTESTANT_10B
 	object_event  3,  2, SPRITE_OFFICER, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, Route36NationalParkGateOfficerScript, EVENT_ROUTE_36_NATIONAL_PARK_GATE_OFFICER_NOT_CONTEST_DAY
+	object_event  7,  2, SPRITE_GENTLEMAN, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, RisingStarCupScript, -1
 
 	object_const_def
 	const ROUTE36NATIONALPARKGATE_OFFICER1
@@ -470,3 +471,150 @@ Route36NationalParkGateOfficer1HeresThePrizeText:
 	line "we were holding"
 	cont "for you."
 	done
+
+RisingStarCupScript:
+; Link Edition: the Rising Star Cup: three of your Pokemon at level 30, three
+; rounds. The first win gives Leftovers, each one after a Rare Candy.
+	faceplayer
+	opentext
+	checkevent EVENT_RISING_STAR_PRIZE_PENDING
+	iftruefwd .FirstPrize
+	writetext .WelcomeText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	loadmem wCupId, CUP_RISING_STAR
+	writetext .ChooseText
+	promptbutton
+	callasm CupSelectTeam
+	ifequalfwd CUPTEAM_CANCEL, .Cancel
+	ifequalfwd CUPTEAM_OK, .Begin
+	jumpopenedtext .RulesText
+
+.Cancel:
+	jumpopenedtext .NoText
+
+.Begin:
+	writetext .Round1Text
+	waitbutton
+	closetext
+	callasm CupBegin
+	winlosstext .WinText, .LossText
+	loadtrainer BUG_CATCHER, RS_ELLIS
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupHealTeam
+	opentext
+	writetext .Round2Text
+	waitbutton
+	closetext
+	winlosstext .WinText, .LossText
+	loadtrainer PICNICKER, RS_RUTH
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupHealTeam
+	opentext
+	writetext .FinalText
+	waitbutton
+	closetext
+	winlosstext .WinText, .LossText
+	loadtrainer COOLTRAINERM, RS_REX
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupEnd
+	callasm CupWin
+	opentext
+	writetext .ChampionText
+	playsound SFX_GET_BADGE
+	waitsfx
+	promptbutton
+	iffalsefwd .Again
+	setevent EVENT_RISING_STAR_PRIZE_PENDING
+.FirstPrize:
+	verbosegiveitem LEFTOVERS, iffalse_endtext
+	clearevent EVENT_RISING_STAR_PRIZE_PENDING
+	jumpopenedtext .ComeBackText
+
+.Again:
+	verbosegiveitem RARE_CANDY, iffalse_endtext
+	jumpopenedtext .ComeBackText
+
+.Lost:
+	callasm CupEnd
+	jumptext .OutText
+
+.WelcomeText:
+	text "Welcome to the"
+	line "Rising Star Cup!"
+
+	para "Enter three"
+	line "#mon. They'll"
+	cont "battle at level"
+	cont "30, whatever their"
+	cont "own level."
+
+	para "Three rounds, and"
+	line "no penalty if you"
+	cont "lose. Enter?"
+	done
+
+.NoText:
+	text "Come back anytime!"
+	done
+
+.ChooseText:
+	text "Choose three"
+	line "#mon to enter."
+	prompt
+
+.RulesText:
+	text "Sorry, that team"
+	line "can't enter."
+	done
+
+.Round1Text:
+	text "Round one: Bug"
+	line "Catcher Ellis!"
+	done
+
+.Round2Text:
+	text "Round two:"
+	line "Picnicker Ruth!"
+	done
+
+.FinalText:
+	text "The final round:"
+	line "Cooltrainer Rex!"
+	done
+
+.WinText:
+	text "Well battled!"
+	done
+
+.LossText:
+	text "That's the end of"
+	line "your run."
+	done
+
+.ChampionText:
+	text "You're the Rising"
+	line "Star champion!"
+	done
+
+.ComeBackText:
+	text "Your #mon are as"
+	line "they were. Come"
+	cont "back anytime!"
+	done
+
+.OutText:
+	text "Your #mon are as"
+	line "they were. Try"
+	cont "again anytime!"
+	done
+

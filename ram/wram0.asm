@@ -1605,6 +1605,11 @@ wWildReachMapHeight:: db ; in tiles
 wWildReachBlockRow:: db ; wMapWidth + 6 (with the border)
 wWildReachKind:: db ; LAND_TILE or WATER_TILE, what you're on
 wWildReachHalf:: db ; 2 in a block's bottom half
+
+; Link Edition: during a cup (engine/events/cups.asm), its level (no
+; experience or items in its battles), else 0; and which cup
+wCupLevel:: db
+wCupId:: db
 ; Sweet Honey's remaining player steps and where it was used.
 wWildHoneySteps:: db
 wWildHoneyX:: db
