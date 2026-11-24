@@ -13,13 +13,13 @@ ROUTE = (
     ('Bottle', 'GOT_SQUIRTBOTTLE'), ('Tree', 'FOUGHT_SUDOWOODO'),
     ('BurnedTower', 'RELEASED_THE_BEASTS'), ('Morty', 'ENGINE_FOGBADGE'),
     ('Surf', 'GOT_HM03_SURF'), ('Lighthouse', 'JASMINE_EXPLAINED_AMPHYS_SICKNESS'),
-    ('Medicine', 'GOT_SECRETPOTION_FROM_PHARMACY'), ('Amphy', 'JASMINE_RETURNED_TO_GYM'),
-    ('Chuck', 'ENGINE_STORMBADGE'), ('Jasmine', 'ENGINE_MINERALBADGE'),
+    ('Medicine', 'GOT_SECRETPOTION_FROM_PHARMACY'), ('Chuck', 'ENGINE_STORMBADGE'),
+    ('Amphy', 'JASMINE_RETURNED_TO_GYM'), ('Jasmine', 'ENGINE_MINERALBADGE'),
     ('Lake', 'DECIDED_TO_HELP_LANCE'), ('Hideout', 'CLEARED_ROCKET_HIDEOUT'),
     ('Pryce', 'ENGINE_GLACIERBADGE'), ('Takeover', 'BEAT_PETREL_1'),
     ('Director', 'RECEIVED_CARD_KEY'), ('CardKey', 'CLEARED_RADIO_TOWER'),
-    ('Clair', 'BEAT_CLAIR'), ('DragonDen', 'ENGINE_RISINGBADGE'),
-    ('Waterfall', 'GOT_HM06_WATERFALL'), ('League', 'BEAT_ELITE_FOUR'),
+    ('Waterfall', 'GOT_HM06_WATERFALL'), ('Clair', 'BEAT_CLAIR'),
+    ('DragonDen', 'ENGINE_RISINGBADGE'), ('League', 'BEAT_ELITE_FOUR'),
     ('Ticket', 'GOT_SS_TICKET_FROM_ELM'), ('Ship', 'FAST_SHIP_FIRST_TIME'),
     ('Surge', 'ENGINE_THUNDERBADGE'), ('Plant', 'MET_MANAGER_AT_POWER_PLANT'),
     ('Grunt', 'MET_ROCKET_GRUNT_AT_CERULEAN_GYM'), ('Bridge', 'LEARNED_ABOUT_MACHINE_PART'),
@@ -69,10 +69,13 @@ def guide_checkpoints(g, read):
     for _, flag in ROUTE + ERRANDS:
         change(flag, False)
     start = g.state()
-    for page, flag in ROUTE:
-        read('FieldBookNotes.' + page)
+    pages = [name for name, _ in ROUTE] + ['Red']
+    previous = 'Begin'
+    for index, (page, flag) in enumerate(ROUTE):
+        read('FieldBookNotes.' + page, recap=(previous, pages[index + 1]))
         change(flag, True)
-    read('FieldBookNotes.Red')
+        previous = page
+    read('FieldBookNotes.Red', recap=('Oak', 'Alph'))
     g.load(start)
     for page, flag in ERRANDS:
         read('FieldBookNotes.' + page, side=True)

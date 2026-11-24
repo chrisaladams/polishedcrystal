@@ -1381,100 +1381,20 @@ MagikarpPlainFrontpic: INCBIN "gfx/pokemon/magikarp_plain/front.animated.2bpp.lz
 MagikarpPlainBackpic:  INCBIN "gfx/pokemon/magikarp_plain/back.2bpp.lzp"
 MagikarpPlainFrames:   INCLUDE "gfx/pokemon/magikarp_plain/frames.asm"
 
-SECTION "MagikarpSkelly Pics", ROMX
-MagikarpSkellyFrontpic: INCBIN "gfx/pokemon/magikarp_skelly/front.animated.2bpp.lzp"
-MagikarpSkellyBackpic:  INCBIN "gfx/pokemon/magikarp_skelly/back.2bpp.lzp"
-MagikarpSkellyFrames:   INCLUDE "gfx/pokemon/magikarp_skelly/frames.asm"
-
 SECTION "MagikarpCalico1 Pics", ROMX
 MagikarpCalico1Frontpic: INCBIN "gfx/pokemon/magikarp_calico1/front.animated.2bpp.lzp"
 MagikarpCalico1Backpic:  INCBIN "gfx/pokemon/magikarp_calico1/back.2bpp.lzp"
 MagikarpCalico1Frames:   INCLUDE "gfx/pokemon/magikarp_calico1/frames.asm"
-
-SECTION "MagikarpCalico2 Pics", ROMX
-MagikarpCalico2Frontpic: INCBIN "gfx/pokemon/magikarp_calico2/front.animated.2bpp.lzp"
-MagikarpCalico2Backpic:  INCBIN "gfx/pokemon/magikarp_calico2/back.2bpp.lzp"
-MagikarpCalico2Frames:   INCLUDE "gfx/pokemon/magikarp_calico2/frames.asm"
-
-SECTION "MagikarpCalico3 Pics", ROMX
-MagikarpCalico3Frontpic: INCBIN "gfx/pokemon/magikarp_calico3/front.animated.2bpp.lzp"
-MagikarpCalico3Backpic:  INCBIN "gfx/pokemon/magikarp_calico3/back.2bpp.lzp"
-MagikarpCalico3Frames:   INCLUDE "gfx/pokemon/magikarp_calico3/frames.asm"
-
-SECTION "MagikarpTwoTone Pics", ROMX
-MagikarpTwoToneFrontpic: INCBIN "gfx/pokemon/magikarp_twotone/front.animated.2bpp.lzp"
-MagikarpTwoToneBackpic:  INCBIN "gfx/pokemon/magikarp_twotone/back.2bpp.lzp"
-MagikarpTwoToneFrames:   INCLUDE "gfx/pokemon/magikarp_twotone/frames.asm"
 
 SECTION "MagikarpOrca Pics", ROMX
 MagikarpOrcaFrontpic: INCBIN "gfx/pokemon/magikarp_orca/front.animated.2bpp.lzp"
 MagikarpOrcaBackpic:  INCBIN "gfx/pokemon/magikarp_orca/back.2bpp.lzp"
 MagikarpOrcaFrames:   INCLUDE "gfx/pokemon/magikarp_orca/frames.asm"
 
-SECTION "MagikarpDapples Pics", ROMX
-MagikarpDapplesFrontpic: INCBIN "gfx/pokemon/magikarp_dapples/front.animated.2bpp.lzp"
-MagikarpDapplesBackpic:  INCBIN "gfx/pokemon/magikarp_dapples/back.2bpp.lzp"
-MagikarpDapplesFrames:   INCLUDE "gfx/pokemon/magikarp_dapples/frames.asm"
-
-SECTION "MagikarpTiger Pics", ROMX
-MagikarpTigerFrontpic: INCBIN "gfx/pokemon/magikarp_tiger/front.animated.2bpp.lzp"
-MagikarpTigerBackpic:  INCBIN "gfx/pokemon/magikarp_tiger/back.2bpp.lzp"
-MagikarpTigerFrames:   INCLUDE "gfx/pokemon/magikarp_tiger/frames.asm"
-
-SECTION "MagikarpZebra Pics", ROMX
-MagikarpZebraFrontpic: INCBIN "gfx/pokemon/magikarp_zebra/front.animated.2bpp.lzp"
-MagikarpZebraBackpic:  INCBIN "gfx/pokemon/magikarp_zebra/back.2bpp.lzp"
-MagikarpZebraFrames:   INCLUDE "gfx/pokemon/magikarp_zebra/frames.asm"
-
-SECTION "MagikarpStripe Pics", ROMX
-MagikarpStripeFrontpic: INCBIN "gfx/pokemon/magikarp_stripe/front.animated.2bpp.lzp"
-MagikarpStripeBackpic:  INCBIN "gfx/pokemon/magikarp_stripe/back.2bpp.lzp"
-MagikarpStripeFrames:   INCLUDE "gfx/pokemon/magikarp_stripe/frames.asm"
-
-SECTION "MagikarpBubbles Pics", ROMX
-MagikarpBubblesFrontpic: INCBIN "gfx/pokemon/magikarp_bubbles/front.animated.2bpp.lzp"
-MagikarpBubblesBackpic:  INCBIN "gfx/pokemon/magikarp_bubbles/back.2bpp.lzp"
-MagikarpBubblesFrames:   INCLUDE "gfx/pokemon/magikarp_bubbles/frames.asm"
-
-SECTION "MagikarpDiamonds Pics", ROMX
-MagikarpDiamondsFrontpic: INCBIN "gfx/pokemon/magikarp_diamonds/front.animated.2bpp.lzp"
-MagikarpDiamondsBackpic:  INCBIN "gfx/pokemon/magikarp_diamonds/back.2bpp.lzp"
-MagikarpDiamondsFrames:   INCLUDE "gfx/pokemon/magikarp_diamonds/frames.asm"
-
-SECTION "MagikarpPatches Pics", ROMX
-MagikarpPatchesFrontpic: INCBIN "gfx/pokemon/magikarp_patches/front.animated.2bpp.lzp"
-MagikarpPatchesBackpic:  INCBIN "gfx/pokemon/magikarp_patches/back.2bpp.lzp"
-MagikarpPatchesFrames:   INCLUDE "gfx/pokemon/magikarp_patches/frames.asm"
-
-SECTION "MagikarpForehead1 Pics", ROMX
-MagikarpForehead1Frontpic: INCBIN "gfx/pokemon/magikarp_forehead1/front.animated.2bpp.lzp"
-MagikarpForehead1Backpic:  INCBIN "gfx/pokemon/magikarp_forehead1/back.2bpp.lzp"
-MagikarpForehead1Frames:   INCLUDE "gfx/pokemon/magikarp_forehead1/frames.asm"
-
 SECTION "MagikarpMask1 Pics", ROMX
 MagikarpMask1Frontpic: INCBIN "gfx/pokemon/magikarp_mask1/front.animated.2bpp.lzp"
 MagikarpMask1Backpic:  INCBIN "gfx/pokemon/magikarp_mask1/back.2bpp.lzp"
 MagikarpMask1Frames:   INCLUDE "gfx/pokemon/magikarp_mask1/frames.asm"
-
-SECTION "MagikarpForehead2 Pics", ROMX
-MagikarpForehead2Frontpic: INCBIN "gfx/pokemon/magikarp_forehead2/front.animated.2bpp.lzp"
-MagikarpForehead2Backpic:  INCBIN "gfx/pokemon/magikarp_forehead2/back.2bpp.lzp"
-MagikarpForehead2Frames:   INCLUDE "gfx/pokemon/magikarp_forehead2/frames.asm"
-
-SECTION "MagikarpMask2 Pics", ROMX
-MagikarpMask2Frontpic: INCBIN "gfx/pokemon/magikarp_mask2/front.animated.2bpp.lzp"
-MagikarpMask2Backpic:  INCBIN "gfx/pokemon/magikarp_mask2/back.2bpp.lzp"
-MagikarpMask2Frames:   INCLUDE "gfx/pokemon/magikarp_mask2/frames.asm"
-
-SECTION "MagikarpSaucy Pics", ROMX
-MagikarpSaucyFrontpic: INCBIN "gfx/pokemon/magikarp_saucy/front.animated.2bpp.lzp"
-MagikarpSaucyBackpic:  INCBIN "gfx/pokemon/magikarp_saucy/back.2bpp.lzp"
-MagikarpSaucyFrames:   INCLUDE "gfx/pokemon/magikarp_saucy/frames.asm"
-
-SECTION "MagikarpRaindrop Pics", ROMX
-MagikarpRaindropFrontpic: INCBIN "gfx/pokemon/magikarp_raindrop/front.animated.2bpp.lzp"
-MagikarpRaindropBackpic:  INCBIN "gfx/pokemon/magikarp_raindrop/back.2bpp.lzp"
-MagikarpRaindropFrames:   INCLUDE "gfx/pokemon/magikarp_raindrop/frames.asm"
 
 SECTION "MewtwoPlain Pics", ROMX
 MewtwoPlainFrontpic: INCBIN "gfx/pokemon/mewtwo_plain/front.animated.2bpp.lzp"

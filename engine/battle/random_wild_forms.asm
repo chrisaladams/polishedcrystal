@@ -63,9 +63,19 @@ RandomWildSpeciesForms:
 	ret
 
 .Magikarp:
-	; Random Magikarp pattern
-	ld a, NUM_MAGIKARP
-	jr .RandomForm
+	ld a, 4
+	call BattleRandomRange
+	ld hl, .MagikarpForms
+	add l
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld a, [hl]
+	ret
+
+.MagikarpForms:
+	db PLAIN_FORM, MAGIKARP_CALICO1_FORM, MAGIKARP_ORCA_FORM, MAGIKARP_MASK1_FORM
 
 .EkansArbok:
 	; Random Arbok form (if not already specified)

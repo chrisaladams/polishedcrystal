@@ -3756,8 +3756,9 @@ _PasswordAskResetClockText::
 
 SECTION "_ClearAllSaveDataText", ROMX
 _ClearAllSaveDataText::
-	text "Clear all save"
-	line "data?"
+	text "Clear adventure"
+	line "data? Link Card"
+	cont "totals stay."
 	done
 
 SECTION "ResetInitialOptionsText", ROMX

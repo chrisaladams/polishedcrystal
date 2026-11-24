@@ -335,25 +335,25 @@ BitmasksPointers:
 
 	dw PichuSpikyBitmasks
 
-	dw MagikarpSkellyBitmasks
-	dw MagikarpCalico1Bitmasks
-	dw MagikarpCalico2Bitmasks
-	dw MagikarpCalico3Bitmasks
-	dw MagikarpTwoToneBitmasks
-	dw MagikarpOrcaBitmasks
-	dw MagikarpDapplesBitmasks
-	dw MagikarpTigerBitmasks
-	dw MagikarpZebraBitmasks
-	dw MagikarpStripeBitmasks
-	dw MagikarpBubblesBitmasks
-	dw MagikarpDiamondsBitmasks
-	dw MagikarpPatchesBitmasks
-	dw MagikarpForehead1Bitmasks
 	dw MagikarpMask1Bitmasks
-	dw MagikarpForehead2Bitmasks
-	dw MagikarpMask2Bitmasks
-	dw MagikarpSaucyBitmasks
-	dw MagikarpRaindropBitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpOrcaBitmasks
+	dw MagikarpOrcaBitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpOrcaBitmasks
+	dw MagikarpOrcaBitmasks
+	dw MagikarpPlainBitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpCalico1Bitmasks
+	dw MagikarpMask1Bitmasks
+	dw MagikarpMask1Bitmasks
+	dw MagikarpMask1Bitmasks
+	dw MagikarpMask1Bitmasks
+	dw MagikarpPlainBitmasks
+	dw MagikarpPlainBitmasks
 
 	assert_table_length NUM_SPECIES + NUM_COSMETIC_FORMS
 

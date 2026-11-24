@@ -20,13 +20,20 @@ DEF SAVE_CHECK_VALUE_1_OLD EQU 99 ; check digit before save version 7
 DEF SAVE_VERSION EQU 11
 
 ; time of day boundaries
-DEF MORN_HOUR EQU  5 ; 5 AM - 9 AM (4 hours)
-DEF DAY_HOUR  EQU  9 ; 9 AM - 5 PM (8 hours)
-DEF EVE_HOUR  EQU 17 ; 5 PM - 9 PM (4 hours)
-DEF NITE_HOUR EQU 21 ; 9 PM - 5 AM (8 hours)
+DEF MORN_HOUR EQU  6 ; 06:00-09:00
+DEF DAY_HOUR  EQU  9 ; 09:00-15:00
+DEF EVE_HOUR  EQU 15 ; 15:00-18:00
+DEF NITE_HOUR EQU 18 ; 18:00-06:00
 DEF MAX_HOUR  EQU 24 ; 12 AM - 12 AM (24 hours)
 
-DEF NO_RTC_SPEEDUP EQU 6
+DEF BUENA_START_HOUR EQU 17
+
+; The GBC refreshes at about 59.7275 Hz. 186/256 of seconds use 60 frames.
+DEF GAME_CLOCK_LONG_FRACTION EQU 186
+DEF WORLD_CLOCK_SPEED EQU 16 ; in-game seconds per gameplay second
+DEF WORLD_CLOCK_DAYS EQU 20 * 7 ; wrap on the same weekday
+DEF SOFTWARE_CLOCK_MARKER EQU $434c
+DEF CLOCK_RESET_PENDING EQU $a5
 
 ; significant money values
 DEF START_MONEY EQU 3000

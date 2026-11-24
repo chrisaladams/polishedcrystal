@@ -727,6 +727,12 @@ wPokegearRadioMusicPlaying:: db
 wPokegearNumberBuffer:: db
 wPokegearMapCursorSpawnpoint:: db
 wPokegearPhoneMaxContact:: db
+; Only live while the Pokégear map is open.
+wQuestMapCount:: db
+wQuestMapSelected:: db
+wQuestMapMain:: db
+wQuestMapRegion:: db
+wQuestMapLeads:: ds NUM_LANDMARKS ; goal table size is asserted against this capacity
 
 
 SECTION UNION "Misc 404", WRAM0
@@ -1170,6 +1176,10 @@ NEXTU
 ; trainer card badges
 wTrainerCardBadgeFrameCounter:: db
 wTrainerCardBadgeTileID:: db
+NEXTU
+wLinkCardPage:: db ; zero-based roster page
+wLinkCardPeriod:: db ; zero for lifetime, nonzero for current year
+wLinkCardMore:: db
 
 NEXTU
 ; slot machine
@@ -1403,7 +1413,7 @@ wOptions3::
 ; bit 0: keyword abc/qwerty
 ; bit 1: nicknames always ("Yes")
 ; bit 2: nicknames never ("No")
-; bit 3: autosave off
+; bit 3: reserved by older saves
 ; (bits 1 and 2 are never both set; both clear = "Ask")
 ; bits 3-7: unused
 	db
@@ -1460,7 +1470,7 @@ wInitialOptions2::
 ; - %01: classic EVs (no 510 cap)
 ; - %10: modern EVs (510 cap)
 ; bit 2: no exp on/off (cannot be set together with scaled exp)
-; bit 3: use RTC
+; bit 3: reserved by older saves
 ; bit 4: evolve in battle
 ; bits 5-6: unused
 ; bit 7: ask to reset at start
@@ -1468,10 +1478,7 @@ wInitialOptions2::
 wOptionsEnd::
 
 ; Time buffer, for counting the amount of time since an event began
-wSecondsSince:: db
-wMinutesSince:: db
-wHoursSince:: db
-wDaysSince:: db
+	ds 4 ; formerly clock delta scratch space
 
 ; Temporary backup for options
 wOptionsBuffer:: db
@@ -1590,3 +1597,7 @@ wWildMonSpawnSlot:: db
 wWildMonSpawnHabitat:: db
 ; Set when one was due but there was nowhere to put it (it comes next step).
 wWildMonSpawnPending:: db
+; Sweet Honey's remaining player steps and where it was used.
+wWildHoneySteps:: db
+wWildHoneyX:: db
+wWildHoneyY:: db

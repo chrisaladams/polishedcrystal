@@ -69,7 +69,6 @@ Route35NationalParkGateLeaveContestEarlyScene:
 	turnobject ROUTE35NATIONALPARKGATE_OFFICER1, RIGHT
 	opentext
 	readvar VAR_CONTESTMINUTES
-	addval $1
 	setquantity
 	writetext Route35NationalParkGateOfficer1WantToFinishText
 	yesorno

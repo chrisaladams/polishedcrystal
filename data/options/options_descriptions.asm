@@ -10,7 +10,6 @@ OptionsDescriptions:
 	dw .BattleStyle
 	dw .Nicknames
 	dw .RunningShoes
-	dw .Autosave
 	dw .Follower
 	dw .TurningSpeed
 	dw .ClockFormat
@@ -83,14 +82,6 @@ OptionsDescriptions:
 
 	para "Off, or to walk"
 	line "if they are On."
-	prompt
-
-.Autosave:
-	text "Save the game"
-	line "automatically when"
-	cont "you stop walking,"
-	cont "wherever you could"
-	cont "save normally."
 	prompt
 
 .Follower:

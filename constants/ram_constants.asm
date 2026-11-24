@@ -23,7 +23,7 @@ DEF JOYPAD_DISABLE_SGB_TRANSFER_F EQU 7
 	const QWERTY_KEYBOARD_F  ; 0
 	const NICKNAMES_ALWAYS   ; 1
 	const NICKNAMES_NEVER    ; 2
-	const AUTOSAVE_OFF_F     ; 3 (Link Edition)
+	const_skip ; 3, formerly autosave
 	const FOLLOWER_OFF_F     ; 4 (Link Edition)
 
 ; wOptions1::
@@ -118,7 +118,7 @@ DEF LINK_OPTMASK EQU (1 << NATURES_OPT) | (1 << ABILITIES_OPT) | (1 << PERFECT_I
 ; wInitialOptions2::
 	const_def 2
 	const NO_EXP_OPT           ; 2
-	const RTC_OPT              ; 3
+	const_skip ; 3, formerly the hardware RTC option
 	const EVOLVE_IN_BATTLE_OPT ; 4
 	const_skip 2
 	const RESET_INIT_OPTS      ; 7

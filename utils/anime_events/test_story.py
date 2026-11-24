@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Follow Oak's field book from Red to the Pallet sketch on one in-memory save.
+"""Follow Oak's field book from Red to the Pallet sketch on a copy of a save.
 
 Travel is shortened with map warps and battle outcomes are forced. Story
 flags are earned through interaction, including both full-pocket victories.
@@ -31,7 +31,8 @@ def main(save):
               *(entry[5] for entry in LEADERS + (DRAKE,)), *(entry[5] for entry in EVENTS),
               *(cls for cls, _ in ROUNDS)]
     k = rgbasm_values(names, None)
-    g = Game(Path(save).read_bytes())
+    save_data = Path(save).read_bytes()
+    g = Game(save_data)
     g.boot()
     texts = []
 
@@ -65,42 +66,34 @@ def main(save):
         visit(mp, x, y, facing)
         texts.clear()
         g.press('a', 60)
-        if label.startswith(('OaksLabFieldBook.', 'FieldBookNotes.')):
+        if label.startswith('FieldBookNotes.'):
             g.press('a', 60)  # Next stop
         settle()
         assert g.sym[label] in texts, f'{label} was not shown when examining {mp} from {x},{y}'
 
-    def menu_book(page, side=False):
-        g.press('start', 90)
-        count = g.rd('wMenuItemsList')
-        assert 0 < count <= 10, 'Start menu did not open'
-        # Match the printed label with the string from this build of the ROM.
-        bank, addr = g.sym['StartMenu.FieldBookString']
-        label = bytes(g.m[bank, addr + i] for i in range(len('Field Book')))
-        screen = bytes(g.rd('wTilemap', i) for i in range(20 * 18))
-        offset = screen.find(label)
-        assert offset >= 0, 'Field Book missing from Start menu'
-        row, column = divmod(offset, 20)
-        assert column + len(label) < 20 and count < g.rd('wMenuBorderBottomCoord') < 18
-        # Walk the cursor to the book as the player would, including wrap.
-        for _ in range(count):
-            if g.rd('wMenuCursorY') == row:
-                break
-            g.press('down', 12)
-        assert g.rd('wMenuCursorY') == row
+    def menu_book(page, *, side=False, recap=None):
+        g.highlight_start_option('FieldBookString')
         location = (g.rd('wMapGroup'), g.rd('wMapNumber'), g.rd('wXCoord'), g.rd('wYCoord'))
         texts.clear()
         g.press('a', 60)
-        if side:
+        for _ in range(2 if side else int(recap is not None)):
             g.press('down', 16)
         g.press('a', 60)
         settle()
-        assert g.sym[page] in texts, f'wrong Start menu page: {page}'
+        if recap is None:
+            assert g.sym[page] in texts, f'wrong Start menu page: {page}'
+        else:
+            before, ahead = recap
+            expected = [g.sym['FieldBookRecap.' + before], g.sym['ReadFieldBook.NextText'],
+                        g.sym[page], g.sym['ReadFieldBook.AheadText'], g.sym['FieldBookNotes.' + ahead]]
+            assert texts == expected, f'wrong catch-up sequence for {before}, {page}, {ahead}: {texts}'
+
         assert location == (g.rd('wMapGroup'), g.rd('wMapNumber'), g.rd('wXCoord'), g.rd('wYCoord'))
 
-    def book(page):
-        menu_book('OaksLabFieldBook.' + page)
-        read('OAKS_LAB', 2, 2, 'up', 'OaksLabFieldBook.' + page)
+    def book(page, before, ahead):
+        label = 'FieldBookNotes.' + page
+        menu_book(label, recap=(before, ahead))
+        read('OAKS_LAB', 2, 2, 'up', label)
         print('Read field book:', page, flush=True)
 
     def battle(cls, win=True):
@@ -163,13 +156,7 @@ def main(save):
         battle('RED')
         settle()
         assert flag('EVENT_GOT_MYSTICTICKET_FROM_RED') and g.sym['Red.Note'] in texts
-        book('Crew')
-        for _, mp, x, y, facing, cls, badge in LEADERS + (DRAKE,):
-            visit(mp, x, y, facing)
-            battle(cls)
-            settle()
-            assert flag(badge), badge
-        book('Alph')
+        book('Alph', 'Red', 'Hale')
         molly, mask, echo = EVENTS
         fill_pocket()
         visit(molly[1], *molly[3], molly[4])
@@ -177,22 +164,68 @@ def main(save):
         settle()
         assert flag('EVENT_BEAT_MOLLY')
         collect('EVENT_MOLLY_PATCH_PENDING', 'ABILITYPATCH')
-        book('Hale')
+        book('Hale', 'Alph', 'Mask')
         read('RUINS_OF_ALPH_INNER_CHAMBER', 5, 14, 'up', 'HaleStatueScript.Note')
         assert flag('EVENT_RESCUED_PROF_HALE')
+        assert g.sym['GiveNextStoryLead.MaskedMan'] in texts
         flag('EVENT_TIME_TRAVEL_FINISHED', False)
-        book('Shrine')
+        book('Shrine', 'Hale', 'Mask')
         flag('EVENT_TIME_TRAVEL_FINISHED', True)
-        book('Mask')
+        book('Mask', 'Shrine', 'Echo')
         visit(mask[1], *mask[3], mask[4])
         battle(mask[5])
         settle()
         assert g.sym['IlexForestIronMaskScript.Vision'] in texts
-        book('Echo')
+        book('Echo', 'Mask', 'Cissy')
+        # Resume from cartridge save data with no emulator state or menu history.
+        g.manual_save()
+        continued = g.sram() + save_data[0x8000:]
+        g.pb.stop(save=False)
+        g = Game(continued)
+        g.boot()
+        settle()
+        g.pb.hook_register(*g.sym['MapTextbox'], record_text, None)
+        menu_book('FieldBookNotes.Echo', recap=('Mask', 'Cissy'))
+        print('Continued a cartridge save and recovered all three catch-up pages.')
         visit(echo[1], *echo[3], echo[4])
         battle(echo[5])
         settle()
-        book('Cup')
+        assert g.sym['TraceyCallsWithALead.Call'] in texts
+        assert g.sym['GiveNextStoryLead.Cissy'] in texts
+        # An older save can have the Cup and some Crew badges out of order.
+        before_crew = g.state()
+        flag('EVENT_BEAT_ORANGE_CREW_CISSY', True)
+        flag('EVENT_BEAT_ORANGE_CREW_RUDY', True)
+        flag('EVENT_WON_WHIRL_CUP', True)
+        menu_book('FieldBookNotes.Danny', recap=('Cissy', 'Luana'))
+        flag('EVENT_BEAT_DRAKE', True)
+        menu_book('FieldBookNotes.Final', recap=('Cup', 'AfterFinal'))
+        # Winning Cissy's badge after Danny/Rudy/Cup should send us to Luana.
+        g.load(before_crew)
+        flag('EVENT_BEAT_ORANGE_CREW_DANNY', True)
+        flag('EVENT_BEAT_ORANGE_CREW_RUDY', True)
+        flag('EVENT_WON_WHIRL_CUP', True)
+        _, mp, x, y, facing, cls, _ = LEADERS[0]
+        visit(mp, x, y, facing)
+        texts.clear()
+        battle(cls)
+        settle()
+        assert g.sym['GiveNextStoryLead.Luana'] in texts
+        g.load(before_crew)
+
+        crew = LEADERS + (DRAKE,)
+        previous = 'Echo'
+        for i, (name, mp, x, y, facing, cls, badge) in enumerate(crew):
+            following = crew[i + 1][0] if i + 1 < len(crew) else 'Cup'
+            book(name, previous, following)
+            visit(mp, x, y, facing)
+            battle(cls)
+            settle()
+            assert flag(badge), badge
+            handoff = 'Misty' if following == 'Cup' else following
+            assert g.sym['GiveNextStoryLead.' + handoff] in texts, handoff
+            previous = name
+        book('Cup', 'Drake', 'Final')
         species = []
         for i in range(g.rd('wPartyCount')):
             offset = i * k['PARTYMON_STRUCT_LENGTH']
@@ -204,10 +237,11 @@ def main(save):
             battle(cls)
         settle()
         assert flag('EVENT_WON_WHIRL_CUP')
+        assert g.sym['GiveNextStoryLead.Ash'] in texts
         collect('EVENT_WHIRL_CUP_PRIZE_PENDING', 'MYSTIC_WATER')
         for i, original in enumerate(species):
             g.wr('wPartyMon1Species', original, i * k['PARTYMON_STRUCT_LENGTH'])
-        book('Final')
+        book('Final', 'Cup', 'AfterFinal')
         ash = CAMEOS[0]
         visit(ash[1], *ash[3], ash[4])
         battle('DRAKE_T')
@@ -219,7 +253,7 @@ def main(save):
         battle('ASH_T')
         settle()
         assert flag('EVENT_WON_PALLET_INVITATIONAL')
-        book('Champion')
+        book('Champion', 'Final', 'FreePlay')
         read('OAKS_LAB', 5, 1, 'up', 'OaksLabPoster.Sketch')
         visit(ash[1], *ash[3], ash[4])
         battle('ASH_T')

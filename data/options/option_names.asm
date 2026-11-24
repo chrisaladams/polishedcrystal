@@ -10,7 +10,6 @@ OptionNames:
 	dw .BattleStyle
 	dw .Nicknames
 	dw .RunningShoes
-	dw .Autosave
 	dw .Follower
 	dw .TurningSpeed
 	dw .ClockFormat
@@ -37,8 +36,6 @@ OptionNames:
 	db "Nicknames@"
 .RunningShoes:
 	db "Running Shoes@"
-.Autosave:
-	db "Autosave@"
 .Follower:
 	db "Follower@"
 .TurningSpeed:

@@ -4,142 +4,266 @@ ReadFieldBook:
 	verticalmenu
 	closewindow
 	ifequalfwd 1, .Next
-	ifequal 2, FieldBookSideQuests
+	ifequalfwd 2, .CatchUp
+	ifequal 3, FieldBookSideQuests
 	endtext
 
 .Contents:
 	db MENU_BACKUP_TILES
-	menu_coords 0, 0, 14, 5
+	menu_coords 0, 0, 14, 7
 	dw .Choices
 	db 1
 .Choices:
 	db STATICMENU_CURSOR
-	db 2
+	db 3
 	db "Next stop@"
+	db "Catch me up@"
 	db "Side quests@"
 
 .Next:
-	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
-	iffalsefwd .Earlier
-	farsjump OaksLabFieldBook
-.Earlier:
-	checkevent EVENT_BEAT_ELITE_FOUR
-	iftruefwd FieldBookKanto
-	checkevent EVENT_GOT_A_POKEMON_FROM_ELM
-	iffalse_jumpopenedtext FieldBookNotes.Starter
-	checkevent EVENT_GOT_MYSTERY_EGG_FROM_MR_POKEMON
-	iffalse_jumpopenedtext FieldBookNotes.Errand
-	checkevent EVENT_GAVE_MYSTERY_EGG_TO_ELM
-	iffalse_jumpopenedtext FieldBookNotes.ReturnEgg
-	checkevent EVENT_GOT_TM70_FLASH
-	iffalse_jumpopenedtext FieldBookNotes.Tower
-	checkevent EVENT_VIOLET_GYM_FALKNER
-	iftrue_jumpopenedtext FieldBookNotes.Cave
-	checkflag ENGINE_ZEPHYRBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Violet
-	checkevent EVENT_GOT_TOGEPI_EGG_FROM_ELMS_AIDE
-	iffalse_jumpopenedtext FieldBookNotes.Aide
-	checkevent EVENT_CLEARED_SLOWPOKE_WELL
-	iffalse_jumpopenedtext FieldBookNotes.Well
-	checkflag ENGINE_HIVEBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Bugsy
-	checkevent EVENT_GOT_HM01_CUT
-	iffalse_jumpopenedtext FieldBookNotes.Cut
-	checkflag ENGINE_RADIO_CARD
-	iffalse_jumpopenedtext FieldBookNotes.Quiz
-	checkflag ENGINE_PLAINBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Whitney
-	checkevent EVENT_GOT_SQUIRTBOTTLE
-	iffalse_jumpopenedtext FieldBookNotes.Bottle
-	checkevent EVENT_FOUGHT_SUDOWOODO
-	iffalse_jumpopenedtext FieldBookNotes.Tree
-	checkevent EVENT_RELEASED_THE_BEASTS
-	iffalse_jumpopenedtext FieldBookNotes.BurnedTower
-	checkflag ENGINE_FOGBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Morty
-	checkevent EVENT_GOT_HM03_SURF
-	iffalse_jumpopenedtext FieldBookNotes.Surf
-	checkevent EVENT_JASMINE_EXPLAINED_AMPHYS_SICKNESS
-	iffalse_jumpopenedtext FieldBookNotes.Lighthouse
-	checkevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY
-	iffalse_jumpopenedtext FieldBookNotes.Medicine
-	checkevent EVENT_JASMINE_RETURNED_TO_GYM
-	iffalse_jumpopenedtext FieldBookNotes.Amphy
-	checkflag ENGINE_STORMBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Chuck
-	checkflag ENGINE_MINERALBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Jasmine
-	checkevent EVENT_DECIDED_TO_HELP_LANCE
-	iffalse_jumpopenedtext FieldBookNotes.Lake
-	checkevent EVENT_CLEARED_ROCKET_HIDEOUT
-	iffalse_jumpopenedtext FieldBookNotes.Hideout
-	checkflag ENGINE_GLACIERBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Pryce
-	checkevent EVENT_CLEARED_RADIO_TOWER
-	iftruefwd .Blackthorn
-	checkevent EVENT_BEAT_PETREL_1
-	iffalse_jumpopenedtext FieldBookNotes.Takeover
-	checkevent EVENT_RECEIVED_CARD_KEY
-	iffalse_jumpopenedtext FieldBookNotes.Director
-	jumpopenedtext FieldBookNotes.CardKey
-.Blackthorn:
-	checkevent EVENT_BEAT_CLAIR
-	iffalse_jumpopenedtext FieldBookNotes.Clair
-	checkflag ENGINE_RISINGBADGE
-	iffalse_jumpopenedtext FieldBookNotes.DragonDen
-	checkevent EVENT_GOT_HM06_WATERFALL
-	iffalse_jumpopenedtext FieldBookNotes.Waterfall
-	jumpopenedtext FieldBookNotes.League
+	callasm FieldBookCurrent
+	repeattext
+	waitendtext
 
-FieldBookKanto:
-	checkevent EVENT_OPENED_MT_SILVER
-	iftrue_jumpopenedtext FieldBookNotes.Red
-	readvar VAR_BADGES
-	ifequalfwd 16, .LeagueRematch
-	checkevent EVENT_GOT_SS_TICKET_FROM_ELM
-	iffalse_jumpopenedtext FieldBookNotes.Ticket
-	checkevent EVENT_FAST_SHIP_FIRST_TIME
-	iffalse_jumpopenedtext FieldBookNotes.Ship
-	checkflag ENGINE_THUNDERBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Surge
-	checkevent EVENT_RESTORED_POWER_TO_KANTO
-	iftruefwd .Powered
-	checkevent EVENT_MET_MANAGER_AT_POWER_PLANT
-	iffalse_jumpopenedtext FieldBookNotes.Plant
-	checkevent EVENT_MET_ROCKET_GRUNT_AT_CERULEAN_GYM
-	iffalse_jumpopenedtext FieldBookNotes.Grunt
-	checkevent EVENT_LEARNED_ABOUT_MACHINE_PART
-	iffalse_jumpopenedtext FieldBookNotes.Bridge
-	checkevent EVENT_FOUND_MACHINE_PART_IN_CERULEAN_GYM
-	iffalse_jumpopenedtext FieldBookNotes.Part
-	jumpopenedtext FieldBookNotes.Restore
-.Powered:
-	checkevent EVENT_TRAINERS_IN_CERULEAN_GYM
-	iftrue_jumpopenedtext FieldBookNotes.Cape
-	checkflag ENGINE_CASCADEBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Misty
-	checkflag ENGINE_MARSHBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Sabrina
-	checkflag ENGINE_RAINBOWBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Erika
-	checkflag ENGINE_SOULBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Janine
-	checkflag ENGINE_EXPN_CARD
-	iffalse_jumpopenedtext FieldBookNotes.Radio
-	checkevent EVENT_FOUGHT_SNORLAX
-	iffalse_jumpopenedtext FieldBookNotes.Flute
-	checkflag ENGINE_BOULDERBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Brock
-	checkflag ENGINE_VOLCANOBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Blaine
-	checkevent EVENT_VIRIDIAN_GYM_BLUE
-	iftrue_jumpopenedtext FieldBookNotes.Cinnabar
-	checkflag ENGINE_EARTHBADGE
-	iffalse_jumpopenedtext FieldBookNotes.Blue
-.LeagueRematch:
-	checkevent EVENT_BEAT_ELITE_FOUR_AGAIN
-	iffalse_jumpopenedtext FieldBookNotes.Rematch
-	jumpopenedtext FieldBookNotes.Oak
+.CatchUp:
+	callasm FieldBookProgress
+	repeattext
+	promptbutton
+	writetext .NextText
+	promptbutton
+	callasm FieldBookCurrent
+	repeattext
+	promptbutton
+	writetext .AheadText
+	promptbutton
+	callasm FieldBookAhead
+	repeattext
+	waitendtext
+
+.NextText:
+	text "Your next stop…"
+	done
+
+.AheadText:
+	text "Looking ahead…"
+	done
+
+; Resolve all three views from the same read-only itinerary. DE holds the
+; most recent completed step on this route. For a preview, skip the first
+; unfinished step. No timestamp or extra save data is needed.
+	const_def
+	const BOOK_CURRENT
+	const BOOK_AHEAD
+	const BOOK_PROGRESS
+
+FieldBookCurrent:
+	call GetCurrentFieldBookPage
+	jr StoreFieldBookPage
+FieldBookProgress:
+	ld b, BOOK_PROGRESS
+	jr ReadFieldBookPage
+FieldBookAhead:
+	ld b, BOOK_AHEAD
+ReadFieldBookPage:
+	call FindFieldBookPage
+StoreFieldBookPage:
+	ld a, BANK(FieldBookRoute)
+	ld [wScriptTextBank], a
+	ld a, l
+	ld [wScriptTextAddr], a
+	ld a, h
+	ld [wScriptTextAddr + 1], a
+	ret
+
+GetCurrentFieldBookPage:
+	ld b, BOOK_CURRENT
+FindFieldBookPage:
+	ld hl, FieldBookRoute
+	ld de, FieldBookRecap.Begin
+.loop
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	and a
+	jr z, .end
+	push de
+	ld d, a
+	ld e, c
+	ld a, [de]
+	and [hl] ; bit mask
+	inc hl
+	cp [hl] ; value when complete
+	inc hl
+	pop de
+	ld a, [hli]
+	ld c, a
+	ld a, [hli] ; high byte of the hint address (low byte in C)
+	jr nz, .unfinished
+	or c
+	jr z, .shortcut
+	ld a, [hli]
+	ld e, a
+	ld d, [hl]
+	inc hl
+	jr .loop
+
+.shortcut
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	jr .loop
+
+.unfinished
+	inc hl
+	inc hl
+	or a ; text pointers are in ROMX
+	jr z, .loop ; unmet shortcut
+	bit 1, b ; BOOK_PROGRESS
+	jr nz, .progress
+	bit 0, b ; BOOK_AHEAD
+	jr z, .current
+	ld b, BOOK_CURRENT
+	jr .loop
+.current
+	ld h, a
+	ld l, c
+	ret
+
+.end
+	ld a, b
+	cp BOOK_PROGRESS
+	jr z, .progress
+	eventflagcheck EVENT_WON_PALLET_INVITATIONAL
+	ld hl, FieldBookNotes.AfterFinal
+	ret z ; reading one step ahead from the finale
+	ld hl, FieldBookNotes.Champion
+	ld a, b
+	and a
+	ret z
+	ld hl, FieldBookNotes.FreePlay
+	ret
+.progress
+	ld h, d
+	ld l, e
+	ret
+
+; Each record names a byte in RAM, its mask and completed value, then the
+; directions and recap text. A zero direction pointer jumps over the
+; earlier steps of a chapter already finished on this save.
+MACRO book_event
+	dw wEventFlags + (\1 / 8)
+	db 1 << (\1 % 8)
+	if _NARG == 3
+		db \3 ; a gym leader's hide flag clears when they return
+	else
+		db 1 << (\1 % 8)
+	endc
+	dw FieldBookNotes.\2, FieldBookRecap.\2
+ENDM
+
+MACRO book_bit
+	dw \1
+	db 1 << (\2), 1 << (\2)
+	dw FieldBookNotes.\3, FieldBookRecap.\3
+ENDM
+
+MACRO book_badge
+	book_bit wJohtoBadges + ((\1 - ENGINE_BADGES) / 8), (\1 - ENGINE_BADGES) % 8, \2
+ENDM
+
+MACRO book_skip
+	dw wEventFlags + (\1 / 8)
+	db 1 << (\1 % 8), 1 << (\1 % 8)
+	dw 0, \2
+ENDM
+
+FieldBookRoute:
+	book_skip EVENT_WON_PALLET_INVITATIONAL, .Final
+	book_skip EVENT_GOT_MYSTICTICKET_FROM_RED, .Red
+	book_skip EVENT_OPENED_MT_SILVER, .Oak
+	book_skip EVENT_BEAT_ELITE_FOUR, .League
+	book_event EVENT_GOT_A_POKEMON_FROM_ELM, Starter
+	book_event EVENT_GOT_MYSTERY_EGG_FROM_MR_POKEMON, Errand
+	book_event EVENT_GAVE_MYSTERY_EGG_TO_ELM, ReturnEgg
+	book_event EVENT_GOT_TM70_FLASH, Tower
+	book_event EVENT_VIOLET_GYM_FALKNER, Cave, 0
+	book_badge ENGINE_ZEPHYRBADGE, Violet
+	book_event EVENT_GOT_TOGEPI_EGG_FROM_ELMS_AIDE, Aide
+	book_event EVENT_CLEARED_SLOWPOKE_WELL, Well
+	book_badge ENGINE_HIVEBADGE, Bugsy
+	book_event EVENT_GOT_HM01_CUT, Cut
+	book_bit wPokegearFlags, POKEGEAR_RADIO_CARD_F, Quiz
+	book_badge ENGINE_PLAINBADGE, Whitney
+	book_event EVENT_GOT_SQUIRTBOTTLE, Bottle
+	book_event EVENT_FOUGHT_SUDOWOODO, Tree
+	book_event EVENT_RELEASED_THE_BEASTS, BurnedTower
+	book_badge ENGINE_FOGBADGE, Morty
+	book_event EVENT_GOT_HM03_SURF, Surf
+	book_event EVENT_JASMINE_EXPLAINED_AMPHYS_SICKNESS, Lighthouse
+	book_event EVENT_GOT_SECRETPOTION_FROM_PHARMACY, Medicine
+	book_badge ENGINE_STORMBADGE, Chuck
+	book_event EVENT_JASMINE_RETURNED_TO_GYM, Amphy
+	book_badge ENGINE_MINERALBADGE, Jasmine
+	book_event EVENT_DECIDED_TO_HELP_LANCE, Lake
+	book_event EVENT_CLEARED_ROCKET_HIDEOUT, Hideout
+	book_badge ENGINE_GLACIERBADGE, Pryce
+	book_skip EVENT_CLEARED_RADIO_TOWER, .CardKey
+	book_event EVENT_BEAT_PETREL_1, Takeover
+	book_event EVENT_RECEIVED_CARD_KEY, Director
+.CardKey:
+	book_event EVENT_CLEARED_RADIO_TOWER, CardKey
+	book_event EVENT_GOT_HM06_WATERFALL, Waterfall
+	book_event EVENT_BEAT_CLAIR, Clair
+	book_badge ENGINE_RISINGBADGE, DragonDen
+.League:
+	book_event EVENT_BEAT_ELITE_FOUR, League
+	; In Kanto all eight local badges also qualify you for the League rematch.
+	dw wKantoBadges
+	db $ff, $ff
+	dw 0, .Blue
+	book_event EVENT_GOT_SS_TICKET_FROM_ELM, Ticket
+	book_event EVENT_FAST_SHIP_FIRST_TIME, Ship
+	book_badge ENGINE_THUNDERBADGE, Surge
+	book_skip EVENT_RESTORED_POWER_TO_KANTO, .Restore
+	book_event EVENT_MET_MANAGER_AT_POWER_PLANT, Plant
+	book_event EVENT_MET_ROCKET_GRUNT_AT_CERULEAN_GYM, Grunt
+	book_event EVENT_LEARNED_ABOUT_MACHINE_PART, Bridge
+	book_event EVENT_FOUND_MACHINE_PART_IN_CERULEAN_GYM, Part
+.Restore:
+	book_event EVENT_RESTORED_POWER_TO_KANTO, Restore
+	book_event EVENT_TRAINERS_IN_CERULEAN_GYM, Cape, 0
+	book_badge ENGINE_CASCADEBADGE, Misty
+	book_badge ENGINE_MARSHBADGE, Sabrina
+	book_badge ENGINE_RAINBOWBADGE, Erika
+	book_badge ENGINE_SOULBADGE, Janine
+	book_bit wPokegearFlags, POKEGEAR_EXPN_CARD_F, Radio
+	book_event EVENT_FOUGHT_SNORLAX, Flute
+	book_badge ENGINE_BOULDERBADGE, Brock
+	book_badge ENGINE_VOLCANOBADGE, Blaine
+	book_event EVENT_VIRIDIAN_GYM_BLUE, Cinnabar, 0
+.Blue:
+	book_badge ENGINE_EARTHBADGE, Blue
+	book_event EVENT_BEAT_ELITE_FOUR_AGAIN, Rematch
+.Oak:
+	book_event EVENT_OPENED_MT_SILVER, Oak
+.Red:
+	book_event EVENT_GOT_MYSTICTICKET_FROM_RED, Red
+	book_event EVENT_BEAT_MOLLY, Alph
+	book_event EVENT_RESCUED_PROF_HALE, Hale
+	book_event EVENT_TIME_TRAVEL_FINISHED, Shrine
+	book_event EVENT_BEAT_IRON_MASK_MARAUDER, Mask
+	book_event EVENT_BEAT_MEWTWO_CLONES, Echo
+	book_skip EVENT_BEAT_DRAKE, .Drake
+	book_event EVENT_BEAT_ORANGE_CREW_CISSY, Cissy
+	book_event EVENT_BEAT_ORANGE_CREW_DANNY, Danny
+	book_event EVENT_BEAT_ORANGE_CREW_RUDY, Rudy
+	book_event EVENT_BEAT_ORANGE_CREW_LUANA, Luana
+.Drake:
+	book_event EVENT_BEAT_DRAKE, Drake
+	book_event EVENT_WON_WHIRL_CUP, Cup
+.Final:
+	book_event EVENT_WON_PALLET_INVITATIONAL, Final
+	dw 0 ; end of itinerary
 
 FieldBookSideQuests:
 	; Favor an errand the player has already accepted.
@@ -402,10 +526,9 @@ FieldBookNotes:
 
 .Clair:
 	text "Blackthorn City"
-	para "Go east on Route"
-	line "44, then through"
-	cont "Ice Path. Clair"
-	cont "waits in the Gym."
+	para "Clair waits at the"
+	line "Gym east of Ice"
+	cont "Path."
 	done
 
 .DragonDen:
@@ -419,10 +542,12 @@ FieldBookNotes:
 
 .Waterfall:
 	text "Ice Path"
+	para "From Mahogany, go"
+	line "east on Route 44."
 	para "Pick up Waterfall"
 	line "on the first floor"
-	cont "before leaving for"
-	cont "the League."
+	cont "on your way east"
+	cont "to Blackthorn."
 	done
 
 .League:
@@ -670,4 +795,689 @@ FieldBookNotes:
 	text "Local errands"
 	para "No new errands on"
 	line "these pages yet."
+	done
+
+.Champion:
+	text "Tracey's last page"
+	line "is a sketch of you"
+	cont "beside Ash."
+	para "Oak wrote one word"
+	line "below: Champion."
+	done
+
+.Alph:
+	text "Field book: Alph"
+	para "Molly heard"
+	line "her father calling"
+	cont "from a statue."
+	para "Meet her at the"
+	line "research center in"
+	cont "the Ruins of Alph."
+	done
+
+.Hale:
+	text "Ruins of Alph"
+	para "In the big chamber"
+	line "stand at the foot"
+	cont "of the ladder."
+	para "Two statues stand"
+	line "to its left. Knock"
+	cont "on the nearer one."
+	done
+
+.Shrine:
+	text "Ilex Forest"
+	para "Bring Celebi to"
+	line "the shrine west"
+	cont "of Azalea."
+	para "Need Celebi? Try"
+	line "Wonder Trade in"
+	cont "Goldenrod for the"
+	cont "GS Ball. Give it"
+	cont "to Kurt in Azalea."
+	para "Return to Kurt the"
+	line "next day. Use the"
+	cont "ball at the shrine"
+	cont "to meet Celebi."
+	done
+
+.Mask:
+	text "A man in a mask"
+	line "is waiting east"
+	cont "of Ilex shrine."
+	para "He carries a black"
+	line "ball. Celebi won't"
+	cont "leave his side."
+	done
+
+.Echo:
+	text "A voice is calling"
+	line "from the depths"
+	cont "of Cerulean Cave."
+	para "Examine the place"
+	line "where Mewtwo stood"
+	cont "if it has gone."
+	done
+
+.Cup:
+	text "A page from Misty"
+	line "smells of sea air."
+	para "Olivine Whirl Cup"
+	para "Take a Water team"
+	line "to the port. Win"
+	cont "all three rounds."
+	done
+
+.Final:
+	text "Ash taped a ticket"
+	line "inside the cover."
+	para "Pallet finals"
+	line "Outside Oak's lab."
+	cont "Two rounds. One"
+	cont "team."
+	done
+
+.Cissy:
+	text "Warm Beach"
+	para "Use the Orange"
+	line "Ticket in"
+	cont "Vermilion to reach"
+	cont "Shamouti Island."
+	para "At the tunnel, use"
+	line "the radio's #"
+	cont "Flute to wake the"
+	cont "tree in your way."
+	para "Take the tunnel to"
+	line "Warm Beach. Cissy"
+	cont "is by the water."
+	done
+
+.Danny:
+	text "Rocky Beach"
+	para "Head north from"
+	line "Shamouti to Rocky"
+	cont "Beach. Danny is on"
+	cont "the sandy path."
+	done
+
+.Rudy:
+	text "Beautiful Beach"
+	para "Rudy is near the"
+	line "ferry landing on"
+	cont "Beautiful Beach."
+	done
+
+.Luana:
+	text "Valencia Island"
+	para "Accept a partner"
+	line "from Prof.Ivy at"
+	cont "Shamouti's #mon"
+	cont "Center to open the"
+	cont "Valencia ferry."
+	para "Sail from the dock"
+	line "on Beautiful Beach"
+	cont "to Valencia. Visit"
+	cont "Luana in the house"
+	cont "west of the lab."
+	done
+
+.Drake:
+	text "Shamouti Island"
+	para "Take the four Crew"
+	line "badges to Drake in"
+	cont "his island home."
+	done
+
+.AfterFinal:
+	text "Pallet Town"
+	para "After both wins,"
+	line "visit Oak's lab to"
+	cont "see what Tracey"
+	cont "drew."
+	done
+
+.FreePlay:
+	text "Pallet Town"
+	para "Ash is ready for a"
+	line "friendly rematch."
+	cont "Read Side quests"
+	cont "for local errands."
+	done
+
+FieldBookRecap:
+.Begin:
+	text "A fresh page! Your"
+	line "journey starts at"
+	cont "home in New Bark."
+	done
+
+.Starter:
+	text "You chose your"
+	line "first partner in"
+	cont "Elm's lab."
+	done
+
+.Errand:
+	text "You received the"
+	line "Mystery Egg for"
+	cont "Prof.Elm."
+	done
+
+.ReturnEgg:
+	text "You brought the"
+	line "Mystery Egg back"
+	cont "to Prof.Elm."
+	done
+
+.Tower:
+	text "The elder at"
+	line "Sprout Tower gave"
+	cont "you Flash."
+	done
+
+.Cave:
+	text "You found Falkner"
+	line "with the Ursaring"
+	cont "in Dark Cave."
+	done
+
+.Violet:
+	text "Falkner gave you"
+	line "your first badge"
+	cont "in Violet."
+	done
+
+.Aide:
+	text "Elm's aide put the"
+	line "Egg in your care."
+	done
+
+.Well:
+	text "You helped Kurt"
+	line "save the Slowpoke"
+	cont "in Azalea."
+	done
+
+.Bugsy:
+	text "You earned Bugsy's"
+	line "Hive Badge."
+	done
+
+.Cut:
+	text "The Farfetch'd is"
+	line "safe. You picked"
+	cont "up Cut in Ilex."
+	done
+
+.Quiz:
+	text "You passed the"
+	line "radio quiz in"
+	cont "Goldenrod."
+	done
+
+.Whitney:
+	text "Whitney handed you"
+	line "the Plain Badge."
+	done
+
+.Bottle:
+	text "The flower shop"
+	line "lent you its"
+	cont "Squirtbottle."
+	done
+
+.Tree:
+	text "You cleared the"
+	line "odd tree from"
+	cont "Route 36."
+	done
+
+.BurnedTower:
+	text "Three beasts fled"
+	line "the Burned Tower."
+	done
+
+.Morty:
+	text "You won Morty's"
+	line "Fog Badge."
+	done
+
+.Surf:
+	text "You earned Surf at"
+	line "the Dance Theatre."
+	done
+
+.Lighthouse:
+	text "Jasmine asked for"
+	line "medicine for Amphy"
+	cont "in the lighthouse."
+	done
+
+.Medicine:
+	text "The Cianwood"
+	line "pharmacist gave"
+	cont "you Amphy's"
+	cont "medicine."
+	done
+
+.Chuck:
+	text "You earned Chuck's"
+	line "Storm Badge in"
+	cont "Cianwood."
+	done
+
+.Amphy:
+	text "Amphy is well."
+	line "Jasmine returned"
+	cont "to her Gym."
+	done
+
+.Jasmine:
+	text "You won Jasmine's"
+	line "Mineral Badge."
+	done
+
+.Lake:
+	text "At the lake, you"
+	line "agreed to help"
+	cont "Lance."
+	done
+
+.Hideout:
+	text "You and Lance shut"
+	line "down the signal in"
+	cont "Mahogany."
+	done
+
+.Pryce:
+	text "You won Pryce's"
+	line "Glacier Badge."
+	done
+
+.Takeover:
+	text "Petrel gave up the"
+	line "Basement Key in"
+	cont "Goldenrod."
+	done
+
+.Director:
+	text "The director gave"
+	line "you the Card Key."
+	done
+
+.CardKey:
+	text "The Radio Tower is"
+	line "back on the air."
+	done
+
+.Waterfall:
+	text "You found the"
+	line "Waterfall HM in"
+	cont "Ice Path."
+	done
+
+.Clair:
+	text "You beat Clair."
+	line "She sent you into"
+	cont "Dragon's Den."
+	done
+
+.DragonDen:
+	text "You received the"
+	line "Rising Badge at"
+	cont "the shrine."
+	done
+
+.League:
+	text "You entered the"
+	line "Hall of Fame in"
+	cont "Johto."
+	done
+
+.Ticket:
+	text "Elm gave you a"
+	line "ticket for the"
+	cont "S.S.Aqua."
+	done
+
+.Ship:
+	text "You reached"
+	line "Vermilion on the"
+	cont "S.S.Aqua."
+	done
+
+.Surge:
+	text "You won Lt.Surge's"
+	line "Thunder Badge."
+	done
+
+.Plant:
+	text "The plant manager"
+	line "reported a stolen"
+	cont "Machine Part."
+	done
+
+.Grunt:
+	text "A Rocket fled the"
+	line "Cerulean Gym."
+	done
+
+.Bridge:
+	text "On Route 24, the"
+	line "grunt told you"
+	cont "where he hid the"
+	cont "part."
+	done
+
+.Part:
+	text "You recovered the"
+	line "missing part from"
+	cont "Cerulean Gym."
+	done
+
+.Restore:
+	text "Power is back on"
+	line "in Kanto."
+	done
+
+.Cape:
+	text "You found Misty at"
+	line "Cerulean Cape."
+	done
+
+.Misty:
+	text "You earned Misty's"
+	line "Cascade Badge."
+	done
+
+.Sabrina:
+	text "You won Sabrina's"
+	line "Marsh Badge."
+	done
+
+.Erika:
+	text "Erika gave you the"
+	line "Rainbow Badge."
+	done
+
+.Janine:
+	text "You found the real"
+	line "Janine and won the"
+	cont "Soul Badge."
+	done
+
+.Radio:
+	text "Your radio picks"
+	line "up Kanto stations"
+	cont "now."
+	done
+
+.Flute:
+	text "You cleared the"
+	line "sleeping Snorlax"
+	cont "from the way."
+	done
+
+.Brock:
+	text "You earned Brock's"
+	line "Boulder Badge."
+	done
+
+.Blaine:
+	text "You won Blaine's"
+	line "Volcano Badge at"
+	cont "Seafoam."
+	done
+
+.Cinnabar:
+	text "Blue went back to"
+	line "Viridian Gym."
+	done
+
+.Blue:
+	text "You earned Blue's"
+	line "Earth Badge."
+	done
+
+.Rematch:
+	text "You won the League"
+	line "rematch with all"
+	cont "sixteen badges."
+	done
+
+.Oak:
+	text "Oak opened the way"
+	line "to Mt.Silver."
+	done
+
+.Red:
+	text "You beat Red on"
+	line "Mt.Silver. His"
+	cont "note led you to"
+	cont "Molly."
+	done
+
+.Alph:
+	text "Molly's dream"
+	line "faded. She heard"
+	cont "real knocking in"
+	cont "the ruins."
+	done
+
+.Hale:
+	text "You helped Molly's"
+	line "father home. He"
+	cont "drew Ilex shrine"
+	cont "for Oak."
+	done
+
+.Shrine:
+	text "Celebi brought you"
+	line "back from your"
+	cont "journey in time."
+	done
+
+.Mask:
+	text "You drove off the"
+	line "masked man at Ilex"
+	cont "shrine."
+	done
+
+.Echo:
+	text "You faced copies"
+	line "of your own team"
+	cont "in Cerulean Cave."
+	done
+
+.Cissy:
+	text "Cissy gave you the"
+	line "Coral-Eye Badge."
+	done
+
+.Danny:
+	text "Danny gave you the"
+	line "Sea Ruby Badge."
+	done
+
+.Rudy:
+	text "Rudy gave you the"
+	line "Spike Shell Badge."
+	done
+
+.Luana:
+	text "Luana gave you the"
+	line "Jade Star Badge."
+	done
+
+.Drake:
+	text "You won Drake's"
+	line "trophy on Shamouti"
+	cont "Island."
+	done
+
+.Cup:
+	text "You beat Misty's"
+	line "team to win the"
+	cont "Whirl Cup."
+	done
+
+.Final:
+	text "You won both bouts"
+	line "in Pallet. Tracey"
+	cont "drew your team."
+	done
+
+TraceyCallsWithALead:
+	playsound SFX_CALL
+	waitsfx
+	opentext
+	writetext .Call
+	promptbutton
+	scall GiveNextStoryLead
+	endtext
+
+.Call:
+	text "The #gear rings."
+	para "Tracey: Got a pen?"
+	line "I've got a name"
+	cont "for your book."
+	done
+
+; Spoken by the character handing off the chapter. Use the Field Book's
+; current destination so a returning player hears the first unfinished lead.
+GiveNextStoryLead:
+	callasm .FindLead
+	repeattext
+	promptbutton
+	end
+
+.FindLead:
+	call FieldBookCurrent
+	ld d, h
+	ld e, l
+	ld hl, .Leads
+.search
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	and a
+	ret z ; the current book page is already set as a fallback
+	cp d
+	jr nz, .skip
+	ld a, c
+	cp e
+	jr z, .found
+.skip
+	inc hl
+	inc hl
+	jr .search
+.found
+	ld a, [hli]
+	ld [wScriptTextAddr], a
+	ld a, [hl]
+	ld [wScriptTextAddr + 1], a
+	ret
+
+.Leads:
+	dw FieldBookNotes.Alph, .Molly
+	dw FieldBookNotes.Hale, .Father
+	dw FieldBookNotes.Shrine, .Celebi
+	dw FieldBookNotes.Mask, .MaskedMan
+	dw FieldBookNotes.Echo, .Mewtwo
+	dw FieldBookNotes.Cissy, .Cissy
+	dw FieldBookNotes.Danny, .Danny
+	dw FieldBookNotes.Rudy, .Rudy
+	dw FieldBookNotes.Luana, .Luana
+	dw FieldBookNotes.Drake, .Drake
+	dw FieldBookNotes.Cup, .Misty
+	dw FieldBookNotes.Final, .Ash
+	dw 0
+
+.Molly:
+	text "Molly heard her"
+	line "dad calling at the"
+	cont "Ruins of Alph."
+	para "She's waiting in"
+	line "the research lab."
+	done
+.Father:
+	text "Molly heard three"
+	line "knocks. Try the"
+	cont "statue just left"
+	cont "of the ladder in"
+	cont "the big chamber."
+	done
+.Celebi:
+	text "Those marks match"
+	line "the shrine west of"
+	cont "Azalea. Take"
+	cont "Celebi there."
+	done
+.MaskedMan:
+	text "Someone stood just"
+	line "east of the Ilex"
+	cont "shrine. I remember"
+	cont "his iron mask."
+	done
+.Mewtwo:
+	text "Go to the depths"
+	line "of Cerulean Cave."
+	cont "Listen where"
+	cont "Mewtwo stood."
+	done
+.Cissy:
+	text "Cissy sent a note."
+	line "“Meet me on Warm"
+	cont "Beach. Bring shoes"
+	cont "you can get wet!”"
+	para "The Orange Ticket"
+	line "gets you there via"
+	cont "Vermilion ferry."
+	done
+.Danny:
+	text "Danny went north"
+	line "from Shamouti to"
+	cont "Rocky Beach."
+	para "Tell him to put"
+	line "his fishing rod"
+	cont "down for once!"
+	done
+.Rudy:
+	text "Rudy practices his"
+	line "footwork near the"
+	cont "ferry landing on"
+	cont "Beautiful Beach."
+	done
+.Luana:
+	text "Luana's at home on"
+	line "Valencia. Prof.Ivy"
+	cont "can get you there."
+	para "Look for Ivy at"
+	line "Shamouti's #mon"
+	cont "Center if you need"
+	cont "a ferry ride."
+	done
+.Drake:
+	text "Four Crew badges!"
+	line "Show them to Drake"
+	cont "at his house on"
+	cont "Shamouti Island."
+	done
+.Misty:
+	text "Misty left you a"
+	line "spot in the Whirl"
+	cont "Cup at Olivine"
+	cont "Port."
+	para "She underlined"
+	line "this part twice:"
+	cont "“All-Water team!”"
+	done
+.Ash:
+	text "Ash asked me to"
+	line "send you to Pallet"
+	cont "Town. He's outside"
+	cont "Oak's lab."
+	para "Bring your best"
+	line "six. Drake gets"
+	cont "the first match!"
 	done

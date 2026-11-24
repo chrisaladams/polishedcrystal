@@ -113,9 +113,9 @@ def expected_colours(sp, form):
     return light, dark
 
 
-def ow_palette_colours(rom, sym, light, dark, time):
+def ow_palette_colours(rom, sym, light, dark, time, *, table='MapObjectPals'):
     """colour 2 (as two bytes) of the light and dark overworld palettes, at a time of day."""
-    bank, addr = sym['MapObjectPals']
+    bank, addr = sym[table]
     off = bank * 0x4000 + (addr - 0x4000)
     n_tod = rgbasm_values(['NUM_OW_TIME_OF_DAY_PALS'], None)['NUM_OW_TIME_OF_DAY_PALS']
     def col2(name):

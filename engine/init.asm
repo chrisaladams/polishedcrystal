@@ -156,10 +156,7 @@ _Init::
 	xor a ; LOW(vBGMap1)
 	ldh [hBGMapAddress], a
 
-	farcall StartClock
-
 	xor a
-	ld [rRTCLATCH], a
 	ld [rRAMG], a
 
 	xor a

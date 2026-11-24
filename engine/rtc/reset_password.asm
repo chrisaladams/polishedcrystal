@@ -18,7 +18,7 @@ _ResetClock:
 	ret z
 	ld a, BANK(sRTCStatusFlags)
 	call GetSRAMBank
-	ld a, $80
+	ld a, CLOCK_RESET_PENDING
 	ld [sRTCStatusFlags], a
 	call CloseSRAM
 	ld hl, .text_okay

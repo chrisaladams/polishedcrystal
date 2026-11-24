@@ -8,6 +8,9 @@ It's kept in sync with Polished Crystal: the latest merge brings in Rangi42's `m
 
 ## What's different here
 
+The [2.0 development roadmap](docs/link-edition-2.0-roadmap.md) tracks the
+release phases, cartridge budgets and tests.
+
 ### Link battle balance
 
 A pass at tightening up the meta for L50 link battles:
@@ -78,6 +81,24 @@ either player knowing. Now:
 `utils/linktest/` plays link battles between two emulated Game Boys on a
 virtual cable, with optional line noise, to test all of this.
 
+### Link records on your Trainer Card
+
+Open **Start → your name**, then press **Left** for **Lifetime**. Press
+**Right** for **Current Year**. On either page, press **Down** for the player
+list. Left and Right turn the pages. Each opponent appears once with their
+name, Trainer ID, and your wins, losses and draws against them. A rematch
+updates the same entry. The yearly list shows opponents battled since its
+last reset.
+
+The cartridge holds 65 distinct opponents. Once full, it keeps every name,
+updates rematches, and counts every battle in the overall totals. Older saves
+import their lifetime totals and up to five opponents retained by the original
+Cable Club. Current Year starts at zero because older battles have no dates.
+
+You choose when the year starts. Press **A** on Current Year and choose **Yes**
+to reset its three counts. The prompt opens on **No**. Lifetime has no reset.
+Both pages keep their totals if you start a new adventure on the same cartridge.
+
 ### Random Battle
 
 At the battle desk, after "Would you like to battle?", choose **Normal** or
@@ -122,12 +143,11 @@ Battle Tower and Battle Factory prize shops are unchanged.
 
 ### Quality of life
 
-- **Autosave.** The game saves itself when you stop walking, wherever you
-  could save normally (it takes a tenth of a second). Turn it off under
-  Options → Autosave.
-- **PC boxes from the start menu.** "Boxes" opens Bill's PC from anywhere you
-  could save, so you can swap team members without a Pokémon Center. (When
-  the menu is full, Exit makes room for it; B and Start still close the menu.)
+- Use **Save** from the Start menu before powering off. Bill's PC is available
+  at Pokémon Centers.
+- Magikarp has four patterns. Older patterns convert to the closest retained
+  pattern when you continue or open a box. Shiny Magikarp keeps its shiny colors.
+
 - **Your Pokémon follows you.** Your first healthy Pokémon walks behind you
   with its own walking sprite (front, back and side, each with a walking
   frame): it copies your steps (running, biking, ledges), never blocks you or
@@ -156,32 +176,64 @@ Battle Tower and Battle Factory prize shops are unchanged.
   Pokémon that come are it, one at a time, at that route's levels. It takes a
   slot the same way a roaming legendary does. One that wanders off screen is gone, making room for
   another. While a Repel works, the ones it would have kept away run from
-  you, and run off if you walk into them. The Bug-Catching Contest's bugs work
-  the same way. Fishing, Headbutt, Rock Smash and Sweet Honey are unchanged,
-  and without the Silph Scope the Pokémon Tower's ghosts still ambush you.
+  you, and run off if you walk into them. Some species react differently.
+  Sentret flee from footsteps and notice you from farther away when you run
+  or cycle. Eevee come closer if you stand still. Beedrill can start a battle,
+  and Ursaring defend the area around their spawn. Chansey flee quickly when
+  disturbed but will let you approach and wait beside them. Magikarp swim
+  together, and nocturnal species are more active after dark. Sweet Honey
+  draws compatible Pokémon to the spot where you used it for 12 steps.
+  Fishing, Headbutt and Rock Smash work as before. Without the Silph Scope,
+  the Pokémon Tower's ghosts still ambush you.
   They don't touch your save or any map's own people. To check them in the
   emulator: `python3 utils/wild_mons/test_wild_mons.py SAVE.sav` (every map
   with wild Pokémon, battles, Repel, sprites and colours, saving).
+
+### In-game clock
+
+A full day takes **90 minutes of play**, and a week takes **10½ hours**.
+Daylight runs from 06:00 to 18:00 in-game. Morning starts at 06:00, day at
+09:00, evening at 15:00, and night at 18:00. A manual save preserves the
+world clock when you quit. Older saves resume from their last saved in-game
+time.
+
+The game uses an MBC3 cartridge with battery-backed save RAM. The clock runs
+in software and pauses during link play. The Bug-Catching Contest still gives
+you 20 minutes of play, and phone delays use gameplay time. Sightings and
+weekday events follow the in-game day.
 
 ### Field Book
 
 Choose **Start → Field Book → Next stop** for directions from New Bark Town
 through Johto, Kanto and Mt. Silver. The book checks the badges you hold
-and the quests you have completed. **Side quests** offers leads for Kenya's
-mail, Moomoo Farm and Copycat's doll as they become available. The book
-on the table in Prof. Oak's lab opens the same guide.
+and the quests you have completed. **Catch me up** recalls a milestone you
+have reached, shows your current destination, then previews the next
+unfinished step. It works when continuing an existing save. **Side quests**
+offers leads for Kenya's mail, Moomoo Farm and Copycat's doll as they become
+available. The book on the table in Prof. Oak's lab opens the same guide.
+
+The **Pokégear Map Card** and wall maps also show quest destinations. **★**
+marks the Field Book's next stop and **!** marks other available leads in
+the region. Press **Select** to browse the leads. **Up/Down** cycles through
+them across Johto, Kanto and the Orange Islands, **A** reads the directions,
+and **B** returns to the local map. Two goals in the same town share a pin
+and have separate entries. The Guide Gent in Cherrygrove gives you the Map Card.
 
 ### After Red (the post-post game)
 
-When you first beat Red on Mt. Silver, the Field Book opens its Orange
-League and movie chapters. Tracey's sketches and letters point you to the
-next unfinished chapter. The book recognizes earlier wins, including
-progress from before this update. Red's MysticTicket keeps the season open when you begin
-alternating Red and Leaf rematches.
+When you first beat Red on Mt. Silver, the Field Book opens its Orange League
+and movie chapters, starting with Molly at the Ruins of Alph. Tracey's
+sketches and letters point you to the next unfinished chapter. The book
+recognizes earlier wins, including progress from before this update. Red's
+MysticTicket keeps the season open when you begin alternating Red and Leaf
+rematches.
 
-The suggested route takes you through the Orange League, the Ruins of Alph,
-Ilex Forest, Cerulean Cave and the Whirl Cup. The movie events and the Cup
-can also be played in a different order after Red. Once Drake is beaten
+The suggested route leads from Molly and her father at the Ruins of Alph
+to Ilex Forest and Cerulean Cave, then to the four Orange Crew leaders,
+Drake and the Whirl Cup. Tracey calls after Cerulean Cave, the Crew leaders
+introduce the next challenger, Drake passes on Misty's invitation, and Misty
+sends you to Ash when the Pallet finals are ready. These leads follow the
+same progress as the Field Book. The movie events and the Cup can also be played in a different order after Red. Once Drake is beaten
 and all four stories are complete, speak to Ash outside Oak's lab for the
 Pallet Invitational. Drake and Ash use their existing teams in back-to-back
 matches. You start healed and carry your team's condition into round two.
@@ -280,8 +332,9 @@ python3 -m venv .venv
 ```
 
 The runner checks the Johto, Kanto and optional quest pages against staged
-progress, then follows the field book from Red through the Pallet finale
-on one in-memory save. It also checks the Orange League, cameos, Whirl Cup and
+progress, then follows the field book from Red through the Pallet finale.
+It restarts the game mid-story and checks all three catch-up pages after
+Continue. It also checks the Orange League, cameos, Whirl Cup and
 movie events, and audits the 14 added character placements. It also executes
 the ROM's spawn-path routine against walls, ledges, warps, water and objects.
 With `--full`, it sweeps every wild encounter map; without it, it runs the

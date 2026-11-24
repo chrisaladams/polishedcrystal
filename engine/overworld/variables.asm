@@ -21,7 +21,7 @@ VarActionTable:
 	dw Var_UnownCaught ; execute
 	dw wEnvironment in_stringbuffer2
 	dw Var_BoxFreeSpace ; execute
-	dw wBugContestMinsRemaining in_stringbuffer2
+	dw Var_ContestMinutes ; execute
 	dw wXCoord in_stringbuffer2
 	dw wYCoord in_stringbuffer2
 	dw wSpecialPhoneCallID in_stringbuffer2
@@ -68,6 +68,14 @@ Var_PlayerFacing:
 	and $c
 	rrca
 	rrca
+	jr _Var_loadstringbuffer2
+
+Var_ContestMinutes:
+	ld a, [wBugContestSecsRemaining]
+	ld hl, wBugContestMinsRemaining
+	add $ff ; set carry if there is a partial minute
+	ld a, [hl]
+	adc 0
 	jr _Var_loadstringbuffer2
 
 Var_DayOfWeek:

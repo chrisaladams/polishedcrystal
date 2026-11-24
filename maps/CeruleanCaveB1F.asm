@@ -38,7 +38,8 @@ CeruleanCaveMewtwo:
 	showtext .ChallengeText
 	cry MEWTWO
 	pause 15
-	sjumpfwd .Battle
+	scall .Battle
+	farsjump TraceyCallsWithALead
 
 .NoClones:
 	closetext
@@ -75,7 +76,8 @@ CeruleanCavePsychicEcho:
 	iffalse_endtext
 	closetext
 	scall CeruleanCaveCloneBattle
-	jumptext .FadedText
+	showtext .FadedText
+	farsjump TraceyCallsWithALead
 
 .Quiet:
 	jumpthistext

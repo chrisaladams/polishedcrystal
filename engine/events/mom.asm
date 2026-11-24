@@ -311,10 +311,9 @@ DSTChecks:
 	call PlaceWholeStringInBoxAtOnce
 	call YesNoBox
 	ret c
-	ld a, [wDST]
-	res 7, a
-	ld [wDST], a
-	call .SetClockBack
+	ld b, -1
+	call .AdjustHour
+	jr c, .AdjustmentUnavailable
 	call .ClearBox
 	ld hl, .Text_SetClockBack
 	jmp PlaceWholeStringInBoxAtOnce
@@ -324,41 +323,39 @@ DSTChecks:
 	call PlaceWholeStringInBoxAtOnce
 	call YesNoBox
 	ret c
-	ld a, [wDST]
-	set 7, a
-	ld [wDST], a
-	call .SetClockForward
+	ld b, 1
+	call .AdjustHour
+	jr c, .AdjustmentUnavailable
 	call .ClearBox
 	ld hl, .Text_SetClockForward
 	jmp PlaceWholeStringInBoxAtOnce
 
-.SetClockForward:
-	ld a, [wStartHour]
-	inc a
-	sub 24
-	jr nc, .DontLoopHourForward
-	add 24
-.DontLoopHourForward:
-	ld [wStartHour], a
-	ccf
-	ld a, [wStartDay]
-	adc 0
-	ld [wStartDay], a
-	ret
+.AdjustmentUnavailable:
+	call .ClearBox
+	ld hl, .Text_LostInstructionBooklet
+	jmp PlaceWholeStringInBoxAtOnce
 
-.SetClockBack:
-	ld a, [wStartHour]
-	sub 1 ; no-optimize a++|a-- (dec a can't set carry)
-	jr nc, .DontLoopHourBack
-	add 24
-.DontLoopHourBack:
-	ld [wStartHour], a
-	ld a, [wStartDay]
-	sbc 0
-	jr nc, .DontLoopDayBack
-	add 7
-.DontLoopDayBack:
-	ld [wStartDay], a
+.AdjustHour:
+	; Freeze the clock briefly so the check and adjustment share one hour.
+	ld a, [wGameLogicPaused]
+	ld c, a
+	ld a, TRUE
+	ld [wGameLogicPaused], a
+	ld hl, wRTCHours
+	ld a, [hl]
+	add b
+	cp MAX_HOUR
+	jr nc, .resume
+	ld [hl], a
+	ld hl, wDST
+	ld a, 1 << 7
+	xor [hl]
+	ld [hl], a
+	scf
+.resume
+	ccf
+	ld a, c
+	ld [wGameLogicPaused], a
 	ret
 
 .ClearBox:

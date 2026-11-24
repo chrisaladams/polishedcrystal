@@ -73,7 +73,6 @@ Conversely, the following emulators are known to have issues and **should not be
 * Delta - while we have had a higher incidence rate of issues with Delta, there is presently no evidence that the emulator itself has any issues. We do still strongly recommend using SameBoy on iOS, as we still are awaiting evidence of any unusual issues with this emulator and save states
 
 #### Android:
-* MyOldBoy - while most of the game is playable, it is incompatible with the Real-Time Clock in Polished Crystal.
 * Nostalgia.GBC - the save file structure that this emulator produces is incompatible with Polished Crystal's save patcher, which means that updating your save to a newer version in the future will be impossible.
 * JohnGBC - is confirmed to cause rendering issues and possibly more.
 
@@ -114,7 +113,6 @@ Note that the in-game reference is typically the most accurate, and online resou
 * **EV gain:** Changes how [EVs](https://bulbapedia.bulbagarden.net/wiki/Effort_values) behave. You can choose "All", which allows maxing every stat, "510" which features the modern 510 EV limit, or "No" which disables their effect completely, and will also cause Tyrogue's evolution to depend purely on its IVs.
 * **Exp. scaling:** Enables the [experience formula](https://bulbapedia.bulbagarden.net/wiki/Experience#Gain_formula) from Gen 5, 7 and 8, which scales experience by the ratio of the opponent's level to your level.
 * **Affection bonus:** Enables the modern Affection system, which can do things like make your Pokémon survive at 1 HP, cure themselves of status problems or evade attacks.
-* **Real-time clock:** Enables the game to keep track of time even when you are not playing. Some cartridges or emulators may not support this. Disabling it will cause time to only tick when you play, and a day will last 4 hours.
 * **Perfect stats:** All Pokémon stats, for you and the opponent, are calculated as if they had maximum IVs. The actual IVs are still random, so color variation and Hidden Power type are not affected. Note that this has no impact on EVs in any way.
 * **Traded PKMN obey:** All differences in traded Pokémon go away: they always obey you, don't gain boosted experience, and can be nicknamed.
 * **Evolve in battle:** Allows your Pokémon to evolve in the middle of a battle if their evolution conditions are met.
@@ -124,7 +122,12 @@ If you need to change these options after starting a game, press Left+B at the t
 
 ### How can I change the current time?
 
-Press Down+B at the title screen (the screen of the running Suicune) to reset the clock.
+Link Edition advances the world clock during play. A day takes 90 minutes,
+and a manual save preserves the time. Older saves start from their last saved
+in-game time.
+
+Press **Down + B** on the title screen to request a reset. Then choose
+**Continue** to set the day and time. Save afterwards to keep the new setting.
 
 ### What happened to Nuzlocke Mode?
 

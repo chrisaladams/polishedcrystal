@@ -29,6 +29,7 @@ DEF WILD_MON_FLEE_DISTANCE EQU 4 ; how close you get before one runs (Repel)
 DEF WILD_MON_USUAL_MAX    EQU 3 ; more than this only while the screen isn't busy
 DEF WILD_MON_BUSY_SCREEN  EQU 7 ; objects on screen (you, your follower and
                                 ; the rest) that leave no room for another
+DEF WILD_HONEY_DURATION EQU 12 ; completed player steps
 
 ; TrySpawnWildMon modes
 DEF SPAWN_NO_CHANCE EQU 1 ; without the encounter chance
@@ -60,6 +61,12 @@ WildMonStep::
 	ld [wWildMonBumped], a ; (a bump is handled at once; never keep a stale one)
 	call CheckVisibleWildMons
 	ret nc
+	ld hl, wWildHoneySteps
+	ld a, [hl]
+	and a
+	jr z, .no_honey
+	dec [hl]
+.no_honey
 	call UpdateWildMonRepelLevel
 	call RemoveFarWildMons
 	xor a ; with the encounter chance, at the edge of the screen
@@ -151,6 +158,7 @@ ClearWildMons:
 	ld [wWildMonBumped], a
 	ld [wWildMonForcedShiny], a
 	ld [wWildMonSpawnPending], a
+	ld [wWildHoneySteps], a
 	ret
 
 GetWildMonSlot:
@@ -438,7 +446,12 @@ TrySpawnWildMon:
 	ld a, [wBattleType]
 	ld [hli], a ; battle type
 	ld a, [wWildMonSpawnHabitat]
-	ld [hl], a ; habitat
+	ld [hli], a ; habitat
+	push hl
+	call GetWildMonTraits
+	pop hl
+	ld [hli], a
+	ld [hl], 0 ; alert
 	pop de
 
 	; its map object
@@ -962,21 +975,20 @@ IsWildMonTile:
 
 GetWildMonStep::
 ; Movement for a wild Pokemon (bc = its object struct): a = the direction it
-; steps, or carry to stand a while. While a Repel keeps it away, it runs from
-; you (and OBJECT_RANGE is set, so it doesn't stop between steps).
+; steps (with speed), or carry to stand a while. Repel takes priority.
 	ld a, [wScriptRunning]
 	and a
-	jmp nz, .wait ; everyone stays put during events
+	jmp nz, WildMonWait ; everyone stays put during events
 	ld hl, OBJECT_MAP_OBJECT_INDEX
 	add hl, bc
 	ld a, [hl]
 	sub FIRST_WILD_OBJECT
 	cp NUM_WILD_MONS
-	jmp nc, .wait
+	jmp nc, WildMonWait
 	call GetWildMonSlot
 	ld a, [hl]
 	and a
-	jmp z, .wait
+	jmp z, WildMonWait
 	push hl
 	push bc
 	call UpdateWildMonRepelLevel ; a Repel may have just been used
@@ -990,21 +1002,21 @@ GetWildMonStep::
 	jr nc, .not_scared
 
 	; is the player close?
-	call .PlayerOffset
+	call WildMonPlayerOffset
 	ld a, d
-	call .Abs
+	call WildMonAbs
 	cp WILD_MON_FLEE_DISTANCE + 1
 	jr nc, .not_scared
 	ld h, a
 	ld a, e
-	call .Abs
+	call WildMonAbs
 	cp WILD_MON_FLEE_DISTANCE + 1
 	jr nc, .not_scared
 	ld l, a
 	push hl
 	ld hl, OBJECT_RANGE
 	add hl, bc
-	ld [hl], TRUE
+	ld [hl], 1 << WILD_STEP_REPEL_F
 	; it may leave its kind of tiles, and the screen
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
@@ -1063,39 +1075,52 @@ GetWildMonStep::
 .not_scared
 	ld hl, OBJECT_RANGE
 	add hl, bc
-	ld [hl], FALSE
+	ld [hl], 0
 	ld hl, OBJECT_FLAGS1
 	add hl, bc
 	res MOVE_ANYWHERE_F, [hl]
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	sub FIRST_WILD_OBJECT
+	call GetWildMonSlot
+	ld de, WILDMON_TRAITS
+	add hl, de
+	jmp ResolveWildMonBehavior
+
+WildMonWander:
 	call Random
 	cp 25 percent
-	jmp c, .wait
+	jr c, WildMonWait
 	and 3 ; any direction
 	ret
 
-.wait
+WildMonWait:
 	scf
 	ret
 
-.PlayerOffset:
+WildMonPlayerOffset:
 ; d = its x - the player's, e = its y - the player's
-	ld hl, OBJECT_MAP_X
-	add hl, bc
 	ld a, [wPlayerMapX]
 	ld d, a
-	ld a, [hl]
-	sub d
-	ld d, a
-	ld hl, OBJECT_MAP_Y
-	add hl, bc
 	ld a, [wPlayerMapY]
 	ld e, a
+
+WildMonTargetOffset:
+; d/e entered as target x/y, returned as actor x/y minus target x/y.
+	ld hl, OBJECT_MAP_X
+WildMonOffsetFrom:
+	add hl, bc
+	assert OBJECT_MAP_Y == OBJECT_MAP_X + 1
+	ld a, [hli]
+	sub d
+	ld d, a
 	ld a, [hl]
 	sub e
 	ld e, a
 	ret
 
-.Abs:
+WildMonAbs:
 	bit 7, a
 	ret z
 	cpl
@@ -1108,8 +1133,27 @@ CheckWildMonStepTile::
 ; map, or where the follower is.
 	ld hl, OBJECT_RANGE
 	add hl, bc
-	ld a, [hl]
-	and a
+	bit WILD_STEP_TERRITORY_F, [hl]
+	jr z, .check_habitat
+	call WildMonHomeOffset
+	call WildMonDistance
+	cp WILD_TERRITORY_RADIUS + 1
+	jr c, .territory_ok
+	; Repel can push it out of its territory. Let it walk back toward home.
+	push af
+	assert OBJECT_LAST_MAP_Y == OBJECT_LAST_MAP_X + 1
+	ld a, OBJECT_LAST_MAP_X
+	call WildMonHomeOffsetFrom
+	call WildMonDistance
+	ld d, a
+	pop af
+	cp d
+	jr nc, .no
+.territory_ok
+	ld hl, OBJECT_RANGE
+	add hl, bc
+.check_habitat
+	bit WILD_STEP_REPEL_F, [hl]
 	jr nz, .any_tile
 	ld hl, OBJECT_MAP_OBJECT_INDEX
 	add hl, bc
@@ -1133,6 +1177,19 @@ CheckWildMonStepTile::
 	ld e, [hl]
 	call IsOutsideMap
 	ret c
+	; A lunge at the player never occupies their tile, even if the follower
+	; is sharing it after a transition or turn.
+	ld hl, OBJECT_RANGE
+	add hl, bc
+	bit WILD_STEP_ATTACK_F, [hl]
+	jr z, .check_follower
+	ld a, [wPlayerMapX]
+	cp d
+	jr nz, .check_follower
+	ld a, [wPlayerMapY]
+	cp e
+	ret z
+.check_follower
 	; not onto the follower (nothing else collides with it)
 	push bc
 	ld a, FOLLOWER_OBJECT

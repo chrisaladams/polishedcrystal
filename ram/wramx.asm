@@ -980,8 +980,8 @@ wMapReentryScriptBank:: db ; MemScriptBank
 wMapReentryScriptAddress:: dw ; MemScriptAddr
 
 wTimeCyclesSinceLastCall:: db
-wReceiveCallDelay_MinsRemaining:: db
-wReceiveCallDelay_StartTime:: ds 3
+wPhoneDelayRemaining:: dw ; gameplay seconds
+wPhoneDelayLastTick:: dw
 
 wBugContestMinsRemaining:: db
 wBugContestSecsRemaining:: db
@@ -1010,15 +1010,14 @@ wTrendyPhrase:: ds NAME_LENGTH
 wSavedAtLeastOnce:: db
 wSpawnAfterChampion:: db
 
-; init time set at newgame
-wStartDay:: db
-wStartHour:: db
-wStartMinute:: db
-wStartSecond:: db
+; Reuse one of the old hardware clock offset bytes without shifting saves.
+wClockFramePhase:: db
+	ds 3
 
-wRTC:: ds 4 ; in-game wall clock time at save
+wRTC:: ds 4 ; day, hour, minute and second displayed when last saved
 
-	ds 4 ; unused
+wSoftwareClockMarker:: dw
+wGameplaySeconds:: dw ; elapsed play for short timers, independent of the world clock
 
 wDST::
 ; bit 7: dst
@@ -1032,8 +1031,7 @@ wGameTimeFrames:: db
 
 wCurDay:: db
 
-; no-RTC patch needs to save/restore rtc state
-; builds with rtc will simply overwrite the saved value
+; Current world time, saved with the player data.
 wRTCDayHi::   db
 wRTCDayLo::   db
 wRTCHours::   db
@@ -1424,7 +1422,7 @@ wCurHiddenGrotto:: db
 
 wLuckyNumberDayBuffer:: dw
 wSpecialPhoneCallID:: db
-wBugContestStartTime:: ds 4 ; day, hour, min, sec
+	ds 4 ; formerly the contest start time
 
 wLastPocket:: db
 
@@ -1707,7 +1705,7 @@ NEXTU
 wDexMonTiles::
 wDexMonType1Tiles:: ds 4 tiles
 wDexMonType2Tiles:: ds 4 tiles
-wDexMonFootprintTiles:: ds 4 tiles
+	ds 4 tiles ; keep the shared Metatiles bank alignment
 wDexMonIconTiles:: ds 4 tiles
 wDexMonShapeTiles:: ds 4 tiles
 wDexAreaTypeTiles:: ds 7 tiles

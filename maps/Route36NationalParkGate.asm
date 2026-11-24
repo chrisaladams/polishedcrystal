@@ -84,7 +84,6 @@ Route36NationalParkGateLeaveContestEarlyScene:
 	turnobject PLAYER, UP
 	opentext
 	readvar VAR_CONTESTMINUTES
-	addval $1
 	setquantity
 	writetext Route35NationalParkGateOfficer1WantToFinishText
 	yesorno

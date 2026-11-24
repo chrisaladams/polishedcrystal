@@ -135,6 +135,14 @@ INCLUDE "engine/pokemon/mon_submenu.asm"
 INCLUDE "engine/battle/menu.asm"
 INCLUDE "engine/items/buy_sell_toss.asm"
 INCLUDE "engine/menus/trainer_card.asm"
+
+PUSHS
+SECTION "Magikarp Save Compatibility", ROMX
+INCLUDE "engine/pokemon/normalize_magikarp.asm"
+
+SECTION "Link Card Records Engine", ROMX
+INCLUDE "engine/menus/link_card.asm"
+POPS
 INCLUDE "engine/events/prof_oaks_pc.asm"
 INCLUDE "engine/overworld/decorations.asm"
 INCLUDE "engine/pokemon/level_up_happiness.asm"
@@ -169,6 +177,7 @@ INCLUDE "engine/events/whirl_cup.asm"
 SECTION "Wild Mons Code", ROMX
 
 INCLUDE "engine/overworld/wild_mons.asm"
+INCLUDE "engine/overworld/wild_behavior.asm"
 
 
 SECTION "Random Battle", ROMX
@@ -240,10 +249,6 @@ INCLUDE "engine/pokedex/pokedex.asm"
 INCLUDE "engine/pokedex/unown_dex.asm"
 
 
-SECTION "Pokédex Footprints", ROMX
-
-INCLUDE "data/pokemon/footprint_pointers.asm"
-INCLUDE "gfx/pokemon/footprints.asm"
 
 
 SECTION "Pokedex Shapes", ROMX
@@ -400,6 +405,11 @@ INCLUDE "engine/phone/phone.asm"
 INCLUDE "engine/rtc/timeset.asm"
 INCLUDE "engine/pokegear/phone.asm"
 INCLUDE "engine/pokegear/pokegear.asm"
+
+PUSHS
+SECTION "Quest Map", ROMX
+INCLUDE "engine/pokegear/quest_map.asm"
+POPS
 INCLUDE "engine/events/fish.asm"
 INCLUDE "engine/games/slot_machine.asm"
 

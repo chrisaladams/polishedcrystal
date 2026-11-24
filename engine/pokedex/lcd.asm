@@ -1114,7 +1114,7 @@ PVB_UpdateDexMap::
 	ldh [rVBK], a
 	ld de, wDexMonType1Tiles
 	ld bc, vTiles2 tile $71
-	ld a, 11
+	ld a, 8 - 1
 	call GDMACopy
 
 .pokeinfo_done

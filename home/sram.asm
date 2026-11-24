@@ -1,11 +1,7 @@
-LatchRTCAndVerifySRAM::
+VerifySRAMAccess:
 	push af
 
-	; latch clock data
-	ld a, 1
-	ld [rRTCLATCH], a
-
-	; enable sram/clock write
+	; enable SRAM access
 	ld a, RAMG_SRAM_ENABLE
 	ld [rRAMG], a
 
@@ -42,16 +38,14 @@ GetSRAMBank::
 	jr nc, CloseSRAM
 
 	; switch to sram bank a
-	call LatchRTCAndVerifySRAM
+	call VerifySRAMAccess
 	ld [rRAMB], a
 	ret
 
 CloseSRAM::
 	push af
 	ld a, RAMG_SRAM_DISABLE
-; reset clock latch for next time
-	ld [rRTCLATCH], a
-; disable sram/clock write
+; disable SRAM access
 	ld [rRAMG], a
 	pop af
 	ret

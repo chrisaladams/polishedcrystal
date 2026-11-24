@@ -603,14 +603,47 @@ endr
 	assert_table_length NUM_SPRITEMOVEFN
 
 .WildMon:
-; Link Edition: a wild Pokemon you can see wanders over its own kind of tiles,
-; and runs from you while a Repel keeps it away (engine/overworld/wild_mons.asm
-; picks the way).
+; Use normal map movement unless the wild Pokémon is lunging at the player.
 	farcall GetWildMonStep ; a = direction, or carry to wait
 	jmp c, RandomStepDuration_Fast
 	call InitStep
 	farcall CheckWildMonStepTile
 	jr c, .wild_mon_stay
+	ld hl, OBJECT_RANGE
+	add hl, bc
+	bit WILD_STEP_ATTACK_F, [hl]
+	jr z, .wild_mon_move
+	ld hl, OBJECT_MAP_X
+	add hl, bc
+	ld a, [wPlayerMapX]
+	cp [hl]
+	jr nz, .wild_mon_move
+	inc hl
+	ld a, [wPlayerMapY]
+	cp [hl]
+	jr nz, .wild_mon_move
+	; Check terrain and side walls before requesting a normal wild battle.
+	push bc
+	ld hl, OBJECT_PALETTE
+	add hl, bc
+	bit SWIMMING_F, [hl]
+	jr nz, .wild_mon_swim
+	call WillObjectBumpIntoWater
+	jr .wild_mon_contact
+.wild_mon_swim
+	call WillObjectBumpIntoLand
+.wild_mon_contact
+	pop bc
+	jr c, .wild_mon_stay
+	ld a, [wWildMonBumped]
+	and a
+	jr nz, .wild_mon_stay
+	ld hl, OBJECT_MAP_OBJECT_INDEX
+	add hl, bc
+	ld a, [hl]
+	ld [wWildMonBumped], a
+	jr .wild_mon_stay
+.wild_mon_move
 	call CanObjectMoveInDirection
 	jmp nc, .RandomWalkStep
 .wild_mon_stay
@@ -621,7 +654,7 @@ endr
 	ld a, [hl]
 	and a
 	jmp z, RandomStepDuration_Fast
-	ld a, 4 ; running from you: soon try another way
+	ld a, 4 ; reacting: soon try another way
 	jmp SetRandomStepDuration
 
 .RandomWalkY:
@@ -1603,7 +1636,7 @@ StepFunction_ContinueWalk:
 	ret nz
 	call CopyNextCoordsTileToStandingCoordsTile
 	; Link Edition: a wild Pokemon you can see pauses less, and not at all
-	; while it runs from you (GetWildMonStep sets OBJECT_RANGE)
+	; while it reacts to you (GetWildMonStep sets OBJECT_RANGE)
 	ld hl, OBJECT_MAP_OBJECT_INDEX
 	add hl, bc
 	ld a, [hl]

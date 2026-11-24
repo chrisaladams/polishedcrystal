@@ -29,3 +29,7 @@ byte to it, and the two emulators run in lockstep (within 128 cycles).
     sh utils/linktest/pyboy_cable/build.sh /tmp/pyboy_cable
     make
     PYTHONPATH=/tmp/pyboy_cable python3 utils/linktest/linktest.py A.sav B.sav --turns 20
+
+Run `python3 utils/linktest/test_link_card.py SAVE.sav` against a built ROM
+to check the Trainer Card, per-opponent records, older saves, the yearly reset
+and the full roster. The test uses an in-memory copy of the supplied save.

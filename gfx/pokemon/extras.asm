@@ -289,25 +289,9 @@ ArbokAgathaAnimationExtra: INCLUDE "gfx/pokemon/arbok_agatha/anim_idle.asm"
 ArbokArianaAnimationExtra: INCLUDE "gfx/pokemon/arbok_ariana/anim_idle.asm"
 
 MagikarpPlainAnimationExtra:
-MagikarpSkellyAnimationExtra:
 MagikarpCalico1AnimationExtra:
-MagikarpCalico2AnimationExtra:
-MagikarpCalico3AnimationExtra:
-MagikarpTwoToneAnimationExtra:
 MagikarpOrcaAnimationExtra:
-MagikarpDapplesAnimationExtra:
-MagikarpTigerAnimationExtra:
-MagikarpZebraAnimationExtra:
-MagikarpStripeAnimationExtra:
-MagikarpBubblesAnimationExtra:
-MagikarpDiamondsAnimationExtra:
-MagikarpPatchesAnimationExtra:
-MagikarpForehead1AnimationExtra:
 MagikarpMask1AnimationExtra:
-MagikarpForehead2AnimationExtra:
-MagikarpMask2AnimationExtra:
-MagikarpSaucyAnimationExtra:
-MagikarpRaindropAnimationExtra: INCLUDE "gfx/pokemon/magikarp/anim_idle.asm"
 
 DudunsparceTwoSegmentAnimationExtra:   INCLUDE "gfx/pokemon/dudunsparce_two_segment/anim_idle.asm"
 DudunsparceThreeSegmentAnimationExtra: INCLUDE "gfx/pokemon/dudunsparce_three_segment/anim_idle.asm"

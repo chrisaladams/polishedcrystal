@@ -222,7 +222,23 @@ Pokedex_CheckForOtherForms:
 	ld a, [hli]
 	jr nz, .variant_loop
 
-	; Is this the actual species? FORM_MASK+1 references upper species bits.
+	; Legacy Magikarp form IDs are kept in the table for save compatibility.
+	push af
+	ld a, c
+	cp MAGIKARP
+	jr nz, .other_species
+	pop af
+	cp MAGIKARP_CALICO1_FORM
+	jr z, .compare_form
+	cp MAGIKARP_ORCA_FORM
+	jr z, .compare_form
+	cp MAGIKARP_MASK1_FORM
+	jr nz, .variant_loop
+	jr .compare_form
+.other_species
+	pop af
+.compare_form
+	; FORM_MASK+1 distinguishes the upper species bits.
 	xor b
 	cp FORM_MASK + 1
 	jr nc, .variant_loop
@@ -1161,7 +1177,7 @@ _Pokedex_Description:
 	push af
 	push af
 	push af
-	jmp .footprint_bank
+	jmp .type_icon_bank
 
 .mon_caught
 	call GetSpeciesAndFormIndex
@@ -1314,8 +1330,8 @@ endr
 	; At this point, we have pointers to the dex pages stored on the stack along
 	; with the bank. This is used if we want to switch page.
 
-.footprint_bank
-	; Type and footprint should use correct vram bank
+.type_icon_bank
+	; Type icons should use the correct VRAM bank
 	ld a, [wPokedex_MonInfoBank]
 	and a
 	jr nz, .sel_shiny
@@ -1925,7 +1941,7 @@ _Pokedex_Stats:
 	hlcoord 1, 13
 	call Pokedex_PrintAbilityWithDescription
 
-	; use correct vram bank for types and footprint
+	; Use the correct VRAM bank for type icons
 	ld a, [wPokedex_MonInfoBank]
 	and a
 	jr nz, .vbank_1
@@ -3211,12 +3227,6 @@ Pokedex_GetCursorMon:
 	ld [wPokedexOAM_DexNoY], a
 	ldh a, [rWBK]
 	push af
-	ld a, BANK(wDexMonFootprintTiles)
-	ldh [rWBK], a
-	ld hl, wDexMonFootprintTiles
-	xor a
-	ld bc, 4 tiles
-	rst ByteFill
 	ld a, BANK(wBGPals1)
 	ldh [rWBK], a
 	ld hl, wBGPals1 palette 7 + 2
@@ -3325,13 +3335,13 @@ endc
 	ld bc, 4
 	call FarCopyBytesToColorWRAM
 
-	; If we haven't caught the mon, clear type and footprint icons
+	; If we haven't caught the mon, clear type icons
 	pop af
 	ldh a, [rWBK]
 	push af
 	lb bc, NUM_TYPES, NUM_TYPES
 	jr z, .got_types
-	; Otherwise, also include type and footprint icons.
+	; Otherwise, also include type icons.
 	ld a, TRUE
 	ld [wPokedexOAM_IsCaught], a
 	ld a, [wBaseType1]
@@ -3369,34 +3379,6 @@ endc
 	ld de, wDexMonType2Tiles
 	lb bc, BANK(TypeIconGFX), 4
 	call Pokedex_Copy1bpp
-	; Footprint icon
-	pop af
-	push af
-	ld hl, BlankFootprint
-	jr z, .got_footprint
-	call Pokedex_GetCursorSpecies
-	call GetSpeciesAndFormIndex
-	ld hl, FootprintPointers
-	add hl, bc
-	add hl, bc
-	ld a, BANK(FootprintPointers)
-	call GetFarWord
-.got_footprint
-	ld a, BANK("Pokédex Footprints")
-	ld de, wDexMonFootprintTiles
-	call FarDecompressToDE
-	; Expand 1bpp to 2bpp
-	ld hl, wDexMonFootprintTiles + 4 * TILE_1BPP_SIZE - 1
-	ld de, wDexMonFootprintTiles + 4 tiles - 1
-	ld c, 4 * TILE_1BPP_SIZE
-.footprint_loop
-	ld a, [hld]
-	ld [de], a
-	dec de
-	ld [de], a
-	dec de
-	dec c
-	jr nz, .footprint_loop
 
 	; Make the type icons use color 1 and 2 of the pal instead of 3.
 	ld hl, wDexMonType1Tiles + 1

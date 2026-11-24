@@ -88,7 +88,7 @@ Buena:
 	checkflag ENGINE_BUENAS_PASSWORD_2
 	iftruefwd .PlayedAlready
 	readvar VAR_HOUR
-	ifless EVE_HOUR, .TooEarly
+	ifless BUENA_START_HOUR, .TooEarly
 	checkflag ENGINE_BUENAS_PASSWORD
 	iffalsefwd .TuneIn
 	checkkeyitem BLUE_CARD
@@ -523,7 +523,7 @@ RadioTower2FBuenaTuneInAfterSixText:
 	text "Buena: Tune in to"
 	line "Password every"
 
-	assert EVE_HOUR == 12 + 5
+	assert BUENA_START_HOUR == 12 + 5
 	para "night from five"
 	line "to midnight!"
 

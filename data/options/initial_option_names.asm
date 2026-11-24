@@ -6,7 +6,6 @@ InitialOptionNames:
 	dw .EVs
 	dw .Experience
 	dw .Affection
-	dw .RTC
 	dw .PerfectStats
 	dw .TradedMon
 	dw .EvolveInBattle
@@ -25,8 +24,6 @@ InitialOptionNames:
 	db "Experience gain@"
 .Affection:
 	db "Affection bonus@"
-.RTC:
-	db "Real-time clock@"
 .PerfectStats:
 	db "Perfect stats@"
 .TradedMon:

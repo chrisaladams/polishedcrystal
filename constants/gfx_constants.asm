@@ -72,7 +72,7 @@ DEF VWF_OPAQUE EQU 1 << VWF_OPAQUE_F
 	const DEXGFX_DEFERRED ; tilemap+pal update scheduled for next input request
 	const DEXGFX_TILEMAP ; includes palettes
 	const DEXGFX_FRONTPIC
-	const DEXGFX_POKEINFO ; non-frontpic gfx (type icons, footprint)
+	const DEXGFX_POKEINFO ; non-frontpic gfx (type icons)
 	const DEXGFX_ROWTILES ; icon+vwf tiles for a row update
 	const DEXGFX_ICONSHAPE ; icon+body for individual mon pages
 

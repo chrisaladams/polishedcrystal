@@ -61,7 +61,7 @@ SetInitialOptions:
 .BGPalettes:
 INCLUDE "gfx/options/initial_options_bg.pal"
 
-DEF NUM_INITIAL_MENU_OPTIONS EQU 11
+DEF NUM_INITIAL_MENU_OPTIONS EQU 10
 
 InitialOptions_CallOptionRoutine:
 	ld a, [wMenuSelection]
@@ -76,7 +76,6 @@ InitialOptions_CallOptionRoutine:
 	dw InitialOptions_EVs
 	dw InitialOptions_ExpScaling
 	dw InitialOptions_AffectionBonus
-	dw InitialOptions_RTC
 	dw InitialOptions_PerfectIVs
 	dw InitialOptions_TradedMon
 	dw InitialOptions_EvolveInBattle
@@ -283,26 +282,6 @@ InitialOptions_AffectionBonus:
 	jmp OptionsShared_PlaceStringAtValueCoord
 .SetYes:
 	set AFFECTION_OPT, [hl]
-	ld de, YesString
-	jmp OptionsShared_PlaceStringAtValueCoord
-
-InitialOptions_RTC:
-	ld hl, wInitialOptions2
-	ldh a, [hJoyPressed]
-	and PAD_LEFT | PAD_RIGHT
-	jr nz, .Toggle
-	bit RTC_OPT, [hl]
-	jr z, .SetNo
-	jr .SetYes
-.Toggle:
-	bit RTC_OPT, [hl]
-	jr z, .SetYes
-.SetNo:
-	res RTC_OPT, [hl]
-	ld de, NoString
-	jmp OptionsShared_PlaceStringAtValueCoord
-.SetYes:
-	set RTC_OPT, [hl]
 	ld de, YesString
 	jmp OptionsShared_PlaceStringAtValueCoord
 

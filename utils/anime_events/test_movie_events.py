@@ -57,7 +57,7 @@ def main():
                        'EVENT_CERULEAN_CAVE_MEWTWO', 'ABILITYPATCH', 'BIG_NUGGET', 'WILD_BATTLE',
                        'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_BEAT_MEWTWO_CLONES',
                        'PLAYER_CAUGHT_MEWTWO_F', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING',
-                       'EVENT_RESCUED_PROF_HALE', 'GROUP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAP_RUINS_OF_ALPH_INNER_CHAMBER', 'AUTOSAVE_OFF_F', 'MAX_ITEMS', 'MAX_ITEM_STACK',
+                       'EVENT_RESCUED_PROF_HALE', 'GROUP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAX_ITEMS', 'MAX_ITEM_STACK',
                        'MON_SPECIES', 'MON_ITEM', 'MON_MOVES', 'MON_LEVEL', 'MON_FORM', 'MON_IS_EGG_F',
                        'MON_STATUS', 'MON_HP', 'MON_MAXHP', 'MON_STATS', 'MON_DVS', 'MON_EVS']
     for e in EVENTS:
@@ -186,11 +186,9 @@ def main():
                     return
 
     def continue_save():
-        """Let the real autosave run, then boot a separate emulator from SRAM."""
+        """Save through START, then boot a separate emulator from SRAM."""
         nonlocal g
-        g.wr('wOptions3', g.rd('wOptions3') & ~(1 << K['AUTOSAVE_OFF_F']))
-        g.wr('wOverworldDelayTimer', 0)
-        g.tick(180)
+        g.manual_save()
         saved = g.sram() + save[0x8000:]
         g.pb.stop(save=False)
         g = Game(saved)

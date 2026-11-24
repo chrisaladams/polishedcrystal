@@ -1,7 +1,4 @@
-; reset the number of hours the game has been played
-; (not to be confused with the real-time clock, which either continues to
-; increment when the GameBoy is switched off, or in the no-RTC patch, runs
-; at 6x speed while the game time remains real-time)
+; Reset playtime and the elapsed-seconds counter used by short timers.
 ResetGameTime::
 	xor a
 	ld [wGameTimeCap], a
@@ -10,6 +7,9 @@ ResetGameTime::
 	ld [wGameTimeMinutes], a
 	ld [wGameTimeSeconds], a
 	ld [wGameTimeFrames], a
+	ld [wClockFramePhase], a
+	ld [wGameplaySeconds], a
+	ld [wGameplaySeconds + 1], a
 	ret
 
 GameTimer::
@@ -38,37 +38,28 @@ UpdateGameTimer::
 	and a
 	ret z
 
-; Is the timer already capped?
-	ld hl, wGameTimeCap
-	bit 0, [hl]
-	ret nz
-
-; +1 frame
+	; Distribute 59- and 60-frame seconds to follow the hardware refresh rate.
+	ld a, [wClockFramePhase]
+	add GAME_CLOCK_LONG_FRACTION
+	ld b, a
 	ld hl, wGameTimeFrames
 	ld a, [hl]
 	inc a
-
-	cp 60 ; frames/second
-	jr nc, .second
-
 	ld [hl], a
-	ret
+	sbc 59
+	ret c
 
-.second
 	xor a
 	ld [hl], a
+	ld a, b
+	ld [wClockFramePhase], a
 
-; kroc - no-RTC patch
-; the game timer has increased by 1 second; increase the "fake" RTC by 6 seconds
-; (24 in-game hours will pass in 4 real-world hours)
-; this does not affect the rate of the "hours played", which remains real-time
-	ld a, [wInitialOptions2]
-	and 1 << RTC_OPT
-	jr nz, .using_rtc
-rept NO_RTC_SPEEDUP
-	call UpdateNoRTC
-endr
-.using_rtc
+	call TickSoftwareClock
+
+	; Only the displayed playtime stops at 999:59:59.
+	ld hl, wGameTimeCap
+	bit 0, [hl]
+	ret nz
 
 ; +1 second
 	ld hl, wGameTimeSeconds
@@ -131,38 +122,63 @@ endr
 	ld [wGameTimeHours + 1], a
 	ret
 
-;; add a second to the no-RTC fake real-time clock
-UpdateNoRTC::
-	; set our modulus
-	ld a, 60
-	ld b, a
+TickSoftwareClock:
+	; Linked battle timing is independent of each cartridge's world.
+	ld a, [wLinkMode]
+	and a
+	ret nz
+	ld hl, wGameplaySeconds
+	inc [hl]
+	jr nz, .world
+	inc hl
+	inc [hl]
 
+.world
 	ld hl, wRTCSeconds
-
-; +1 second
-	inc [hl]
-	sub [hl]
-	ret nz
+	ld a, [hl]
+	add WORLD_CLOCK_SPEED
+	cp 60
+	jr c, .write_seconds
+	sub 60
 	ld [hld], a
-
-; +1 minute
-	ld a, b
-	inc [hl]
-	sub [hl]
-	ret nz
+	inc [hl] ; minutes
+	ld a, [hl]
+	cp 60
+	jr c, .short_timers
+	xor a
 	ld [hld], a
-
-; +1 hour
-	ld a, 24
-	inc [hl]
-	sub [hl]
-	ret nz
+	inc [hl] ; hours
+	ld a, [hl]
+	cp MAX_HOUR
+	jr c, .short_timers
+	xor a
 	ld [hld], a
+	inc [hl] ; days
+	ld a, [hl]
+	cp WORLD_CLOCK_DAYS
+	jr c, .short_timers
+	ld [hl], 0
+	jr .short_timers
 
-; We do not need to check for days overflow! Pokémon Crystal always keeps the
-; RTC within a 140 day loop (see time.asm/FixDays)!
-; Since the no-RTC patch is not running the clock when the GameBoy is off,
-; it is not possible for the clock to stray beyond 140 days, let alone the
-; RTC hardware limit of 512 days!
-	inc [hl]
+.write_seconds
+	ld [hl], a
+.short_timers
+	ld hl, wStatusFlags2
+	bit STATUSFLAGS2_BUG_CONTEST_TIMER_F, [hl]
+	ret z
+	ld hl, wBugContestSecsRemaining
+	ld a, [hl]
+	and a
+	jr z, .borrow_minute
+	dec [hl]
+	ret
+.borrow_minute
+	dec hl
+	assert wBugContestSecsRemaining == wBugContestMinsRemaining + 1
+	ld a, [hl]
+	and a
+	ret z
+	dec [hl]
+	inc hl
+	ld [hl], 59
 	ret

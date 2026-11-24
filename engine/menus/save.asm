@@ -33,13 +33,11 @@ SaveMenu:
 
 SaveAfterLinkTrade:
 	call SetWRAMStateForSave
-	call StageRTCTimeForSave
 	call SavePokemonData
 	call SaveChecksum
 	call SaveBackupPokemonData
 	call SaveBackupChecksum
 	farcall BackupPartyMonMail
-	call SaveRTC
 	; fallthrough
 
 ClearWRAMStateAfterSave:
@@ -162,7 +160,7 @@ SaveGameData::
 	ldh [hVBlank], a
 	dec a ; ld a, TRUE
 	ld [wSaveFileExists], a
-	call StageRTCTimeForSave
+	call StageGameClockForSave
 	call ValidateSave
 	call SaveOptions
 	call SavePlayerData
@@ -186,7 +184,7 @@ SaveGameData::
 
 	call SaveChecksum
 	call WriteBackupSave
-	call SaveRTC
+	call ClearClockResetRequest
 	call CloseSRAM ; just in case
 	pop af
 	ldh [hVBlank], a
@@ -248,8 +246,7 @@ ErasePreviousSave:
 	ret
 
 EraseLinkBattleStats:
-	ld a, BANK(sLinkBattleStats)
-	call GetSRAMBank
+	farcall OpenLinkCardRecords ; inherit a previous adventure before clearing its records
 	ld hl, sLinkBattleStats
 	ld bc, sLinkBattleStatsEnd - sLinkBattleStats
 	xor a
@@ -406,6 +403,8 @@ TryLoadSaveFile:
 	jr nz, .backup
 	call LoadPlayerData
 	call LoadPokemonData
+	farcall NormalizePartyMagikarp
+	call RestoreGameClock
 
 	; If a mid-save was aborted but main save data is good, finish it.
 	call WasMidSaveAborted
@@ -423,6 +422,8 @@ TryLoadSaveFile:
 	jr nz, .corrupt
 	call LoadBackupPlayerData
 	call LoadBackupPokemonData
+	farcall NormalizePartyMagikarp
+	call RestoreGameClock
 	farcall RestorePartyMonMail
 	call LoadStorageSystem
 	call SaveGameData
@@ -451,9 +452,9 @@ TryLoadSaveData:
 
 	ld a, BANK(sPlayerData)
 	call GetSRAMBank
-	ld hl, sPlayerData + wStartDay - wPlayerData
-	ld de, wStartDay
-	ld bc, 8
+	ld hl, sPlayerData + wRTC - wPlayerData
+	ld de, wRTC
+	ld bc, 4
 	rst CopyBytes
 	ld hl, sPlayerData + wStatusFlags - wPlayerData
 	ld de, wStatusFlags
@@ -469,9 +470,9 @@ TryLoadSaveData:
 
 	ld a, BANK(sBackupPlayerData)
 	call GetSRAMBank
-	ld hl, sBackupPlayerData + wStartDay - wPlayerData
-	ld de, wStartDay
-	ld bc, 8
+	ld hl, sBackupPlayerData + wRTC - wPlayerData
+	ld de, wRTC
+	ld bc, 4
 	rst CopyBytes
 	ld hl, sBackupPlayerData + wStatusFlags - wPlayerData
 	ld de, wStatusFlags

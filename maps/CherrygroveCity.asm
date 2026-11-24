@@ -354,6 +354,12 @@ GuideGentPokegearText:
 	text "#gear becomes"
 	line "more useful as you"
 	cont "add Cards."
+	para "See the star? Your"
+	line "next stop! The !"
+	cont "marks other leads."
+	para "Press SELECT on"
+	line "the Map to look"
+	cont "through them."
 
 	para "I wish you luck on"
 	line "your journey!"

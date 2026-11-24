@@ -417,6 +417,9 @@ WhirlCupOfficialScript:
 	iftruefwd .Again
 	setevent EVENT_WON_WHIRL_CUP
 	setevent EVENT_WHIRL_CUP_PRIZE_PENDING
+	writetext .MistyHandoff
+	promptbutton
+	farscall GiveNextStoryLead
 .FirstPrize:
 	writetext .MysticWaterText
 	promptbutton
@@ -495,6 +498,11 @@ WhirlCupOfficialScript:
 	line "Whirl Cup!"
 	done
 
+.MistyHandoff:
+	text "Misty: Before you"
+	line "go, one thing!"
+	done
+
 .MysticWaterText:
 	text "Here's the prize:"
 	line "Mystic Water!"
@@ -504,9 +512,6 @@ WhirlCupOfficialScript:
 	text "Come back and"
 	line "defend the cup"
 	cont "anytime!"
-	para "Misty: I sent Oak"
-	line "the results."
-	cont "Check the book!"
 	done
 
 .OutText:

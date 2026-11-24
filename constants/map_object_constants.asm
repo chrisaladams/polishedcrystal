@@ -117,7 +117,33 @@ DEF WILDMON_SHINY      rb ; SHINY_MASK or 0
 DEF WILDMON_LEVEL      rb
 DEF WILDMON_BATTLETYPE rb
 DEF WILDMON_HABITAT    rb
+DEF WILDMON_TRAITS     rb
+DEF WILDMON_ALERT      rb
 DEF WILDMON_LENGTH EQU _RS
+
+; OBJECT_RANGE flags for visible wild Pokémon.
+DEF WILD_STEP_REPEL_F     EQU 0 ; may leave its habitat
+DEF WILD_STEP_QUICK_F     EQU 1 ; shorter pause between steps
+DEF WILD_STEP_ATTACK_F    EQU 2 ; may initiate contact with the player
+DEF WILD_STEP_TERRITORY_F EQU 3 ; stay near the spawn tile
+
+; The low three bits select a movement profile. The upper bits are traits
+; that apply independently of the profile.
+	const_def
+	const WILD_PASSIVE
+	const WILD_TIMID
+	const WILD_CURIOUS
+	const WILD_AGGRESSIVE
+	const WILD_TERRITORIAL
+	const WILD_STATIONARY
+	const WILD_ELUSIVE
+	const WILD_SCHOOLING
+DEF WILD_BEHAVIOR_MASK EQU %111
+DEF WILD_HONEY_F      EQU 3
+DEF WILD_NOCTURNAL_F  EQU 4
+DEF WILD_HONEY        EQU 1 << WILD_HONEY_F
+DEF WILD_NOCTURNAL    EQU 1 << WILD_NOCTURNAL_F
+DEF WILD_TERRITORY_RADIUS EQU 2
 
 ; WILDMON_HABITAT values: the tiles a wild Pokemon appears and walks on
 	const_def

@@ -199,13 +199,8 @@ OrangeCrewRudyScript:
 	playsound SFX_GET_BADGE
 	waitsfx
 	promptbutton
-	jumpthisopenedtext
-
-	text "That's one of the"
-	line "four Orange Crew"
-	cont "badges!"
-	text_far OrangeLeagueHintText
-	text_end
+	farscall GiveNextStoryLead
+	endtext
 
 .Rematch:
 	farwritetext OrangeLeagueRematchText

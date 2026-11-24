@@ -45,6 +45,7 @@ OrangeLeagueDrakeScript:
 	playsound SFX_GET_BADGE
 	waitsfx
 	promptbutton
+	farscall GiveNextStoryLead
 .Prize:
 	checkevent EVENT_GOT_ORANGE_LEAGUE_PRIZE
 	iftruefwd .GotPrize
@@ -55,11 +56,9 @@ OrangeLeagueDrakeScript:
 .GotPrize:
 	jumpthisopenedtext
 
-	text "Oak sent word from"
-	line "Pallet Town."
-	para "Look for his field"
-	line "book on the table"
-	cont "in his lab."
+	text "Your name goes in"
+	line "the Orange League"
+	cont "record book!"
 	done
 
 .Beaten:

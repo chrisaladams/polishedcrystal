@@ -8,7 +8,6 @@ InitialOptionDescriptions:
 	dw .EVs
 	dw .Experience
 	dw .AffectionBonus
-	dw .RTC
 	dw .PerfectIVs
 	dw .TradedMon
 	dw .EvolveInBattle
@@ -100,21 +99,6 @@ InitialOptionDescriptions:
 
 	para "Introduced in"
 	line "Gen 6."
-	prompt
-
-.RTC:
-	text "Use the Real-Time"
-	line "Clock function to"
-	cont "track the time."
-
-	para "If your cartridge"
-	line "or emulator does"
-	cont "not support RTC,"
-
-	assert 24 % NO_RTC_SPEEDUP == 0
-	para "disable this to"
-	line "make each in-game"
-	cont STRFMT("day last %d hours.", 24 / NO_RTC_SPEEDUP) ; 24 / 6 == 4
 	prompt
 
 .PerfectIVs:

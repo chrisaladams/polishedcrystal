@@ -28,7 +28,7 @@ endr
 	db 60, 15
 
 RestartClock:
-; If we're here, we had an RTC overflow.
+; The player requested a clock reset on the title screen.
 	ld hl, .Text_ClockTimeMayBeWrong
 	call PrintText
 	ld hl, wOptions1

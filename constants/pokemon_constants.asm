@@ -13,7 +13,6 @@
 ; - PokemonBodyData (see data/pokemon/body_data.asm)
 ; - PokemonPalettes (see data/pokemon/palettes.asm)
 ; - PokedexDataPointerTable (see data/pokemon/dex_entry_pointers.asm)
-; - FootprintPointers (see data/pokemon/footprint_pointers.asm)
 ; indexes for (species + all variants):
 ; - MiniIconPointers (see data/pokemon/mini_icon_pointers.asm)
 ; - OverworldMonIconColors (see data/pokemon/overworld_icon_pals.asm)

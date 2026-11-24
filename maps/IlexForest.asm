@@ -1224,9 +1224,14 @@ IlexForestIronMaskScript:
 	special FadeInPalettes_EnableDynNoApply
 	waitsfx
 	cry CELEBI
+	checkevent EVENT_RESCUED_PROF_HALE
+	iffalsefwd .AnotherLead
 	checkevent EVENT_BEAT_MEWTWO_CLONES
-	iftrue IlexForestMarauderPrizeScript
+	iftruefwd .AnotherLead
 	showtext .Vision
+	sjump IlexForestMarauderPrizeScript
+.AnotherLead:
+	farscall TraceyCallsWithALead
 	sjump IlexForestMarauderPrizeScript
 
 .Vision:

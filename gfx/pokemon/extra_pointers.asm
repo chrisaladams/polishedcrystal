@@ -335,25 +335,25 @@ AnimationExtraPointers:
 
 	dw PichuSpikyAnimationExtra
 
-	dw MagikarpSkellyAnimationExtra
-	dw MagikarpCalico1AnimationExtra
-	dw MagikarpCalico2AnimationExtra
-	dw MagikarpCalico3AnimationExtra
-	dw MagikarpTwoToneAnimationExtra
-	dw MagikarpOrcaAnimationExtra
-	dw MagikarpDapplesAnimationExtra
-	dw MagikarpTigerAnimationExtra
-	dw MagikarpZebraAnimationExtra
-	dw MagikarpStripeAnimationExtra
-	dw MagikarpBubblesAnimationExtra
-	dw MagikarpDiamondsAnimationExtra
-	dw MagikarpPatchesAnimationExtra
-	dw MagikarpForehead1AnimationExtra
 	dw MagikarpMask1AnimationExtra
-	dw MagikarpForehead2AnimationExtra
-	dw MagikarpMask2AnimationExtra
-	dw MagikarpSaucyAnimationExtra
-	dw MagikarpRaindropAnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpOrcaAnimationExtra
+	dw MagikarpOrcaAnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpOrcaAnimationExtra
+	dw MagikarpOrcaAnimationExtra
+	dw MagikarpPlainAnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpCalico1AnimationExtra
+	dw MagikarpMask1AnimationExtra
+	dw MagikarpMask1AnimationExtra
+	dw MagikarpMask1AnimationExtra
+	dw MagikarpMask1AnimationExtra
+	dw MagikarpPlainAnimationExtra
+	dw MagikarpPlainAnimationExtra
 
 	assert_table_length NUM_SPECIES + NUM_COSMETIC_FORMS
 

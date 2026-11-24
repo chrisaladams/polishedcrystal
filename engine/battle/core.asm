@@ -8474,6 +8474,7 @@ DoGetRoamMonData:
 	ret
 
 AddLastBattleToLinkRecord:
+	farcall CountLinkCardResult ; before advancing the legacy totals
 	ld hl, wOTPlayerID
 	ld de, wStringBuffer1
 	ld bc, 2

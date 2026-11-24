@@ -351,7 +351,7 @@ Continue:
 	call ConfirmContinue
 	jmp c, CloseWindow
 	call WarnVBA
-	call Continue_CheckRTC_RestartClock
+	call Continue_CheckClockReset
 	jmp c, CloseWindow
 	call Continue_CheckEGO_ResetInitialOptions
 	ld a, $8
@@ -365,7 +365,6 @@ Continue:
 	farcall ClearSavedObjPals
 	farcall FixPlayerEVsAndStats
 	farcall JumpRoamMons
-	farcall ClockContinue ; time-related
 	ld a, [wSpawnAfterChampion]
 	cp SPAWN_LANCE
 	jr z, .SpawnAfterE4
@@ -422,16 +421,19 @@ endc
 
 .WarnVBAText:
 	text_farend _WarnVBAText
-Continue_CheckRTC_RestartClock:
-	call CheckRTCStatus
-	and %10000000 ; Day count exceeded 16383
-	jr z, Continue_FinishReset
+Continue_CheckClockReset:
+	farcall CheckClockResetRequest
+	jr nz, Continue_FinishReset
 	farcall RestartClock
 	ld a, c
 	and a
-	jr z, Continue_FinishReset
+	jr z, .reset
 	scf
 	ret
+.reset
+	farcall InitializeStartDay
+	farcall ClearDailyTimers
+	jr Continue_FinishReset
 
 Continue_CheckEGO_ResetInitialOptions:
 	ld a, [wInitialOptions2]
@@ -461,13 +463,6 @@ FinishContinueFunction:
 	jr .loop
 
 DisplaySaveInfoOnContinue:
-	call CheckRTCStatus
-	and %10000000
-	jr z, .clock_ok
-	lb de, 4, 8
-	jr DisplayContinueDataWithRTCError
-
-.clock_ok
 	lb de, 4, 8
 	jr DisplayNormalContinueData
 
@@ -479,13 +474,6 @@ DisplayNormalContinueData:
 	call Continue_LoadMenuHeader
 	call Continue_DisplayBadgesDexPlayerName
 	call Continue_PrintGameTime
-	call LoadFrame
-	jmp UpdateSprites
-
-DisplayContinueDataWithRTCError:
-	call Continue_LoadMenuHeader
-	call Continue_DisplayBadgesDexPlayerName
-	call Continue_UnknownGameTime
 	call LoadFrame
 	jmp UpdateSprites
 
@@ -559,16 +547,6 @@ Continue_PrintGameTime:
 	decoord 9, 8, 0
 	add hl, de
 	jr Continue_DisplayGameTime
-
-Continue_UnknownGameTime:
-	decoord 9, 8, 0
-	add hl, de
-	ld de, .three_question_marks
-	rst PlaceString
-	ret
-
-.three_question_marks
-	db " ???@"
 
 Continue_DisplayBadgeCount:
 	push hl

@@ -229,6 +229,7 @@ InitPokegearTilemap:
 	ld a, [wJumptableIndex]
 	cp 7 ; Orange
 	call z, TownMapOrangeFlips
+	farcall DrawLocalQuestMapPins
 .not_town_map
 	ld a, [wPokegearMapRegion]
 	and a
@@ -499,6 +500,7 @@ PokegearMap_CheckRegion:
 	jmp ExitPokegearRadio_HandleMusic
 
 PokegearMap_Init:
+	farcall BuildQuestMapLeads
 	call InitPokegearTilemap
 	call TownMap_InitFlyPossible
 	ld a, [wPokegearMapPlayerIconLandmark]
@@ -536,6 +538,17 @@ PokegearMap_KantoMap:
 PokegearMap_OrangeMap:
 	call TownMap_GetOrangeLandmarkLimits
 PokegearMap_ContinueMap:
+	ldh a, [hJoyPressed]
+	and PAD_SELECT
+	jr z, .normal
+	farcall BrowseQuestMap
+	; Rebuild the original region, player and cursor before enabling Fly again.
+	ld a, [wJumptableIndex]
+	dec a
+	ld c, a
+	ld b, POKEGEARCARD_MAP
+	jmp Pokegear_SwitchPage
+.normal
 	ld hl, hJoyLast
 	ld a, [hl]
 	and PAD_A
@@ -1203,10 +1216,12 @@ _TownMap:
 	call TownMap_InitCursorAndPlayerIconPositions
 	ld [wTownMapPlayerIconLandmark], a
 	ld [wTownMapCursorLandmark], a
+	farcall BuildQuestMapLeads
 	xor a
 	assert NO_BG_MAP_TRANSFER == 0
 	ldh [hBGMapMode], a
 	call .InitTilemap
+	farcall DrawLocalQuestMapPins
 	call ApplyAttrAndTilemapInVBlank
 	ld a, [wTownMapPlayerIconLandmark]
 	call PokegearMap_InitPlayerIcon
@@ -1252,7 +1267,17 @@ _TownMap:
 	ld a, [hl]
 	and PAD_B
 	ret nz
-
+	ldh a, [hJoyPressed]
+	and PAD_SELECT
+	jr z, .move
+	push de
+	farcall BrowseQuestMap
+	call .InitTilemap
+	farcall DrawLocalQuestMapPins
+	call ApplyAttrAndTilemapInVBlank
+	pop de
+	jr .loop2
+.move
 	ld hl, hJoyLast
 	ld a, [hl]
 	and PAD_UP
@@ -1339,7 +1364,7 @@ TownMap_InitFlyPossible:
 	farcall CheckPartyMove
 	jr c, .no_fly
 	ld de, ENGINE_STORMBADGE
-	farcall CheckBadge
+	farcall CheckEngineFlag ; eligibility check while browsing the map
 	jr c, .no_fly
 	farcall CheckFlyAllowedOnMap
 	jr nz, .no_fly

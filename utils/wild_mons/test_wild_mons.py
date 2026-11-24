@@ -18,6 +18,9 @@ In the emulator (PyBoy), from a save:
   another route; the TV names it;
 - with a Repel, a weaker one runs from you and runs off if you walk into it,
   and a stronger one still battles;
+- a nearby Beedrill can start a battle without input, and a waiting player
+  can start a battle with a Chansey they get close to;
+- Sweet Honey can be used from the Bag and leaves a local scent;
 - saving with some out, then Continue, leaves no stale ones;
 - the Bug-Catching Contest's are from the contest's list.
 
@@ -110,6 +113,31 @@ class Game:
             self.press('b', 30)
         self.tick(60)
 
+    def highlight_start_option(self, symbol):
+        """Open Start and highlight a plain-text label, wherever it appears."""
+        self.press('start', 90)
+        count = self.rd('wMenuItemsList')
+        assert 0 < count <= 10, 'Start menu did not open'
+        bank, addr = self.sym['StartMenu.' + symbol]
+        label = bytes(self.m[bank, addr + i] for i in range(20)).split(b'\x53', 1)[0]  # @ terminator
+        screen = bytes(self.rd('wTilemap', i) for i in range(20 * 18))
+        offset = screen.find(label)
+        assert label and offset >= 0, f'{symbol} missing from Start menu'
+        row, column = divmod(offset, 20)
+        assert column + len(label) < 20 and count < self.rd('wMenuBorderBottomCoord') < 18
+        for _ in range(count):
+            if self.rd('wMenuCursorY') == row:
+                return
+            self.press('down', 12)
+        raise AssertionError(f'Start cursor did not reach {symbol}')
+
+    def manual_save(self):
+        self.highlight_start_option('SaveString')
+        self.press('a', 120)
+        self.press('a', 400)
+        for _ in range(3):
+            self.press('b', 60)
+
     def warp(self, group, number, x, y):
         for nm, v in (('wMapGroup', group), ('wMapNumber', number), ('wXCoord', x),
                       ('wYCoord', y), ('wDefaultSpawnpoint', 255), ('wMapStatus', 1)):
@@ -157,9 +185,12 @@ def main():
               'OBJECT_LAST_TILE', 'OBJECT_PALETTE', 'OBJECT_SPRITE_TILE', 'PLAYER_SURF',
               'COLL_WATER', 'COLL_TALL_GRASS', 'COLL_LONG_GRASS', 'COLL_FLOOR', 'HABITAT_GRASS',
               'HABITAT_FLOOR', 'HABITAT_WATER', 'EXTSPECIES_MASK', 'SHINY_MASK',
-              'BATTLETYPE_ROAMING', 'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'OBJECT_FLAGS1',
+              'BATTLETYPE_ROAMING', 'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'PALSTATE_OVERCAST_INDEX', 'OBJECT_FLAGS1',
               'OBJECT_FLAGS2', 'NUM_OBJECTS', 'EEVEE', 'GROUP_ROUTE_30', 'MAP_ROUTE_30',
-              'GROUP_PLAYERS_HOUSE_1F', 'MAP_PLAYERS_HOUSE_1F']
+              'GROUP_PLAYERS_HOUSE_1F', 'MAP_PLAYERS_HOUSE_1F', 'WILDMON_SPECIES',
+              'WILDMON_FORM', 'WILDMON_TRAITS', 'WILDMON_ALERT', 'PLAIN_FORM', 'BEEDRILL', 'CHANSEY',
+              'WILD_AGGRESSIVE', 'WILD_ELUSIVE', 'STEP_TYPE_FROM_MOVEMENT', 'OBJECT_STEP_TYPE',
+              'SWEET_HONEY']
     K = rgbasm_values(names, None)
     by_value = {K[n]: n for n in species_names}
     save = open(args.save, 'rb').read()
@@ -306,8 +337,11 @@ def main():
             got = tuple(g.m[5, sym['wOBPals2'][1] + p * 8 + k] for k in range(2, 6))
             light, dark = (shiny_colours if x['shiny'] else
                            (lambda nm: TF.expected_colours(nm, 'PLAIN_FORM')))(x['name'])
-            if not any(got == (lc[0], lc[1], dc[0], dc[1]) for lc, dc in
-                       (TF.ow_palette_colours(rom, sym, light, dark, tm) for tm in range(4))):
+            overcast = g.rd('wCurPalStates', K['PALSTATE_OVERCAST_INDEX'])
+            table = 'OvercastOBPalette' if overcast else 'MapObjectPals'
+            if not any(got == lc + dc for lc, dc in
+                       (TF.ow_palette_colours(rom, sym, light, dark, tm, table=table)
+                        for tm in range(4))):
                 fails.append((where, f'palette {got} is not {light}/{dark}'))
             n += 1
         if not n:
@@ -373,6 +407,39 @@ def main():
     if not wait_battle(300) or g.rd('wTempWildMonSpecies') != x['sp']:
         fails.append(('pressed A facing one', 'no battle with it'))
 
+    # 3a. Actual overworld input dispatch for new behavior, using two species
+    # in the same predictable grass patch to isolate encounter timing.
+    for species, profile, stays_quiet in (('BEEDRILL', 'WILD_AGGRESSIVE', False),
+                                         ('CHANSEY', 'WILD_ELUSIVE', True)):
+        g.load(route29)
+        g.face('right')
+        slot = wild()[0]['slot']
+        b = struct_of(slot)
+        assert put_next_to_player(slot, 1, 0)
+        for name, v in (('WILDMON_SPECIES', K[species]), ('WILDMON_FORM', K['PLAIN_FORM']),
+                        ('WILDMON_TRAITS', K[profile]), ('WILDMON_ALERT', 0)):
+            g.wr('wWildMons', v, slot * K['WILDMON_LENGTH'] + K[name])
+        g.m[1, b + K['OBJECT_STEP_TYPE']] = K['STEP_TYPE_FROM_MOVEMENT']
+        g.m[1, b + K['OBJECT_LAST_TILE']] = K['COLL_TALL_GRASS']
+        if stays_quiet:
+            g.tick(120)
+            if g.rd('wBattleMode') or sget(b, 'OBJECT_MAP_X') != g.rd('wPlayerMapX') + 1:
+                fails.append((species, 'did not stay near a motionless player'))
+            g.press('a', 1, 3)
+        if not wait_battle() or g.rd('wTempWildMonSpecies') != K[species]:
+            fails.append((species, 'did not start its expected battle'))
+
+    g.load(route29)
+    g.wr('wLastPocket', 0)
+    g.wr('wNumItems', 1)
+    for offset, value in enumerate((K['SWEET_HONEY'], 1, 0xff)):
+        g.wr('wItems', value, offset)
+    g.highlight_start_option('PackString')
+    for _ in range(6):
+        g.press('a', 90)
+    if g.rd('wNumItems') or g.rd('wWildHoneySteps') != 12 or g.rd('wBattleMode') or g.rd('wScriptRunning'):
+        fails.append(('Sweet Honey', 'Bag use did not finish with a scent and no battle'))
+
     # 3b. roaming legendaries: all three on Route 29, every slot kept full
     g.load(route29)
     roam_len = g.addr('wRoamMon2') - g.addr('wRoamMon1')
@@ -416,9 +483,10 @@ def main():
         elif (g.rd('wBattleType'), g.rd('wTempWildMonSpecies')) != (K['BATTLETYPE_ROAMING'], roamer['sp']):
             fails.append(('roaming legendaries', f'{roamer["name"]} did not battle as a roaming legendary'))
 
-    # 3c. today's rare Pokemon: the emulator's clock is at day 0, Eevee on Route 29
+    # 3c. Stage day 0 for the Eevee sighting, independent of the input save.
     def rare_walk(group, number, x, y, steps, only_when_full=False):
         g.load(base)
+        g.wr('wRTCDayLo', 0)
         if only_when_full:
             # it comes the usual way most of the time, and then stays: to see
             # it come when every slot is full, that's the only way it can come
@@ -447,26 +515,24 @@ def main():
         if only_when_full:
             g.pb.hook_deregister(ab, aa)
         return seen, most, while_full
-    if g.rd('wRTCDayLo') % 14 == 0:
-        seen, most, _ = rare_walk(K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'], 16, 5, 120)
-        if not seen:
-            fails.append(("today's rare Pokemon", 'no Eevee on Route 29'))
-        seen2, most2, while_full = rare_walk(K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'], 16, 5, 200, True)
-        if max(most, most2) > 1:
-            fails.append(("today's rare Pokemon", 'two Eevee out at once'))
-        if not while_full or seen2 and not while_full:
-            fails.append(("today's rare Pokemon", 'never came while every slot was full'))
-        if rare_walk(K['GROUP_ROUTE_30'], K['MAP_ROUTE_30'], 10, 30, 40)[0]:
-            fails.append(("today's rare Pokemon", 'Eevee on Route 30'))
-        g.load(base)
-        g.warp(K['GROUP_PLAYERS_HOUSE_1F'], K['MAP_PLAYERS_HOUSE_1F'], 6, 2)
-        g.press('up', 2, 3)
-        g.tick(20)
-        g.press('a', 60)
-        if g.rd('wNamedObjectIndex') != K['EEVEE']:
-            fails.append(("today's rare Pokemon", 'the TV did not report Eevee'))
-    else:
-        print("(skipped today's rare Pokemon: the clock isn't at day 0)")
+    seen, most, _ = rare_walk(K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'], 16, 5, 120)
+    if not seen:
+        fails.append(("today's rare Pokemon", 'no Eevee on Route 29'))
+    seen2, most2, while_full = rare_walk(K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'], 16, 5, 200, True)
+    if max(most, most2) > 1:
+        fails.append(("today's rare Pokemon", 'two Eevee out at once'))
+    if not while_full or seen2 and not while_full:
+        fails.append(("today's rare Pokemon", 'never came while every slot was full'))
+    if rare_walk(K['GROUP_ROUTE_30'], K['MAP_ROUTE_30'], 10, 30, 40)[0]:
+        fails.append(("today's rare Pokemon", 'Eevee on Route 30'))
+    g.load(base)
+    g.wr('wRTCDayLo', 0)
+    g.warp(K['GROUP_PLAYERS_HOUSE_1F'], K['MAP_PLAYERS_HOUSE_1F'], 6, 2)
+    g.press('up', 2, 3)
+    g.tick(20)
+    g.press('a', 60)
+    if g.rd('wNamedObjectIndex') != K['EEVEE']:
+        fails.append(("today's rare Pokemon", 'the TV did not report Eevee'))
 
     # 4. Repel
     g.load(route29)
@@ -513,13 +579,7 @@ def main():
     g.load(route29)
     if not wild():
         fails.append(('save', 'none out to save with'))
-    g.press('start', 60)
-    for _ in range(5):
-        g.press('down', 10)
-    g.press('a', 120)
-    g.press('a', 400)
-    for _ in range(3):
-        g.press('b', 60)
+    g.manual_save()
     saved = g.sram() + save[0x8000:]
     if saved[:0x8000] == save[:0x8000]:
         fails.append(('save', 'the game was not saved'))
@@ -528,6 +588,8 @@ def main():
         g2.boot()
         g2.tick(120)
         gsave, g = g, g2
+        expected_map = (K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'])
+        assert (g.rd('wMapGroup'), g.rd('wMapNumber')) == expected_map, 'Continue did not restore Route 29'
         for i in range(K['NUM_OBJECT_STRUCTS']):
             sb = g.addr('wObjectStructs') + i * K['OBJECT_LENGTH']
             idx = g.m[1, sb + K['OBJECT_MAP_OBJECT_INDEX']]
@@ -544,6 +606,7 @@ def main():
     for x0, y0 in ((20, 20), (16, 30), (24, 36)):
         g.load(base)
         g.wr('wStatusFlags2', g.rd('wStatusFlags2') | (1 << K['STATUSFLAGS2_BUG_CONTEST_TIMER_F']))
+        g.wr('wBugContestMinsRemaining', 20)
         g.warp(K['GROUP_NATIONAL_PARK_BUG_CONTEST'], K['MAP_NATIONAL_PARK_BUG_CONTEST'], x0, y0)
         for x in wild():
             seen.add(x['name'])

@@ -126,7 +126,11 @@ HaleStatueScript:
 	earthquake 12
 	showtext .Rescue
 	setevent EVENT_RESCUED_PROF_HALE
-	jumptext .Note
+	opentext
+	writetext .Note
+	promptbutton
+	farscall GiveNextStoryLead
+	endtext
 
 .Rescue:
 	text "Three knocks come"

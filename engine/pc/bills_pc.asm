@@ -982,6 +982,8 @@ DecodeTempMon:
 INCLUDE "data/pc/bad_egg.asm"
 
 SetTempPartyMonData:
+	ld hl, wTempMonSpecies
+	farcall NormalizeMagikarpForm
 	; Calculate stats
 	ld a, [wTempMonSpecies]
 	ld [wCurSpecies], a

@@ -1,3 +1,10 @@
+; Load states are followed by their input states in the jump table.
+DEF CARD_STATUS EQU 0
+DEF CARD_JOHTO EQU 2
+DEF CARD_KANTO EQU 4
+DEF CARD_LINK_LIFETIME EQU 6
+DEF CARD_LINK_YEAR EQU 8
+
 TrainerCard:
 	ld a, [wStateFlags]
 	push af
@@ -72,12 +79,10 @@ TrainerCard:
 	dw TrainerCard_Page2_Joypad
 	dw TrainerCard_Page3_LoadGFX
 	dw TrainerCard_Page3_Joypad
-	dw TrainerCard_Quit
-
-TrainerCard_Quit:
-	ld hl, wJumptableIndex
-	set 7, [hl]
-	ret
+	dw TrainerCard_Link_Load
+	dw TrainerCard_Lifetime_Joypad
+	dw TrainerCard_Link_Load
+	dw TrainerCard_Year_Joypad
 
 TrainerCard_Page1_LoadGFX:
 	call ClearSprites
@@ -102,13 +107,15 @@ TrainerCard_IncrementJumptable:
 
 TrainerCard_Page1_Joypad:
 	call TrainerCard_Page1_PrintGameTime
-	ld hl, hJoyLast
-	ld a, [hl]
+	ldh a, [hJoyLast]
+	bit B_PAD_LEFT, a
+	ld a, CARD_LINK_LIFETIME
+	jr nz, TrainerCard_SetPage
+	ldh a, [hJoyLast]
 	and PAD_RIGHT | PAD_A
 	ret z
-
-; pressed_right_or_a
-	ld a, $2
+	ld a, CARD_JOHTO
+TrainerCard_SetPage:
 	ld [wJumptableIndex], a
 	ret
 
@@ -142,42 +149,19 @@ TrainerCard_Page2_LoadGFX:
 TrainerCard_Page2_Joypad:
 	ld hl, TrainerCard_JohtoBadgesOAM
 	call TrainerCard_Page2_3_AnimateBadges
-	ld hl, hJoyLast
-	ld a, [hl]
-	and PAD_RIGHT
-	jr nz, .pressed_right
-	ld a, [hl]
-	and PAD_A
-	jr nz, .pressed_a
-	ld a, [hl]
-	and PAD_LEFT
+	ldh a, [hJoyLast]
+	bit B_PAD_LEFT, a
+	ld a, CARD_STATUS
+	jr nz, TrainerCard_SetPage
+	ldh a, [hJoyLast]
+	and PAD_RIGHT | PAD_A
 	ret z
-
-; pressed_left
-	xor a
-	ld [wJumptableIndex], a
-	ret
-
-.pressed_right
 	ld a, [wKantoBadges]
 	and a
-	ret z
-	ld a, $4
-	ld [wJumptableIndex], a
-	ret
-
-.pressed_a
-	ld a, [wKantoBadges]
-	and a
-	jr z, .quit
-	ld a, $4
-	ld [wJumptableIndex], a
-	ret
-
-.quit
-	ld a, $6
-	ld [wJumptableIndex], a
-	ret
+	ld a, CARD_LINK_LIFETIME
+	jr z, TrainerCard_SetPage
+	ld a, CARD_KANTO
+	jr TrainerCard_SetPage
 
 TrainerCard_Page3_LoadGFX:
 	call ClearSprites
@@ -209,23 +193,74 @@ TrainerCard_Page3_LoadGFX:
 TrainerCard_Page3_Joypad:
 	ld hl, TrainerCard_KantoBadgesOAM
 	call TrainerCard_Page2_3_AnimateBadges
-	ld hl, hJoyLast
-	ld a, [hl]
-	and PAD_A
-	jr nz, .quit
-	ld a, [hl]
+	ldh a, [hJoyLast]
+	bit B_PAD_LEFT, a
+	ld a, CARD_JOHTO
+	jp nz, TrainerCard_SetPage
+	ldh a, [hJoyLast]
+	and PAD_A | PAD_RIGHT
+	ret z
+	ld a, CARD_LINK_LIFETIME
+	jmp TrainerCard_SetPage
+
+TrainerCard_Link_Load:
+	call ClearSprites
+	call TrainerCardSetup_ClearBottomHalf
+	ld a, CGB_TRAINER_CARD
+	call GetCGBLayout
+	call SetDefaultBGPAndOBP
+	ld de, CardStatusGFX
+	call TrainerCard_LoadHeaderGFX
+	farcall DrawLinkCardRecords
+	call ApplyTilemapInVBlank
+	jmp TrainerCard_IncrementJumptable
+
+TrainerCard_Lifetime_Joypad:
+	ldh a, [hJoyPressed]
+	and PAD_DOWN
+	jr nz, TrainerCard_OpenRoster
+	ldh a, [hJoyPressed]
+	and PAD_RIGHT | PAD_A
+	ld a, CARD_LINK_YEAR
+	jp nz, TrainerCard_SetPage
+	ldh a, [hJoyPressed]
 	and PAD_LEFT
 	ret z
+	ld a, [wKantoBadges]
+	and a
+	ld a, CARD_JOHTO
+	jp z, TrainerCard_SetPage
+	ld a, CARD_KANTO
+	jmp TrainerCard_SetPage
 
-; pressed_left
-	ld a, $2
-	ld [wJumptableIndex], a
-	ret
+TrainerCard_OpenRoster:
+	ld a, [wJumptableIndex]
+	push af
+	sub CARD_LINK_LIFETIME + 1
+	ld [wLinkCardPeriod], a
+	farcall BrowseLinkCardPlayers
+	pop af
+	dec a ; redraw the summary that opened the list
+	jmp TrainerCard_SetPage
 
-.quit
-	ld a, $6
-	ld [wJumptableIndex], a
-	ret
+TrainerCard_Year_Joypad:
+	ldh a, [hJoyPressed]
+	and PAD_DOWN
+	jr nz, TrainerCard_OpenRoster
+	ldh a, [hJoyPressed]
+	bit B_PAD_LEFT, a
+	ld a, CARD_LINK_LIFETIME
+	jp nz, TrainerCard_SetPage
+	ldh a, [hJoyPressed]
+	bit B_PAD_RIGHT, a
+	ld a, CARD_STATUS
+	jp nz, TrainerCard_SetPage
+	ldh a, [hJoyPressed]
+	and PAD_A
+	ret z
+	farcall ConfirmResetLinkCardYear
+	ld a, CARD_LINK_YEAR
+	jmp TrainerCard_SetPage
 
 TrainerCard_LoadHeaderGFX:
 	ld hl, vTiles2 tile $29
@@ -347,13 +382,16 @@ TrainerCard_PrintTopHalfOfCard:
 	db     " Money@"
 
 TrainerCardSetup_ClearBottomHalf:
-	hlcoord 1, 10
-	lb bc, 7, 18
+	hlcoord 1, 9
+	lb bc, 8, 18
 	jmp ClearBox
 
 TrainerCard_Page1_PrintDexCaught_GameTime:
 	hlcoord 2, 10
 	ld de, .Dex_PlayTime_BP
+	rst PlaceString
+	hlcoord 2, 15
+	ld de, .LinkShortcut
 	rst PlaceString
 
 	hlcoord 18, 16
@@ -408,6 +446,8 @@ TrainerCard_Page1_PrintDexCaught_GameTime:
 	ld [hl], $28 ; no-optimize *hl++|*hl-- = N
 	inc hl
 	jr .star_loop
+
+.LinkShortcut: db "◀ Link records@"
 
 .Dex_PlayTime_BP:
 	text "#dex"

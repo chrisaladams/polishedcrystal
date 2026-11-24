@@ -116,6 +116,7 @@ CanObjectLeaveTile:
 	push af
 	ld hl, OBJECT_WALKING
 	add hl, bc
+	ld a, [hl]
 	and 3
 	ld e, a
 	ld d, 0

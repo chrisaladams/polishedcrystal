@@ -81,8 +81,8 @@ Red:
 .Note:
 	text "A note is tucked"
 	line "inside the ticket."
-	para "Orange Crew season"
-	line "is open. Press"
-	cont "Start and read"
-	cont "Oak's Field Book."
+	para "Molly needs help"
+	line "at the Ruins of"
+	cont "Alph. Read Oak's"
+	cont "Field Book."
 	done

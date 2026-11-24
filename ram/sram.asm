@@ -77,6 +77,24 @@ endr
 sLinkBattleStatsEnd::
 
 
+; Unused space after the backup save. Keep these totals on the cartridge
+; across adventures. The layout of all existing save fields is unchanged.
+SECTION "Link Card Records", SRAM
+
+sLinkCardMarker:: ds 2
+sLinkCardLifetime:: ds 3 * 3 ; wins, losses, draws, each a big-endian 24-bit count
+sLinkCardYear:: ds 3 * 3
+sLinkCardEnd::
+	assert BANK(sLinkCardMarker) == BANK(sLinkBattleStats)
+
+SECTION "Link Card Players", SRAM
+
+sLinkCardPlayerTag:: dw
+sLinkCardPlayerCount:: db
+sLinkCardPlayers:: ds LINK_CARD_ROW_SIZE * LINK_CARD_MAX_PLAYERS
+sLinkCardPlayersEnd::
+	assert BANK(sLinkCardPlayers) == BANK(sSRAMAccessCount)
+
 SECTION "SRAM Hall of Fame", SRAM
 
 sHallOfFame::

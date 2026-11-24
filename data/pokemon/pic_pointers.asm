@@ -339,25 +339,25 @@ PokemonPicPointers::
 
 	pics PichuSpiky
 
-	pics MagikarpSkelly
-	pics MagikarpCalico1
-	pics MagikarpCalico2
-	pics MagikarpCalico3
-	pics MagikarpTwoTone
-	pics MagikarpOrca
-	pics MagikarpDapples
-	pics MagikarpTiger
-	pics MagikarpZebra
-	pics MagikarpStripe
-	pics MagikarpBubbles
-	pics MagikarpDiamonds
-	pics MagikarpPatches
-	pics MagikarpForehead1
 	pics MagikarpMask1
-	pics MagikarpForehead2
-	pics MagikarpMask2
-	pics MagikarpSaucy
-	pics MagikarpRaindrop
+	pics MagikarpCalico1
+	pics MagikarpCalico1
+	pics MagikarpCalico1
+	pics MagikarpOrca
+	pics MagikarpOrca
+	pics MagikarpCalico1
+	pics MagikarpCalico1
+	pics MagikarpOrca
+	pics MagikarpOrca
+	pics MagikarpPlain
+	pics MagikarpCalico1
+	pics MagikarpCalico1
+	pics MagikarpMask1
+	pics MagikarpMask1
+	pics MagikarpMask1
+	pics MagikarpMask1
+	pics MagikarpPlain
+	pics MagikarpPlain
 
 	assert_table_length NUM_SPECIES + NUM_COSMETIC_FORMS
 
