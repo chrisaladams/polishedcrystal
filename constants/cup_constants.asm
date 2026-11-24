@@ -4,6 +4,7 @@
 	const_def
 	const CUP_RISING_STAR ; National Park: 3 at level 30
 	const CUP_WHIRL       ; Olivine Port: 3-6 Water types at level 50
+	const CUP_KIMONO      ; Ecruteak Dance Theatre: 3 of today's type at level 50
 DEF NUM_CUPS EQU const_value
 
 ; how a cup's team is chosen
@@ -16,6 +17,12 @@ DEF NUM_CUPS EQU const_value
 	const CUPRULE_ANY
 	const CUPRULE_ALL_TYPE ; every one has the type
 	const CUPRULE_HAS_TYPE ; at least one has the type
+
+; CupRules and CupMakeTeam types besides the 18
+DEF CUPTYPE_TODAY EQU $fe ; the Kimono Cup's (wCupFoeType)
+DEF CUPTYPE_ANY   EQU $ff ; CupMakeTeam: any, with a decent spread
+
+DEF NUM_KIMONO_TYPES EQU 18
 
 ; CupSelectTeam results (hScriptVar)
 	const_def

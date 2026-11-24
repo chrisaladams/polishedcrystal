@@ -183,6 +183,7 @@ INCLUDE "engine/overworld/wild_behavior.asm"
 SECTION "Random Battle", ROMX
 
 INCLUDE "engine/link/random_battle.asm"
+INCLUDE "engine/events/cup_teams.asm"
 
 
 SECTION "Wild Data", ROMX

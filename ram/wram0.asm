@@ -1610,6 +1610,11 @@ wWildReachHalf:: db ; 2 in a block's bottom half
 ; experience or items in its battles), else 0; and which cup
 wCupLevel:: db
 wCupId:: db
+; a generated team for the next trainer battle: how many (then cleared), of
+; what type (CUPTYPE_ANY: any); and CupMakeTeam's count
+wCupFoeSize:: db
+wCupFoeType:: db
+wCupMakeCount:: db
 ; Sweet Honey's remaining player steps and where it was used.
 wWildHoneySteps:: db
 wWildHoneyX:: db

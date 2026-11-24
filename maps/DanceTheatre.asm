@@ -24,6 +24,7 @@ DanceTheatre_MapScriptHeader:
 	object_event 10, 12, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, DanceTheatreCooltrainerMText, -1
 	object_event  3,  6, SPRITE_GRANNY, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, DanceTheatreGrannyText, -1
 	object_event  1, 10, SPRITE_LADY, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_COMMAND, jumptextfaceplayer, DanceTheatreLadyText, -1
+	object_event  4, 12, SPRITE_GRANNY, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, DanceTheatreKimonoCupScript, -1
 
 GenericTrainerKimono_girlNaoko:
 	assert !DEF(TRAINERPAL_NAOKO) ; the default TRAINERPAL_KIMONO_GIRL is hers
@@ -283,4 +284,200 @@ DanceTheatreLadyText:
 
 	para "use them are"
 	line "somewhere else?"
+	done
+
+DanceTheatreKimonoCupScript:
+; Link Edition: the Kimono Cup: three of today's type at level 50 against
+; three Kimono Girls with teams of that type. Today's type follows the world
+; clock's days, all 18 in turn. The first win with a type gives its item
+; (Silk Scarf for Normal, and so on), each one after a Big Pearl.
+	faceplayer
+	opentext
+	callasm KimonoCupToday
+	writetext .WelcomeText
+	yesorno
+	iffalse_jumpopenedtext .NoText
+	loadmem wCupId, CUP_KIMONO
+	writetext .ChooseText
+	promptbutton
+	callasm CupSelectTeam
+	ifequalfwd CUPTEAM_CANCEL, .Cancel
+	ifequalfwd CUPTEAM_OK, .Begin
+	ifequalfwd CUPTEAM_TYPE, .WrongType
+	jumpopenedtext .RulesText
+
+.WrongType:
+	jumpopenedtext .WrongTypeText
+
+.Cancel:
+	jumpopenedtext .NoText
+
+.Begin:
+	writetext .Round1Text
+	waitbutton
+	closetext
+	callasm CupBegin
+	winlosstext .WinText, .LossText
+	loadmem wCupFoeSize, 3
+	loadtrainer KIMONO_GIRL, SAYO
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupHealTeam
+	opentext
+	writetext .Round2Text
+	waitbutton
+	closetext
+	winlosstext .WinText, .LossText
+	loadmem wCupFoeSize, 3
+	loadtrainer KIMONO_GIRL, ZUKI
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupHealTeam
+	opentext
+	writetext .FinalText
+	waitbutton
+	closetext
+	winlosstext .WinText, .LossText
+	loadmem wCupFoeSize, 4
+	loadtrainer KIMONO_GIRL, MIKI
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupEnd
+	opentext
+	writetext .ChampionText
+	playsound SFX_GET_BADGE
+	waitsfx
+	promptbutton
+	; the first win with today's type gives its item, then counts
+	callasm KimonoCupTypeItem
+	iffalsefwd .Again
+	verbosegiveitem ITEM_FROM_MEM, iffalse_jumpopenedtext .NoRoomText
+	callasm CupWin
+	callasm KimonoCupTypesWon
+	getnum STRING_BUFFER_4
+	ifequalfwd NUM_KIMONO_TYPES, .AllTypes
+	jumpopenedtext .TypesWonText
+
+.AllTypes:
+	jumpopenedtext .AllTypesText
+
+.Again:
+	verbosegiveitem BIG_PEARL, iffalse_endtext
+	jumpopenedtext .ComeBackText
+
+.Lost:
+	callasm CupEnd
+	jumptext .OutText
+
+.WelcomeText:
+	text "Welcome to the"
+	line "Kimono Cup!"
+
+	para "Today's type is"
+	line "@"
+	text_ram wStringBuffer3
+	text "."
+
+	para "Enter three"
+	line "#mon of that"
+	cont "type. They'll"
+	cont "battle at level"
+	cont "50 against three"
+	cont "Kimono Girls."
+
+	para "No penalty if you"
+	line "lose. Enter?"
+	done
+
+.NoText:
+	text "The stage is"
+	line "always open!"
+	done
+
+.ChooseText:
+	text "Choose three"
+	line "#mon to enter."
+	prompt
+
+.WrongTypeText:
+	text "Sorry, today all"
+	line "three must be"
+	cont "@"
+	text_ram wStringBuffer3
+	text "-type."
+	done
+
+.RulesText:
+	text "Sorry, that team"
+	line "can't enter."
+	done
+
+.Round1Text:
+	text "Round one: Sayo!"
+	done
+
+.Round2Text:
+	text "Round two: Zuki!"
+	done
+
+.FinalText:
+	text "The final round:"
+	line "Miki!"
+	done
+
+.WinText:
+	text "A graceful win!"
+	done
+
+.LossText:
+	text "The dance is"
+	line "over…"
+	done
+
+.ChampionText:
+	text "<PLAYER> won the"
+	line "Kimono Cup!"
+	done
+
+.NoRoomText:
+	text "Oh, you've no room"
+	line "for your prize."
+
+	para "Win with this type"
+	line "again to claim it."
+	done
+
+.TypesWonText:
+	text "You've won with"
+	line "@"
+	text_ram wStringBuffer4
+	text " of 18 types."
+
+	para "Come back for"
+	line "another type!"
+	done
+
+.AllTypesText:
+	text "You've won with"
+	line "all 18 types!"
+
+	para "The Kimono Girls"
+	line "will remember"
+	cont "your dance!"
+	done
+
+.ComeBackText:
+	text "Come back for"
+	line "another type!"
+	done
+
+.OutText:
+	text "That's the end of"
+	line "the dance for now."
 	done

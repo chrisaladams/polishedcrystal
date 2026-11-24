@@ -42,6 +42,7 @@ ADDED = (
     ('SilverCaveOutside', 25, 15), ('NationalPark', 23, 22),
     ('OlivinePort', 13, 7), ('RuinsOfAlphResearchCenter', 2, 2),
     ('IlexForest', 11, 25), ('CeruleanCaveB1F', 7, 13),
+    ('Route36NationalParkGate', 7, 2), ('DanceTheatre', 4, 12),
 )
 # The actual standing positions used to interact with each new story clue.
 STORY_STOPS = (

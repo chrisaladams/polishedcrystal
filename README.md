@@ -282,10 +282,17 @@ no items or experience in its battles, and come back exactly as they were
   Ellis, Picnicker Ruth and Cooltrainer Rex. The first win gives Leftovers,
   each one after a Rare Candy.
 - **Whirl Cup**, at Olivine Port after Red: below.
+- **Kimono Cup**, in the Ecruteak Dance Theatre, open from the start: each
+  day has a type, all 18 in turn (by the world clock's day). Choose three of
+  that type to battle at level 50 against Kimono Girls Sayo, Zuki and Miki,
+  whose teams of that type (three, three, then four) are drawn from the
+  Random Battle sets. The first win with each type gives its item (Silk
+  Scarf, Black Belt, ... Fairy Feather) and counts toward all 18; each win
+  after a Big Pearl.
 
 Everyone in a cup battles at its level, the cup's trainers too.
 `python3 utils/anime_events/test_cups.py SAVE.sav` checks the Rising Star
-Cup.
+and Kimono Cups.
 
 ### The Whirl Cup
 

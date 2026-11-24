@@ -9,6 +9,7 @@ CupRules:
 ; level, fewest, most, how they're chosen, rule, type
 	db 30, 3, 3, CUPPICK_THREE, CUPRULE_ANY,      0     ; CUP_RISING_STAR
 	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_ALL_TYPE, WATER ; CUP_WHIRL
+	db 50, 3, 3, CUPPICK_THREE, CUPRULE_ALL_TYPE, CUPTYPE_TODAY ; CUP_KIMONO
 .End:
 	rsreset
 DEF CUPRULE_LEVEL rb
@@ -24,6 +25,7 @@ CupRecordMasks:
 ; the wCupRecords bit for each cup's first win (0: kept elsewhere)
 	db 1 << CUPWON_RISING_STAR_F ; CUP_RISING_STAR
 	db 0                         ; CUP_WHIRL (EVENT_WON_WHIRL_CUP)
+	db 0                         ; CUP_KIMONO (a bit for each type)
 .End:
 	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
 
@@ -113,7 +115,12 @@ CupSelectTeam::
 	assert CUPRULE_ANY == 0
 	jr z, .ok
 	push af
-	ld d, [hl]
+	ld a, [hl]
+	cp CUPTYPE_TODAY
+	jr nz, .got_type
+	ld a, [wCupFoeType]
+.got_type
+	ld d, a
 	call CupCountType ; e = how many have it
 	pop af
 	cp CUPRULE_HAS_TYPE
@@ -272,18 +279,27 @@ CupEnd::
 	farjp HealParty
 
 CupWin::
-; Record a win in cup wCupId: hScriptVar = TRUE if it's the first.
+; Record a win in cup wCupId (for the Kimono Cup, with type wCupFoeType):
+; hScriptVar = TRUE if it's the first.
 	call CupCheckRecords
 	ld a, [wCupId]
+	cp CUP_KIMONO
+	jr nz, .not_kimono
+	call GetKimonoRecordBit
+	jr .record
+.not_kimono
 	ld e, a
 	ld d, 0
 	ld hl, CupRecordMasks
 	add hl, de
-	ld b, [hl]
-	ld a, [wCupRecords]
+	ld a, [hl]
+	ld hl, wCupRecords
+.record
+	ld b, a
+	ld a, [hl]
 	ld c, a
 	or b
-	ld [wCupRecords], a
+	ld [hl], a
 	ld a, c
 	and b
 	ld a, TRUE
@@ -361,4 +377,95 @@ CupRestoreParty:
 	jr nz, .loop
 	pop af
 	ldh [rWBK], a
+	ret
+
+; The Kimono Cup's type of the day: all 18 in turn, one a day by the world
+; clock's day count (wRTCDayLo, 0-139: an exact 18-day rotation for the
+; first 126 days, before the clock's 140 days wrap).
+KimonoCupTypes:
+	table_width 1
+	db NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, FIGHTING, POISON, GROUND
+	db FLYING, PSYCHIC, BUG, ROCK, GHOST, DRAGON, DARK, STEEL, FAIRY
+	assert_table_length NUM_KIMONO_TYPES
+
+KimonoCupToday::
+; Today's type: in wCupFoeType (for the team rule, the Kimono Girls' teams
+; and the prize, even if the day turns meanwhile) and named in
+; wStringBuffer3.
+	ld a, [wRTCDayLo]
+.mod
+	sub NUM_KIMONO_TYPES
+	jr nc, .mod
+	add NUM_KIMONO_TYPES
+	ld e, a
+	ld d, 0
+	ld hl, KimonoCupTypes
+	add hl, de
+	ld a, [hl]
+	ld [wCupFoeType], a
+	ld [wNamedObjectIndex], a
+	farcall GetTypeName
+	ld hl, wStringBuffer1
+	ld de, wStringBuffer3
+	ld bc, MOVE_NAME_LENGTH
+	rst CopyBytes
+	ret
+
+KimonoCupTypeItem::
+; hScriptVar = the item for a first win with type wCupFoeType (its type's
+; Silk Scarf, Charcoal, ...), or FALSE if it's been won with before.
+	call CupCheckRecords
+	call GetKimonoRecordBit
+	and [hl]
+	ld a, FALSE
+	jr nz, .done
+	ld a, [wCupFoeType]
+	assert SILK_SCARF + FAIRY == FAIRYFEATHER
+	add SILK_SCARF
+.done
+	ldh [hScriptVar], a
+	ret
+
+GetKimonoRecordBit:
+; hl = the wCupRecords byte, a = the bit, for a Kimono Cup win with type
+; wCupFoeType.
+	ld a, [wCupFoeType]
+	ld c, a
+	srl a
+	srl a
+	srl a
+	ld e, a
+	ld d, 0
+	ld hl, wCupRecords + 1
+	add hl, de
+	ld a, c
+	and 7
+	ld c, a
+	ld a, 1
+	inc c
+.shift
+	dec c
+	ret z
+	add a
+	jr .shift
+
+KimonoCupTypesWon::
+; hScriptVar = how many types have won the Kimono Cup.
+	ld hl, wCupRecords + 1
+	ld c, 3
+	ld b, 0
+.byte
+	ld a, [hli]
+.bit
+	and a
+	jr z, .next
+	srl a
+	jr nc, .bit
+	inc b
+	jr .bit
+.next
+	dec c
+	jr nz, .byte
+	ld a, b
+	ldh [hScriptVar], a
 	ret

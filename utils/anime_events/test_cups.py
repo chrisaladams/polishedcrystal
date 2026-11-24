@@ -12,6 +12,15 @@ The Rising Star Cup (Route 36 National Park gate):
 - on a save with an old party species list where the records go, they start
   out clear.
 
+The Kimono Cup (Ecruteak Dance Theatre):
+- today's type follows the world clock's day (KimonoCupTypes); a team that
+  isn't all that type is turned away;
+- the rounds are Kimono Girls Sayo, Zuki and Miki with generated teams of
+  3, 3 and 4 Pokemon, all of today's type, different species, at level 50;
+- the first win with a type gives its item (Mystic Water for Water) and
+  records it, each one after a Big Pearl; it works for the type with the
+  fewest sets (Dragon) too.
+
 The choice in the Battle Tower's party menu is made by a hook (the first
 three of the party, or as given), and the battles are won or lost by setting
 HP in RAM.
@@ -28,6 +37,23 @@ sys.path.insert(0, os.path.join(ROOT, 'utils', 'wild_mons'))
 from test_wild_mons import Game, rgbasm_values  # noqa: E402
 
 ROUNDS = (('BUG_CATCHER', 'RS_ELLIS'), ('PICNICKER', 'RS_RUTH'), ('COOLTRAINERM', 'RS_REX'))
+KIMONO_ROUNDS = (('SAYO', 3), ('ZUKI', 3), ('MIKI', 4))
+TYPES = ('NORMAL FIGHTING FLYING POISON GROUND ROCK BUG GHOST STEEL FIRE WATER GRASS ELECTRIC PSYCHIC '
+         'ICE DRAGON DARK FAIRY').split()
+
+
+def kimono_data():
+    """The rotation, and each Random Battle species and form's types."""
+    src = open(os.path.join(ROOT, 'engine', 'events', 'cups.asm')).read()
+    table = src[src.index('KimonoCupTypes:'):src.index('assert_table_length NUM_KIMONO_TYPES')]
+    rotation = re.findall(r'\b(' + '|'.join(TYPES) + r')\b', table)
+    sets = open(os.path.join(ROOT, 'data', 'link', 'random_battle_sets.asm')).read()
+    setpart, prof = sets.split('RandomBattleProfiles:')
+    profiles = [tuple(map(int, m)) for m in re.findall(r'db (\d+), (\d+) ; \d+', prof)]
+    types = {}
+    for sp, form, p in re.findall(r'dp (\w+), (\w+)\n\tdb [^\n]+\n\tdb \w+, \w+, (\d+)', setpart):
+        types[sp, form] = {TYPES[i] for i in profiles[int(p)]}
+    return rotation, types
 
 
 def expected_party(cls, tid):
@@ -257,6 +283,93 @@ def main():
         fails.append(('old save', f'records {rec} after one win'))
     if magic != (K['CUP_RECORDS_MAGIC_1'], K['CUP_RECORDS_MAGIC_2']):
         fails.append(('old save', 'records not marked as set up'))
+
+    # the Kimono Cup
+    rotation, set_types = kimono_data()
+    if len(rotation) != 18 or len(set(rotation)) != 18:
+        fails.append(('kimono', f'the rotation {rotation} is not the 18 types once each'))
+    KK = rgbasm_values(sorted({n for key in set_types for n in key}) + ['SPECIESFORM_MASK', 'KIMONO_GIRL', 'SAYO', 'ZUKI', 'MIKI', 'GROUP_DANCE_THEATRE',
+                                            'MAP_DANCE_THEATRE', 'MYSTIC_WATER', 'DRAGON_FANG', 'BIG_PEARL',
+                                            'SQUIRTLE', 'DRATINI', 'RATTATA', 'WATER', 'DRAGON'], None)
+    K.update(KK)
+    by_value = {}
+    for sp, form in set_types:
+        by_value[KK[sp], KK[form]] = (sp, form)
+
+    def kimono_talk(day, species):
+        g.wr('wRTCDayLo', day)
+        for i in range(g.rd('wPartyCount')):
+            g.wr('wPartyMon1Species', K[species], i * L)
+            g.wr('wPartyMon1Form', g.rd('wPartyMon1Form', i * L) & ~K['EXTSPECIES_MASK'], i * L)
+        g.warp(K['GROUP_DANCE_THEATRE'], K['MAP_DANCE_THEATRE'], 4, 13)
+        g.press('up', 2, 3)
+        g.tick(30)
+
+    def kimono_round(k, kind):
+        name, size = KIMONO_ROUNDS[k]
+        where = f'kimono {kind} round {k + 1}'
+        if (g.rd('wOtherTrainerClass'), g.rd('wOtherTrainerID')) != (K['KIMONO_GIRL'], K[name]):
+            fails.append((where, f'battled class {g.rd("wOtherTrainerClass")} #{g.rd("wOtherTrainerID")}'))
+        n = g.rd('wOTPartyCount')
+        team = []
+        for i in range(n):
+            form = g.rd('wOTPartyMon1Form', i * L)
+            sp = g.rd('wOTPartyMon1Species', i * L) | (0x100 if form & K['EXTSPECIES_MASK'] else 0)
+            team.append(by_value.get((sp, form & K['SPECIESFORM_MASK'] & ~K['EXTSPECIES_MASK']), (sp, form)))
+            if g.rd('wOTPartyMon1Level', i * L) != 50:
+                fails.append((where, f'their #{i + 1} is level {g.rd("wOTPartyMon1Level", i * L)}'))
+            hp = (g.rd('wOTPartyMon1HP', i * L) << 8) | g.rd('wOTPartyMon1HP', i * L + 1)
+            maxhp = (g.rd('wOTPartyMon1MaxHP', i * L) << 8) | g.rd('wOTPartyMon1MaxHP', i * L + 1)
+            if i and (not hp or hp != maxhp):
+                fails.append((where, f'their #{i + 1} HP {hp}/{maxhp}'))
+        if n != size:
+            fails.append((where, f'their team has {n}, not {size}'))
+        if len({s for s, _ in team}) != len(team):
+            fails.append((where, f'their team repeats a species: {team}'))
+        off = [s for s in team if kind not in set_types.get(s, ())]
+        if off:
+            fails.append((where, f'not {kind}: {off} (team {team})'))
+        levels = [g.rd('wPartyMon1Level', i * L) for i in range(g.rd('wPartyCount'))]
+        if levels != [50, 50, 50]:
+            fails.append((where, f'your team is at levels {levels}'))
+
+    def kimono_run(day, species, kind, prize):
+        party = party_block()
+        before = items(prize)
+        kimono_talk(day, species)
+        for k in range(3):
+            if not until_battle(30 if k == 0 else 20):
+                fails.append((f'kimono {kind}', f'round {k + 1} did not start'))
+                return
+            kimono_round(k, kind)
+            finish(True)
+        settle()
+        if items(prize) != before + 1:
+            fails.append((f'kimono {kind}', f'{prize}: {before} -> {items(prize)}, not +1'))
+        if g.rd('wCupLevel') or g.rd('wCupFoeSize'):
+            fails.append((f'kimono {kind}', 'cup state left set afterwards'))
+        return party
+
+    water_day = rotation.index('WATER')
+    dragon_day = rotation.index('DRAGON') + 18  # (the same type, 18 days on)
+    picks = [0, 1, 2]
+    g.load(base)
+    kimono_run(water_day, 'SQUIRTLE', 'WATER', 'MYSTIC_WATER')
+    bit = K['WATER']
+    if not (g.rd('wCupRecords', 1 + bit // 8) >> (bit % 8)) & 1:
+        fails.append(('kimono', 'the Water win was not recorded'))
+    kimono_run(water_day, 'SQUIRTLE', 'WATER', 'BIG_PEARL')
+    kimono_run(dragon_day, 'DRATINI', 'DRAGON', 'DRAGON_FANG')
+    won = sum(bin(g.rd('wCupRecords', i)).count('1') for i in (1, 2, 3))
+    if won != 2:
+        fails.append(('kimono', f'{won} types recorded, not 2'))
+
+    # the wrong type: turned away
+    g.load(base)
+    kimono_talk(water_day, 'RATTATA')
+    if until_battle(14):
+        fails.append(('kimono', 'a Normal team entered on a Water day'))
+    settle()
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

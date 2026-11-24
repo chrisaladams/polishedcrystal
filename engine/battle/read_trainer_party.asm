@@ -14,6 +14,18 @@ ReadTrainerParty:
 	ld bc, PARTYMON_STRUCT_LENGTH * PARTY_LENGTH
 	rst ByteFill
 
+	; Link Edition: a cup's generated team (engine/events/cup_teams.asm)
+	ld a, [wCupFoeSize]
+	and a
+	jr z, .not_generated
+	ld b, a
+	xor a
+	ld [wCupFoeSize], a
+	ld a, [wCupFoeType]
+	ld c, a
+	farjp CupMakeTeam
+.not_generated
+
 	ld a, [wOtherTrainerClass]
 	cp MEWTWO_T
 	jmp z, CopyPlayerPartyAsClones
