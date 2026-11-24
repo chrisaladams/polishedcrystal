@@ -281,18 +281,22 @@ no items or experience in its battles, and come back exactly as they were
   species or holding the same item) to battle at level 30 against Bug Catcher
   Ellis, Picnicker Ruth and Cooltrainer Rex. The first win gives Leftovers,
   each one after a Rare Candy.
+- **Whirl Cup**, at Olivine Port after Red: below.
 
-`python3 utils/anime_events/test_cups.py SAVE.sav` checks them.
+Everyone in a cup battles at its level, the cup's trainers too.
+`python3 utils/anime_events/test_cups.py SAVE.sav` checks the Rising Star
+Cup.
 
 ### The Whirl Cup
 
 From the anime: a Water-type tournament at Olivine Port, run by an official
-who's there after you beat Red. With a team of only Water-type Pokémon,
-you're healed and battle three rounds in a row: Swimmer Trinity (Seaking,
-Dewgong, Lanturn, Corsola), Sailor Jasper (Tentacruel, Octillery, Quagsire,
-Kingler), then Misty's Whirl Cup team (Psyduck, Corsola, Azumarill,
-Politoed, Gyarados, Starmie), at levels 68–74. Losing a round just ends the
-run (no blacking out). Winning gives the Mystic Water the first time and a
+who's there after you beat Red. Your whole party enters (eggs aside): three
+to six Pokémon, all Water-type. At level 50, healed between rounds, you
+battle three in a row: Swimmer Trinity (Seaking, Dewgong, Lanturn,
+Corsola), Sailor Jasper (Tentacruel, Octillery, Quagsire, Kingler), then
+Misty's Whirl Cup team (Psyduck, Corsola, Azumarill, Politoed, Gyarados,
+Starmie), all at level 50 too. Losing a round just ends the run (no
+blacking out), and as in every cup your party comes back as it was. Winning gives the Mystic Water the first time and a
 Bottle Cap on repeat wins. If your bag is full on your first win, the
 official keeps the Mystic Water for you and the win counts immediately.
 `python3 utils/anime_events/test_whirl_cup.py SAVE.sav` checks it.

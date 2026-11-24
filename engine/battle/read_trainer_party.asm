@@ -38,6 +38,12 @@ ReadTrainerParty:
 	call GetNextTrainerDataByte
 	farcall AdjustLevelForBadges
 	ld [wCurPartyLevel], a
+	; Link Edition: in a cup, everyone battles at the cup's level
+	ld a, [wCupLevel]
+	and a
+	jr z, .not_cup
+	ld [wCurPartyLevel], a
+.not_cup
 
 ; species
 	call GetNextTrainerDataByte

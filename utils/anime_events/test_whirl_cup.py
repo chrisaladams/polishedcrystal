@@ -2,10 +2,12 @@
 """Check the Whirl Cup in the running game (PyBoy), from a save:
 
 - the official at Olivine Port is there only after Red;
-- he turns away a party
-  that isn't all Water-type;
+- he turns away a party that isn't all Water-type, or has fewer than three
+  (eggs aside);
 - with an all-Water party, the three rounds are Swimmer Trinity, Sailor
-  Jasper and Misty, with the teams in data/trainers/parties.asm;
+  Jasper and Misty, with the teams in data/trainers/parties.asm, all at
+  level 50, and so is your team (wCupLevel 50);
+- afterwards the party is back as it was (healed), win or lose;
 - winning all three gives the Mystic Water the first time and a Bottle Cap
   each time after;
 - losing a round ends the run with the party healed, without blacking out.
@@ -42,7 +44,7 @@ def main():
         'PARTYMON_STRUCT_LENGTH', 'EXTSPECIES_MASK', 'GROUP_OLIVINE_PORT', 'MAP_OLIVINE_PORT',
         'EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME', 'EVENT_WON_WHIRL_CUP', 'EVENT_GOT_MYSTICTICKET_FROM_RED',
         'EVENT_BEAT_RED', 'EVENT_BEAT_LEAF', 'EVENT_WHIRL_CUP_PRIZE_PENDING',
-        'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MYSTIC_WATER', 'BOTTLE_CAP']
+        'MON_HP', 'MON_STATUS', 'MON_PP', 'MON_LEVEL', 'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE', 'MYSTIC_WATER', 'BOTTLE_CAP']
     K = rgbasm_values(names, None)
     L = K['PARTYMON_STRUCT_LENGTH']
     g = Game(save)
@@ -82,6 +84,7 @@ def main():
         fails.append(('before Red', 'the official is there'))
     flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
     base = g.state()
+    n_party = g.rd('wPartyCount')  # (the test save has no eggs)
 
     def talk():
         g.warp(K['GROUP_OLIVINE_PORT'], K['MAP_OLIVINE_PORT'], 13, 8)
@@ -144,9 +147,34 @@ def main():
             sp = g.rd('wOTPartyMon1Species', i * L)
             ext = g.rd('wOTPartyMon1Form', i * L) & K['EXTSPECIES_MASK']
             got.append((g.rd('wOTPartyMon1Level', i * L), sp | (0x100 if ext else 0)))
-        want = [(int(lv), K[sp]) for lv, sp in parties[r]]
+        want = [(50, K[sp]) for _, sp in parties[r]]
         if got != want:
             fails.append((f'{cls} {n}', f'team {got}, not {want}'))
+        if g.rd('wCupLevel') != 50:
+            fails.append((f'{cls} {n}', f'wCupLevel {g.rd("wCupLevel")}'))
+        levels = [g.rd('wPartyMon1Level', i * L) for i in range(g.rd('wPartyCount'))]
+        if levels != [50] * len(levels) or len(levels) != n_party:
+            fails.append((f'{cls} {n}', f'your team is at levels {levels}'))
+
+    def party_block():
+        a = g.addr('wPartyCount')
+        return bytes(g.m[1, a + i] for i in range(g.addr('wPartyMonNicknamesEnd') - a))
+
+    def compare_party(where, before):
+        after = party_block()
+        if after[0] != before[0]:
+            fails.append((where, f'party count {after[0]}, not {before[0]}'))
+            return
+        start = g.addr('wPartyMon1') - g.addr('wPartyCount')
+        skip = set(range(g.addr('wCupRecords') - g.addr('wPartyCount'),
+                         g.addr('wCupRecordsMagic') + 2 - g.addr('wPartyCount')))
+        for i in range(after[0]):
+            b = start + i * L
+            for f, w in (('MON_HP', 2), ('MON_STATUS', 2), ('MON_PP', 4)):
+                skip |= set(range(b + K[f], b + K[f] + w))
+        diff = [i for i in range(len(before)) if before[i] != after[i] and i not in skip]
+        if diff:
+            fails.append((where, f'party changed at offsets {diff[:8]}'))
 
     # not all Water-type: turned away
     g.load(base)
@@ -155,11 +183,21 @@ def main():
         fails.append(('entry', 'a party that is not all Water-type was let in'))
 
     # all Water-type: three rounds, then the prize
-    def water_party():
+    def water_party(count=None):
         for i in range(g.rd('wPartyCount')):
             g.wr('wPartyMon1Species', K['SQUIRTLE'], i * L)
+        if count is not None:
+            g.wr('wPartyCount', count)
+
+    # fewer than three: turned away
+    g.load(base)
+    water_party(2)
+    talk()
+    if until_battle(12):
+        fails.append(('entry', 'a party of two was let in'))
 
     def run_cup(expect_item, before):
+        party = party_block()
         talk()
 
         for k, r in enumerate(ROUNDS):
@@ -169,6 +207,9 @@ def main():
             check_round(r)
             finish(True)
         settle()
+        compare_party(f'after winning (for the {expect_item})', party)
+        if g.rd('wCupLevel'):
+            fails.append(('the cup', 'wCupLevel still set afterwards'))
         if items(expect_item) != before + 1:
             fails.append(('the cup', f'{expect_item}: {before} -> {items(expect_item)}, not +1'))
 
@@ -182,6 +223,7 @@ def main():
     # losing round one
     g.load(base)
     water_party()
+    party = party_block()
     talk()
     if until_battle():
         finish(False)
@@ -191,6 +233,7 @@ def main():
         if not all(g.rd('wPartyMon1HP', i * L) or g.rd('wPartyMon1HP', i * L + 1)
                    for i in range(g.rd('wPartyCount'))):
             fails.append(('losing', 'the party was not healed'))
+        compare_party('after losing', party)
     else:
         fails.append(('losing', 'round one did not start'))
 

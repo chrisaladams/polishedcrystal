@@ -364,29 +364,33 @@ OlivinePortSailorBeforeHOFText:
 
 WhirlCupOfficialScript:
 ; Link Edition: the Whirl Cup, from the anime: three Water-type battles in a
-; row (Trinity, Jasper, then Misty). The first win gives the Mystic Water,
-; each one after a Bottle Cap.
+; row (Trinity, Jasper, then Misty), at level 50, on the cup runner
+; (engine/events/cups.asm). The first win gives the Mystic Water, each one
+; after a Bottle Cap.
 	faceplayer
 	opentext
 	checkevent EVENT_WHIRL_CUP_PRIZE_PENDING
 	iftruefwd .FirstPrize
 	writetext .WelcomeText
 	promptbutton
-	callasm WhirlCupCheckParty
-	iffalse_jumpopenedtext .WaterOnlyText
+	loadmem wCupId, CUP_WHIRL
+	callasm CupSelectTeam
+	ifequalfwd CUPTEAM_SIZE, .TooFew
+	ifnotequal CUPTEAM_OK, .NotWater
 	writetext .EnterText
 	yesorno
 	iffalse_jumpopenedtext .NoText
-	special HealParty
 	writetext .Round1Text
 	waitbutton
 	closetext
+	callasm CupBegin
 	winlosstext .WinText, .LossText
 	loadtrainer SWIMMERF, 33
 	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
 	startbattle
 	reloadmap
 	iftruefwd .Lost
+	callasm CupHealTeam
 	opentext
 	writetext .Round2Text
 	waitbutton
@@ -397,6 +401,7 @@ WhirlCupOfficialScript:
 	startbattle
 	reloadmap
 	iftruefwd .Lost
+	callasm CupHealTeam
 	opentext
 	writetext .FinalText
 	waitbutton
@@ -407,7 +412,7 @@ WhirlCupOfficialScript:
 	startbattle
 	reloadmap
 	iftruefwd .Lost
-	special HealParty
+	callasm CupEnd
 	opentext
 	writetext .ChampionText
 	playsound SFX_GET_BADGE
@@ -432,17 +437,30 @@ WhirlCupOfficialScript:
 	jumpopenedtext .ComeBackText
 
 .Lost:
-	special HealParty
+	callasm CupEnd
 	jumptext .OutText
+
+.TooFew:
+	jumpopenedtext .TooFewText
+
+.NotWater:
+	jumpopenedtext .WaterOnlyText
 
 .WelcomeText:
 	text "Welcome to the"
 	line "Whirl Cup!"
 
 	para "Three Water-type"
-	line "battles in a row."
+	line "battles in a row,"
+	cont "at level 50."
 	cont "Win them all to"
 	cont "take the cup!"
+	done
+
+.TooFewText:
+	text "You'll need at"
+	line "least three"
+	cont "#mon to enter."
 	done
 
 .WaterOnlyText:
@@ -464,9 +482,8 @@ WhirlCupOfficialScript:
 	done
 
 .Round1Text:
-	text "Your #mon are"
-	line "healed. Round one:"
-	cont "Swimmer Trinity!"
+	text "Round one:"
+	line "Swimmer Trinity!"
 	done
 
 .Round2Text:

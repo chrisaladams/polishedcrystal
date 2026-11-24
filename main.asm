@@ -174,11 +174,6 @@ SECTION "Cup Code", ROMX
 INCLUDE "engine/events/cups.asm"
 
 
-SECTION "Whirl Cup Code", ROMX
-
-INCLUDE "engine/events/whirl_cup.asm"
-
-
 SECTION "Wild Mons Code", ROMX
 
 INCLUDE "engine/overworld/wild_mons.asm"
