@@ -68,3 +68,6 @@ bank_ends.txt
 .venv/
 rgbds/
 deploy.sh
+
+# compiler caches
+*.pch

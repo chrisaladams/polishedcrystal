@@ -11,7 +11,7 @@ def main(path):
     original = Path(path).read_bytes()
     k = rgbasm_values(('MAGIKARP', 'MAGIKARP_DAPPLES_FORM', 'MAGIKARP_CALICO1_FORM',
                        'MAGIKARP_SKELLY_FORM', 'MAGIKARP_MASK1_FORM', 'FORM_MASK',
-                       'MON_SHINY_F', 'PARTYMON_STRUCT_LENGTH'), None)
+                       'MON_SHINY_F', 'PARTYMON_STRUCT_LENGTH', 'STATUSFLAGS_POKEDEX_F'), None)
     g = Game(original)
     try:
         g.boot()
@@ -63,9 +63,16 @@ def main(path):
 
         seen = []
         g.pb.hook_register(*g.sym['Pokedex_Description'], seen.append, True)
+        # Saves from before the Pokédex don't list it in the Start menu.
+        g.wr('wStatusFlags', g.rd('wStatusFlags') | (1 << k['STATUSFLAGS_POKEDEX_F']))
         g.press('start', 90)  # The Pokédex is the first item after receiving it.
         g.press('a', 120)
-        g.press('a', 110)
+        # Open the first entry this save has seen (A does nothing on others).
+        for _ in range(40):
+            g.press('a', 110)
+            if seen:
+                break
+            g.press('right', 20)
         g.press('a', 100)
         assert seen, 'Pokédex description did not open'
         assert all(g.rd('wTilemap', 20*y+x) not in range(0x79, 0x7d)
