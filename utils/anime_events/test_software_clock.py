@@ -92,7 +92,8 @@ def main(path):
     rom = (Path(ROOT) / 'polishedcrystal-3.2.3.gbc').read_bytes()
     assert rom[0x147] == 0x13  # MBC3 with battery-backed RAM, no RTC
     k = rgbasm_values(('MORN', 'DAY', 'EVE', 'NITE', 'SOFTWARE_CLOCK_MARKER', 'WORLD_CLOCK_DAYS',
-                       'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'BUG_CONTEST_MINUTES', 'LIGHTNING_ROD'), None)
+                       'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'BUG_CONTEST_MINUTES', 'LIGHTNING_ROD',
+                       'NORMAL', 'FAIRY'), None)
     game = Game(original)
     fixtures = [legacy_save(game, original, hardware=True),
                 legacy_save(game, original, hardware=False, bad_primary=True)]
@@ -148,12 +149,16 @@ def main(path):
 
         # Advance past the day counter wrap and let the normal daily reset run.
         set_clock(game, (k['WORLD_CLOCK_DAYS'] - 1, 23, 59, 57))
+        run_clock_code(game, 'KimonoCupToday')
+        assert game.rd('wCupFoeType') == k['FAIRY']
         game.wr('wDailyResetTimer', 1)
         game.wr('wDailyResetTimer', k['WORLD_CLOCK_DAYS'] - 1, 1)
         game.wr('wDailyFlags', 255)
         game.wr('wFruitTreeFlags', 255)
         run_clock_code(game, 'UpdateGameTimer', seconds=1)
         assert clock(game) == (0, 0, 0, 13)
+        run_clock_code(game, 'KimonoCupToday')
+        assert game.rd('wCupFoeType') == k['NORMAL']
         run_clock_code(game, 'UpdateTime')
         run_clock_code(game, 'CheckDailyResetTimer')
         assert game.rd('wDailyFlags') == 0 and game.rd('wFruitTreeFlags') == 0
@@ -162,6 +167,17 @@ def main(path):
         run_clock_code(game, 'UpdateGameTimer', seconds=5400)
         run_clock_code(game, 'GetTodaysSightingNames')
         assert game.rd('wNamedObjectIndex') != sighting_before
+
+        # Continue a software-clock save with a day from the old 140-day cycle.
+        set_clock(game, (139, 12, 34, 56))
+        game.wr('wDailyResetTimer', 1)
+        game.wr('wDailyResetTimer', 139, 1)
+        game.wr('wDailyFlags', 255)
+        run_clock_code(game, 'RestoreGameClock')
+        assert clock(game) == (139 - k['WORLD_CLOCK_DAYS'], 12, 34, 56)
+        run_clock_code(game, 'UpdateTime')
+        run_clock_code(game, 'CheckDailyResetTimer')
+        assert game.rd('wDailyFlags') == 255
 
         # The phone counts real gameplay seconds even across the 16-bit wrap.
         word(game, 'wGameplaySeconds', 65530)

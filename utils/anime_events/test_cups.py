@@ -29,6 +29,10 @@ Badge:
   their own teams at level 50;
 - the first win gives a Dragon Scale and records it, each one after a PP Up.
 
+The Rental Cup (Goldenrod Department Store 6F) supplies both sides with
+three generated level-50 Pokémon. The original party returns after losses
+and wins, and a full Bag leaves the first prize at the desk.
+
 The choice in the Battle Tower's party menu is made by a hook (the first
 three of the party, or as given), and the battles are won or lost by setting
 HP in RAM.
@@ -80,7 +84,7 @@ def main():
         'GROUP_ROUTE_36_NATIONAL_PARK_GATE', 'MAP_ROUTE_36_NATIONAL_PARK_GATE', 'PARTYMON_STRUCT_LENGTH',
         'EXTSPECIES_MASK', 'LEFTOVERS', 'RARE_CANDY', 'CUPWON_RISING_STAR_F', 'CUP_RECORDS_LENGTH',
         'CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2', 'EVENT_RISING_STAR_PRIZE_PENDING',
-        'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_EXP', 'MON_SPECIES'], None)
+        'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_EXP', 'MON_SPECIES', 'TACKLE'], None)
     L = K['PARTYMON_STRUCT_LENGTH']
     g = Game(save)
     g.boot()
@@ -137,28 +141,38 @@ def main():
         return False
 
     def finish(win):
-        g.tick(300)
-        for i in range(400):
-            if i < 20:
-                if win:
-                    for k in range(g.rd('wOTPartyCount')):
-                        g.wr('wOTPartyMon1HP', 0, k * L)
-                        g.wr('wOTPartyMon1HP', 0, k * L + 1)
-                    g.wr('wEnemyMonHP', 0)
-                    g.wr('wEnemyMonHP', 1, 1)
-                    g.wr('wBattleMonHP', 3)
-                    g.wr('wBattleMonHP', 0xe7, 1)
-                    g.wr('wEnemyMonSpeed', 0)
-                    g.wr('wEnemyMonSpeed', 1, 1)
-                else:
-                    for k in range(g.rd('wPartyCount')):
-                        g.wr('wPartyMon1HP', 0, k * L)
-                        g.wr('wPartyMon1HP', 0, k * L + 1)
-                    g.wr('wBattleMonHP', 0)
-                    g.wr('wBattleMonHP', 1, 1)
-            g.press('a', 20)
+        menu = []
+        g.pb.hook_register(*g.sym['LoadBattleMenu'], menu.append, True)
+        for _ in range(40):
+            if menu:
+                break
+            g.press('a', 45)
+        g.pb.hook_deregister(*g.sym['LoadBattleMenu'])
+        assert menu, 'the battle did not show its command menu'
+        g.tick(45)
+        if win:
+            def faint_opponents(_):
+                for i in range(g.rd('wOTPartyCount')):
+                    g.wr('wOTPartyMon1HP', 0, i * L)
+                    g.wr('wOTPartyMon1HP', 0, i * L + 1)
+                g.wr('wEnemyMonHP', 0)
+                g.wr('wEnemyMonHP', 0, 1)
+                g.wr('wBattleMonHP', 3)
+                g.wr('wBattleMonHP', 0xe7, 1)
+
+            g.wr('wBattleMonMoves', K['TACKLE'])
+            g.wr('wBattleMonPP', 35)
+            g.pb.hook_register(*g.sym['ResolveFaints'], faint_opponents, None)
+        else:
+            for button in ('down', 'right', 'a', 'down'):
+                g.press(button, 40)
+        for _ in range(260):
             if not g.rd('wBattleMode'):
                 break
+            g.press('a', 35)
+        if win:
+            g.pb.hook_deregister(*g.sym['ResolveFaints'])
+        assert not g.rd('wBattleMode'), 'the battle did not finish'
 
     def settle():
         for _ in range(120):
@@ -218,6 +232,20 @@ def main():
             fails.append((where, f'party changed at offsets {diff[:8]}'))
 
     K.update(rgbasm_values(['MON_STATUS', 'MON_PP'], None))
+
+    K.update(rgbasm_values(['MAX_ITEM_STACK', 'MAX_ITEMS', 'BIG_NUGGET'], None))
+
+    def fill_items():
+        g.wr('wNumItems', K['MAX_ITEMS'])
+        for i in range(K['MAX_ITEMS']):
+            g.wr('wItems', K['BIG_NUGGET'], 2 * i)
+            g.wr('wItems', K['MAX_ITEM_STACK'], 2 * i + 1)
+        g.wr('wItems', 0xff, 2 * K['MAX_ITEMS'])
+
+    def free_item_slot():
+        n = K['MAX_ITEMS'] - 1
+        g.wr('wNumItems', n)
+        g.wr('wItems', 0xff, 2 * n)
 
     def run(expect_item, before_count):
         talk()
@@ -341,9 +369,9 @@ def main():
         if levels != [50, 50, 50]:
             fails.append((where, f'your team is at levels {levels}'))
 
-    def kimono_run(day, species, kind, prize):
+    def kimono_run(day, species, kind, prize=None):
         party = party_block()
-        before = items(prize)
+        before = items(prize) if prize else None
         kimono_talk(day, species)
         for k in range(3):
             if not until_battle(30 if k == 0 else 20):
@@ -352,7 +380,7 @@ def main():
             kimono_round(k, kind)
             finish(True)
         settle()
-        if items(prize) != before + 1:
+        if prize and items(prize) != before + 1:
             fails.append((f'kimono {kind}', f'{prize}: {before} -> {items(prize)}, not +1'))
         if g.rd('wCupLevel') or g.rd('wCupFoeSize'):
             fails.append((f'kimono {kind}', 'cup state left set afterwards'))
@@ -371,6 +399,23 @@ def main():
     won = sum(bin(g.rd('wCupRecords', i)).count('1') for i in (1, 2, 3))
     if won != 2:
         fails.append(('kimono', f'{won} types recorded, not 2'))
+
+    # A full Bag records the win and preserves the prize after today's type changes.
+    K.update(rgbasm_values(['CUP_KIMONO_PRIZE_OFFSET'], None))
+    g.load(base)
+    fill_items()
+    kimono_run(water_day, 'SQUIRTLE', 'WATER')
+    prize = K['CUP_KIMONO_PRIZE_OFFSET']
+    if not g.rd('wCupRecords', 1 + bit // 8) & (1 << (bit % 8)):
+        fails.append(('kimono full Bag', 'the win was lost'))
+    if g.rd('wCupRecords', prize) != K['MYSTIC_WATER']:
+        fails.append(('kimono full Bag', 'the reward was lost'))
+    free_item_slot()
+    g.wr('wRTCDayLo', water_day + 1)
+    g.press('a', 50)
+    settle()
+    if g.rd('wCupRecords', prize) or items('MYSTIC_WATER') != 1:
+        fails.append(('kimono full Bag', 'could not claim yesterday’s prize without a rematch'))
 
     # the wrong type: turned away
     g.load(base)
@@ -433,6 +478,64 @@ def main():
     if until_battle(14):
         fails.append(('dragon', 'entered without the Rising Badge'))
     settle()
+
+    K.update(rgbasm_values(['GROUP_GOLDENROD_DEPT_STORE_6F', 'MAP_GOLDENROD_DEPT_STORE_6F',
+                            'RENTAL_CUP_TEAM_SIZE', 'CUPWON_RENTAL_F', 'BOTTLE_CAP',
+                            'EVENT_RENTAL_CUP_PRIZE_PENDING', 'SCHOOLBOY', 'JACK1',
+                            'PICNICKER', 'GINA1', 'COOLTRAINERM', 'RS_REX', 'MON_EVS'], None))
+    rental_map = (K['GROUP_GOLDENROD_DEPT_STORE_6F'], K['MAP_GOLDENROD_DEPT_STORE_6F'])
+
+    def rental_talk():
+        g.warp(*rental_map, 8, 3)
+        g.face('up')
+
+    def rental_team(prefix):
+        team = []
+        for i in range(g.rd(prefix + 'Count')):
+            kind = mon(prefix + 'Mon1', i, 'MON_SPECIES')[0]
+            form = g.rd(prefix + 'Mon1Form', i * L)
+            species = kind | (0x100 if form & K['EXTSPECIES_MASK'] else 0)
+            team.append((species, form & K['SPECIESFORM_MASK'] & ~K['EXTSPECIES_MASK']))
+            if mon(prefix + 'Mon1', i, 'MON_LEVEL') != (50,):
+                fails.append(('Rental level', f'{prefix} #{i + 1} was not level 50'))
+            if any(mon(prefix + 'Mon1', i, 'MON_EVS', 6)):
+                fails.append(('Rental EVs', f'{prefix} #{i + 1} inherited trainer EVs'))
+        if len(team) != K['RENTAL_CUP_TEAM_SIZE'] or len({s for s, _ in team}) != len(team):
+            fails.append(('Rental draw', f'invalid team {team}'))
+        if not all(entry in by_value for entry in team):
+            fails.append(('Rental draw', f'team outside the rental sets {team}'))
+        return team
+
+    g.load(base)
+    rental_talk()
+    assert until_battle(35), 'Rental Cup did not start'
+    rental_team('wParty')
+    rental_team('wOTParty')
+    finish(False)
+    settle()
+    compare_party('Rental after forfeiting')
+    assert (g.rd('wMapGroup'), g.rd('wMapNumber')) == rental_map and not g.rd('wCupLevel')
+
+    fill_items()
+    home_team = None
+    for i, (cls, trainer) in enumerate((('SCHOOLBOY', 'JACK1'), ('PICNICKER', 'GINA1'), ('COOLTRAINERM', 'RS_REX'))):
+        assert until_battle(35 if not i else 20), f'Rental Cup round {i + 1} did not start'
+        assert (g.rd('wOtherTrainerClass'), g.rd('wOtherTrainerID')) == (K[cls], K[trainer])
+        got = rental_team('wParty')
+        assert home_team in (None, got), 'the player’s rentals changed between rounds'
+        home_team = got
+        rental_team('wOTParty')
+        finish(True)
+    settle()
+    compare_party('Rental after winning')
+    assert not g.rd('wCupLevel') and not g.rd('wCupFoeSize')
+    assert g.rd('wCupRecords') & (1 << K['CUPWON_RENTAL_F'])
+    prize_byte, prize_bit = divmod(K['EVENT_RENTAL_CUP_PRIZE_PENDING'], 8)
+    assert g.rd('wEventFlags', prize_byte) & (1 << prize_bit)
+    free_item_slot()
+    g.press('a', 50)
+    settle()
+    assert not g.rd('wEventFlags', prize_byte) & (1 << prize_bit) and items('BOTTLE_CAP') == 1
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

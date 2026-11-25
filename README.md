@@ -287,16 +287,21 @@ no items or experience in its battles, and come back exactly as they were
   that type to battle at level 50 against Kimono Girls Sayo, Zuki and Miki,
   whose teams of that type (three, three, then four) are drawn from the
   Random Battle sets. The first win with each type gives its item (Silk
-  Scarf, Black Belt, ... Fairy Feather) and counts toward all 18; each win
-  after a Big Pearl.
+  Scarf, Black Belt, ... Fairy Feather) and counts toward all 18. A full
+  Bag leaves the prize at the desk, even after the type changes. Repeat
+  wins with the same type give a Big Pearl.
 - **Dragon Masters Cup**, in Blackthorn's dragon house, once you hold the
   Rising Badge: your whole party enters (three to six, at least one of them
   a Dragon type) at level 50 against Dragon Tamers Erick and Aegon, then
   Clair. The first win gives a Dragon Scale, each one after a PP Up.
+- **Rental Cup**, on floor 6F of the Goldenrod Department Store. Preview
+  three generated level-50 Pokémon before entering. Take that team through
+  three rounds against Jack, Gina and Rex, who also use rentals. The first
+  win earns a Bottle Cap. Repeat wins earn a Big Pearl.
 
 Everyone in a cup battles at its level, the cup's trainers too.
 `python3 utils/anime_events/test_cups.py SAVE.sav` checks the Rising Star,
-Kimono and Dragon Masters Cups.
+Kimono, Dragon Masters and Rental Cups.
 
 ### The Whirl Cup
 

@@ -34,7 +34,11 @@ RestoreGameClock:
 	jr nz, .legacy
 	ld a, [hl]
 	cp HIGH(SOFTWARE_CLOCK_MARKER)
-	ret z
+	jr nz, .legacy
+	ld a, [wRTCDayLo]
+	call NormalizeWorldDay
+	ld [wRTCDayLo], a
+	ret
 .legacy
 	xor a
 	ld [wClockFramePhase], a
@@ -55,10 +59,7 @@ SetGameClock:
 	ld a, TRUE
 	ld [wGameLogicPaused], a
 	ld a, [hli]
-	cp WORLD_CLOCK_DAYS
-	jr c, .day
-	sub WORLD_CLOCK_DAYS
-.day
+	call NormalizeWorldDay
 	ld [wRTCDayLo], a
 	ld a, [hli]
 	cp MAX_HOUR
@@ -82,6 +83,12 @@ SetGameClock:
 	ld [wRTCDayHi], a
 	pop af
 	ld [wGameLogicPaused], a
+	ret
+
+NormalizeWorldDay:
+	sub WORLD_CLOCK_DAYS
+	jr nc, NormalizeWorldDay
+	add WORLD_CLOCK_DAYS
 	ret
 
 CheckClockResetRequest:

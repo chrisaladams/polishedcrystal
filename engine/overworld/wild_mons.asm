@@ -1751,7 +1751,8 @@ LoadWildMonSpriteGFX::
 ; one at a time; like a roaming legendary, it takes the place of the one
 ; furthest from you if every slot is full. The day comes from the clock's day
 ; count (wRTCDayLo, 0-139), so nothing is saved.
-DEF NUM_SIGHTINGS EQU 14 ; (140 days divide evenly, so the order never skips)
+DEF NUM_SIGHTINGS EQU 14
+	assert WORLD_CLOCK_DAYS % NUM_SIGHTINGS == 0 ; sightings continue in order at the wrap
 DEF SIGHTING_CHANCE EQU 25 percent
 
 Sightings:

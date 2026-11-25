@@ -272,6 +272,13 @@ CheckPokerusTick::
 
 CalcDaysSince:
 ; Update the old day at HL and return elapsed days in C.
+	; Older saves may still hold a day stamp from the 140-day cycle.
+	ld a, [hl]
+	cp WORLD_CLOCK_DAYS
+	jr c, .normalized
+	sub WORLD_CLOCK_DAYS
+	ld [hl], a
+.normalized
 	ld a, [wCurDay]
 	ld c, a
 	sub [hl]

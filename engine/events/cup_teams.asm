@@ -80,7 +80,21 @@ CupMakeTeam::
 	ld [wCurPartyLevel], a
 	ld a, OTPARTYMON
 	ld [wMonType], a
+	; Generate fresh stats with zero EVs. Trainer defaults would otherwise
+	; give rentals the last opponent's EVs and gender.
+	ld a, [wBattleMode]
+	push af
+	ld a, [wBattleType]
+	push af
+	ld a, WILD_BATTLE
+	ld [wBattleMode], a
+	ld a, BATTLETYPE_NORMAL
+	ld [wBattleType], a
 	farcall TryAddMonToParty
+	pop af
+	ld [wBattleType], a
+	pop af
+	ld [wBattleMode], a
 	ld a, [wOTPartyCount]
 	dec a
 	ld hl, wOTPartyMon1

@@ -15,7 +15,7 @@ GoldenrodDeptStore6F_MapScriptHeader:
 
 	def_object_events
 	object_event 10,  2, SPRITE_PICNICKER, SPRITEMOVEDATA_WALK_LEFT_RIGHT, 0, 1, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, GoldenrodDeptStore6FLassText, -1
-	object_event  8,  2, SPRITE_POKEMANIAC, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, GoldenrodDeptStore6FSuperNerdText, -1
+	object_event  8,  2, SPRITE_POKEMANIAC, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_SCRIPT, 0, GoldenrodRentalCup, -1
 
 GoldenrodDeptStore6FLassText:
 	text "Do you listen to"
@@ -45,4 +45,122 @@ GoldenrodDeptStore6FDirectoryText:
 	line "Shopping!"
 
 	para "6F Tranquil Square"
+
+	para "Rental Cup desk"
+	line "on this floor."
+	done
+
+GoldenrodRentalCup:
+	faceplayer
+	opentext
+	checkevent EVENT_RENTAL_CUP_PRIZE_PENDING
+	iftruefwd .FirstPrize
+	writetext .WelcomeText
+	yesorno
+	iffalse_jumpopenedtext GoldenrodDeptStore6FSuperNerdText
+	loadmem wCupId, CUP_RENTAL
+	callasm CupSelectTeam
+	writetext .TeamText
+	yesorno
+	iffalse_endtext
+	closetext
+	callasm CupBegin
+	showtext .Round1Text
+	winlosstext .WinText, .LossText
+	loadmem wCupFoeSize, RENTAL_CUP_TEAM_SIZE
+	loadtrainer SCHOOLBOY, JACK1
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupHealTeam
+	showtext .Round2Text
+	winlosstext .WinText, .LossText
+	loadmem wCupFoeSize, RENTAL_CUP_TEAM_SIZE
+	loadtrainer PICNICKER, GINA1
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupHealTeam
+	showtext .FinalText
+	winlosstext .WinText, .LossText
+	loadmem wCupFoeSize, RENTAL_CUP_TEAM_SIZE
+	loadtrainer COOLTRAINERM, RS_REX
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm CupEnd
+	callasm CupWin
+	opentext
+	iffalsefwd .Again
+	setevent EVENT_RENTAL_CUP_PRIZE_PENDING
+	writetext .ChampionText
+	promptbutton
+.FirstPrize:
+	verbosegiveitem BOTTLE_CAP, iffalse_jumpopenedtext .PendingText
+	clearevent EVENT_RENTAL_CUP_PRIZE_PENDING
+	jumpopenedtext .ReturnText
+.Again:
+	writetext .ChampionText
+	promptbutton
+	verbosegiveitem BIG_PEARL, iffalse_endtext
+	jumpopenedtext .ReturnText
+.Lost:
+	callasm CupEnd
+	jumptext .OutText
+
+.WelcomeText:
+	text "The Rental Cup!"
+	para "We lend both sides"
+	line "three #mon at"
+	cont "level 50. Win all"
+	cont "three rounds."
+	para "It's free. Your"
+	line "own team waits"
+	cont "here. Want a draw?"
+	done
+.TeamText:
+	text "Your rentals are:"
+	line "@"
+	text_ram wOTPartyMon1Nickname
+	cont "@"
+	text_ram wOTPartyMon2Nickname
+	cont "@"
+	text_ram wOTPartyMon3Nickname
+	para "Enter with these?"
+	done
+.Round1Text:
+	text "Round one: Jack!"
+	done
+.Round2Text:
+	text "Round two: Gina!"
+	done
+.FinalText:
+	text "The final: Rex!"
+	done
+.WinText:
+	text "You made good use"
+	line "of those rentals."
+	done
+.LossText:
+	text "I win this round."
+	done
+.ChampionText:
+	text "You won the"
+	line "Rental Cup!"
+	done
+.ReturnText:
+	text "Come back for"
+	line "another draw."
+	done
+.PendingText:
+	text "I'll hold your"
+	line "prize at the desk."
+	done
+.OutText:
+	text "Here's your team."
+	para "The rentals can"
+	line "try again anytime."
 	done

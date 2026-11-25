@@ -11,6 +11,7 @@ CupRules:
 	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_ALL_TYPE, WATER ; CUP_WHIRL
 	db 50, 3, 3, CUPPICK_THREE, CUPRULE_ALL_TYPE, CUPTYPE_TODAY ; CUP_KIMONO
 	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_HAS_TYPE, DRAGON ; CUP_DRAGON
+	db 50, RENTAL_CUP_TEAM_SIZE, RENTAL_CUP_TEAM_SIZE, CUPPICK_GENERATED, CUPRULE_ANY, 0 ; CUP_RENTAL
 .End:
 	rsreset
 DEF CUPRULE_LEVEL rb
@@ -28,6 +29,7 @@ CupRecordMasks:
 	db 0                         ; CUP_WHIRL (EVENT_WON_WHIRL_CUP)
 	db 0                         ; CUP_KIMONO (a bit for each type)
 	db 1 << CUPWON_DRAGON_F      ; CUP_DRAGON
+	db 1 << CUPWON_RENTAL_F      ; CUP_RENTAL
 .End:
 	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
 
@@ -47,6 +49,8 @@ CupSelectTeam::
 	ld c, CUPRULE_PICK
 	call GetCupRules
 	ld a, [hl]
+	cp CUPPICK_GENERATED
+	jmp z, .rentals
 	cp CUPPICK_THREE
 	jr nz, .whole_party
 	; three, in the Battle Tower's party menu (no eggs or banned Pokemon,
@@ -144,6 +148,12 @@ CupSelectTeam::
 .done
 	ldh [hScriptVar], a
 	ret
+
+.rentals
+	lb bc, RENTAL_CUP_TEAM_SIZE, CUPTYPE_ANY
+	farcall CupMakeTeam
+	ld a, CUPTEAM_OK
+	jr .done
 
 CupStageTeam:
 ; Copy the chosen Pokemon (wBT_PartySelections) to wOTParty, in order.
@@ -382,9 +392,9 @@ CupRestoreParty:
 	ret
 
 ; The Kimono Cup's type of the day: all 18 in turn, one a day by the world
-; clock's day count (wRTCDayLo, 0-139: an exact 18-day rotation for the
-; first 126 days, before the clock's 140 days wrap).
+; clock's day count, which wraps at a multiple of both 18 and seven.
 KimonoCupTypes:
+	assert WORLD_CLOCK_DAYS % NUM_KIMONO_TYPES == 0
 	table_width 1
 	db NORMAL, FIRE, WATER, GRASS, ELECTRIC, ICE, FIGHTING, POISON, GROUND
 	db FLYING, PSYCHIC, BUG, ROCK, GHOST, DRAGON, DARK, STEEL, FAIRY
@@ -413,19 +423,23 @@ KimonoCupToday::
 	rst CopyBytes
 	ret
 
-KimonoCupTypeItem::
-; hScriptVar = the item for a first win with type wCupFoeType (its type's
-; Silk Scarf, Charcoal, ...), or FALSE if it's been won with before.
+KimonoCupPendingPrize::
 	call CupCheckRecords
-	call GetKimonoRecordBit
-	and [hl]
-	ld a, FALSE
-	jr nz, .done
+	ld a, [wCupRecords + CUP_KIMONO_PRIZE_OFFSET]
+	ldh [hScriptVar], a
+	ret
+
+KimonoCupQueuePrize::
 	ld a, [wCupFoeType]
 	assert SILK_SCARF + FAIRY == FAIRYFEATHER
 	add SILK_SCARF
-.done
+	ld [wCupRecords + CUP_KIMONO_PRIZE_OFFSET], a
 	ldh [hScriptVar], a
+	ret
+
+KimonoCupClearPrize::
+	xor a
+	ld [wCupRecords + CUP_KIMONO_PRIZE_OFFSET], a
 	ret
 
 GetKimonoRecordBit:

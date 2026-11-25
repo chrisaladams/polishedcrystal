@@ -293,6 +293,8 @@ DanceTheatreKimonoCupScript:
 ; (Silk Scarf for Normal, and so on), each one after a Big Pearl.
 	faceplayer
 	opentext
+	callasm KimonoCupPendingPrize
+	iftruefwd .Prize
 	callasm KimonoCupToday
 	writetext .WelcomeText
 	yesorno
@@ -354,11 +356,12 @@ DanceTheatreKimonoCupScript:
 	playsound SFX_GET_BADGE
 	waitsfx
 	promptbutton
-	; the first win with today's type gives its item, then counts
-	callasm KimonoCupTypeItem
-	iffalsefwd .Again
-	verbosegiveitem ITEM_FROM_MEM, iffalse_jumpopenedtext .NoRoomText
 	callasm CupWin
+	iffalsefwd .Again
+	callasm KimonoCupQueuePrize
+.Prize:
+	verbosegiveitem ITEM_FROM_MEM, iffalse_jumpopenedtext .NoRoomText
+	callasm KimonoCupClearPrize
 	callasm KimonoCupTypesWon
 	getnum STRING_BUFFER_4
 	ifequalfwd NUM_KIMONO_TYPES, .AllTypes
@@ -449,8 +452,8 @@ DanceTheatreKimonoCupScript:
 	text "Oh, you've no room"
 	line "for your prize."
 
-	para "Win with this type"
-	line "again to claim it."
+	para "I'll hold it here"
+	line "until you return."
 	done
 
 .TypesWonText:

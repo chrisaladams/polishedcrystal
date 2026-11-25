@@ -31,7 +31,7 @@ DEF BUENA_START_HOUR EQU 17
 ; The GBC refreshes at about 59.7275 Hz. 186/256 of seconds use 60 frames.
 DEF GAME_CLOCK_LONG_FRACTION EQU 186
 DEF WORLD_CLOCK_SPEED EQU 16 ; in-game seconds per gameplay second
-DEF WORLD_CLOCK_DAYS EQU 20 * 7 ; wrap on the same weekday
+DEF WORLD_CLOCK_DAYS EQU 18 * 7 ; keep both weekdays and the Kimono rotation in order
 DEF SOFTWARE_CLOCK_MARKER EQU $434c
 DEF CLOCK_RESET_PENDING EQU $a5
 

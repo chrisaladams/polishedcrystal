@@ -6,12 +6,15 @@
 	const CUP_WHIRL       ; Olivine Port: 3-6 Water types at level 50
 	const CUP_KIMONO      ; Ecruteak Dance Theatre: 3 of today's type at level 50
 	const CUP_DRAGON      ; Blackthorn: 3-6 with a Dragon type at level 50
+	const CUP_RENTAL      ; Goldenrod: three generated Pokémon at level 50
 DEF NUM_CUPS EQU const_value
+DEF RENTAL_CUP_TEAM_SIZE EQU 3
 
 ; how a cup's team is chosen
 	const_def
 	const CUPPICK_THREE ; three, in the Battle Tower's party menu
 	const CUPPICK_PARTY ; the whole party (eggs aside)
+	const CUPPICK_GENERATED ; a new team from the rental sets
 
 ; what a cup asks of its team
 	const_def
@@ -39,6 +42,7 @@ DEF NUM_KIMONO_TYPES EQU 18
 	const CUPWON_RENTAL_F
 	const CUPWON_WORLD_F
 DEF CUP_RECORDS_LENGTH EQU 5
+DEF CUP_KIMONO_PRIZE_OFFSET EQU 4 ; item owed for an earned type win
 ; (in the two bytes after them, once set up)
 DEF CUP_RECORDS_MAGIC_1 EQU $4c
 DEF CUP_RECORDS_MAGIC_2 EQU $45

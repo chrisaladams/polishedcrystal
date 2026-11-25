@@ -38,7 +38,7 @@ def main():
         'MAP_RUINS_OF_ALPH_INNER_CHAMBER', 'EVENT_GOT_MYSTICTICKET_FROM_RED', 'EVENT_TIME_TRAVEL_FINISHED',
         'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_BEAT_MOLLY', 'EVENT_RESCUED_PROF_HALE', 'BATTLETYPE_SHADOW',
         'NUM_OBJECT_STRUCTS', 'OBJECT_LENGTH', 'OBJECT_MAP_X', 'OBJECT_MAP_Y', 'OBJECT_SPRITE',
-        'PARTYMON_STRUCT_LENGTH'], None)
+        'TACKLE'], None)
     g = Game(save)
     g.boot()
     fails = []
@@ -74,20 +74,30 @@ def main():
         return False
 
     def win():
-        # (keep yours standing: the test save's team is far weaker)
-        g.tick(300)
-        # (and through the many level-ups a weak team gets for winning)
-        for i in range(1500):
-            if i < 20:
-                g.wr('wEnemyMonHP', 0)
-                g.wr('wEnemyMonHP', 1, 1)
-                g.wr('wBattleMonHP', 3)
-                g.wr('wBattleMonHP', 0xe7, 1)
-                g.wr('wEnemyMonSpeed', 0)  # (you move first)
-                g.wr('wEnemyMonSpeed', 1, 1)
+        menu = []
+        g.pb.hook_register(*g.sym['LoadBattleMenu'], menu.append, True)
+        for _ in range(40):
+            if menu:
+                break
+            g.press('a', 45)
+        g.pb.hook_deregister(*g.sym['LoadBattleMenu'])
+        assert menu, 'the shadow battle did not show its command menu'
+        g.tick(45)
+        g.wr('wBattleMonMoves', K['TACKLE'])
+        g.wr('wBattleMonPP', 35)
+
+        def faint_opponent(_):
+            g.wr('wEnemyMonHP', 0)
+            g.wr('wEnemyMonHP', 0, 1)
+            g.wr('wBattleMonHP', 3)
+            g.wr('wBattleMonHP', 0xe7, 1)
+
+        g.pb.hook_register(*g.sym['ResolveFaints'], faint_opponent, None)
+        for _ in range(1500):
             g.press('a', 20)
             if not g.rd('wBattleMode'):
                 break
+        g.pb.hook_deregister(*g.sym['ResolveFaints'])
         for _ in range(10):
             g.tick(40)
             g.press('b', 10)

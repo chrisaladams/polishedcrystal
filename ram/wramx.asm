@@ -1504,7 +1504,7 @@ wPokemonData::
 
 wPartyCount::   db ; number of Pokémon in party
 
-; Link Edition: cup records (CUPWON_* and the Kimono Cup's types), then
+; Link Edition: cup records (CUPWON_*, Kimono type wins and pending prize), then
 ; CUP_RECORDS_MAGIC once they're set up (older saves may have an old party
 ; species list here; see CupCheckRecords)
 wCupRecords:: ds CUP_RECORDS_LENGTH
