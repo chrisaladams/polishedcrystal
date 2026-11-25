@@ -64,6 +64,13 @@ CupTrophyDescScript::
 	jumptext .Text
 
 .Describe:
+	; (and how many of the Kimono Cup's 18 types: the cup counts once won,
+	; mastering it is all 18, as the Adventure Album shows)
+	farcall CupCheckRecords
+	ld a, ALBUMCOUNT_KIMONO
+	call AlbumCount
+	ld a, b
+	ld [wStringBuffer4], a
 	call CountCupsWon
 	ldh [hScriptVar], a
 	ld hl, .Bronze
@@ -90,7 +97,11 @@ CupTrophyDescScript::
 	text " Cup Trophy:"
 	para "@"
 	text_decimal hScriptVar, 1, 1
-	text " of 6 cups won."
+	text " of 6 cups won,"
+	line "@"
+	text_decimal wStringBuffer4, 1, 2
+	text " of 18 Kimono"
+	cont "types."
 	done
 
 ; The Adventure Album (the bedroom bookshelf): a page each for the leagues,

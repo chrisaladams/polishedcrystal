@@ -131,6 +131,9 @@ def main():
                    else chr(c - 0xe0 + 48) if 0xe0 <= c <= 0xe9 else ' ' for c in screen)
     if 'gold Cup Trophy' not in text or '6 of 6 cups' not in text:
         fails.append(('cup trophy', f'description: {" ".join(text.split())[:120]}'))
+    kimono = sum(bin(g.rd('wCupRecords', k)).count('1') for k in (1, 2, 3))
+    if f'{kimono} of 18 Kimono' not in ' '.join(text.split()):
+        fails.append(('cup trophy', f'no "{kimono} of 18 Kimono" types: {" ".join(text.split())[:160]}'))
     for _ in range(4):
         g.press('b', 30)
 
