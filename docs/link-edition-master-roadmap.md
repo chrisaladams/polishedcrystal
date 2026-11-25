@@ -139,8 +139,8 @@ Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `en
 ### General stability
 
 - [ ] Bound generated-team retry loops in the cup and random-team generators; provide legal deterministic fallbacks or a graceful error for impossible constraints. *(Checked: with today's Random Battle sets, every type fills a team of four (the most a cup asks) and of six, as do the Rental and Random Battle teams. The new `test_team_generation.py` makes 111 teams within a time limit and checks size, no repeated species and type, so trimming the sets can't silently hang a cup. Not done: the loops themselves are still unbounded (they start over until a team fits), with no fallback.)*
-- [ ] Audit event-flag exhaustion, reusable flags and persistent state migration. Do not reuse flags still needed by older saves.
-- [ ] Verify all CupBegin/CupEnd paths restore party data, nicknames, OT, held items, stats, moves, PP and intended healing. Check cancel, loss, reset, full bag and repeated entry.
+- [x] Audit event-flag exhaustion, reusable flags and persistent state migration. Do not reuse flags still needed by older saves. *([`event-flags.md`](event-flags.md): 2,304 flags, all taken but 16 retired slots. The rules for reusing one say an old save may still have it set. The family's three saves have none set.)*
+- [ ] Verify all CupBegin/CupEnd paths restore party data, nicknames, OT, held items, stats, moves, PP and intended healing. Check cancel, loss, reset, full bag and repeated entry. *(Cancel, loss, backing out, a full Bag and repeated entry are tested in `test_cups.py` (the party compared byte for byte). A reset can't lose the party: each cup runs inside one script with no save, and autosave was removed. Not tested: every cup's own paths (the tests cover Rising Star and World).)*
 - [ ] Audit Orange Surf checkpoint bypasses, ice-puzzle exits, out-of-order badges, and legacy badge saves.
 - [ ] Verify achievement navigation, graphics restoration and legacy trophies/customization.
 
