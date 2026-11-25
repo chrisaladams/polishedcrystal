@@ -17,6 +17,10 @@ The Kimono Cup (Ecruteak Dance Theatre):
   isn't all that type is turned away;
 - the rounds are Kimono Girls Sayo, Zuki and Miki with generated teams of
   3, 3 and 4 Pokemon, all of today's type, different species, at level 50;
+- the desk tells a player who has already won with today's type which new
+  type comes next and in how many days (KimonoCupNextNew, from the saved
+  wins, wrapping round the rotation), and one who has won with all 18 that
+  they have; a new type for you adds nothing;
 - the first win with a type gives its item (Mystic Water for Water) and
   records it, each one after a Big Pearl; it works for the type with the
   fewest sets (Dragon) too.
@@ -448,6 +452,59 @@ def main():
     kimono_talk(water_day, 'RATTATA')
     if until_battle(14):
         fails.append(('kimono', 'a Normal team entered on a Water day'))
+    settle()
+
+    # the way to all 18 types (KimonoCupNextNew), from the saved wins
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from test_friend_records import Caller
+    KT = rgbasm_values(rotation, None)
+    g.load(base)
+    caller = Caller(g)
+    caller.call('CupCheckRecords')
+
+    def letters(s):
+        # as the game names a type ("Water"): A-Z from $80, a-z from $a0
+        s = s.capitalize()
+        return bytes(0x80 + ord(c) - ord('A') if c.isupper() else 0xa0 + ord(c) - ord('a') for c in s)
+
+    def next_new(day, won):
+        for i in (1, 2, 3):
+            g.wr('wCupRecords', 0, i)
+        for name in won:
+            v = KT[name]
+            g.wr('wCupRecords', g.rd('wCupRecords', 1 + v // 8) | 1 << (v % 8), 1 + v // 8)
+        g.wr('wRTCDayLo', day)
+        caller.call('KimonoCupNextNew')
+        days = g.m[g.sym['hScriptVar'][1]]
+        name = bytes(g.rd('wStringBuffer4', i) for i in range(8)).split(b'\x53', 1)[0]  # (@ ends it)
+        return days, name
+
+    cases = [  # (day, types won, days to the next new type, its name)
+        (water_day, [], 0, None),
+        (water_day, ['WATER'], 1, rotation[(water_day + 1) % 18]),
+        (water_day, ['WATER', rotation[(water_day + 1) % 18]], 2, rotation[(water_day + 2) % 18]),
+        (17 + 18, [r for r in rotation if r != rotation[0]], 1, rotation[0]),  # (round to the start)
+        (5, list(rotation), 18, None),
+    ]
+    for day, won, want_days, want_name in cases:
+        days, name = next_new(day, won)
+        if days != want_days or (want_name and name != letters(want_name)):
+            fails.append(('kimono next type', f'day {day}, {len(won)} won: {days} days, {name}, '
+                                              f'not {want_days} days, {want_name}'))
+    # and at the desk: today's type won, the next one named
+    g.load(base)
+    caller.call('CupCheckRecords')
+    next_new(water_day, ['WATER'])
+    kimono_talk(water_day, 'SQUIRTLE')
+    seen = False
+    for _ in range(8):
+        screen = bytes(g.rd('wTilemap', i) for i in range(20 * 18))
+        if letters(rotation[(water_day + 1) % 18]) in screen:
+            seen = True
+            break
+        g.press('a', 40)
+    if not seen:
+        fails.append(('kimono next type', 'the desk did not name the next new type'))
     settle()
 
     # the Dragon Masters Cup

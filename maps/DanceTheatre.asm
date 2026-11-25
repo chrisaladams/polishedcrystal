@@ -296,7 +296,19 @@ DanceTheatreKimonoCupScript:
 	callasm KimonoCupPendingPrize
 	iftruefwd .Prize
 	callasm KimonoCupToday
+	callasm KimonoCupNextNew
 	writetext .WelcomeText
+	promptbutton
+	ifequalfwd 0, .Enter
+	ifequalfwd NUM_KIMONO_TYPES, .Mastered
+	writetext .WonBeforeText
+	sjumpfwd .WonBefore
+.Mastered:
+	writetext .MasteredText
+.WonBefore:
+	promptbutton
+.Enter:
+	writetext .EnterText
 	yesorno
 	iffalse_jumpopenedtext .NoText
 	loadmem wCupId, CUP_KIMONO
@@ -386,8 +398,31 @@ DanceTheatreKimonoCupScript:
 	line "@"
 	text_ram wStringBuffer3
 	text "."
+	done
 
-	para "Enter three"
+.WonBeforeText:
+	text "You've won with"
+	line "@"
+	text_ram wStringBuffer3
+	text " before."
+
+	para "The next new type,"
+	line "@"
+	text_ram wStringBuffer4
+	text ", is"
+	cont "@"
+	text_decimal hScriptVar, 1, 2
+	text " day(s) away."
+	done
+
+.MasteredText:
+	text "You've won with"
+	line "every type. A true"
+	cont "Kimono master!"
+	done
+
+.EnterText:
+	text "Enter three"
 	line "#mon of that"
 	cont "type. They'll"
 	cont "battle at level"

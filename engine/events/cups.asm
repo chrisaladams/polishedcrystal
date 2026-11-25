@@ -508,6 +508,58 @@ KimonoCupToday::
 	rst CopyBytes
 	ret
 
+KimonoCupNextNew::
+; Link Edition: the way to mastering all 18 types, from the saved wins.
+; hScriptVar = 0 if today's type hasn't won yet; else how many days until
+; the next type that hasn't (named in wStringBuffer4); NUM_KIMONO_TYPES if
+; every type has.
+	call CupCheckRecords
+	ld a, [wRTCDayLo]
+.mod
+	sub NUM_KIMONO_TYPES
+	jr nc, .mod
+	add NUM_KIMONO_TYPES
+	ld b, a ; the day's place in KimonoCupTypes
+	xor a
+	ldh [hScriptVar], a
+.loop
+	push bc
+	ld e, b
+	ld d, 0
+	ld hl, KimonoCupTypes
+	add hl, de
+	ld a, [hl]
+	push af
+	call GetKimonoRecordBitOf
+	and [hl]
+	pop de ; d = the type
+	pop bc
+	jr z, .found
+	ldh a, [hScriptVar]
+	inc a
+	ldh [hScriptVar], a
+	cp NUM_KIMONO_TYPES
+	ret z ; every type
+	inc b
+	ld a, b
+	cp NUM_KIMONO_TYPES
+	jr c, .loop
+	ld b, 0
+	jr .loop
+
+.found
+	ldh a, [hScriptVar]
+	and a
+	ret z ; today's
+	ld a, d
+	ld [wNamedObjectIndex], a
+	farcall GetTypeName
+	ld hl, wStringBuffer1
+	ld de, wStringBuffer4
+	ld bc, MOVE_NAME_LENGTH
+	rst CopyBytes
+	ret
+
 KimonoCupPendingPrize::
 	call CupCheckRecords
 	ld a, [wCupRecords + CUP_KIMONO_PRIZE_OFFSET]
@@ -529,8 +581,9 @@ KimonoCupClearPrize::
 
 GetKimonoRecordBit:
 ; hl = the wCupRecords byte, a = the bit, for a Kimono Cup win with type
-; wCupFoeType.
+; wCupFoeType (or type a, from GetKimonoRecordBitOf).
 	ld a, [wCupFoeType]
+GetKimonoRecordBitOf:
 	ld c, a
 	srl a
 	srl a
