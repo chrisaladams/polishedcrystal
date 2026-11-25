@@ -2459,13 +2459,13 @@ PerformLinkChecks:
 	ld b, a
 	and $f0
 	cp $10
-	jmp nz, .WrongRules
+	jr nz, .WrongRules
 	ld a, b
 	and $f
 	ld b, a
 	ld a, [wLinkBattleRules]
 	cp b
-	jmp nz, .WrongRules
+	jr nz, .WrongRules
 .skip_options
 
 	; Process link opponent gender

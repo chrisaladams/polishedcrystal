@@ -627,7 +627,7 @@ WorldLinkClose::
 	ret nc
 	ld hl, wWorldLinkRecord + WORLD_LINK_STATUS
 	set WORLDLINK_CLOSED_F, [hl]
-	jmp WorldLinkSave
+	jr WorldLinkSave
 
 WorldLinkClaim::
 ; The champion's prize has been given (or is held at the desk): this game's

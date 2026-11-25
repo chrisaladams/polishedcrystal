@@ -179,7 +179,7 @@ OaksCupSpotlight:
 	ld [wRadioCupSpotlight], a
 	ld hl, .Text
 	ld a, OAKS_CUP_NAME
-	jmp NextRadioLine
+	jr NextRadioLine
 .Text:
 	line "Tournament news!"
 	done

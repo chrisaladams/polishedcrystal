@@ -61,7 +61,7 @@ ForceGameSave:
 SilentGameSave:
 	call SetWRAMStateForSave
 	call SavedTheGame
-	jmp ClearWRAMStateAfterSave
+	jr ClearWRAMStateAfterSave
 
 SetWRAMStateForSave:
 	ld a, $1

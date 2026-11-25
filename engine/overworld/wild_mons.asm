@@ -396,7 +396,7 @@ TrySpawnWildMon:
 	jr c, .room_on_screen
 	call CountVisibleObjects
 	cp WILD_MON_BUSY_SCREEN
-	jmp nc, .no_room
+	jr nc, .no_room
 .room_on_screen
 	ld a, [wWildMonSpawnMode]
 	and SPAWN_NO_CHANCE

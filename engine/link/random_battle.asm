@@ -79,7 +79,7 @@ LinkRandomBattle_MakeTeam::
 	call .HaveSpecies
 	jmp z, .reject
 	call .TypeSpreadOK
-	jmp c, .reject
+	jr c, .reject
 	call .CountTypes
 .add_set
 	ld a, [hli] ; species and form again (the checks used b and c)

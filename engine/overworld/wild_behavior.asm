@@ -59,7 +59,7 @@ ResolveWildMonBehavior:
 	jr z, .dispatch
 	ld a, [wTimeOfDay]
 	cp NITE
-	jmp nz, WildMonStationary
+	jr nz, WildMonStationary
 .dispatch
 	ld a, [hli]
 	and WILD_BEHAVIOR_MASK
@@ -116,7 +116,7 @@ WildMonFlee:
 	and a
 	jmp z, WildMonWait
 	cp l
-	jmp z, .run
+	jr z, .run
 	jmp nc, WildMonWander
 .run
 	push hl
