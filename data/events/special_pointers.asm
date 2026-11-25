@@ -177,6 +177,7 @@ SpecialsPointers::
 	add_special PrintDiploma
 	add_special Special_AdventureAlbum ; Link Edition
 	add_special Special_FriendTeamPreview ; Link Edition
+	add_special Special_WorldLinkSession ; Link Edition
 	add_special ItemManiac_SelectQuantity
 	add_special MultiplyMoneyByQuantity
 	add_special TakeItemFromMemWithQuantity

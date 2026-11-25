@@ -5,6 +5,7 @@ LinkBattleRuleTable:
 	db LINK_BATTLE_FORCED_LEVEL, PARTY_LENGTH, PARTY_LENGTH ; Random
 	db 30, 3, 3 ; Rising Star
 	db LINK_BATTLE_FORCED_LEVEL, 1, PARTY_LENGTH ; Unrestricted
+	db LINK_BATTLE_FORCED_LEVEL, PARTY_LENGTH, PARTY_LENGTH ; Championship (engine/link/world_link.asm)
 	assert_table_length NUM_LINK_BATTLE_RULES
 
 LinkBattleGetRule:
@@ -122,6 +123,8 @@ CheckLinkBattleMon:
 .egg
 	ld a, [wLinkBattleRules]
 	cp LINK_RULE_RISING_STAR
+	jr z, .invalid
+	cp LINK_RULE_WORLD ; (six who battle)
 	jr z, .invalid
 	cp LINK_RULE_RANDOM
 	jr z, .invalid

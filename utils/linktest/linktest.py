@@ -94,6 +94,7 @@ class Side:
         self.rng = random.Random(seed)
         self.noisy = False
         self.noise_setup = noise_setup
+        self.noise_desk = False
         self.setup_errors = 0
         self.rules = 'normal'
         self.rules_chosen = False
@@ -113,6 +114,10 @@ class Side:
         self.force_moves = None
         bank, addr = sym['Link_PrepPartyData_Gen2']
         self.pb.hook_register(bank, addr, self._on_prep_party, None)
+        # LINKTEST_TRACE=Label,Label: log each time these run
+        for label in filter(None, os.environ.get('LINKTEST_TRACE', '').split(',')):
+            if label in sym:
+                self.pb.hook_register(*sym[label], lambda _, label=label: self.say(f'    (trace) {label}'), None)
 
     # ---- memory helpers
     def rd(self, name, k=0):
@@ -145,7 +150,8 @@ class Side:
                     self.cable.mm[126] = 0
                     self.say('    (test) cable plugged back in')
         if self.corrupt and not self.noisy and (
-                self.rd('wBattleMode') or (self.noise_setup and self.where() == COLOSSEUM)):
+                self.rd('wBattleMode') or (self.noise_setup and self.where() == COLOSSEUM)
+                or (self.noise_desk and self.rules_chosen)):
             # line noise on what this side receives, from the battle on
             # (or from entering the Colosseum, to hit the pre-battle data swap)
             self.cable.set_noise(self.slot, self.corrupt, self.rng.randrange(1 << 30))
@@ -173,6 +179,10 @@ class Side:
         for _ in range(4):
             self.press('b', 30)
         self.tick(60)
+        if getattr(self, 'boot_day', None) is not None:
+            # a different clock on this Game Boy
+            self.mem[1, self.sym['wRTCDayLo'][1]] = self.boot_day
+            self.say(f'    (test) clock set to day {self.boot_day}')
         if self.where() != POKECENTER_2F:
             # warp to the link room, in front of the battle desk
             for n, v in (('wMapGroup', 20), ('wMapNumber', 1), ('wXCoord', 9), ('wYCoord', 3),
@@ -214,6 +224,14 @@ class Side:
             a = self.sym['wBattleMonHP'][1] + 1
             self.mem[a] = (self.mem[a] - 1) & 0xff
             self.say(f'    (test) changed our HP at exchange {self.desync_at}')
+
+    def dump_sram(self, sav):
+        """Write this cartridge's battery RAM (and the input save's clock bytes)
+        to out/<name>.sav, for the next session."""
+        ram = bytes(self.mem[bank, 0xa000 + i] for bank in range(4) for i in range(0x2000))
+        tail = open(sav, 'rb').read()[len(ram):]
+        with open(os.path.join(self.out, f'{self.name}.sav'), 'wb') as f:
+            f.write(ram + tail)
 
     def friend_report(self):
         """The teams this side kept for Friend Battles (sFriendTeam1 and 2,
@@ -320,6 +338,20 @@ class Side:
                     return 'rejected: different rules'
                 if 'three eligible' in text:
                     return 'rejected: illegal Rising Star party'
+                # the linked World Championship's sessions that end at the desk
+                for words, outcome in (('are in a World', 'registered'), ('You heard how', 'synced'),
+                                       ('someone else', 'other brackets'), ('interrupted', 'interrupted')):
+                    if self.rules == 'world' and words in joined:
+                        if 'wWorldLinkReceive' in self.sym:
+                            n = 2 + 2 * 20 + 4
+                            self.say('    received ' + bytes(self.rd('wWorldLinkReceive', k)
+                                                         for k in range(n)).hex(' '))
+                            self.say('    sent     ' + bytes(self.rd('wWorldLinkSend', k)
+                                                         for k in range(n)).hex(' '))
+                        for _ in range(12):
+                            self.press('a', 30)
+                        self.tick(200)
+                        return 'desk: ' + outcome
             in_battle = self.rd('wBattleMode') != 0
             here = self.where()
             if in_battle:
@@ -371,7 +403,7 @@ class Side:
                 return f'battle over, real party back: {same}'
             if 'Random teams' in joined and not self.rules_chosen:
                 self.rules_chosen = True
-                for _ in range(('normal', 'random', 'rising', 'unrestricted').index(self.rules)):
+                for _ in range(RULES.index(self.rules)):
                     self.press('down', 10)
                 self.press('a', 30)
                 self.say(f'--- chose {self.rules} rules')
@@ -390,6 +422,8 @@ class Side:
                 continue
             self.press('a', 20)
         self.shot('timeout')
+        rf = self.pb.register_file
+        self.say(f'    (timeout) PC {rf.PC:04x} ROM bank {self.mem[0x2000] if False else "?"} SP {rf.SP:04x}')
         return 'timeout'
 
     def seat(self):
@@ -420,9 +454,12 @@ class Side:
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
            desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None,
-           party_size=None, expect_rejection=False):
+           party_size=None, expect_rejection=False, noise_desk=False, day=None):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
+        s.noise_desk = noise_desk
+        if day is not None:
+            s.boot_day = day
         s.desync_at = desync_at
         s.shot_every = shot_every
         s.unplug_at, s.unplug_delay, s.unplug_frames = unplug
@@ -431,8 +468,11 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
         if force_moves:
             s.force_moves = force_moves
         result = s.run(turns, time.time() + seconds)
-        if not (expect_rejection and result.startswith('rejected:')):
+        # (a session that ends at the desk doesn't stop the other side early)
+        if not (expect_rejection and result.startswith('rejected:')) and not result.startswith('desk:'):
             cable.mm[127] = 1
+        s.tick(120)
+        s.dump_sram(sav)
         q.put((name, f'{result} ({getattr(s, "setup_retries", 0)} swap retries, '
                      f'{s.setup_errors} setup errors)', s.exchanges, cable.flips(slot), s.friend_report()))
         s.pb.stop(save=False)
@@ -443,6 +483,7 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
 
 
 FRIEND_TEAM_LENGTH = 16 + 20 * 6  # (constants/serial_constants.asm)
+RULES = ('normal', 'random', 'rising', 'unrestricted', 'world')  # the desk's menu, in wire ID order
 
 
 def compare(ta, tb):
@@ -491,11 +532,14 @@ def main():
                     help="change side B's HP at this action exchange, to test desync detection")
     ap.add_argument('--noise-setup', action='store_true',
                     help='start the noise on entering the Colosseum, before the parties are swapped')
+    ap.add_argument('--noise-desk', action='store_true',
+                    help="start side B's noise at the battle desk (the Championship's exchange)")
+    ap.add_argument('--day-b', type=int, default=None, help="set side B's clock to this day")
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--out', default='linktest_out')
     args = ap.parse_args()
     formats = args.rules.split(',')
-    if len(formats) not in (1, 2) or any(rule not in ('normal', 'random', 'rising', 'unrestricted') for rule in formats):
+    if len(formats) not in (1, 2) or any(rule not in RULES for rule in formats):
         ap.error('invalid battle format')
     os.makedirs(args.out, exist_ok=True)
     force_ids = None
@@ -518,7 +562,8 @@ def main():
                                             args.desync_at if slot else 0, args.shot_every,
                                             tuple(map(int, args.unplug.split(','))) if args.unplug and not slot
                                             else (0, 0, 0),
-                                            (formats * 2)[slot], force_ids, args.party_size, bool(args.expect_rejection)))
+                                            (formats * 2)[slot], force_ids, args.party_size, bool(args.expect_rejection),
+                                            args.noise_desk and slot == 1, args.day_b if slot else None))
         p.start()
         ctx_procs.append(p)
     res = {}
@@ -538,13 +583,16 @@ def main():
             return 0
         print(f'Expected both desks to report {wanted}.')
         return 1
+    if all(res[name][0].startswith('desk:') for name in 'AB'):
+        # a Championship session that ended at the desk: the caller checks it
+        return 0
     problems = compare(res['A'][1], res['B'][1])
     n = min(len(res['A'][1]), len(res['B'][1]))
     if not n:
         problems.append('No action exchange completed on both sides.')
     elif not args.rom_b:
         expected_level = 30 if formats[0] == 'rising' else 50
-        expected_size = {'rising': 3, 'random': 6}.get(formats[0])
+        expected_size = {'rising': 3, 'random': 6, 'world': 6}.get(formats[0])
         for name in 'AB':
             for exchange in res[name][1]:
                 if exchange['levels'] != (expected_level, expected_level):
@@ -571,7 +619,7 @@ def main():
         team = match[0]
         if sum(team[3:]) + 0x46 & 0xff != team[2]:
             problems.append(f'Side {name} kept a team with a bad checksum.')
-        if team[3] != ('normal', 'random', 'rising', 'unrestricted').index(formats[0]):
+        if team[3] != RULES.index(formats[0]):
             problems.append(f'Side {name} kept the wrong rules: {team[3]}.')
         mons = [(team[16 + 20 * i], team[17 + 20 * i]) for i in range(team[15])]
         sent = theirs['mons'][:args.party_size] if args.party_size else theirs['mons']

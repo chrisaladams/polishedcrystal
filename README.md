@@ -56,9 +56,35 @@ party at registration and validates the received team before the battle.
 | Random teams | 50 | Six generated Pokémon |
 | Rising Star | 30 | Bring exactly three. Eggs, Mewtwo, Mew, Lugia, Ho-Oh and Celebi sit this out |
 | Unrestricted | 50 | Up to six from your party. Legendary and mythical Pokémon and the full range of evasion boosts are allowed |
+| Championship | 50 | Six, no Eggs: the linked World Championship (below) |
 
 Battling restores your party after the match. All four formats use the
 same synchronization protections. Both players need the same build.
+
+### The linked World Championship
+
+Two players can share one World Championship bracket. Choose
+**Championship** at a Cable Club battle desk together:
+
+1. The first time, you're registered in the same eight-player draw, in
+   opposite halves, with six of the World Championship's visiting trainers.
+   Nothing else happens: no battle.
+2. Each of you then plays your quarterfinal and semifinal against those
+   trainers at the Indigo Plateau's World Championship desk, whenever you
+   like. A loss puts you out of this bracket (no penalty otherwise).
+3. Link up at the desk again with Championship rules to hear how each other
+   did. If you both made the final, it's played right then, as a link
+   battle. If only one of you did, that player goes back to the Indigo
+   Plateau to face the other half's finalist. If you're both out, the
+   bracket is over.
+
+The winner gets the World Championship's prize at the Indigo Plateau. You
+can link up as often as you like (hearing the same news twice changes
+nothing), and if the cable slips mid-session nothing changes; just link up
+again. Either of you can leave a bracket at the Indigo Plateau desk.
+The bracket doesn't depend on either Game Boy's clock.
+`PYTHONPATH=/tmp/pyboy_cable python3 utils/linktest/test_world_link.py A.sav B.sav`
+plays it all through over the virtual cable.
 
 ### Friend Battles
 

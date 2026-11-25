@@ -680,9 +680,10 @@ Special_FriendTeamPreview::
 	db "'s team@"
 .Rules:
 	table_width 2
-	dw .Standard, .Random, .RisingStar, .Unrestricted
+	dw .Standard, .Random, .RisingStar, .Unrestricted, .World
 	assert_table_length NUM_LINK_BATTLE_RULES
 .Standard:     db "Standard, Lv.50@"
 .Random:       db "Random, Lv.50@"
 .RisingStar:   db "Rising Star, Lv.30@"
 .Unrestricted: db "Unrestricted, Lv.50@"
+.World:        db "Championship, Lv.50@"

@@ -264,6 +264,20 @@ wLinkPolishedMiscBuffer:: ds LINK_MISC_BUFFER_LENGTH
 
 
 SECTION UNION "Misc 404", WRAM0
+; Link Edition: the linked World Championship's exchange (engine/link/world_link.asm)
+
+wWorldLinkSend:: ds WORLD_LINK_BUFFER_LENGTH
+wWorldLinkReceive:: ds WORLD_LINK_BUFFER_LENGTH
+wWorldLinkMine:: ds WORLD_LINK_MESSAGE_LENGTH
+wWorldLinkTheirs:: ds WORLD_LINK_MESSAGE_LENGTH
+wWorldLinkMineFirst:: ds WORLD_LINK_MESSAGE_LENGTH
+wWorldLinkTheirsFirst:: ds WORLD_LINK_MESSAGE_LENGTH
+wWorldLinkPlan:: db
+; (also at the Indigo Plateau's desk, outside battle)
+wWorldLinkRecord:: ds WORLD_LINK_LENGTH
+
+
+SECTION UNION "Misc 404", WRAM0
 ; battle + pokédex (merged because pokédex can be called from battle)
 
 ; wLCDPokedex is defined in a LOAD UNION block in engine/pokedex/lcd.asm

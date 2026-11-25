@@ -8247,6 +8247,7 @@ ShowLinkBattleResult:
 
 	call CloseSRAM
 	farcall KeepFriendTeam ; Link Edition: for Friend Battles
+	farcall WorldLinkFinalResult ; Link Edition: the linked World Championship
 
 	call WaitPressAorB_BlinkCursor
 	jmp ClearTileMap

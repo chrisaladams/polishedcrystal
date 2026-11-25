@@ -519,6 +519,173 @@ IndigoPlateauAbraText::
 	text "Abra: Aabra…"
 	done
 
+IndigoPlateauLinkedCup:
+; Link Edition: a linked World Championship (engine/link/world_link.asm):
+; this player's rounds against the visiting trainers, and how it ended.
+	ifequalfwd WORLDDESK_WAIT, .Wait
+	ifequalfwd WORLDDESK_OUT, .Out
+	ifequalfwd WORLDDESK_OVER, .Over
+	ifequalfwd WORLDDESK_CHAMPION, .Champion
+	ifequalfwd WORLDDESK_RUNNER_UP, .RunnerUp
+	ifequalfwd WORLDDESK_QUARTERFINAL, .Quarterfinal
+	ifequalfwd WORLDDESK_SEMIFINAL, .Semifinal
+	writetext .FinalText
+	sjumpfwd .Ready
+.Quarterfinal:
+	writetext .QuarterfinalText
+	sjumpfwd .Ready
+.Semifinal:
+	writetext .SemifinalText
+.Ready:
+	yesorno
+	iffalse_jumpopenedtext .LaterText
+	loadmem wCupId, CUP_WORLD
+	callasm CupSelectTeam
+	ifnotequal CUPTEAM_OK, .WrongSize
+	closetext
+	callasm CupBegin
+	callasm WorldLinkOpponent ; (the trainer again, after the party's swapped)
+	winlosstext IndigoPlateauWorldCup.WinText, IndigoPlateauWorldCup.LossText
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	callasm WorldLinkResult
+	callasm CupEnd
+	opentext
+	callasm WorldLinkOpponent
+	sjump IndigoPlateauLinkedCup
+
+.WrongSize:
+	jumpopenedtext IndigoPlateauWorldCup.SizeText
+
+.Wait:
+	writetext .WaitText
+	sjumpfwd .Withdraw
+.Out:
+	writetext .OutText
+.Withdraw:
+	promptbutton
+	writetext .WithdrawText
+	yesorno
+	iffalse_endtext
+	callasm WorldLinkClear
+	jumpopenedtext .WithdrawnText
+
+.Over:
+	callasm WorldLinkClear
+	jumpopenedtext .OverText
+
+.RunnerUp:
+	callasm WorldLinkClear
+	jumpopenedtext .RunnerUpText
+
+.Champion:
+	callasm WorldLinkClear
+	loadmem wCupId, CUP_WORLD
+	callasm CupWin
+	iffalse IndigoPlateauWorldCup.Again
+	setevent EVENT_WORLD_CUP_PRIZE_PENDING
+	writetext IndigoPlateauWorldCup.ChampionText
+	promptbutton
+	sjump IndigoPlateauWorldCup.FirstPrize
+
+.QuarterfinalText:
+	text "Your bracket with"
+	line "@"
+	text_ram wStringBuffer3
+	text "!"
+
+	para "Quarterfinal:"
+	line "@"
+	text_ram wStringBuffer4
+	text ". Ready?"
+	done
+
+.SemifinalText:
+	text "Your bracket with"
+	line "@"
+	text_ram wStringBuffer3
+	text "!"
+
+	para "Semifinal:"
+	line "@"
+	text_ram wStringBuffer4
+	text ". Ready?"
+	done
+
+.FinalText:
+	text "@"
+	text_ram wStringBuffer3
+	text " is out,"
+	line "so the final is"
+
+	para "against @"
+	text_ram wStringBuffer4
+	text "."
+	line "Ready?"
+	done
+
+.LaterText:
+	text "Come back when"
+	line "you're ready."
+	done
+
+.WaitText:
+	text "You made the"
+	line "final!"
+
+	para "Link up with"
+	line "@"
+	text_ram wStringBuffer3
+	text " at a"
+
+	para "Cable Club battle"
+	line "desk: Championship"
+	cont "rules."
+	done
+
+.OutText:
+	text "You're out of"
+	line "the bracket."
+
+	para "Link up with"
+	line "@"
+	text_ram wStringBuffer3
+	text " to hear"
+	cont "how it went."
+	done
+
+.WithdrawText:
+	text "Leave the bracket"
+	line "with @"
+	text_ram wStringBuffer3
+	text "?"
+	done
+
+.WithdrawnText:
+	text "You've left it."
+	done
+
+.OverText:
+	text "You and @"
+	text_ram wStringBuffer3
+	line "are both out of"
+
+	para "your bracket. Come"
+	line "back for another!"
+	done
+
+.RunnerUpText:
+	text "You were runner-"
+	line "up in your bracket"
+	cont "with @"
+	text_ram wStringBuffer3
+	text "!"
+
+	para "Come back for"
+	line "another!"
+	done
+
 IndigoPlateauWorldCup:
 	faceplayer
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
@@ -526,6 +693,8 @@ IndigoPlateauWorldCup:
 	opentext
 	checkevent EVENT_WORLD_CUP_PRIZE_PENDING
 	iftruefwd .FirstPrize
+	callasm WorldLinkOpponent ; Link Edition: a linked bracket?
+	ifnotequal WORLDDESK_NONE, IndigoPlateauLinkedCup
 	writetext .WelcomeText
 	yesorno
 	iffalse_endtext

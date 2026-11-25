@@ -112,6 +112,9 @@ LinkReceptionistScript_DoTradeOrBattle:
 	ifequalfwd LINK_ERR_MISMATCH_BUILD, .WrongBuild
 	ifequalfwd LINK_ERR_MISMATCH_RULES, .WrongRules
 	ifequalfwd LINK_ERR_INCOMPATIBLE_ROOMS, .IncompatibleRooms
+	readmem wLinkBattleRules
+	ifequalfwd LINK_RULE_WORLD, .Championship
+.ComeIn:
 	writetext Text_PleaseComeIn
 	waitbutton
 	closetext
@@ -161,6 +164,33 @@ LinkReceptionistScript_DoTradeOrBattle:
 
 .WrongRules
 	writetext Text_WrongRules
+	sjumpfwd .CloseLink
+
+.Championship:
+	; Link Edition: the linked World Championship (engine/link/world_link.asm)
+	special Special_WorldLinkSession
+	ifequalfwd WORLDSESSION_FINAL, .ChampionshipFinal
+	ifequalfwd WORLDSESSION_REGISTERED, .Registered
+	ifequalfwd WORLDSESSION_SYNCED, .Synced
+	ifequalfwd WORLDSESSION_MISMATCH, .OtherBrackets
+	writetext Text_WorldLinkError
+	sjumpfwd .CloseLink
+
+.ChampionshipFinal:
+	writetext Text_WorldLinkFinal
+	promptbutton
+	sjump .ComeIn
+
+.Registered:
+	writetext Text_WorldLinkRegistered
+	sjumpfwd .CloseLink
+
+.Synced:
+	writetext Text_WorldLinkSynced
+	sjumpfwd .CloseLink
+
+.OtherBrackets:
+	writetext Text_WorldLinkOtherBrackets
 	sjumpfwd .CloseLink
 
 .IncompatibleRooms:
@@ -220,7 +250,12 @@ LinkReceptionistScript_Battle:
 	ifequalfwd LINK_RULE_RANDOM, .RandomRules
 	ifequalfwd LINK_RULE_RISING_STAR, .RisingRules
 	ifequalfwd LINK_RULE_UNRESTRICTED, .UnrestrictedRules
+	ifequalfwd LINK_RULE_WORLD, .WorldRules
 	sjumpfwd .Validate
+
+.WorldRules:
+	writetext Text_WorldRules
+	sjumpfwd .ReadRules
 
 .RandomRules:
 	writetext Text_RandomRules
@@ -241,13 +276,16 @@ LinkReceptionistScript_Battle:
 .InvalidParty:
 	readmem wLinkBattleRules
 	ifequalfwd LINK_RULE_RISING_STAR, .InvalidRising
+	ifequalfwd LINK_RULE_WORLD, .InvalidWorld
 	jumpopenedtext Text_NoLinkTeam
+.InvalidWorld:
+	jumpopenedtext Text_InvalidWorld
 .InvalidRising:
 	jumpopenedtext Text_InvalidRising
 
 .RulesMenuHeader:
 	db MENU_BACKUP_TILES
-	menu_coords 0, 3, 15, 12
+	menu_coords 0, 1, 15, 12
 	dw .RulesMenuData
 	db 1 ; default option
 
@@ -258,6 +296,7 @@ LinkReceptionistScript_Battle:
 	db "Random teams@"
 	db "Rising Star@"
 	db "Unrestricted@"
+	db "Championship@"
 
 .BattleRoomClosed:
 	jumpthistextfaceplayer
@@ -650,4 +689,77 @@ FriendBattleDeskScript:
 	text "So close! Your"
 	line "#mon are back"
 	cont "to normal."
+	done
+
+Text_WorldRules:
+	text "Championship: the"
+	line "linked World"
+	cont "Championship."
+
+	para "Link here to join"
+	line "a bracket, to hear"
+
+	para "how each other"
+	line "did, and for the"
+	cont "final."
+
+	para "Six #mon each,"
+	line "at level 50."
+	done
+
+Text_InvalidWorld:
+	text "Bring six #mon,"
+	line "and no Eggs."
+	done
+
+Text_WorldLinkRegistered:
+	text "You and @"
+	text_ram wStringBuffer3
+	line "are in a World"
+	cont "Championship!"
+
+	para "You're in opposite"
+	line "halves. Win your"
+
+	para "rounds at the"
+	line "Indigo Plateau,"
+
+	para "then link up here"
+	line "again."
+	done
+
+Text_WorldLinkSynced:
+	text "You heard how"
+	line "@"
+	text_ram wStringBuffer3
+	text " is doing."
+
+	para "Ask at the Indigo"
+	line "Plateau what's"
+	cont "next."
+	done
+
+Text_WorldLinkFinal:
+	text "You both made the"
+	line "final! It's time"
+	cont "for the final"
+	cont "battle!"
+	done
+
+Text_WorldLinkOtherBrackets:
+	text "You're each in a"
+	line "bracket with"
+	cont "someone else."
+
+	para "Finish or leave it"
+	line "at the Indigo"
+	cont "Plateau first."
+	done
+
+Text_WorldLinkError:
+	text "The link was"
+	line "interrupted."
+
+	para "Nothing changed."
+	line "Please try again."
 	done

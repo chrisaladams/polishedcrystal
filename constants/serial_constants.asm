@@ -138,6 +138,7 @@ DEF LINK_MIN_TRADE_VERSION EQU 1
 	const LINK_RULE_RANDOM
 	const LINK_RULE_RISING_STAR
 	const LINK_RULE_UNRESTRICTED
+	const LINK_RULE_WORLD ; Link Edition: the linked World Championship
 DEF NUM_LINK_BATTLE_RULES EQU const_value
 assert NUM_LINK_BATTLE_RULES <= 16
 
@@ -170,6 +171,57 @@ DEF FRIENDMON_HAPPINESS   rb
 DEF FRIENDMON_HYPER       rb ; hyper training
 DEF FRIENDMON_LENGTH EQU _RS
 DEF FRIEND_TEAM_LENGTH EQU FRIEND_TEAM_HEADER_LENGTH - 1 + FRIENDMON_LENGTH * PARTY_LENGTH
+
+; The linked World Championship (engine/link/world_link.asm): a bracket two
+; players share, kept on each cartridge (sWorldLink)
+DEF WORLD_LINK_MAGIC_1 EQU $57
+DEF WORLD_LINK_MAGIC_2 EQU $43
+rsreset
+DEF WORLD_LINK_MAGIC          rb 2
+DEF WORLD_LINK_CHECKSUM       rb
+DEF WORLD_LINK_ID             rb 2 ; the bracket's
+DEF WORLD_LINK_SEED           rb 2 ; its draw
+DEF WORLD_LINK_HALF           rb   ; 0: the top half (slot 0), 1: the bottom (slot 4)
+DEF WORLD_LINK_PARTNER_ID     rb 2
+DEF WORLD_LINK_PARTNER_NAME   rb PLAYER_NAME_LENGTH
+DEF WORLD_LINK_STATUS         rb   ; WORLDLINK_*
+DEF WORLD_LINK_PARTNER_STATUS rb   ; WORLDLINK_* (as last heard)
+DEF WORLD_LINK_LENGTH EQU _RS
+
+; how a player stands in the linked bracket
+	const_def
+	const WORLDLINK_QUARTERFINAL ; to play
+	const WORLDLINK_SEMIFINAL    ; to play
+	const WORLDLINK_FINAL        ; qualified: to play
+	const WORLDLINK_OUT_QF       ; lost the quarterfinal
+	const WORLDLINK_OUT_SF       ; lost the semifinal
+	const WORLDLINK_CHAMPION
+	const WORLDLINK_RUNNER_UP    ; lost the final
+DEF WORLDLINK_UNKNOWN EQU $ff ; (the partner's, before hearing)
+
+; what a Championship session at the battle desk did (hScriptVar)
+	const_def
+	const WORLDSESSION_ERROR     ; the exchange failed: nothing changed
+	const WORLDSESSION_REGISTERED ; a new bracket
+	const WORLDSESSION_SYNCED    ; heard how each other is doing
+	const WORLDSESSION_FINAL     ; both qualified: the final, over the cable
+	const WORLDSESSION_MISMATCH  ; in brackets with other players
+
+; what's next at the Indigo Plateau's desk (WorldLinkOpponent, hScriptVar)
+	const_def
+	const WORLDDESK_NONE         ; no linked bracket
+	const WORLDDESK_QUARTERFINAL
+	const WORLDDESK_SEMIFINAL
+	const WORLDDESK_FINAL        ; the partner's out: the other half's finalist
+	const WORLDDESK_WAIT         ; qualified: link up for the final
+	const WORLDDESK_OUT          ; out, the partner still playing (or unheard)
+	const WORLDDESK_OVER         ; both out
+	const WORLDDESK_CHAMPION
+	const WORLDDESK_RUNNER_UP
+
+; the exchange: a message's data bytes (the last a check)
+DEF WORLD_LINK_MESSAGE_LENGTH EQU 20
+DEF WORLD_LINK_BUFFER_LENGTH EQU 2 + 2 * WORLD_LINK_MESSAGE_LENGTH + SERIAL_POLISHED_MAX_PREAMBLE_LENGTH
 
 ; PerformLinkChecks error codes
 	const_def

@@ -184,6 +184,7 @@ SECTION "Cup Code", ROMX
 
 INCLUDE "engine/events/cups.asm"
 INCLUDE "engine/events/world_cup.asm"
+INCLUDE "engine/link/world_link.asm"
 INCLUDE "engine/events/cup_spotlight.asm"
 
 
