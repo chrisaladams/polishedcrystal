@@ -78,11 +78,19 @@ Two players can share one World Championship bracket. Choose
    Plateau to face the other half's finalist. If you're both out, the
    bracket is over.
 
-The winner gets the World Championship's prize at the Indigo Plateau. You
-can link up as often as you like (hearing the same news twice changes
-nothing), and if the cable slips mid-session nothing changes; just link up
-again. Either of you can leave a bracket at the Indigo Plateau desk.
-The bracket doesn't depend on either Game Boy's clock.
+Championship rules open once you've beaten Red (when the Indigo Plateau
+desk does). Each round you battle with whatever six you bring, at level 50:
+you can change your team between rounds.
+
+The winner gets the World Championship's prize at the Indigo Plateau; it
+counts once the game is saved (if the power goes before you save, ask again
+and it's still yours). You can link up as often as you like (hearing the
+same news twice changes nothing), and if the cable slips mid-session nothing
+changes; just link up again. Either of you can leave a bracket at the Indigo
+Plateau desk, which forfeits your next match: your partner hears it the next
+time you link up. A finished or abandoned bracket is kept on the cartridge as
+closed, so your partner's copy can't start it up again, until you both join a
+new one. The bracket doesn't depend on either Game Boy's clock.
 `PYTHONPATH=/tmp/pyboy_cable python3 utils/linktest/test_world_link.py A.sav B.sav`
 plays it all through over the virtual cable.
 

@@ -179,6 +179,13 @@ class Side:
         for _ in range(4):
             self.press('b', 30)
         self.tick(60)
+        if self.rules == 'world':
+            # Championship rules are for players past Red
+            sys.path.insert(0, os.path.join(ROOT, 'utils', 'wild_mons'))
+            from test_wild_mons import rgbasm_values
+            n = rgbasm_values(['EVENT_GOT_MYSTICTICKET_FROM_RED'], None)['EVENT_GOT_MYSTICTICKET_FROM_RED']
+            a = self.sym['wEventFlags'][1] + n // 8
+            self.mem[1, a] = self.mem[1, a] | 1 << (n % 8)
         if getattr(self, 'boot_day', None) is not None:
             # a different clock on this Game Boy
             self.mem[1, self.sym['wRTCDayLo'][1]] = self.boot_day

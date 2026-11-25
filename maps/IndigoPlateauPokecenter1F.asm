@@ -527,6 +527,7 @@ IndigoPlateauLinkedCup:
 	ifequalfwd WORLDDESK_OVER, .Over
 	ifequalfwd WORLDDESK_CHAMPION, .Champion
 	ifequalfwd WORLDDESK_RUNNER_UP, .RunnerUp
+	ifequalfwd WORLDDESK_CLAIMED, .Claimed
 	ifequalfwd WORLDDESK_QUARTERFINAL, .Quarterfinal
 	ifequalfwd WORLDDESK_SEMIFINAL, .Semifinal
 	writetext .FinalText
@@ -538,7 +539,7 @@ IndigoPlateauLinkedCup:
 	writetext .SemifinalText
 .Ready:
 	yesorno
-	iffalse_jumpopenedtext .LaterText
+	iffalsefwd .NotNow
 	loadmem wCupId, CUP_WORLD
 	callasm CupSelectTeam
 	ifnotequal CUPTEAM_OK, .WrongSize
@@ -568,19 +569,32 @@ IndigoPlateauLinkedCup:
 	writetext .WithdrawText
 	yesorno
 	iffalse_endtext
-	callasm WorldLinkClear
+	; (the record stays, closed: the partner hears it as a forfeit)
+	callasm WorldLinkClose
+	jumpopenedtext .WithdrawnText
+
+.NotNow:
+	writetext .WithdrawText
+	yesorno
+	iffalse_jumpopenedtext .LaterText
+	callasm WorldLinkClose
 	jumpopenedtext .WithdrawnText
 
 .Over:
-	callasm WorldLinkClear
+	callasm WorldLinkClose
 	jumpopenedtext .OverText
 
 .RunnerUp:
-	callasm WorldLinkClear
+	callasm WorldLinkClose
 	jumpopenedtext .RunnerUpText
 
+.Claimed:
+	jumpopenedtext .ClaimedText
+
 .Champion:
-	callasm WorldLinkClear
+	; the prize: the bracket closes when the game is next saved, so the prize
+	; and the closing are kept (or lost to a power cut) together
+	callasm WorldLinkClaim
 	loadmem wCupId, CUP_WORLD
 	callasm CupWin
 	iffalse IndigoPlateauWorldCup.Again
@@ -628,6 +642,12 @@ IndigoPlateauLinkedCup:
 .LaterText:
 	text "Come back when"
 	line "you're ready."
+	done
+
+.ClaimedText:
+	text "You have your"
+	line "prize. Save your"
+	cont "game to keep it!"
 	done
 
 .WaitText:

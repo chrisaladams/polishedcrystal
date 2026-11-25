@@ -198,6 +198,11 @@ DEF WORLD_LINK_LENGTH EQU _RS
 	const WORLDLINK_CHAMPION
 	const WORLDLINK_RUNNER_UP    ; lost the final
 DEF WORLDLINK_UNKNOWN EQU $ff ; (the partner's, before hearing)
+; set on this player's status once they're done with the bracket: its prize
+; claimed and saved, or it over, or left. The record stays (as a receipt) so
+; a partner's older record can't start it again; a new bracket replaces it.
+DEF WORLDLINK_CLOSED_F EQU 7
+DEF WORLDLINK_STATUS_MASK EQU (1 << WORLDLINK_CLOSED_F) - 1
 
 ; what a Championship session at the battle desk did (hScriptVar)
 	const_def
@@ -218,9 +223,10 @@ DEF WORLDLINK_UNKNOWN EQU $ff ; (the partner's, before hearing)
 	const WORLDDESK_OVER         ; both out
 	const WORLDDESK_CHAMPION
 	const WORLDDESK_RUNNER_UP
+	const WORLDDESK_CLAIMED      ; the prize given: saving keeps it
 
 ; the exchange: a message's data bytes (the last a check)
-DEF WORLD_LINK_MESSAGE_LENGTH EQU 20
+DEF WORLD_LINK_MESSAGE_LENGTH EQU 24
 DEF WORLD_LINK_BUFFER_LENGTH EQU 2 + 2 * WORLD_LINK_MESSAGE_LENGTH + SERIAL_POLISHED_MAX_PREAMBLE_LENGTH
 
 ; PerformLinkChecks error codes

@@ -23,7 +23,7 @@ Every opponent is checked against the draw worked out here from the shared
 seed, as WorldLinkDraw makes it.
 
 Usage (from the repository root, after make):
-  PYTHONPATH=/tmp/pyboy_cable python3 utils/linktest/test_world_link.py A.sav B.sav --out DIR
+  PYTHONPATH=/tmp/pyboy_cable python3 utils/linktest/test_world_link.py A.sav B.sav C.sav --out DIR
 """
 import argparse
 import io
@@ -47,7 +47,7 @@ def record(sav):
     if r[:2] != b'WC':
         return None
     return {'id': r[3:5], 'seed': r[5] | r[6] << 8, 'half': r[7], 'partner': r[8:10],
-            'name': r[10:18], 'status': r[18], 'partner_status': r[19]}
+            'name': r[10:18], 'status': r[18] & 0x7f, 'closed': bool(r[18] & 0x80), 'partner_status': r[19]}
 
 
 def draw(seed):
@@ -101,6 +101,8 @@ class Indigo:
         for _ in range(8):
             self.g.press('b', 30)
         self.g.tick(60)
+        # where it was saved (the battle desk), for saving there again
+        self.home = tuple(self.g.rd(n) for n in ('wMapGroup', 'wMapNumber', 'wXCoord', 'wYCoord'))
         n = self.K['EVENT_GOT_MYSTICTICKET_FROM_RED']
         self.g.wr('wEventFlags', self.g.rd('wEventFlags', n // 8) | 1 << (n % 8), n // 8)
 
@@ -175,9 +177,37 @@ class Indigo:
         question with `answer`)."""
         self.talk()
         self.g.press('a', 40)
-        for _ in range(12):
+        for _ in range(16):
+            if not self.g.rd('wScriptRunning'):
+                break  # (once it's done: another press would talk again)
             self.g.press(answer, 40)
         self.settle()
+
+    def withdraw(self):
+        """Decline the round offered (or the wait) and leave the bracket."""
+        self.talk()
+        for _ in range(10):
+            text = bytes(self.g.rd('wTilemap', i) for i in range(20 * 18))
+            if bytes([0x98, 0xa4, 0xb2]) in text and self.g.rd('wMenuCursorY'):  # a Yes/No box
+                break
+            self.g.press('a', 40)
+        self.g.press('down', 20)  # No: not now
+        self.g.press('a', 60)
+        for _ in range(10):  # "Leave the bracket?"
+            text = bytes(self.g.rd('wTilemap', i) for i in range(20 * 18))
+            if bytes([0x98, 0xa4, 0xb2]) in text:
+                break
+            self.g.press('a', 40)
+        self.g.press('a', 60)  # Yes
+        self.settle()
+
+    def game_save(self):
+        """Save the game in place (at the battle desk, where the link sessions
+        start)."""
+        self.g.warp(*self.home)
+        self.g.tick(60)
+        self.g.manual_save()
+        self.g.tick(60)
 
     def record(self):
         ram = bytes(self.g.m[0, 0xb1d5 + i] for i in range(20))
@@ -222,6 +252,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('save_a')
     ap.add_argument('save_b')
+    ap.add_argument('save_c', help='a third player, for a mismatched session')
     ap.add_argument('--out', default='world_link_out')
     args = ap.parse_args()
     os.makedirs(args.out, exist_ok=True)
@@ -231,15 +262,23 @@ def main():
         os.makedirs(d, exist_ok=True)
         return d
 
+    def keep(ind, name, save_game=False):
+        if save_game:
+            ind.game_save()
+        return ind.save(os.path.join(args.out, name + '.sav'))
+
     def offline(sav, results, name):
         ind = Indigo(sav)
         ind.rounds(results, name)
-        return ind.save(os.path.join(args.out, name + '.sav'))
+        return keep(ind, name)
 
-    # both finalists (with B's clock on another day)
+    def prizes(ind):
+        return ind.items('ABILITYPATCH') + ind.items('BOTTLE_CAP')
+
+    # 1. both finalists (B's clock on another day)
     ra_, rb_, a, b = link(args.save_a, args.save_b, step('both_register'), '--day-b', '77')
     check((ra_, rb_) == ('desk: registered', 'desk: registered'), 'both', f'registration: {ra_} / {rb_}')
-    registered(a, b, 'both')
+    reg_a, reg_b = registered(a, b, 'both')
     a = offline(a, [True, True], 'both_A')
     b = offline(b, [True, True], 'both_B')
     check(record(a)['status'] == FINAL and record(b)['status'] == FINAL, 'both', 'not both qualified')
@@ -248,16 +287,47 @@ def main():
     sa, sb = record(a)['status'], record(b)['status']
     check({sa, sb} == {CHAMPION, RUNNER_UP}, 'both', f'after the final: {sa} {sb}')
     check(record(a)['partner_status'] == sb and record(b)['partner_status'] == sa, 'both',
-          'each did not hear the other\'s result')
-    champ = a if sa == CHAMPION else b
-    ind = Indigo(champ)
-    prizes = ind.items('ABILITYPATCH') + ind.items('BOTTLE_CAP')
-    ind.visit()
-    check(ind.record() is None, 'both', "the champion's bracket did not close")
-    check(ind.items('ABILITYPATCH') + ind.items('BOTTLE_CAP') == prizes + 1, 'both', 'no prize for the champion')
-    ind.save(os.path.join(args.out, 'both_champion_done.sav'))
+          "each did not hear the other's result")
+    champ, other = (a, b) if sa == CHAMPION else (b, a)
 
-    # one finalist; the sync session twice
+    # the prize, and a power cut before saving: still unclaimed, so given again
+    ind = Indigo(champ)
+    before = prizes(ind)
+    ind.visit()
+    check(prizes(ind) == before + 1, 'prize', 'no prize for the champion')
+    ind.visit()
+    check(prizes(ind) == before + 1, 'prize', 'a second prize before saving')
+    rec = ind.record()
+    check(rec and not rec['closed'], 'prize', 'the bracket closed before the game was saved')
+    keep(ind, 'prize_unsaved')  # (the cartridge as a power cut leaves it)
+    ind = Indigo(os.path.join(args.out, 'prize_unsaved.sav'))
+    before = prizes(ind)
+    ind.visit()
+    check(prizes(ind) == before + 1, 'prize', 'lost to a power cut before saving')
+    # saved: closed, and no prize again
+    champ = keep(ind, 'prize_saved', save_game=True)
+    check(record(champ) and record(champ)['closed'], 'prize', 'saving did not close the bracket')
+    ind = Indigo(champ)
+    before = prizes(ind)
+    ind.visit('b')
+    check(prizes(ind) == before, 'prize', 'another prize after the saved claim')
+    ind.save(os.path.join(args.out, 'prize_after.sav'))
+
+    # the champion's closed record doesn't let the bracket start again
+    ra_, rb_, x, y = link(champ, other, step('closed_vs_open'))
+    check((ra_, rb_) == ('desk: synced', 'desk: synced'), 'closed', f'closed vs open: {ra_} / {rb_}')
+    check(record(x)['id'] == reg_a['id'] and record(y)['id'] == reg_a['id'], 'closed', 'the bracket changed')
+    ind = Indigo(y)
+    ind.visit()
+    check(ind.record()['closed'], 'closed', "the runner-up's bracket did not close")
+    y = keep(ind, 'runner_up_closed')
+    # both closed: a new bracket, with a new ID
+    ra_, rb_, x, y = link(x, y, step('new_bracket'))
+    check((ra_, rb_) == ('desk: registered', 'desk: registered'), 'closed', f'new bracket: {ra_} / {rb_}')
+    nx, ny = registered(x, y, 'closed')
+    check(nx and nx['id'] != reg_a['id'] and not nx['closed'], 'closed', 'the new bracket reused the old ID')
+
+    # 2. one finalist; the eliminated partner hears the final result
     ra_, rb_, a, b = link(args.save_a, args.save_b, step('one_register'))
     registered(a, b, 'one')
     a = offline(a, [True, True], 'one_A')
@@ -271,20 +341,24 @@ def main():
     ra_, rb_, a, b = link(a, b, step('one_sync_again'))
     after = (open(a, 'rb').read()[RECORD:RECORD + 20], open(b, 'rb').read()[RECORD:RECORD + 20])
     check(before == after, 'one', 'a second session changed the records')
-    # (winning the final there, the desk gives the prize and closes the bracket)
-    ind = Indigo(a)
-    prizes = ind.items('ABILITYPATCH') + ind.items('BOTTLE_CAP')
-    ind.rounds([True], 'one_A_final')
-    check(ind.record() is None, 'one', f'after the NPC final the bracket is still open: {ind.record()}')
-    check(ind.items('ABILITYPATCH') + ind.items('BOTTLE_CAP') == prizes + 1, 'one', 'no prize after the NPC final')
-    a = ind.save(os.path.join(args.out, 'one_A_final.sav'))
     ind = Indigo(b)
     ind.visit('b')
-    check(ind.record() is not None and ind.record()['status'] == OUT_QF, 'one',
-          'the one out lost the bracket before hearing the end')
-    ind.save(os.path.join(args.out, 'one_B_wait.sav'))
+    check(not ind.record()['closed'], 'one', 'the one out closed before hearing the end')
+    b = keep(ind, 'one_B_wait')
+    ind = Indigo(a)
+    before = prizes(ind)
+    ind.rounds([True], 'one_A_final')
+    check(prizes(ind) == before + 1, 'one', 'no prize after the NPC final')
+    a = keep(ind, 'one_A_champion', save_game=True)
+    check(record(a)['closed'] and record(a)['status'] == CHAMPION, 'one', 'the NPC final champion not closed')
+    ra_, rb_, a, b = link(a, b, step('one_hears'))
+    check(record(b)['partner_status'] == CHAMPION, 'one', 'the one out did not hear the final result')
+    ind = Indigo(b)
+    ind.visit()
+    check(ind.record()['closed'], 'one', 'the one out could not finish the bracket')
+    ind.save(os.path.join(args.out, 'one_B_done.sav'))
 
-    # both out
+    # 3. both out
     ra_, rb_, a, b = link(args.save_a, args.save_b, step('out_register'))
     registered(a, b, 'out')
     a = offline(a, [False], 'out_A')
@@ -292,13 +366,38 @@ def main():
     check(record(b)['status'] == OUT_SF, 'out', f'B status {record(b)["status"]}')
     ra_, rb_, a, b = link(a, b, step('out_sync'))
     check((ra_, rb_) == ('desk: synced', 'desk: synced'), 'out', f'sync: {ra_} / {rb_}')
-    for sav in (a, b):
+    for name, sav in (('A', a), ('B', b)):
         ind = Indigo(sav)
         ind.visit()
-        check(ind.record() is None, 'out', 'a bracket stayed open with both out')
-        ind.pb_done = ind.save(sav + '.done')
+        check(ind.record()['closed'], 'out', f'{name} bracket stayed open with both out')
+        ind.save(sav + '.done')
 
-    # noise at the desk, then a clean session
+    # 4. a withdrawal, heard as a forfeit; the survivor then loses the NPC final
+    ra_, rb_, a, b = link(args.save_a, args.save_b, step('leave_register'))
+    registered(a, b, 'leave')
+    ind = Indigo(a)
+    ind.withdraw()
+    rec = ind.record()
+    check(rec and rec['closed'] and rec['status'] == QF, 'leave', f'after leaving: {rec}')
+    a = keep(ind, 'leave_A')
+    b = offline(b, [True, True], 'leave_B')
+    ra_, rb_, a, b = link(a, b, step('leave_sync'))
+    check((ra_, rb_) == ('desk: synced', 'desk: synced'), 'leave', f'sync: {ra_} / {rb_}')
+    check(record(b)['partner_status'] == OUT_QF, 'leave', f'B heard {record(b)["partner_status"]}')
+    ind = Indigo(b)
+    ind.rounds([False], 'leave_B_final')  # (checks the opponent: the other half's finalist)
+    rec = ind.record()
+    check(rec and rec['status'] == RUNNER_UP and rec['closed'], 'leave', f'after losing the NPC final: {rec}')
+    ind.save(os.path.join(args.out, 'leave_B_done.sav'))
+
+    # 5. a third player, while in a bracket with someone else
+    ra_, rb_, a2, b2 = link(args.save_a, args.save_b, step('mismatch_register'))
+    ra_, rb_, _, _ = link(a2, args.save_c, step('mismatch'))
+    check((ra_, rb_) == ('desk: other brackets', 'desk: other brackets'), 'mismatch', f'{ra_} / {rb_}')
+    check(record(os.path.join(args.out, 'mismatch', 'A.sav'))['id'] == record(a2)['id'], 'mismatch',
+          'the bracket changed')
+
+    # 6. noise at the desk, then a clean session
     ra_, rb_, a, b = link(args.save_a, args.save_b, step('noisy'), '--noise-desk', '--corrupt', '4')
     na, nb = record(a), record(b)
     ra_, rb_, a, b = link(a, b, step('noisy_clean'))

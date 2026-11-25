@@ -15,7 +15,7 @@
 
 ; message bytes (WORLD_LINK_MESSAGE_LENGTH, the last a check)
 	rsreset
-DEF WLMSG_STATE       rb ; 0: no bracket, 1: a bracket
+DEF WLMSG_STATE       rb ; WLSTATE_*
 DEF WLMSG_ID          rb 2
 DEF WLMSG_SEED        rb 2
 DEF WLMSG_HALF        rb
@@ -23,8 +23,14 @@ DEF WLMSG_MY_ID       rb 2
 DEF WLMSG_PARTNER_ID  rb 2
 DEF WLMSG_STATUS      rb
 DEF WLMSG_NAME        rb PLAYER_NAME_LENGTH
+DEF WLMSG_NEW_ID      rb 2 ; a new bracket's, should one be made
+DEF WLMSG_NEW_SEED    rb 2
 DEF WLMSG_CHECK EQU WORLD_LINK_MESSAGE_LENGTH - 1
 	assert _RS <= WLMSG_CHECK
+	const_def
+	const WLSTATE_NONE   ; no bracket
+	const WLSTATE_OPEN   ; in one
+	const WLSTATE_CLOSED ; done with one (its record kept)
 ; (the plan message)
 DEF WLMSG_PLAN EQU 0
 DEF WLMSG_ECHO EQU 1
@@ -129,7 +135,11 @@ WorldLinkPut:
 	rst ByteFill
 	call WorldLinkLoad ; carry if there's a bracket (wWorldLinkRecord)
 	jr nc, .none
-	ld a, 1
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	rlca
+	and 1
+	inc a ; WLSTATE_OPEN or WLSTATE_CLOSED
+	assert WLSTATE_CLOSED == WLSTATE_OPEN + 1 && WORLDLINK_CLOSED_F == 7
 	ld [wWorldLinkMine + WLMSG_STATE], a
 	ld hl, wWorldLinkRecord + WORLD_LINK_ID
 	ld de, wWorldLinkMine + WLMSG_ID
@@ -142,19 +152,18 @@ WorldLinkPut:
 	ld a, [wWorldLinkRecord + WORLD_LINK_PARTNER_ID + 1]
 	ld [wWorldLinkMine + WLMSG_PARTNER_ID + 1], a
 	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	and WORLDLINK_STATUS_MASK
 	ld [wWorldLinkMine + WLMSG_STATUS], a
-	jr .common
 .none
 	; a new bracket's ID and draw, in case this side's are used
+	ld hl, wWorldLinkMine + WLMSG_NEW_ID
+	ld b, 4
+	assert WLMSG_NEW_SEED == WLMSG_NEW_ID + 2
+.random
 	call Random
-	ld [wWorldLinkMine + WLMSG_ID], a
-	call Random
-	ld [wWorldLinkMine + WLMSG_ID + 1], a
-	call Random
-	ld [wWorldLinkMine + WLMSG_SEED], a
-	call Random
-	ld [wWorldLinkMine + WLMSG_SEED + 1], a
-.common
+	ld [hli], a
+	dec b
+	jr nz, .random
 	ld a, [wPlayerID]
 	ld [wWorldLinkMine + WLMSG_MY_ID], a
 	ld a, [wPlayerID + 1]
@@ -293,28 +302,33 @@ WorldLinkPlan:
 	ret
 
 .Plan:
+	; anything out of range: no plan (so the two plans differ, and neither
+	; side changes anything)
+	ld hl, wWorldLinkTheirs
+	call .Valid
+	ld a, 0
+	ret c
 	ld a, [wWorldLinkMine + WLMSG_STATE]
 	ld b, a
 	ld a, [wWorldLinkTheirs + WLMSG_STATE]
 	ld c, a
-	or b
+	ld a, b
+	cp WLSTATE_OPEN
+	jr z, .mine_open
+	; neither in an open bracket (none, or closed): a new one
+	ld a, c
+	cp WLSTATE_OPEN
 	ld a, WLPLAN_REGISTER
-	ret z
+	ret nz
+	; theirs open: the same bracket, mine closed?
 	ld a, b
-	and c
-	jr nz, .both
-	; one of us has a bracket: with the other as partner?
-	ld a, b
-	and a
-	jr z, .theirs
-	ld hl, wWorldLinkMine + WLMSG_PARTNER_ID
-	ld de, wWorldLinkTheirs + WLMSG_MY_ID
-	call .SameID
-	ld a, WLPLAN_JOIN_MINE
+	cp WLSTATE_CLOSED
+	jr nz, .theirs_partner
+	call .SameBracket
+	ld a, WLPLAN_SYNC
 	ret z
-	ld a, WLPLAN_MISMATCH
-	ret
-.theirs
+.theirs_partner
+	; else, am I their partner (a registration this side didn't keep)?
 	ld hl, wWorldLinkTheirs + WLMSG_PARTNER_ID
 	ld de, wWorldLinkMine + WLMSG_MY_ID
 	call .SameID
@@ -322,21 +336,72 @@ WorldLinkPlan:
 	ret z
 	ld a, WLPLAN_MISMATCH
 	ret
-.both
-	; the same bracket, each the other's partner
+
+.mine_open
+	ld a, c
+	and a ; WLSTATE_NONE
+	jr z, .my_partner
+	call .SameBracket ; (theirs open or closed)
+	ld a, WLPLAN_SYNC
+	ret z
+	ld a, c
+	cp WLSTATE_OPEN
+	ld a, WLPLAN_MISMATCH
+	ret z ; both open, in different brackets
+.my_partner
+	; are they my partner (a registration that side didn't keep)?
+	ld hl, wWorldLinkMine + WLMSG_PARTNER_ID
+	ld de, wWorldLinkTheirs + WLMSG_MY_ID
+	call .SameID
+	ld a, WLPLAN_JOIN_MINE
+	ret z
+	ld a, WLPLAN_MISMATCH
+	ret
+
+.Valid:
+; Carry if the message at hl has a value out of range.
+	ld a, [hl] ; state
+	cp WLSTATE_CLOSED + 1
+	ccf
+	ret c
+	and a
+	ret z
+	ld de, WLMSG_HALF
+	add hl, de
+	ld a, [hl]
+	cp 2
+	ccf
+	ret c
+	ld de, WLMSG_STATUS - WLMSG_HALF
+	add hl, de
+	ld a, [hl]
+	cp WORLDLINK_RUNNER_UP + 1
+	ccf
+	ret
+
+.SameBracket:
+; z if the two messages are the same bracket: its ID and draw, opposite
+; halves, each the other's partner.
 	ld hl, wWorldLinkMine + WLMSG_ID
 	ld de, wWorldLinkTheirs + WLMSG_ID
 	call .SameID
-	ld a, WLPLAN_MISMATCH
+	ret nz
+	ld hl, wWorldLinkMine + WLMSG_SEED
+	ld de, wWorldLinkTheirs + WLMSG_SEED
+	call .SameID
+	ret nz
+	ld a, [wWorldLinkMine + WLMSG_HALF]
+	ld hl, wWorldLinkTheirs + WLMSG_HALF
+	xor [hl]
+	dec a
 	ret nz
 	ld hl, wWorldLinkMine + WLMSG_PARTNER_ID
 	ld de, wWorldLinkTheirs + WLMSG_MY_ID
 	call .SameID
-	ld a, WLPLAN_MISMATCH
 	ret nz
-	ld a, WLPLAN_SYNC
-	ret
-
+	ld hl, wWorldLinkTheirs + WLMSG_PARTNER_ID
+	ld de, wWorldLinkMine + WLMSG_MY_ID
+	; fallthrough
 .SameID:
 ; z if the two bytes at hl and de match.
 	ld a, [de]
@@ -381,10 +446,10 @@ WorldLinkCommit:
 	; the clock side's ID and draw; the clock side takes the top half
 	ldh a, [hSerialConnectionStatus]
 	cp USING_INTERNAL_CLOCK
-	ld hl, wWorldLinkMine + WLMSG_ID
+	ld hl, wWorldLinkMine + WLMSG_NEW_ID
 	ld b, 0
 	jr z, .new
-	ld hl, wWorldLinkTheirs + WLMSG_ID
+	ld hl, wWorldLinkTheirs + WLMSG_NEW_ID
 	ld b, 1
 .new
 	ld de, wWorldLinkRecord + WORLD_LINK_ID
@@ -420,9 +485,13 @@ WorldLinkCommit:
 	ret
 
 .partner_joined
-	; ours stands; they've joined it
+	; ours stands; they've joined it, at the start
 	call WorldLinkLoad
-	jr .heard
+	ld a, WORLDLINK_QUARTERFINAL
+	ld [wWorldLinkRecord + WORLD_LINK_PARTNER_STATUS], a
+	call WorldLinkSave
+	ld a, WORLDSESSION_REGISTERED
+	ret
 
 .Partner:
 	ld hl, wWorldLinkTheirs + WLMSG_MY_ID
@@ -441,11 +510,29 @@ WorldLinkCommit:
 
 .sync
 	call WorldLinkLoad
-.heard
-	; what they said of themselves
+	; done with it on this side: nothing changes here
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	bit WORLDLINK_CLOSED_F, a
+	ld a, WORLDSESSION_SYNCED
+	ret nz
+	; what they said of themselves (if they left it unfinished, as a forfeit
+	; of their next match)
 	ld a, [wWorldLinkTheirs + WLMSG_STATUS]
-	ld [wWorldLinkRecord + WORLD_LINK_PARTNER_STATUS], a
 	ld b, a
+	ld a, [wWorldLinkTheirs + WLMSG_STATE]
+	cp WLSTATE_CLOSED
+	jr nz, .their_status
+	ld a, b
+	cp WORLDLINK_SEMIFINAL
+	ld b, WORLDLINK_OUT_QF
+	jr c, .their_status
+	cp WORLDLINK_FINAL + 1
+	ld b, WORLDLINK_OUT_SF
+	jr c, .their_status
+	ld b, a ; finished: as it ended
+.their_status
+	ld a, b
+	ld [wWorldLinkRecord + WORLD_LINK_PARTNER_STATUS], a
 	ld hl, wWorldLinkRecord + WORLD_LINK_STATUS
 	; a final cut short on this side: theirs says how it ended
 	ld a, [hl]
@@ -533,13 +620,35 @@ WorldLinkSave::
 	rst CopyBytes
 	jmp CloseSRAM
 
-WorldLinkClear::
-; Leave the bracket.
-	ld a, BANK(sWorldLink)
-	call GetSRAMBank
+WorldLinkClose::
+; This player is done with the bracket (it's over, or they leave it): the
+; record stays, closed, as a receipt.
+	call WorldLinkLoad
+	ret nc
+	ld hl, wWorldLinkRecord + WORLD_LINK_STATUS
+	set WORLDLINK_CLOSED_F, [hl]
+	jmp WorldLinkSave
+
+WorldLinkClaim::
+; The champion's prize is being given: the next save closes the bracket, so
+; until then (or if the power goes before then) the prize stays unclaimed.
+	ld a, TRUE
+	ld [wWorldLinkClaimPending], a
+	ret
+
+WorldLinkCommitClaim::
+; From SaveGameData, once the game (with the prize in it) is saved.
+	ld a, [wWorldLinkClaimPending]
+	and a
+	ret z
 	xor a
-	ld [sWorldLink], a
-	jmp CloseSRAM
+	ld [wWorldLinkClaimPending], a
+	call WorldLinkLoad
+	ret nc
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	cp WORLDLINK_CHAMPION
+	ret nz
+	jr WorldLinkClose
 
 WorldLinkFinalResult::
 ; After a link battle: if it was the linked final, keep how it went. (On
@@ -693,6 +802,10 @@ WorldLinkOpponent::
 	call WorldLinkLoad
 	ld a, WORLDDESK_NONE
 	jmp nc, .done
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	bit WORLDLINK_CLOSED_F, a
+	ld a, WORLDDESK_NONE
+	jmp nz, .done
 	ld hl, wWorldLinkRecord + WORLD_LINK_PARTNER_NAME
 	ld de, wStringBuffer3
 	ld bc, PLAYER_NAME_LENGTH
@@ -712,8 +825,14 @@ WorldLinkOpponent::
 	cp WORLDLINK_FINAL
 	jr z, .final
 	cp WORLDLINK_CHAMPION
+	jr nz, .not_champion
+	ld a, [wWorldLinkClaimPending]
+	and a
+	ld a, WORLDDESK_CLAIMED
+	jr nz, .done
 	ld a, WORLDDESK_CHAMPION
-	jr z, .done
+	jr .done
+.not_champion
 	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
 	cp WORLDLINK_RUNNER_UP
 	ld a, WORLDDESK_RUNNER_UP

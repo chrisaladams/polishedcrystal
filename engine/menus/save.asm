@@ -185,6 +185,9 @@ SaveGameData::
 	call SaveChecksum
 	call WriteBackupSave
 	call ClearClockResetRequest
+	; Link Edition: a linked championship prize given since the last save is
+	; now in the save: close that bracket (engine/link/world_link.asm)
+	farcall WorldLinkCommitClaim
 	call CloseSRAM ; just in case
 	pop af
 	ldh [hVBlank], a

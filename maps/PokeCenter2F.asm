@@ -112,6 +112,9 @@ LinkReceptionistScript_DoTradeOrBattle:
 	ifequalfwd LINK_ERR_MISMATCH_BUILD, .WrongBuild
 	ifequalfwd LINK_ERR_MISMATCH_RULES, .WrongRules
 	ifequalfwd LINK_ERR_INCOMPATIBLE_ROOMS, .IncompatibleRooms
+	; (the trade desk comes here too, with the rules of the last battle)
+	readmem wChosenCableClubRoom
+	ifnotequal LINK_COLOSSEUM - 1, .ComeIn
 	readmem wLinkBattleRules
 	ifequalfwd LINK_RULE_WORLD, .Championship
 .ComeIn:
@@ -254,6 +257,8 @@ LinkReceptionistScript_Battle:
 	sjumpfwd .Validate
 
 .WorldRules:
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumpopenedtext Text_WorldNotYet
 	writetext Text_WorldRules
 	sjumpfwd .ReadRules
 
@@ -705,6 +710,14 @@ Text_WorldRules:
 
 	para "Six #mon each,"
 	line "at level 50."
+	done
+
+Text_WorldNotYet:
+	text "Championship rules"
+	line "are for trainers"
+
+	para "who have beaten"
+	line "Red at Mt.Silver."
 	done
 
 Text_InvalidWorld:
