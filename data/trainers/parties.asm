@@ -9591,27 +9591,25 @@ SECTION "RudyGroup", ROMX
 RudyGroup:
 
 	def_trainer_class RUDY_T
-	def_trainer 1, "Rudy"
+	def_trainer RUDY_GRASS, "Rudy"
 	tr_mon 72, EXEGGUTOR @ LEFTOVERS, MALE
 		tr_extra SATK_UP_SPE_DOWN
 		tr_evs 252 HP, 4 SDf, 252 SAt
 		tr_moves ENERGY_BALL, PSYCHIC_M, SLEEP_POWDER, LEECH_SEED
-	tr_mon 72, STARMIE @ LUM_BERRY, MALE
-		tr_extra SPE_UP_ATK_DOWN
-		tr_evs 252 SAt, 4 SDf, 252 Spe
-		tr_moves SURF, THUNDERBOLT, ICE_BEAM, RECOVER
-	tr_mon 72, GYARADOS @ LUM_BERRY, MALE
-		tr_extra SPE_UP_SATK_DOWN
-		tr_evs 252 Atk, 4 Def, 252 Spe
-		tr_moves DRAGON_DANCE, WATERFALL, EARTHQUAKE, STONE_EDGE
+	end_trainer
+
+	def_trainer RUDY_FIRE, "Rudy"
 	tr_mon 72, ARCANINE @ CHOICE_BAND, MALE
 		tr_extra ATK_UP_SATK_DOWN
 		tr_evs 252 Atk, 4 Def, 252 Spe
 		tr_moves FLARE_BLITZ, EXTREMESPEED, WILD_CHARGE, CLOSE_COMBAT
-	tr_mon 74, ELECTIVIRE @ MUSCLE_BAND, MALE
-		tr_extra SPE_UP_SATK_DOWN
-		tr_evs 252 Atk, 4 Def, 252 Spe
-		tr_moves THUNDERPUNCH, ICE_PUNCH, FIRE_PUNCH, CROSS_CHOP
+	end_trainer
+
+	def_trainer RUDY_WATER, "Rudy"
+	tr_mon 72, STARMIE @ LUM_BERRY, MALE
+		tr_extra SPE_UP_ATK_DOWN
+		tr_evs 252 SAt, 4 SDf, 252 Spe
+		tr_moves SURF, THUNDERBOLT, ICE_BEAM, RECOVER
 	end_trainer
 
 
@@ -9620,18 +9618,6 @@ LuanaGroup:
 
 	def_trainer_class LUANA_T
 	def_trainer 1, "Luana"
-	tr_mon 72, KANGASKHAN @ SILK_SCARF, FEMALE
-		tr_extra ATK_UP_SATK_DOWN
-		tr_evs 252 HP, 4 Def, 252 Atk
-		tr_moves DOUBLE_EDGE, EARTHQUAKE, SUCKER_PUNCH, PROTECT
-	tr_mon 72, PERSIAN @ BLACKGLASSES, FEMALE
-		tr_extra SPE_UP_ATK_DOWN
-		tr_evs 252 SAt, 4 SDf, 252 Spe
-		tr_moves NASTY_PLOT, DARK_PULSE, HYPER_VOICE, THUNDERBOLT
-	tr_mon 73, NINETALES @ CHARCOAL, FEMALE
-		tr_extra SPE_UP_ATK_DOWN
-		tr_evs 252 SAt, 4 SDf, 252 Spe
-		tr_moves FLAMETHROWER, SHADOW_BALL, NASTY_PLOT, WILL_O_WISP
 	tr_mon 74, MAROWAK @ THICK_CLUB, MALE
 		tr_extra ATK_UP_SATK_DOWN
 		tr_evs 252 HP, 4 Def, 252 Atk

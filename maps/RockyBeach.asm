@@ -7,6 +7,7 @@ RockyBeach_MapScriptHeader:
 	warp_event 25, 20, ROCKY_BEACH_HOUSE, 1
 	warp_event 29, 10, NOISY_FOREST, 1
 	warp_event 29, 11, NOISY_FOREST, 2
+	warp_event 24,  5, ROCKY_PEAK, 1
 
 	def_coord_events
 
@@ -30,6 +31,8 @@ RockyBeach_MapScriptHeader:
 
 RockyBeachSign1Text:
 	text "Rocky Beach"
+	para "Rocky Peak Path"
+	line "To the north"
 	done
 
 RockyBeachSign2Text:
@@ -210,6 +213,8 @@ OrangeCrewDannyScript:
 .SeasonOpen:
 	checkevent EVENT_BEAT_ORANGE_CREW_DANNY
 	iftruefwd .Rematch
+	checkevent EVENT_REACHED_DANNYS_SUMMIT
+	iffalse_jumpopenedtext .PeakText
 	writetext .IntroText
 	waitbutton
 	closetext
@@ -242,13 +247,23 @@ OrangeCrewDannyScript:
 	end
 
 .IntroText:
-	text "I'm Danny of the"
-	line "Orange Crew!"
-	para "I've climbed every"
-	line "peak on these"
-	cont "islands."
-	para "Let's see if you"
-	line "can keep up!"
+	text "You made it all"
+	line "the way up!"
+	para "Now let's see how"
+	line "you handle a team."
+	done
+
+.PeakText:
+	text "I'm Danny. See the"
+	line "ridge up north?"
+	para "Follow the path up"
+	line "to the cave."
+	para "Let the ice carry"
+	line "you. Use the rocks"
+	cont "to stop and turn."
+	para "Find the dry shelf"
+	line "at the top, then"
+	cont "come back to me."
 	done
 
 .BeatenText:

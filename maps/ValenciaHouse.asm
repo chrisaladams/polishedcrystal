@@ -35,14 +35,32 @@ OrangeCrewLuanaScript:
 	checkevent EVENT_BEAT_ORANGE_CREW_LUANA
 	iftruefwd .Rematch
 	writetext .IntroText
-	waitbutton
+	sjumpfwd .Confirm
+.Rematch:
+	farwritetext OrangeLeagueRematchText
+.Confirm:
+	yesorno
+	iffalse_endtext
+	writetext .PairText
+.Choose:
+	promptbutton
+	loadmem wCupId, CUP_LUANA
+	callasm CupSelectTeam
+	ifequalfwd CUPTEAM_CANCEL, .Cancel
+	ifnotequal CUPTEAM_OK, .InvalidPair
 	closetext
-	winlosstext .BeatenText, 0
+	callasm CupBegin
+	winlosstext .BeatenText, .LossText
 	loadtrainer LUANA_T, 1
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
 	startbattle
-	reloadmapafterbattle
-	setevent EVENT_BEAT_ORANGE_CREW_LUANA
+	reloadmap
+	iftruefwd .Lost
+	callasm CupEnd
 	opentext
+	checkevent EVENT_BEAT_ORANGE_CREW_LUANA
+	iftrue_jumpopenedtext .ReturnText
+	setevent EVENT_BEAT_ORANGE_CREW_LUANA
 	writetext .BadgeText
 	playsound SFX_GET_BADGE
 	waitsfx
@@ -50,36 +68,50 @@ OrangeCrewLuanaScript:
 	farscall GiveNextStoryLead
 	endtext
 
-.Rematch:
-	farwritetext OrangeLeagueRematchText
-	yesorno
-	iffalsefwd .No
-	closetext
-	winlosstext .BeatenText, 0
-	loadtrainer LUANA_T, 1
-	startbattle
-	reloadmapafterbattle
-	end
-
-.No:
-	closetext
-	end
+.Cancel:
+	endtext
+.InvalidPair:
+	writetext .InvalidPairText
+	sjump .Choose
+.Lost:
+	callasm CupEnd
+	jumptext .ReturnText
 
 .IntroText:
 	text "I'm Luana of the"
 	line "Orange Crew."
-	para "My son wants to be"
-	line "a great trainer,"
-	cont "just like you."
-	para "Let me show you"
-	line "how a mother"
-	cont "battles!"
+	para "My son learned to"
+	line "battle with just"
+	cont "two partners."
+	para "Let's each pick"
+	line "two for singles,"
+	cont "at Lv.50. Ready?"
+	done
+
+.PairText:
+	text "Pick your lead,"
+	line "then one partner."
+	done
+
+.InvalidPairText:
+	text "Please pick two"
+	line "different #mon."
+	para "Eggs sit this out."
 	done
 
 .BeatenText:
 	text "You and your"
 	line "#mon move as"
 	cont "one!"
+	done
+
+.LossText:
+	text "My pair held on!"
+	done
+
+.ReturnText:
+	text "Come back anytime."
+	line "Try a new pair!"
 	done
 
 .BadgeText:

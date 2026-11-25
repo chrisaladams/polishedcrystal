@@ -40,7 +40,7 @@ Keep the Field Book and quest map as the common source of player directions.
 | **3. Ecology** | The eight movement profiles and environmental interactions are in the build. | Emulator checks cover movement speeds, aggression at walls and habitat boundaries, territory, schooling, and the Sweet Honey Bag flow. Verify encounter pacing and feel on hardware during the release playthrough. |
 | **4. Narrative campaigns** | Cinnabar's flight log leads to the clone battle, with an echo for existing Mewtwo catches. Shamouti's three beacons and Lawrence lead to Lugia. Alph has a staged rescue and two optional illusion battles. Ilex has a time-travel entry, corrupted forest Pokémon, the Marauder and Sammy's reveal. Short leads for Mew, Ho-Oh and the beasts remain optional. | Verify each campaign on hardware and past saves, including alternate beacon order, full reward pockets, losses and resuming a saved quest. |
 | **5. Regional tournaments** | Six solo tournaments run on the shared engine. Indigo Plateau hosts the World Championship after Red. The Field Book lists the rules and today's Kimono type. The quest map tracks open cups and held first prizes. TV and Oak's Pokémon Talk rotate through available tournaments. Hardware testing remains part of the release playthrough. | Rising Star is 3 at level 30. Whirl is 3–6 Water types at level 50. Kimono is 3 at level 50, rotates continuously through 18 types and records a win per type before paying its reward. Dragon Masters includes a Dragon type at level 50. Rental supplies three level-50 Pokémon to each side. The World Championship is 6 at level 50 across an eight-contestant bracket. Emulator checks cover advancement, losses, retries, held prizes across a save and party restoration. |
-| **6. Orange League** | Keep the four islands open to exploration. Give Cissy a short Surf course, Danny an ascent and ice puzzle, Rudy three matchup rounds and Luana a two-Pokémon singles battle. Reuse current trainers and appropriate assets. Keep Drake's six-on-six match and the Pallet ending. | Enter from the ferry in either direction and complete all four challenges in any order. Preserve earlier badges and wins. Check reachability, post-battle placement and the next story handoff. |
+| **6. Orange League** | Cissy runs a Surf course on Warm Beach. Danny sends players up Rocky Peak, with an ice puzzle and a ladder back down. Rudy has three single-Pokémon type rounds. Luana has two-Pokémon singles. The Field Book gives directions for all four. Drake's six-on-six and the Pallet ending follow the Crew badges. | Check the ferries in both directions and earn badges out of order. Earlier badges still count and allow rematches. Verify the ridge, the Surf checkpoints, the restricted-party loss and retry paths, and the handoffs to Drake and Pallet. |
 | **7. Cable Club** | Retain Standard and Random. Add Rising Star and Unrestricted through a shared rules handshake. Prototype offline Friend Battles using a separately budgeted team cache linked to the existing opponent identities. Add preview, updates after compatible exchanges and independent team removal. | Each format validates legal party size and level on both ends. Unrestricted admits legendaries. Generated teams never replace personal teams. The saved team and its lifetime opponent record can be managed independently. |
 | **8. Linked World Championship** | Reuse phase 5 brackets and phase 7 rules. Connect for registration, assign opposite halves, and save a shared identity, seed and rules. Play NPC rounds offline. Reconcile results on reconnect and run the human final over the cable when both qualify. | Exercise both finalists, one finalist, both eliminated, duplicate result exchange and interrupted sessions. Test disconnects and different console clocks. Provide an NPC final for the surviving player. |
 | **9. Bedroom achievements** | Reuse bedroom decorations for Indigo and Orange trophies, one upgraded tournament trophy and an Adventure Album. Use existing story flags and the new cup and championship result flags. | Older wins populate the album. Test trophy upgrades and preserve bedroom customization and the Pokédex diploma. |
@@ -52,9 +52,10 @@ Keep the Field Book and quest map as the common source of player directions.
 Measure free ROM after each phase. The cleanup recovered 19,960 bytes over the
 quest-map build. The clock changes recovered another 601 bytes. The first
 ecology pass used 779 bytes and left 28,333 bytes free. The solo World
-Championship and broadcasts used 1,282 bytes, leaving 19,114 bytes free in
-the 2 MiB build. The largest areas are one empty 16 KiB bank and 2,497 bytes
-in another bank. Keeping a 7 KiB reserve leaves 11,946 bytes for remaining work.
+Championship and broadcasts used 1,282 bytes. The Orange League challenges
+used another 1,229 bytes, leaving 17,885 bytes free in the 2 MiB build.
+The largest areas are one empty 16 KiB bank and 1,253 bytes in another bank.
+Keeping a 7 KiB reserve leaves 10,717 bytes for remaining work.
 
 Battery-backed save space is separate. The current link map reports 444 free
 bytes across four save banks, with 422 bytes split across three gaps in bank 0.
@@ -67,6 +68,6 @@ The fixed work RAM bank has 19 unallocated bytes. Switchable work RAM reports
 banks are mapped to existing graphics and screens. Budget new effects in the
 screen or map that uses them and verify the reused tiles in the emulator.
 
-Expand the Orange challenges next. Finish the new cable handshake before
+Expand the Cable Club formats next. Finish the new cable handshake before
 starting linked championships. Schedule original hardware tests before calling
 the release ready. Seasons, doubles and the simulator overhaul remain deferred.

@@ -9,6 +9,13 @@ WarmBeach_MapScriptHeader:
 	warp_event  3,  8, WARM_BEACH_HOUSE, 1
 
 	def_coord_events
+	coord_event  2, 25, SCENE_ALWAYS, CissyStartBuoy
+	coord_event  3, 25, SCENE_ALWAYS, CissyStartBuoy
+	coord_event  8, 25, SCENE_ALWAYS, CissyMiddleBuoy
+	coord_event 12, 24, SCENE_ALWAYS, CissyFinishBuoy
+	for x, 2, 14
+		coord_event x, 23, SCENE_ALWAYS, CissyLeftCourse
+	endr
 
 	def_bg_events
 	bg_event 17, 14, BGEVENT_JUMPTEXT, WarmBeachShackSignText
@@ -197,6 +204,8 @@ OrangeCrewCissyScript:
 .SeasonOpen:
 	checkevent EVENT_BEAT_ORANGE_CREW_CISSY
 	iftruefwd .Rematch
+	checkevent EVENT_FINISHED_CISSYS_SURF_COURSE
+	iffalsefwd .Course
 	writetext .IntroText
 	waitbutton
 	closetext
@@ -212,6 +221,10 @@ OrangeCrewCissyScript:
 	promptbutton
 	farscall GiveNextStoryLead
 	endtext
+
+.Course:
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
+	jumpopenedtext .CourseText
 
 .Rematch:
 	farwritetext OrangeLeagueRematchText
@@ -229,13 +242,27 @@ OrangeCrewCissyScript:
 	end
 
 .IntroText:
-	text "I'm Cissy of the"
-	line "Orange Crew!"
-	para "Out here, battles"
-	line "are as wild as"
-	cont "the ocean waves."
-	para "Show me you can"
-	line "ride them!"
+	text "Smooth sailing!"
+	para "You read the sea."
+	line "Now read my team!"
+	done
+
+.CourseText:
+	text "I'm Cissy. I teach"
+	line "the island's kids"
+	cont "to read the waves."
+	para "Surf at the west"
+	line "end of this beach."
+	cont "Start in the deep"
+	cont "corner."
+	para "Go south of the"
+	line "first buoy line,"
+	cont "then north of the"
+	cont "second."
+	para "Stay in the water."
+	line "Finish at the east"
+	line "end. I'll wait on"
+	cont "shore."
 	done
 
 .BeatenText:
@@ -248,4 +275,53 @@ OrangeCrewCissyScript:
 	line "the Coral-Eye"
 	cont "Badge!"
 	done
+
+CissyStartBuoy:
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
+	iffalsefwd CissyBuoyDone
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	iftruefwd CissyBuoyDone
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	playsound SFX_READ_TEXT
+	end
+
+CissyMiddleBuoy:
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	iffalsefwd CissyBuoyDone
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	iftruefwd CissyBuoyDone
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	playsound SFX_READ_TEXT
+	end
+
+CissyFinishBuoy:
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	iffalsefwd CissyBuoyDone
+	setevent EVENT_FINISHED_CISSYS_SURF_COURSE
+	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
+	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	jumpthistext
+
+	text "Course clear!"
+	para "Return to Cissy on"
+	line "the beach."
+	done
+
+CissyBuoyDone:
+	end
+
+CissyLeftCourse:
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	iffalsefwd .Done
+	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
+	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	jumpthistext
+
+	text "Back on shore!"
+	para "Restart the course"
+	line "at the west end."
+	done
+.Done:
+	end
 

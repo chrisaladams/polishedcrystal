@@ -1643,6 +1643,10 @@ SECTION "RockyBeach_BlockData", ROMX
 RockyBeach_BlockData:
 	INCBIN "maps/RockyBeach.ablk.lzp"
 
+SECTION "RockyPeak_BlockData", ROMX
+RockyPeak_BlockData:
+	INCBIN "maps/RockyPeak.ablk.lzp"
+
 SECTION "FireIsland_BlockData", ROMX
 FireIsland_BlockData:
 	INCBIN "maps/FireIsland.ablk.lzp"

@@ -9,10 +9,12 @@ CupRules:
 ; level, fewest, most, how they're chosen, rule, type
 	db 30, 3, 3, CUPPICK_THREE, CUPRULE_ANY,      0     ; CUP_RISING_STAR
 	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_ALL_TYPE, WATER ; CUP_WHIRL
-	db 50, 3, 3, CUPPICK_THREE, CUPRULE_ALL_TYPE, CUPTYPE_TODAY ; CUP_KIMONO
+	db 50, 3, 3, CUPPICK_THREE, CUPRULE_ALL_TYPE, CUPTYPE_SCRIPTED ; CUP_KIMONO
 	db 50, 3, 6, CUPPICK_PARTY, CUPRULE_HAS_TYPE, DRAGON ; CUP_DRAGON
 	db 50, RENTAL_CUP_TEAM_SIZE, RENTAL_CUP_TEAM_SIZE, CUPPICK_GENERATED, CUPRULE_ANY, 0 ; CUP_RENTAL
 	db 50, PARTY_LENGTH, PARTY_LENGTH, CUPPICK_PARTY, CUPRULE_ANY, 0 ; CUP_WORLD
+	db 50, 1, 1, CUPPICK_SMALL, CUPRULE_ALL_TYPE, CUPTYPE_SCRIPTED ; CUP_RUDY
+	db 50, 2, 2, CUPPICK_SMALL, CUPRULE_ANY, 0 ; CUP_LUANA
 .End:
 	rsreset
 DEF CUPRULE_LEVEL rb
@@ -32,6 +34,8 @@ CupRecordMasks:
 	db 1 << CUPWON_DRAGON_F      ; CUP_DRAGON
 	db 1 << CUPWON_RENTAL_F      ; CUP_RENTAL
 	db 1 << CUPWON_WORLD_F       ; CUP_WORLD
+	db 0                         ; CUP_RUDY (Orange Crew badge)
+	db 0                         ; CUP_LUANA (Orange Crew badge)
 .End:
 	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
 
@@ -53,6 +57,8 @@ CupSelectTeam::
 	ld a, [hl]
 	cp CUPPICK_GENERATED
 	jmp z, .rentals
+	cp CUPPICK_SMALL
+	jmp z, .small_team
 	cp CUPPICK_THREE
 	jr nz, .whole_party
 	; three, in the Battle Tower's party menu (no eggs or banned Pokemon,
@@ -124,7 +130,7 @@ CupSelectTeam::
 	jr z, .ok
 	push af
 	ld a, [hl]
-	cp CUPTYPE_TODAY
+	cp CUPTYPE_SCRIPTED
 	jr nz, .got_type
 	ld a, [wCupFoeType]
 .got_type
@@ -156,6 +162,48 @@ CupSelectTeam::
 	farcall CupMakeTeam
 	ld a, CUPTEAM_OK
 	jr .done
+
+.small_team
+	xor a
+	ld [wBT_PartySelectCounter], a
+.pick
+	farcall SelectMonFromParty
+	ld a, CUPTEAM_CANCEL
+	jr c, .done
+	ld a, MON_IS_EGG
+	call GetPartyParamLocationAndValue
+	bit MON_IS_EGG_F, a
+	ld a, CUPTEAM_EGG
+	jr nz, .done
+	ld hl, wBT_PartySelections
+	ld a, [wBT_PartySelectCounter]
+	and a
+	ld a, [wCurPartyMon]
+	jr z, .store_pick
+	cp [hl]
+	ld a, CUPTEAM_DUPLICATE
+	jr z, .done
+	ld a, [wCurPartyMon]
+	inc hl
+.store_pick
+	ld [hl], a
+	ld hl, wBT_PartySelectCounter
+	inc [hl]
+	ld c, CUPRULE_MOST
+	call GetCupRules
+	ld a, [wBT_PartySelectCounter]
+	cp [hl]
+	jr nc, .picked
+	ld hl, .PartnerText
+	call PrintText
+	jr .pick
+.picked
+	jmp .stage
+
+.PartnerText:
+	text "Now choose your"
+	line "second #mon."
+	prompt
 
 CupStageTeam:
 ; Copy the chosen Pokemon (wBT_PartySelections) to wOTParty, in order.

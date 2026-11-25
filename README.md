@@ -257,20 +257,22 @@ sketch on the lab wall. Ash then offers his friendly rematch again.
 From the anime's Orange Islands, on the islands Polished Crystal already has
 (reached by the Seagallop Ferry from Vermilion City, in Kanto):
 the four Orange Crew leaders, each with a badge, and Head Leader Drake, who
-battles you once you have all four. Their teams start from the Pokémon they
-used on the show, at post-game levels (70–79), with gym leader battle music.
+battles you once you have all four. The Field Book suggests a route through
+the islands. You can earn the badges in any order.
 
-| Leader | Where | Team | Badge |
+| Leader | Where | Challenge | Badge or prize |
 |---|---|---|---|
-| Cissy | Warm Beach, by the water | Kingdra, Starmie, Lapras, Golduck, Blastoise | Coral-Eye Badge |
-| Danny | Rocky Beach, on the sandy path | Golem, Scyther, Electrode, Machamp, Nidoking | Sea Ruby Badge |
-| Rudy | Beautiful Beach, where the ferry lands | Exeggutor, Starmie, Gyarados, Arcanine, Electivire | Spike Shell Badge |
-| Luana | the house on Valencia Island | Kangaskhan, Persian, Ninetales, Marowak, Alakazam | Jade Star Badge |
-| Drake | the house on Shamouti Island | Ditto, Steelix, Gengar, Venusaur, Electabuzz, Dragonite | Winner's Trophy and 3 Bottle Caps |
+| Cissy | Warm Beach, by the water | Surf the buoy course, then battle her Water team | Coral-Eye Badge |
+| Danny | Rocky Beach, on the sandy path | Climb to Rocky Peak and cross the ice. Take the ladder back to battle him | Sea Ruby Badge |
+| Rudy | Beautiful Beach, where the ferry lands | Three level-50 singles rounds. Choose one Grass, one Fire and one Water type to face Exeggutor, Arcanine and Starmie respectively | Spike Shell Badge |
+| Luana | the house on Valencia Island | Choose two for level-50 singles against Marowak and Alakazam | Jade Star Badge |
+| Drake | the house on Shamouti Island | Six-on-six with Ditto, Steelix, Gengar, Venusaur, Electabuzz and Dragonite | Winner's Trophy and 3 Bottle Caps |
 
-The season opens after Red, and all five offer rematches. The league uses
-existing maps, sprites, music and spare save flags. `python3 utils/anime_events/test_orange_league.py SAVE.sav` checks it in
-the emulator.
+The season opens after Red, and all five offer rematches. Earlier badges
+still qualify for Drake and let you rematch Cissy and Danny directly. Rudy
+and Luana temporarily stage the chosen Pokémon and restore your party healed.
+Rocky Peak uses the existing Ice Path tiles. The emulator checks cover both
+ferry routes and each badge in `utils/anime_events/test_orange_league.py`.
 
 ### Regional cups
 

@@ -666,6 +666,8 @@ ENDM
 	map_const LIGHTNING_ISLAND,                           13, 16 ; 28
 	map_const LIGHTNING_ISLAND_ROOF,                       6,  6 ; 29
 
+	map_const ROCKY_PEAK,                                 8,  8 ; 30
+
 	newgroup                                                     ; 32
 	map_const SAFARI_ZONE_HUB,                            17, 16 ;  1
 	map_const SAFARI_ZONE_EAST,                           17, 15 ;  2

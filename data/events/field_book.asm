@@ -1077,6 +1077,10 @@ FieldBookNotes:
 	para "Take the tunnel to"
 	line "Warm Beach. Cissy"
 	cont "is by the water."
+	para "Ask about her Surf"
+	line "course. Go around"
+	cont "both buoy lines,"
+	cont "then return to her."
 	done
 
 .Danny:
@@ -1085,6 +1089,10 @@ FieldBookNotes:
 	line "Shamouti to Rocky"
 	cont "Beach. Danny is on"
 	cont "the sandy path."
+	para "Climb to the cave"
+	line "on the north ridge."
+	cont "Cross the ice and"
+	cont "report back to him."
 	done
 
 .Rudy:
@@ -1092,6 +1100,10 @@ FieldBookNotes:
 	para "Rudy is near the"
 	line "ferry landing on"
 	cont "Beautiful Beach."
+	para "Bring Grass, Fire"
+	line "and Water types."
+	cont "Pick one per round"
+	cont "at level 50."
 	done
 
 .Luana:
@@ -1106,6 +1118,8 @@ FieldBookNotes:
 	cont "to Valencia. Visit"
 	cont "Luana in the house"
 	cont "west of the lab."
+	para "Choose two partners"
+	line "for Lv.50 singles."
 	done
 
 .Drake:
@@ -1631,8 +1645,8 @@ GiveNextStoryLead:
 .Cissy:
 	text "Cissy sent a note."
 	line "“Meet me on Warm"
-	cont "Beach. Bring shoes"
-	cont "you can get wet!”"
+	cont "Beach. Bring a"
+	cont "partner to Surf!”"
 	para "The Orange Ticket"
 	line "gets you there via"
 	cont "Vermilion ferry."
@@ -1641,15 +1655,17 @@ GiveNextStoryLead:
 	text "Danny went north"
 	line "from Shamouti to"
 	cont "Rocky Beach."
-	para "Tell him to put"
-	line "his fishing rod"
-	cont "down for once!"
+	para "He's marked a trail"
+	line "up to Rocky Peak."
 	done
 .Rudy:
 	text "Rudy practices his"
 	line "footwork near the"
 	cont "ferry landing on"
 	cont "Beautiful Beach."
+	para "Bring one Grass,"
+	line "one Fire and one"
+	cont "Water type."
 	done
 .Luana:
 	text "Luana's at home on"
@@ -1659,6 +1675,8 @@ GiveNextStoryLead:
 	line "Shamouti's #mon"
 	cont "Center if you need"
 	cont "a ferry ride."
+	para "Bring two partners"
+	line "for singles."
 	done
 .Drake:
 	text "Four Crew badges!"

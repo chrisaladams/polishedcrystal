@@ -1148,6 +1148,9 @@ DEF BETA EQU __trainer_class__
 	trainerclass DANNY_T
 
 	trainerclass RUDY_T
+	const RUDY_GRASS
+	const RUDY_FIRE
+	const RUDY_WATER
 
 	trainerclass LUANA_T
 

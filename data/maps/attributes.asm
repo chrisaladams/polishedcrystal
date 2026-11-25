@@ -425,6 +425,8 @@ ENDM
 	map_attributes RockyBeach, ROCKY_BEACH, $35
 	connection south, ShamoutiIsland, SHAMOUTI_ISLAND, 0
 
+	map_attributes RockyPeak, ROCKY_PEAK, $0b
+
 	map_attributes ValenciaIsland, VALENCIA_ISLAND, $0
 	connection west, Route49, ROUTE_49, -2
 

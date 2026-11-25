@@ -852,6 +852,7 @@ INCLUDE "maps/ShamoutiMerchant.asm"
 INCLUDE "maps/ShamoutiTouristCenter.asm"
 INCLUDE "maps/RockyBeach.asm" ; shares text with ShamoutiIsland.asm
 INCLUDE "maps/RockyBeachHouse.asm"
+INCLUDE "maps/RockyPeak.asm"
 
 
 SECTION "Shamouti Scripts 2", ROMX

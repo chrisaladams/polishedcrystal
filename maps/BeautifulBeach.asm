@@ -187,14 +187,54 @@ OrangeCrewRudyScript:
 	checkevent EVENT_BEAT_ORANGE_CREW_RUDY
 	iftruefwd .Rematch
 	writetext .IntroText
-	waitbutton
+	sjumpfwd .Confirm
+.Rematch:
+	farwritetext OrangeLeagueRematchText
+.Confirm:
+	yesorno
+	iffalse_endtext
+	loadmem wCupId, CUP_RUDY
+	loadmem wCupFoeType, GRASS
+	writetext .GrassText
+	sjumpfwd .Pick
+.FireRound:
+	loadmem wCupFoeType, FIRE
+	writetext .FireText
+	sjumpfwd .Pick
+.WaterRound:
+	loadmem wCupFoeType, WATER
+	writetext .WaterText
+.Pick:
+	promptbutton
+	callasm CupSelectTeam
+	ifequalfwd CUPTEAM_CANCEL, .Cancel
+	ifnotequal CUPTEAM_OK, .WrongType
 	closetext
-	winlosstext .BeatenText, 0
-	loadtrainer RUDY_T, 1
+	callasm CupBegin
+	readmem wCupFoeType
+	ifequalfwd GRASS, .GrassBattle
+	ifequalfwd FIRE, .FireBattle
+	loadtrainer RUDY_T, RUDY_WATER
+	sjumpfwd .Battle
+.GrassBattle:
+	loadtrainer RUDY_T, RUDY_GRASS
+	sjumpfwd .Battle
+.FireBattle:
+	loadtrainer RUDY_T, RUDY_FIRE
+.Battle:
+	winlosstext .BeatenText, .LossText
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
 	startbattle
-	reloadmapafterbattle
-	setevent EVENT_BEAT_ORANGE_CREW_RUDY
+	reloadmap
+	iftruefwd .Lost
+	callasm CupEnd
 	opentext
+	readmem wCupFoeType
+	ifequal GRASS, .FireRound
+	ifequal FIRE, .WaterRound
+	checkevent EVENT_BEAT_ORANGE_CREW_RUDY
+	iftrue_jumpopenedtext .RematchWinText
+	setevent EVENT_BEAT_ORANGE_CREW_RUDY
 	writetext .BadgeText
 	playsound SFX_GET_BADGE
 	waitsfx
@@ -202,33 +242,62 @@ OrangeCrewRudyScript:
 	farscall GiveNextStoryLead
 	endtext
 
-.Rematch:
-	farwritetext OrangeLeagueRematchText
-	yesorno
-	iffalsefwd .No
-	closetext
-	winlosstext .BeatenText, 0
-	loadtrainer RUDY_T, 1
-	startbattle
-	reloadmapafterbattle
-	end
-
-.No:
-	closetext
-	end
+.Cancel:
+	endtext
+.WrongType:
+	writetext .WrongTypeText
+	sjump .Pick
+.Lost:
+	callasm CupEnd
+	jumptext .RetryText
 
 .IntroText:
 	text "I'm Rudy of the"
 	line "Orange Crew."
-	para "Battling is like"
-	line "dancing: it's all"
-	cont "about timing."
+	para "I teach dancing"
+	line "here by the docks."
+	para "Three solo rounds."
+	line "Grass, Fire, Water"
+	cont "Each at level 50."
+	para "Pick one of the"
+	line "right type each"
+	cont "round."
+	para "Win all three."
 	para "Shall we dance?"
 	done
 
+.GrassText:
+	text "Round one. Pick a"
+	line "Grass-type #mon."
+	done
+.FireText:
+	text "Round two. Pick a"
+	line "Fire-type #mon."
+	done
+.WaterText:
+	text "Final. Pick a"
+	line "Water-type #mon."
+	done
+.WrongTypeText:
+	text "Pick a #mon of"
+	line "the round's type."
+	para "Eggs sit this out."
+	done
 .BeatenText:
 	text "What graceful"
 	line "footwork!"
+	done
+.LossText:
+	text "I take this round!"
+	done
+.RetryText:
+	text "Take a breather."
+	para "We'll start from"
+	line "round one anytime."
+	done
+.RematchWinText:
+	text "Three clean rounds"
+	line "You kept the beat!"
 	done
 
 .BadgeText:

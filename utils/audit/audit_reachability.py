@@ -54,6 +54,8 @@ STORY_STOPS = (
     ('FireIslandRoof', 5, 4, 'Fire beacon'), ('IceIslandRoof', 5, 4, 'Ice beacon'),
     ('LightningIslandRoof', 5, 4, 'Lightning beacon'),
     ('GoldenrodDeptStore6F', 8, 3, 'Rental Cup desk'),
+    ('RockyBeach', 24, 6, 'Rocky Peak entrance'),
+    ('RockyBeach', 22, 26, 'Rocky Peak descent landing'),
 )
 # flags that make them all appear
 SHOW = ('EVENT_BEAT_ELITE_FOUR', 'EVENT_BEAT_DRAKE', 'EVENT_TIME_TRAVEL_FINISHED', 'EVENT_GOT_MYSTICTICKET_FROM_RED')

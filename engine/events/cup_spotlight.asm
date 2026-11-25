@@ -1,11 +1,11 @@
 GetCupSpotlight::
 	; Rotate with the world clock. Skip cups whose story gates are closed.
-	assert WORLD_CLOCK_DAYS % NUM_CUPS == 0
+	assert WORLD_CLOCK_DAYS % NUM_BROADCAST_CUPS == 0
 	ld a, [wRTCDayLo]
 .day
-	sub NUM_CUPS
+	sub NUM_BROADCAST_CUPS
 	jr nc, .day
-	add NUM_CUPS
+	add NUM_BROADCAST_CUPS
 	ld c, a
 .check
 	ld a, c
@@ -23,7 +23,7 @@ GetCupSpotlight::
 	ld a, c
 	ret nz
 	inc c
-	cp NUM_CUPS - 1
+	cp NUM_BROADCAST_CUPS - 1
 	jr nz, .check
 	ld a, CUP_RISING_STAR
 	ret
@@ -60,7 +60,7 @@ CupSpotlightNames:
 	dw .Dragon, .Blackthorn
 	dw .Rental, .Goldenrod
 	dw .World, .Indigo
-	assert_table_length NUM_CUPS
+	assert_table_length NUM_BROADCAST_CUPS
 .Rising:     db "Rising Star Cup@"
 .Park:       db "National Park Gate@"
 .Whirl:      db "Whirl Cup@"

@@ -8,7 +8,10 @@
 	const CUP_DRAGON      ; Blackthorn: 3-6 with a Dragon type at level 50
 	const CUP_RENTAL      ; Goldenrod: three generated Pokémon at level 50
 	const CUP_WORLD       ; Indigo Plateau: six at level 50
+	const CUP_RUDY        ; one Pokémon of the round's type
+	const CUP_LUANA       ; two Pokémon, singles rules
 DEF NUM_CUPS EQU const_value
+DEF NUM_BROADCAST_CUPS EQU CUP_WORLD + 1
 DEF RENTAL_CUP_TEAM_SIZE EQU 3
 DEF WORLD_CUP_CONTESTANTS EQU 8
 
@@ -17,6 +20,7 @@ DEF WORLD_CUP_CONTESTANTS EQU 8
 	const CUPPICK_THREE ; three, in the Battle Tower's party menu
 	const CUPPICK_PARTY ; the whole party (eggs aside)
 	const CUPPICK_GENERATED ; a new team from the rental sets
+	const CUPPICK_SMALL ; choose one or two from the regular party menu
 
 ; what a cup asks of its team
 	const_def
@@ -25,7 +29,7 @@ DEF WORLD_CUP_CONTESTANTS EQU 8
 	const CUPRULE_HAS_TYPE ; at least one has the type
 
 ; CupRules and CupMakeTeam types besides the 18
-DEF CUPTYPE_TODAY EQU $fe ; the Kimono Cup's (wCupFoeType)
+DEF CUPTYPE_SCRIPTED EQU $fe ; use the type selected by the script (wCupFoeType)
 DEF CUPTYPE_ANY   EQU $ff ; CupMakeTeam: any, with a decent spread
 
 DEF NUM_KIMONO_TYPES EQU 18
@@ -36,6 +40,8 @@ DEF NUM_KIMONO_TYPES EQU 18
 	const CUPTEAM_CANCEL ; backed out of choosing
 	const CUPTEAM_SIZE   ; too few or too many
 	const CUPTEAM_TYPE   ; doesn't meet the type rule
+	const CUPTEAM_DUPLICATE ; chose the same party slot twice
+	const CUPTEAM_EGG   ; chose an Egg
 
 ; wCupRecords: first wins (byte 0); Kimono Cup wins by type (bytes 1-3)
 	const_def

@@ -9,7 +9,10 @@ from pathlib import Path
 
 from test_cameos import CAMEOS
 from test_movie_events import EVENTS
-from test_orange_league import DRAKE, LEADERS
+from test_orange_league import (
+    DRAKE, LEADERS, MATCHUP_SPECIES, SURF_COURSE, SUMMIT,
+    finish_challenge_battle, prepare_matchup_team, select_party,
+)
 from test_whirl_cup import ROUNDS
 from field_book_checkpoints import guide_checkpoints
 from test_wild_mons import Game, rgbasm_values
@@ -24,13 +27,13 @@ def main(save):
              'EVENT_BEAT_IRON_MASK_MARAUDER', 'EVENT_READ_CINNABAR_CLONE_REPORT',
              'EVENT_BEAT_MEWTWO_CLONES', 'EVENT_WON_WHIRL_CUP',
              'EVENT_WON_PALLET_INVITATIONAL', 'EVENT_MOLLY_PATCH_PENDING', 'EVENT_WHIRL_CUP_PRIZE_PENDING',
-             'EVENT_MARAUDER_REWARD_PENDING', *(entry[6] for entry in LEADERS)]
+             'EVENT_MARAUDER_REWARD_PENDING', SURF_COURSE, SUMMIT, *(entry[6] for entry in LEADERS)]
     names = flags + [prefix + m for m in maps for prefix in ('GROUP_', 'MAP_')]
     names += ['EVENT_GOT_A_POKEMON_FROM_ELM', 'EVENT_BEAT_ELITE_FOUR', 'RED', 'ASH_T', 'SQUIRTLE', 'PARTYMON_STRUCT_LENGTH', 'MAX_ITEMS', 'MAX_ITEM_STACK',
               'DAILYFLAGS2_RED_IN_MOUNT_SILVER_F', 'BIG_NUGGET', 'MYSTIC_WATER', 'ABILITYPATCH', 'EVENT_TIME_TRAVEL_FINISHED',
               'EVENT_CERULEAN_CAVE_MEWTWO', 'EVENT_OLIVINE_PORT_SPRITES_AFTER_HALL_OF_FAME',
               *(entry[5] for entry in LEADERS + (DRAKE,)), *(entry[5] for entry in EVENTS),
-              *(cls for cls, _ in ROUNDS)]
+              'TACKLE', *MATCHUP_SPECIES, *(cls for cls, _ in ROUNDS)]
     k = rgbasm_values(names, None)
     save_data = Path(save).read_bytes()
     g = Game(save_data)
@@ -103,6 +106,9 @@ def main(save):
                 break
             g.press('a', 40)
         assert g.rd('wBattleMode') and g.rd('wOtherTrainerClass') == k[cls], f'expected battle with {cls}'
+        if cls in ('RUDY_T', 'LUANA_T'):
+            finish_challenge_battle(g, k, win=win)
+            return
         g.tick(400)
         if win:
             party, count, loser, survivor = 'wOTPartyMon1HP', 'wOTPartyCount', 'wEnemyMonHP', 'wBattleMonHP'
@@ -221,6 +227,7 @@ def main(save):
         flag('EVENT_BEAT_ORANGE_CREW_DANNY', True)
         flag('EVENT_BEAT_ORANGE_CREW_RUDY', True)
         flag('EVENT_WON_WHIRL_CUP', True)
+        flag(SURF_COURSE, True)
         _, mp, x, y, facing, cls, _ = LEADERS[0]
         visit(mp, x, y, facing)
         texts.clear()
@@ -228,6 +235,10 @@ def main(save):
         settle()
         assert g.sym['GiveNextStoryLead.Luana'] in texts
         g.load(before_crew)
+        # The Orange League test drives the Surf course and climb with real movement.
+        flag(SURF_COURSE, True)
+        flag(SUMMIT, True)
+        prepare_matchup_team(g, k)
 
         crew = LEADERS + (DRAKE,)
         previous = 'Echo'
@@ -235,6 +246,13 @@ def main(save):
             following = crew[i + 1][0] if i + 1 < len(crew) else 'Cup'
             book(name, previous, following)
             visit(mp, x, y, facing)
+            if name == 'Rudy':
+                for pick in (0, 1):
+                    select_party(g, pick)
+                    battle(cls)
+                select_party(g, 2)
+            elif name == 'Luana':
+                select_party(g, 0, 1)
             battle(cls)
             settle()
             assert flag(badge), badge
