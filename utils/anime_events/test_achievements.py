@@ -7,7 +7,8 @@
   silver for three to five and gold for all six, and says how many;
 - the Adventure Album (the bedroom PC's "Album") stars what's done on its
   Leagues, Stories and Cups pages, with counts for the badges, the Orange
-  Crew and the Kimono Cup's types.
+  Crew and the Kimono Cup's types; each page is marked "n/3"; Right goes on,
+  Left goes back (not before the first), B closes it from any page.
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_achievements.py SAVE.sav
@@ -138,11 +139,14 @@ def main():
         g.press('b', 30)
 
     # the album
-    def album_pages():
+    def open_album():
         room()
         g.face('up')
         for b in ['a', 'a'] + ['down'] * 5 + ['a']:
             g.press(b, 60 if b == 'a' else 15)
+
+    def album_pages():
+        open_album()
         pages = []
         for _ in range(3):
             g.tick(60)
@@ -178,6 +182,29 @@ def main():
         fails.append(('album', f'Kimono count tiles {kimono.hex()}'))
     if g.rd('wMapGroup') != K['GROUP_PLAYERS_HOUSE_2F'] or g.rd('wMapNumber') != K['MAP_PLAYERS_HOUSE_2F']:
         fails.append(('album', 'not back in the bedroom afterwards'))
+
+    # moving through it: the page marker after each press
+    def marker():
+        g.tick(40)
+        return bytes(g.rd('wTilemap', 20 + 16 + c) for c in range(3))
+
+    def mark(n):
+        return bytes([0xe0 + n, 0xdc, 0xe3])  # "n/3"
+
+    g.load(base)
+    open_album()
+    seen = [marker()]
+    for b in ('right', 'right', 'left', 'left', 'left'):
+        g.press(b, 20)
+        seen.append(marker())
+    want = [mark(n) for n in (1, 2, 3, 2, 1, 1)]
+    if seen != want:
+        fails.append(('album', f'pages after Right, Right, Left, Left, Left: {[s.hex() for s in seen]}'))
+    g.press('right', 20)
+    g.press('b', 20)
+    g.tick(120)
+    if g.rd('wMapGroup') != K['GROUP_PLAYERS_HOUSE_2F'] or bytes(g.rd('wTilemap', 20 + 16 + c) for c in range(3)) == mark(2):
+        fails.append(('album', 'B on page 2 did not close it'))
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

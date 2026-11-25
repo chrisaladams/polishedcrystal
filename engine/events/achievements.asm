@@ -131,30 +131,57 @@ Special_AdventureAlbum::
 	call _AdventureAlbum
 	jmp ExitAllMenus
 
+DEF NUM_ALBUM_PAGES EQU 3
+
 _AdventureAlbum:
+; A or Right: the next page (after the last, the album closes); Left: the
+; one before; B: close.
 	farcall CupCheckRecords
-	ld hl, AlbumPages
+	xor a
 .page
-	ld a, [hli]
-	ld e, a
-	ld a, [hli]
-	ld d, a
-	or e
-	ret z
-	push hl
+	push af
 	call AlbumShowPage
-	pop hl
+	ld b, a
+	pop af
+	bit B_PAD_B, b
+	ret nz
+	bit B_PAD_LEFT, b
+	jr z, .forward
+	and a
+	jr z, .page
+	dec a
 	jr .page
+.forward
+	inc a
+	cp NUM_ALBUM_PAGES
+	jr c, .page
+	ret
 
 AlbumShowPage:
-; Show the page at de, and wait for a button.
-	push de
+; Show page a (from 0), marked "n/N"; a = the button pressed.
+	push af
 	call ClearTileMap
 	call ClearSprites
 	hlcoord 0, 0
 	lb bc, SCREEN_HEIGHT - 2, SCREEN_WIDTH - 2
 	call Textbox
-	pop de
+	pop af
+	hlcoord 16, 1
+	push af
+	add '1'
+	ld [hli], a
+	ld a, '/'
+	ld [hli], a
+	ld [hl], '0' + NUM_ALBUM_PAGES
+	pop af
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, AlbumPages
+	add hl, de
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
 	hlcoord 2, 1
 	call AlbumPlaceString
 	hlcoord 1, 3
@@ -179,7 +206,13 @@ AlbumShowPage:
 	call SetDefaultBGPAndOBP
 	ld c, 8
 	call DelayFrames
-	jmp WaitPressAorB_BlinkCursor
+.wait
+	call DelayFrame
+	call GetJoypad
+	ldh a, [hJoyPressed]
+	and PAD_A | PAD_B | PAD_LEFT | PAD_RIGHT
+	jr z, .wait
+	ret
 
 AlbumPlaceString:
 ; Place the string at de at hl; de = after it.
@@ -326,8 +359,9 @@ AlbumCount:
 	ret
 
 AlbumPages:
+	table_width 2
 	dw .Leagues, .Stories, .Cups
-	dw 0
+	assert_table_length NUM_ALBUM_PAGES
 
 .Leagues:
 	db "Leagues@"
