@@ -20,8 +20,9 @@ _StandardRulesText::
 	done
 
 _RisingRulesText::
-	text "Bring three #mon"
-	line "for Lv.30 battles."
+	text "Bring three"
+	line "#mon for Lv.30"
+	cont "battles."
 	para "No Eggs, Mewtwo,"
 	line "Mew, Lugia, Ho-Oh"
 	cont "or Celebi."

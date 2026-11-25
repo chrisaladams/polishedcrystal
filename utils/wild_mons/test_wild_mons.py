@@ -71,10 +71,23 @@ class Game:
         self.pb = PyBoy(ROM, window='null', ram_file=io.BytesIO(save_bytes))
         self.pb.set_emulation_speed(0)
         self.m = self.pb.memory
+        # LE_SHOTS=dir: render every frame and keep one in 40 there (for
+        # looking at scenes as the tests play them; slower)
+        self.shots = os.environ.get('LE_SHOTS')
+        self.frame = 0
+        if self.shots:
+            os.makedirs(self.shots, exist_ok=True)
 
     def tick(self, n=1):
         for _ in range(n):
-            self.pb.tick(1, False)
+            if self.shots:
+                self.pb.tick(1, True)
+                self.frame += 1
+                if self.frame % 40 == 0:
+                    self.pb.screen.image.convert('RGB').save(
+                        os.path.join(self.shots, f'{os.getpid()}_{self.frame:07d}.png'))
+            else:
+                self.pb.tick(1, False)
 
     def press(self, b, wait=30, hold=5):
         self.pb.button_press(b)

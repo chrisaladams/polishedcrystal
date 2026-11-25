@@ -614,21 +614,21 @@ RisingStarCupScript:
 	done
 
 .ComeBackText:
-	text "Your #mon are as"
-	line "they were. Come"
+	text "Your #mon are"
+	line "as they were. Come"
 	cont "back anytime!"
 	done
 
 .TomorrowText:
-	text "Your #mon are as"
-	line "they were. Win"
+	text "Your #mon are"
+	line "as they were. Win"
 	cont "again tomorrow for"
 	cont "a Rare Candy!"
 	done
 
 .OutText:
-	text "Your #mon are as"
-	line "they were. Try"
+	text "Your #mon are"
+	line "as they were. Try"
 	cont "again anytime!"
 	done
 

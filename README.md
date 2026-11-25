@@ -185,8 +185,9 @@ Both pages keep their totals if you start a new adventure on the same cartridge.
 
 ### Random Battle
 
-At the battle desk, after "Would you like to battle?", choose **Normal** or
-**Random teams** (both players must choose the same). With random teams each
+At the battle desk, after "Would you like to battle?", choose **Random
+teams** from the formats (both players must choose the same; see the table
+above). With random teams each
 player gets six random level 50 Pokémon, all different species, fully evolved
 and non-legendary, with perfect DVs and a neutral nature, so a brand-new save
 can battle a finished one on equal terms. Teams get a decent type spread: no
@@ -203,7 +204,7 @@ A save made inside a room whose scripts moved in a newer build (the Pokémon
 Center 2F link room, after this update) used to crash when you talked to
 someone there; continuing a save now takes the room's scripts from the ROM.
 
-**Both players need the same build.** This is the Christmas release, link version 2 (Link Edition 1.0 was version 1). A version 2 game won't battle a version 1 game, since the battle rules changed; everyone needs to flash the new build. Trading with a 1.0 game still works, because the party layout hasn't changed. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync.
+**Both players need the same build.** This build is link version 4 (Link Edition 1.0 was version 1, the Christmas release 2, the expanded Cable Club formats 3, and the unified rules 4: see [`docs/rules-matrix.md`](docs/rules-matrix.md)). Games of different link versions won't battle, since the battle rules changed; everyone needs to flash the same build. Trading with a 1.0 game still works, because the party layout hasn't changed. Link Edition has its own link game ID, so it won't connect to stock Polished Crystal or to the pre-release Link Edition builds at all; that's deliberate, since mismatched battle rules or party layouts would desync.
 
 ### Specialty shops
 
@@ -453,7 +454,9 @@ SAVE.sav` checks them in the emulator.
 
 ### The movies
 
-Three events from the first movies, each a battle where the story happened:
+Three of the movie stories, each a battle where the story happened (the
+fourth, The Power of One, is the Shamouti beacons chapter of the Field Book,
+above):
 
 - **Mewtwo Strikes Back**, Cerulean Cave (after Red): before you can battle
   Mewtwo, it speaks to you (the music falls silent and the cave pulses in
@@ -493,8 +496,10 @@ emulator.
 Story scenes use a small effects library: tints, pulses, flashes and
 silhouettes, with the palettes and music restored exactly afterwards. Map
 scripts use it through `scene_begin`, `scene_tint`, `scene_end` and the other
-macros in [`docs/cinematics.md`](docs/cinematics.md). The Mewtwo clones are
-the first scene to use it; the other campaigns come next (roadmap Phase 5).
+macros in [`docs/cinematics.md`](docs/cinematics.md). Each movie story, the
+Orange League and the Pallet finals have first-pass scenes (listed there):
+color, flashes, shadows and sparkles. Fuller staging, with characters moving,
+environments changing and dedicated art, is still to come.
 `utils/anime_events/test_cinematic.py` checks the effects.
 
 ### Checking the postgame

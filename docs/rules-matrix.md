@@ -109,7 +109,8 @@ if they knocked out your partner, it says that (`WorldLinkLastResult`).
 result in 203 cases, in either order and twice over, and that the offline
 cup's rounds follow it.
 
-## Not yet decided
+## Cup rewards
 
-- Early and repeated cup rewards, difficulty progression and free healing:
-  the roadmap's last Phase 3 item.
+Reviewed in [`cup-rewards-review.md`](cup-rewards-review.md). One change was
+made: the Rising Star Cup's repeat Rare Candy is now once a day, and other
+repeat wins that day give a Poké Ball.

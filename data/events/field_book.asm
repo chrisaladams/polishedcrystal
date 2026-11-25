@@ -379,9 +379,10 @@ FieldBookNotes:
 	text "Pallet Town"
 	para "Sammy, the boy"
 	line "from Ilex, wanted"
-	cont "to study #mon in"
-	cont "Pallet. Ask Prof."
-	cont "Oak about him."
+	cont "to study #mon"
+	cont "in Pallet. Ask"
+	cont "Prof. Oak about"
+	cont "him."
 	done
 
 .Starter:
@@ -1079,8 +1080,8 @@ FieldBookNotes:
 	cont "is by the water."
 	para "Ask about her Surf"
 	line "course. Go around"
-	cont "both buoy lines,"
-	cont "then return to her."
+	cont "both buoy lines"
+	cont "and return to her."
 	done
 
 .Danny:
@@ -1090,9 +1091,9 @@ FieldBookNotes:
 	cont "Beach. Danny is on"
 	cont "the sandy path."
 	para "Climb to the cave"
-	line "on the north ridge."
+	line "on the north peak."
 	cont "Cross the ice and"
-	cont "report back to him."
+	cont "go back to him."
 	done
 
 .Rudy:
@@ -1118,7 +1119,7 @@ FieldBookNotes:
 	cont "to Valencia. Visit"
 	cont "Luana in the house"
 	cont "west of the lab."
-	para "Choose two partners"
+	para "Pick two partners"
 	line "for Lv.50 singles."
 	done
 
@@ -1544,7 +1545,7 @@ TraceyCallsWithALead:
 	endtext
 
 .Call:
-	text "The #gear rings."
+	text "The phone rings."
 	para "Tracey: Got a pen?"
 	line "I've got a name"
 	cont "for your book."

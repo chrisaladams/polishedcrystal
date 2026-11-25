@@ -278,7 +278,7 @@ OrangeCrewRudyScript:
 
 .GrassText:
 	text "Round one. Pick a"
-	line "Grass-type #mon."
+	line "Grass #mon."
 	done
 .FireText:
 	text "Round two. Pick a"
@@ -286,7 +286,7 @@ OrangeCrewRudyScript:
 	done
 .WaterText:
 	text "Final. Pick a"
-	line "Water-type #mon."
+	line "Water #mon."
 	done
 .WrongTypeText:
 	text "Pick a #mon of"
