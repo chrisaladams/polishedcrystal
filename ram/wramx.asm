@@ -1692,6 +1692,11 @@ SECTION "Cup Party Backup", WRAMX
 
 ; Link Edition: your party while you're in a cup (engine/events/cups.asm)
 wCupPartyBackup:: ds CUP_BACKUP_LENGTH
+; and in the World Championship (engine/events/world_cup.asm), for its
+; bracket screen: the draw (contestants in bracket order), and each
+; contestant's results: matches won (WORLDCUP_WINS_MASK), WORLDCUP_OUT_F
+wWorldCupDraw:: ds WORLD_CUP_CONTESTANTS
+wWorldCupResults:: ds WORLD_CUP_CONTESTANTS
 
 
 SECTION "Sprites Backup", WRAMX

@@ -31,6 +31,57 @@ WorldCupDraw::
 	ld [wWorldCupSeed + 1], a
 	xor a
 	ld [wWorldCupPairCursor], a
+	; the draw kept for the bracket screen, and no results yet
+	ldh a, [rWBK]
+	push af
+	ld hl, wWorldCupBracket
+	ld de, wWorldCupDraw
+	ld c, WORLD_CUP_CONTESTANTS
+.keep
+	ld a, [hli] ; (WRAM0)
+	ld b, a
+	ld a, BANK(wWorldCupDraw)
+	ldh [rWBK], a
+	ld a, b
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .keep
+	ld hl, wWorldCupResults
+	ld bc, WORLD_CUP_CONTESTANTS
+	xor a
+	rst ByteFill
+	pop af
+	ldh [rWBK], a
+	ret
+
+WorldCupNoteResult:
+; For the bracket screen: contestant a beat contestant c. Keeps af, bc.
+	push af
+	push bc
+	ld b, a
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wWorldCupResults)
+	ldh [rWBK], a
+	ld a, b
+	call .Result
+	inc [hl]
+	ld a, c
+	call .Result
+	set WORLDCUP_OUT_F, [hl]
+	pop af
+	ldh [rWBK], a
+	pop bc
+	pop af
+	ret
+
+.Result:
+	ld hl, wWorldCupResults
+	add l
+	ld l, a
+	ret nc
+	inc h
 	ret
 
 WorldCupNextPair::
@@ -131,29 +182,73 @@ WorldCupLoadOpponent::
 	ret
 
 WorldCupAdvance::
-	; The player's win leaves seed zero in slot zero. For other matches,
-	; WorldCupWinner decides, from the draw's seed and the match.
+; After you win a round: the trainers' matches, and the next round's draw;
+; hScriptVar = FALSE if that was the final.
+	ld a, [wWorldCupBracket + 1]
+	ld c, a
+	xor a ; you
+	call WorldCupNoteResult
+	ld b, 1 ; (yours is decided)
+	call WorldCupPlayRound
+	ld a, FALSE
+	jr z, .done
+	inc a ; TRUE
+.done
+	ldh [hScriptVar], a
+	ret
+
+WorldCupPlayOut::
+; After you lose: who beat you goes on, and the rest of the bracket is
+; played out (decided as WorldCupWinner decides every trainers' match), so
+; the bracket screen can show the champion.
+	ld a, [wWorldCupBracket + 1]
+	ld [wWorldCupBracket], a
+	ld c, 0 ; you
+	call WorldCupNoteResult
+	ld b, 1
+.round
+	call WorldCupPlayRound
+	ret z
+	ld b, 0
+	jr .round
+
+WorldCupPlayRound:
+; The round's matches from pair b on (each match numbered as WorldCupWinner
+; expects: 0-3, 4-5, 6), the winners moved up to the next round's draw. z
+; if that was the final.
 	ld a, [wWorldCupRoundSize]
 	ld c, a
 	ld a, WORLD_CUP_CONTESTANTS
 	sub c
-	inc a
-	ld [wWorldCupMatch], a ; this round's first trainers' match: 1 (of 0-3), then 5 (of 4-5)
+	add b
+	ld [wWorldCupMatch], a
 	ld a, c
 	srl a
 	ld [wWorldCupRoundSize], a
-	ld b, a
+	ld c, a
 	xor a
 	ld [wWorldCupPairCursor], a
-	inc a
-	cp b
-	ld a, FALSE
-	ldh [hScriptVar], a
-	ret z
-	dec b
-	ld hl, wWorldCupBracket + 2
-	ld de, wWorldCupBracket + 1
-.advance
+	ld a, c
+	sub b
+	jr z, .played
+	ld c, a ; pairs to play
+	ld a, b
+	add a
+	ld hl, wWorldCupBracket
+	add l
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld a, b
+	ld de, wWorldCupBracket
+	add e
+	ld e, a
+	adc d
+	sub e
+	ld d, a
+	ld b, c
+.match
 	push bc
 	push de
 	ld a, [hli]
@@ -167,16 +262,183 @@ WorldCupAdvance::
 	ld [wWorldCupMatch], a
 	ld hl, wWorldCupSeed
 	call WorldCupWinner
+	cp b
+	jr nz, .b_lost
+	ld b, c
+.b_lost
+	ld c, b ; the loser
+	call WorldCupNoteResult
 	pop hl
 	pop de
 	ld [de], a
 	inc de
 	pop bc
 	dec b
-	jr nz, .advance
-	ld a, TRUE
-	ldh [hScriptVar], a
+	jr nz, .match
+.played
+	ld a, [wWorldCupRoundSize]
+	dec a
 	ret
+
+WorldCupShowBracket::
+; The bracket screen: everyone in the draw's order, a star for each round
+; they've won and a cross where they went out, and the champion once there
+; is one. (A copy of the bank-2 history in wStringBuffer5 to read from:
+; the draw, then the results.)
+	ldh a, [rWBK]
+	push af
+	ld hl, wWorldCupDraw
+	ld de, wStringBuffer5
+	ld c, 2 * WORLD_CUP_CONTESTANTS
+.copy
+	ld a, BANK(wWorldCupDraw)
+	ldh [rWBK], a
+	ld b, [hl]
+	inc hl
+	ld a, BANK(wStringBuffer5)
+	ldh [rWBK], a
+	ld a, b
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .copy
+	pop af
+	ldh [rWBK], a
+
+	call FadeToMenu_BackupSprites
+	call LoadStandardFont
+	call LoadFrame
+	call ClearTileMap
+	call ClearSprites
+	hlcoord 0, 0
+	lb bc, SCREEN_HEIGHT - 2, SCREEN_WIDTH - 2
+	call Textbox
+	hlcoord 1, 1
+	ld de, .Title
+	rst PlaceString
+	hlcoord 11, 2
+	ld de, .Rounds
+	rst PlaceString
+	ld c, 0
+.row
+	; rows 4-5, 7-8, 10-11, 13-14: the four first-round pairs
+	push bc
+	ld a, c
+	srl a
+	add c
+	add 4
+	hlcoord 2, 0
+	ld bc, SCREEN_WIDTH
+	call AddNTimes
+	pop bc
+	push bc
+	push hl
+	call .Who
+	call .Name
+	pop hl
+	push hl
+	rst PlaceString
+	pop hl
+	ld de, 9
+	add hl, de ; their QF column
+	pop bc
+	push bc
+	call .Who
+	ld de, wStringBuffer5 + WORLD_CUP_CONTESTANTS
+	add e
+	ld e, a
+	adc d
+	sub e
+	ld d, a
+	ld a, [de]
+	ld b, a
+	and WORLDCUP_WINS_MASK
+	jr z, .no_wins
+	ld c, a
+.star
+	ld [hl], '★'
+	inc hl
+	inc hl
+	inc hl
+	dec c
+	jr nz, .star
+.no_wins
+	bit WORLDCUP_OUT_F, b
+	jr z, .next
+	ld [hl], '×'
+.next
+	pop bc
+	inc c
+	ld a, c
+	cp WORLD_CUP_CONTESTANTS
+	jr c, .row
+
+	; the champion: three wins
+	ld hl, wStringBuffer5 + WORLD_CUP_CONTESTANTS
+	ld c, 0
+.find
+	ld a, [hli]
+	and WORLDCUP_WINS_MASK
+	cp 3
+	jr z, .champion
+	inc c
+	ld a, c
+	cp WORLD_CUP_CONTESTANTS
+	jr c, .find
+	jr .shown
+.champion
+	ld a, c
+	call .Name
+	push de
+	hlcoord 2, 16
+	ld de, .Champion
+	rst PlaceString
+	pop de
+	hlcoord 12, 16
+	rst PlaceString
+.shown
+	hlcoord 0, 0, wAttrmap
+	xor a
+	ld bc, SCREEN_AREA
+	rst ByteFill
+	call ApplyAttrAndTilemapInVBlank
+	ld a, CGB_PLAIN
+	call GetCGBLayout
+	call SetDefaultBGPAndOBP
+	ld c, 8
+	call DelayFrames
+	call WaitPressAorB_BlinkCursor
+	jmp ExitAllMenus
+
+.Who:
+; a = who's at draw position c. Keeps hl.
+	push hl
+	ld hl, wStringBuffer5
+	ld b, 0
+	add hl, bc
+	ld a, [hl]
+	pop hl
+	ret
+
+.Name:
+; de = contestant a's name.
+	and a
+	ld de, wPlayerName
+	ret z
+	call WorldCupTrainer
+	inc hl
+	inc hl
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
+	ret
+
+.Title:
+	db "World Championship@"
+.Rounds:
+	db "QF SF F@"
+.Champion:
+	db "Champion:@"
 
 WorldCupWinner::
 ; a = the winner of trainers b and c (WorldCupTrainers indexes, plus one) in

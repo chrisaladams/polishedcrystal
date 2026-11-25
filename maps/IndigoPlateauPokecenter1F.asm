@@ -729,15 +729,17 @@ IndigoPlateauWorldCup:
 	callasm CupBegin
 	callasm WorldCupDraw
 	showtext .QuarterfinalText
-	sjumpfwd .Pairings
+	sjumpfwd .Bracket
 .NextRound:
 	callasm CupHealTeam
 	readmem wWorldCupRoundSize
 	ifequalfwd 2, .Final
 	showtext .SemifinalText
-	sjumpfwd .Pairings
+	sjumpfwd .Bracket
 .Final:
 	showtext .FinalText
+.Bracket:
+	callasm WorldCupShowBracket ; (Link Edition: where everyone stands)
 .Pairings:
 	callasm WorldCupNextPair
 	iffalsefwd .Battle
@@ -763,6 +765,7 @@ IndigoPlateauWorldCup:
 .Advance:
 	callasm WorldCupAdvance
 	iftrue .NextRound
+	callasm WorldCupShowBracket
 	callasm CupEnd
 	callasm CupWin
 	opentext
@@ -781,7 +784,11 @@ IndigoPlateauWorldCup:
 	jumpopenedtext .ReturnText
 .Lost:
 	callasm CupEnd
-	jumptext .OutText
+	showtext .OutText
+	; the rest of the bracket, played out: who became champion
+	callasm WorldCupPlayOut
+	callasm WorldCupShowBracket
+	end
 .WrongSize:
 	jumpopenedtext .SizeText
 

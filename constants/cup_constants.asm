@@ -19,6 +19,9 @@ DEF CUP_OWN_LEVELS EQU $ff
 DEF NUM_BROADCAST_CUPS EQU CUP_WORLD + 1
 DEF RENTAL_CUP_TEAM_SIZE EQU 3
 DEF WORLD_CUP_CONTESTANTS EQU 8
+; wWorldCupResults, each contestant's: matches won, and whether they're out
+DEF WORLDCUP_WINS_MASK EQU %11
+DEF WORLDCUP_OUT_F EQU 7
 
 ; how a cup's team is chosen
 	const_def

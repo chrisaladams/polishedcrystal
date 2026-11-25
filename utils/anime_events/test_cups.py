@@ -39,7 +39,11 @@ and wins, and a full Bag leaves the first prize at the desk.
 
 The World Championship opens after Red. Seven visiting trainers form an
 eight-person bracket with the player, using six level-50 Pokémon each.
-Test the draw, advancement, a semifinal loss and retry, and both prizes.
+Test the draw, advancement, a semifinal loss and retry, and both prizes;
+and the bracket screen's record (wWorldCupDraw, wWorldCupResults): every
+entrant's wins and where they went out, as an independent model of the
+bracket (bracket.py's winner) has them, with the rest of the bracket played
+out after you lose, and the closing screen naming that champion.
 
 The choice in the Battle Tower's party menu is made by a hook (the first
 three of the party, or as given), and the battles are won or lost by setting
@@ -679,6 +683,38 @@ def main():
         g.wr('wPartyMon1IsEgg', original, egg_offset)
     g.wr('wPartyCount', 6)
 
+    CUP_NAMES = ['Ash', 'Drake', 'Green', 'Blue', 'Lance', 'Cynthia', 'Red']  # (WorldCupTrainers)
+
+    def tiles(s):
+        out = []
+        for ch in s:
+            if ch == ':':
+                out.append(0xbd)
+            elif ch.isupper():
+                out.append(0x80 + ord(ch) - ord('A'))
+            else:
+                out.append(0xa0 + ord(ch) - ord('a'))
+        return bytes(out)
+
+    def expected_results(draw, seed, rounds_won):
+        # the whole bracket: you win your first rounds_won matches, then lose
+        # (or are champion); every other match is the model's
+        res = {i: [0, False] for i in range(8)}
+        br, r = list(draw), 0
+        while len(br) > 1:
+            first, new = 8 - len(br), []
+            for k in range(len(br) // 2):
+                b, c = br[2 * k:2 * k + 2]
+                if 0 in (b, c):
+                    w = 0 if r < rounds_won else max(b, c)
+                else:
+                    w = winner(seed, first + k, b, c)
+                res[w][0] += 1
+                res[c if w == b else b][1] = True
+                new.append(w)
+            br, r = new, r + 1
+        return res
+
     def world_run(rounds, lose=False):
         bracket = None
         for i in range(rounds):
@@ -688,6 +724,7 @@ def main():
             if bracket is None:
                 assert actual[0] == 0 and sorted(actual) == list(range(8)), actual
                 bracket = actual
+                bracket_draw = list(actual)
             assert bracket == actual
             cls, tid = roster[bracket[1] - 1]
             assert (g.rd('wOtherTrainerClass'), g.rd('wOtherTrainerID')) == (K[cls], K[tid] if isinstance(tid, str) else tid)
@@ -698,8 +735,36 @@ def main():
             first = 8 - len(bracket) + 1  # (this round's first trainers' match: WorldCupWinner)
             bracket = [0] + [winner(seed, first + (j - 2) // 2, *bracket[j:j + 2])
                              for j in range(2, len(bracket), 2)]
+            if i == 0:
+                draw, draw_seed = list(bracket_draw), seed
             loss = lose and i == rounds - 1
             finish(not loss, faint_party=loss)
+        # the closing bracket screen names the champion
+        want = expected_results(draw, draw_seed, rounds - 1 if lose else rounds)
+        champ = [k for k, (w, _) in want.items() if w == 3]
+        champ_name = (bytes(g.rd('wPlayerName', j) for j in range(8)).split(b'\x53')[0] if champ == [0]
+                      else tiles(CUP_NAMES[champ[0] - 1]) if len(champ) == 1 else None)
+        shown = None
+        for _ in range(60):
+            row = bytes(g.rd('wTilemap', 16 * 20 + j) for j in range(20))
+            if tiles('Champion:') in row:
+                shown = row
+                if os.environ.get('LE_SHOTS'):
+                    g.tick(30)
+                    g.pb.tick(1, True)
+                    g.pb.screen.image.save(os.path.join(os.environ['LE_SHOTS'], f'world_bracket_{rounds}{"_lost" if lose else ""}.png'))
+                break
+            if not g.rd('wScriptRunning') and not g.rd('wBattleMode'):
+                break  # (over, and no screen: don't talk to the desk again)
+            g.press('a', 40)
+        if shown is None or champ_name is None or shown[12:12 + len(champ_name)] != champ_name:
+            fails.append(('world bracket', f'closing screen {shown}, not champion {champ}'))
+        # the record behind it
+        got_draw = [g.m[2, g.addr('wWorldCupDraw') + j] for j in range(8)]
+        got = [g.m[2, g.addr('wWorldCupResults') + j] for j in range(8)]
+        exp = [want[k][0] | (0x80 if want[k][1] else 0) for k in range(8)]
+        if got_draw != draw or got != exp:
+            fails.append(('world bracket', f'draw {got_draw} results {got}, not {draw} {exp}'))
         settle()
         compare_party('World Championship after finishing')
         assert (g.rd('wMapGroup'), g.rd('wMapNumber')) == world_map and not g.rd('wCupLevel')
