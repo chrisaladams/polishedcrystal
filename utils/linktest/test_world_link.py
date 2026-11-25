@@ -68,9 +68,9 @@ def opponent(rec, round_):
     return finalist
 
 
-def link(a, b, out, *extra):
+def link(a, b, out, *extra, seconds=900):
     cmd = [sys.executable, os.path.join(ROOT, 'utils', 'linktest', 'linktest.py'), a, b,
-           '--rules', 'world', '--turns', '400', '--seconds', '900', '--out', out, *extra]
+           '--rules', 'world', '--turns', '400', '--seconds', str(seconds), '--out', out, *extra]
     res = subprocess.run(cmd, capture_output=True, text=True, timeout=1300)
     got = dict(re.findall(r'^([AB]): (.*?) \(', res.stdout, re.M))
     return got.get('A', '?'), got.get('B', '?'), os.path.join(out, 'A.sav'), os.path.join(out, 'B.sav')
@@ -393,7 +393,9 @@ def main():
           'the bracket changed')
 
     # 6. noise at the desk, then a clean session
-    ra_, rb_, a, b = link(args.save_a, args.save_b, step('noisy'), '--noise-desk', '--corrupt', '4')
+    # (a noisy session may be cut off rather than finish: either is checked
+    # below, so it needn't wait out the usual limit)
+    ra_, rb_, a, b = link(args.save_a, args.save_b, step('noisy'), '--noise-desk', '--corrupt', '4', seconds=240)
     na, nb = record(a), record(b)
     ra_, rb_, a, b = link(a, b, step('noisy_clean'))
     check(ra_.startswith('desk:') and rb_.startswith('desk:'), 'noise', f'clean session: {ra_} / {rb_}')
