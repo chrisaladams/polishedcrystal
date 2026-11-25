@@ -138,7 +138,7 @@ Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `en
 
 ### General stability
 
-- [ ] Bound generated-team retry loops in the cup and random-team generators; provide legal deterministic fallbacks or a graceful error for impossible constraints.
+- [ ] Bound generated-team retry loops in the cup and random-team generators; provide legal deterministic fallbacks or a graceful error for impossible constraints. *(Checked: with today's Random Battle sets, every type fills a team of four (the most a cup asks) and of six, as do the Rental and Random Battle teams. The new `test_team_generation.py` makes 111 teams within a time limit and checks size, no repeated species and type, so trimming the sets can't silently hang a cup. Not done: the loops themselves are still unbounded (they start over until a team fits), with no fallback.)*
 - [ ] Audit event-flag exhaustion, reusable flags and persistent state migration. Do not reuse flags still needed by older saves.
 - [ ] Verify all CupBegin/CupEnd paths restore party data, nicknames, OT, held items, stats, moves, PP and intended healing. Check cancel, loss, reset, full bag and repeated entry.
 - [ ] Audit Orange Surf checkpoint bypasses, ice-puzzle exits, out-of-order badges, and legacy badge saves.
