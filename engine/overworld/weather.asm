@@ -1228,6 +1228,9 @@ Lightning:
 	ret nz
 	bit OW_WEATHER_LIGHTNING_DISABLED_F, [hl]
 	ret nz
+	ld a, [wCinematicFlags] ; Link Edition: none during a story scene
+	and a
+	ret nz
 	ld a, 1
 	ld [wPalWhiteState], a
 	call SetWhitePals

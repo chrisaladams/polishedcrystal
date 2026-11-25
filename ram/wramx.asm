@@ -1970,3 +1970,9 @@ SECTION "Window Stack", WRAMX
 
 wWindowStack:: ds $1000 - 1
 wWindowStackBottom:: db
+
+
+SECTION "Cinematic Pals", WRAMX, BANK[5]
+
+; the palettes a story scene began with (engine/events/cinematic.asm)
+wCinematicSavedPals:: ds 16 palettes

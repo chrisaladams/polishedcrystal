@@ -107,7 +107,18 @@ CeruleanCavePsychicEcho:
 	done
 
 CeruleanCaveCloneBattle:
+	; Link Edition: the first story scene (engine/events/cinematic.asm):
+	; silence, psychic pulses, the cave in Mewtwo's light while it speaks,
+	; then a flash, colors and music back, and the clones
+	scene_begin
+	musicfadeout MUSIC_NONE, 8
+	pause 20
+	scene_pulse TINT_PURPLE
+	scene_tint TINT_PURPLE
 	showtext .ClonesText
+	cry MEWTWO
+	scene_flash 1
+	scene_end
 	winlosstext .ClonesBeatenText, 0
 	loadtrainer MEWTWO_T, 1
 	startbattle

@@ -456,7 +456,8 @@ SAVE.sav` checks them in the emulator.
 Three events from the first movies, each a battle where the story happened:
 
 - **Mewtwo Strikes Back**, Cerulean Cave (after Red): before you can battle
-  Mewtwo, it speaks to you and sends out clones of your own team: the same Pokémon,
+  Mewtwo, it speaks to you (the music falls silent and the cave pulses in
+  its psychic light) and sends out clones of your own team: the same Pokémon,
   levels, moves, items and stats, at full health even if yours are hurt. It
   has its own trainer picture (cut from its battle sprite) and its Stadium
   battle music. Then the usual Mewtwo battle. If you already caught or
@@ -488,6 +489,13 @@ Three events from the first movies, each a battle where the story happened:
 
 `python3 utils/anime_events/test_movie_events.py SAVE.sav` checks them in the
 emulator.
+
+Story scenes use a small effects library: tints, pulses, flashes and
+silhouettes, with the palettes and music restored exactly afterwards. Map
+scripts use it through `scene_begin`, `scene_tint`, `scene_end` and the other
+macros in [`docs/cinematics.md`](docs/cinematics.md). The Mewtwo clones are
+the first scene to use it; the other campaigns come next (roadmap Phase 5).
+`utils/anime_events/test_cinematic.py` checks the effects.
 
 ### Checking the postgame
 

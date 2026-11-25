@@ -216,14 +216,14 @@ Measure net savings individually; historic numbers are rough gross estimates, no
 
 **Initial provisional ROM budget:** 1.5–3 KiB excluding substantial new graphics. Audit and reuse existing camera, movement, palette, sound, tile animation and battle-effect helpers before writing replacements.
 
-- [ ] Shared begin/end scene API; safely lock input, restore camera, movement, palettes, sprites, audio and state on completion or interruption.
-- [ ] Camera focus, pan, offscreen reveal and return; optional scene framing/title cards where affordable.
-- [ ] Palette fade, tint, pulse, darkness and silhouette reveals.
-- [ ] Configurable screen shake, flashes and dramatic pauses; optional reduced-flash/reduced-motion settings, budget permitting.
-- [ ] Music fades, silence, Pokémon cries and environmental sounds.
-- [ ] Reusable `!`, `?`, sleep, heart and other emotes; basic sparkles, dust, magical particles and water effects.
+- [x] Shared begin/end scene API; safely lock input, restore camera, movement, palettes, sprites, audio and state on completion or interruption. *(`scene_begin` / `scene_end` ([`cinematics.md`](cinematics.md)). They restore the exact palettes, recompute sprite palettes, and restart the map's music only if the scene changed it. Lightning is held off. The script engine already locks input. Tested: `test_cinematic.py`.)*
+- [ ] Camera focus, pan, offscreen reveal and return; optional scene framing/title cards where affordable. *(Not done: Gen 2's overworld has no camera; see [`cinematics.md`](cinematics.md).)*
+- [x] Palette fade, tint, pulse, darkness and silhouette reveals. *(`scene_tint` (7 colors, compounding; two `TINT_DARK` for darkness), `scene_pulse`, `scene_silhouette`, faded with the engine's `FadePalettes`. Exact colors tested.)*
+- [x] Configurable screen shake, flashes and dramatic pauses; optional reduced-flash/reduced-motion settings, budget permitting. *(`scene_flash` (1–3), with the engine's `earthquake` and `pause`. Not done: the optional reduced-flash or reduced-motion setting.)*
+- [x] Music fades, silence, Pokémon cries and environmental sounds. *(The engine's `musicfadeout`, `cry` and `playsound`; `scene_end` brings the map's music back.)*
+- [ ] Reusable `!`, `?`, sleep, heart and other emotes; basic sparkles, dust, magical particles and water effects. *(The emotes exist (`showemote`). Particles need graphics; the plan is a sparkle emote in the same pipeline.)*
 - [ ] Use shared graphics, temporary tile allocations and sprite budgets; gracefully degrade crowded scenes.
-- [ ] Prove one representative cinematic before applying it to multiple maps.
+- [x] Prove one representative cinematic before applying it to multiple maps. *(The Mewtwo clones' opening in Cerulean Cave B1F: silence, psychic pulses, purple light, cry and flash, then colors and music back before the battle. `test_movie_events.py` still plays it through.)*
 
 Illustrative API (not existing assembly commands):
 

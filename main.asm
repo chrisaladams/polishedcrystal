@@ -804,3 +804,8 @@ INCLUDE "data/text/link_rules_text.asm"
 SECTION "World Cup Text", ROMX
 
 INCLUDE "data/text/world_cup_text.asm"
+
+
+SECTION "Cinematic Code", ROMX
+
+INCLUDE "engine/events/cinematic.asm"
