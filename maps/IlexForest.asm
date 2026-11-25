@@ -1283,6 +1283,8 @@ IlexForestIronMaskScript:
 	iffalsefwd .AnotherLead
 	checkevent EVENT_BEAT_MEWTWO_CLONES
 	iftruefwd .AnotherLead
+	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
+	iftruefwd .AnotherLead
 	showtext .Vision
 	sjump IlexForestMarauderPrizeScript
 .AnotherLead:

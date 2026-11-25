@@ -213,7 +213,8 @@ have reached, shows your current destination, then previews the next
 unfinished step. It works when continuing an existing save. **Side quests**
 offers leads for Kenya's mail, Moomoo Farm, Copycat's doll, and the Shamouti
 beacons as they become available. The book on the table in Prof. Oak's lab
-opens the same guide.
+opens the same guide. **Cups** lists all five regional tournaments, their
+rules and locations, and today's Kimono Cup type.
 
 After Red, Molly's search at the Ruins of Alph leads into the disturbance
 at Ilex Shrine. Oak's investigation takes you to the old Cinnabar Mansion
@@ -226,7 +227,9 @@ marks the Field Book's next stop and **!** marks other available leads in
 the region. Press **Select** to browse the leads. **Up/Down** cycles through
 them across Johto, Kanto and the Orange Islands, **A** reads the directions,
 and **B** returns to the local map. Two goals in the same town share a pin
-and have separate entries. The Guide Gent in Cherrygrove gives you the Map Card.
+and have separate entries. Available cups show up alongside quests once
+you reach the area. First-win prize leads stay on the map until the prize
+is collected. The Guide Gent in Cherrygrove gives you the Map Card.
 
 ### After Red (the post-post game)
 

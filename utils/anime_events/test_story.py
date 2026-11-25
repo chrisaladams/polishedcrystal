@@ -173,6 +173,17 @@ def main(save):
         book('Shrine', 'Hale', 'Mask')
         flag('EVENT_TIME_TRAVEL_FINISHED', True)
         book('Mask', 'Shrine', 'CloneReport')
+
+        before_marauder = g.state()
+        flag('EVENT_READ_CINNABAR_CLONE_REPORT', True)
+        visit(mask[1], *mask[3], mask[4])
+        texts.clear()
+        battle(mask[5])
+        settle()
+        assert g.sym['GiveNextStoryLead.Mewtwo'] in texts
+        assert g.sym['IlexForestIronMaskScript.Vision'] not in texts
+        g.load(before_marauder)
+
         visit(mask[1], *mask[3], mask[4])
         battle(mask[5])
         settle()

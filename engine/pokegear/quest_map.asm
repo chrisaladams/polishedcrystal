@@ -62,6 +62,17 @@ MACRO map_pending_badge
 	call z, AddQuestMapLead
 ENDM
 
+MACRO map_cup_lead
+	eventflagcheck \2
+	jr nz, .add\@
+	bit \1, c
+	jr nz, .done\@
+.add\@:
+	ld a, QMAP_\3
+	call AddQuestMapLead
+.done\@:
+ENDM
+
 BuildQuestMapLeads:
 	xor a
 	ld [wQuestMapCount], a
@@ -106,6 +117,7 @@ BuildQuestMapLeads:
 .post_red
 	call QuestMapPostRedLeads
 .errands
+	call QuestMapCupLeads
 	; Each errand contributes its own current step.
 	eventflagcheck EVENT_GOT_HP_UP_FROM_RANDY
 	jr nz, .farm
@@ -280,7 +292,10 @@ QuestMapPostRedLeads:
 	call AddQuestMapLead
 .ilex
 	eventflagcheck EVENT_BEAT_IRON_MASK_MARAUDER
-	jr nz, .cave
+	jr z, .forest_open
+	map_pending_event EVENT_OAK_WAS_SAMMY, Sammy
+	jr .cave
+.forest_open
 	eventflagcheck EVENT_TIME_TRAVEL_FINISHED
 	ld a, QMAP_Shrine
 	jr z, .forest
@@ -299,6 +314,9 @@ QuestMapPostRedLeads:
 .islands
 	call QuestMapShamoutiLeads
 	map_pending_event EVENT_WON_WHIRL_CUP, Cup
+	eventflagcheck EVENT_WHIRL_CUP_PRIZE_PENDING
+	ld a, QMAP_Cup
+	call nz, AddQuestMapLead
 	eventflagcheck EVENT_BEAT_DRAKE
 	ret nz ; the book already includes Pallet when all the stories are finished
 	map_pending_event EVENT_BEAT_ORANGE_CREW_CISSY, Cissy
@@ -339,6 +357,22 @@ QuestMapShamoutiLeads:
 	jmp AddQuestMapLead
 .guardian
 	map_pending_event EVENT_FOUGHT_LUGIA, SeaGuardian
+	ret
+
+QuestMapCupLeads:
+	farcall GetCupFirstWinFlags
+	ld c, a
+	flagcheck wVisitedSpawns, SPAWN_GOLDENROD
+	jr z, .kimono
+	map_cup_lead CUPWON_RISING_STAR_F, EVENT_RISING_STAR_PRIZE_PENDING, RisingCup
+	map_cup_lead CUPWON_RENTAL_F, EVENT_RENTAL_CUP_PRIZE_PENDING, RentalCup
+.kimono
+	flagcheck wVisitedSpawns, SPAWN_ECRUTEAK
+	ld a, QMAP_KimonoCup
+	call nz, AddQuestMapLead
+	flagcheck wJohtoBadges, (ENGINE_RISINGBADGE - ENGINE_BADGES)
+	ret z
+	map_cup_lead CUPWON_DRAGON_F, EVENT_DRAGON_MASTERS_PRIZE_PENDING, DragonCup
 	ret
 
 ; Return HL at the caption and E at its landmark. Until the Valencia ferry
@@ -491,6 +525,11 @@ BrowseQuestMap:
 	jr .redraw
 .read
 	call SelectedQuestMapGoal
+	cp QMAP_KimonoCup
+	jr nz, .read_text
+	farcall KimonoCupToday
+	ld a, QMAP_KimonoCup
+.read_text
 	call QuestMapLookup
 	ld a, [hli]
 	ld h, [hl]

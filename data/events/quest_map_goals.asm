@@ -79,3 +79,8 @@
 	map_goal Club, VERMILION_CITY, "Find Copycat's doll"
 	map_goal Pass, SAFFRON_CITY, "Return the doll"
 	map_goal Berries, ROUTE_39, "Help Miltank"
+	map_goal Sammy, PALLET_TOWN, "Ask Oak about Sammy"
+	map_goal RisingCup, NATIONAL_PARK, "Rising Star Cup"
+	map_goal KimonoCup, ECRUTEAK_CITY, "Kimono Cup"
+	map_goal DragonCup, BLACKTHORN_CITY, "Dragon Masters Cup"
+	map_goal RentalCup, GOLDENROD_CITY, "Rental Cup"

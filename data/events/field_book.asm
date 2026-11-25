@@ -6,19 +6,21 @@ ReadFieldBook:
 	ifequalfwd 1, .Next
 	ifequalfwd 2, .CatchUp
 	ifequal 3, FieldBookSideQuests
+	ifequalfwd 4, FieldBookCups
 	endtext
 
 .Contents:
 	db MENU_BACKUP_TILES
-	menu_coords 0, 0, 14, 7
+	menu_coords 0, 0, 14, 9
 	dw .Choices
 	db 1
 .Choices:
 	db STATICMENU_CURSOR
-	db 3
+	db 4
 	db "Next stop@"
 	db "Catch me up@"
 	db "Side quests@"
+	db "Cups@"
 
 .Next:
 	callasm FieldBookCurrent
@@ -47,6 +49,41 @@ ReadFieldBook:
 .AheadText:
 	text "Looking ahead…"
 	done
+
+FieldBookCups:
+	loadmenu .Menu
+	verticalmenu
+	closewindow
+	ifequalfwd 1, .Rising
+	ifequalfwd 2, .Whirl
+	ifequalfwd 3, .Kimono
+	ifequalfwd 4, .Dragon
+	ifequalfwd 5, .Rental
+	endtext
+.Kimono:
+	callasm KimonoCupToday
+	jumpopenedtext FieldBookNotes.KimonoCup
+.Rising:
+	jumpopenedtext FieldBookNotes.RisingCup
+.Whirl:
+	jumpopenedtext FieldBookNotes.Cup
+.Dragon:
+	jumpopenedtext FieldBookNotes.DragonCup
+.Rental:
+	jumpopenedtext FieldBookNotes.RentalCup
+.Menu:
+	db MENU_BACKUP_TILES
+	menu_coords 0, 0, 17, 11
+	dw .Choices
+	db 1
+.Choices:
+	db STATICMENU_CURSOR
+	db 5
+	db "Rising Star@"
+	db "Whirl Cup@"
+	db "Kimono Cup@"
+	db "Dragon Masters@"
+	db "Rental Cup@"
 
 ; Resolve all three views from the same read-only itinerary. DE holds the
 ; most recent completed step on this route. For a preview, skip the first
@@ -953,9 +990,53 @@ FieldBookNotes:
 	text "A page from Misty"
 	line "smells of sea air."
 	para "Olivine Whirl Cup"
-	para "Take a Water team"
-	line "to the port. Win"
-	cont "all three rounds."
+	para "After Red, take"
+	line "three to six Water"
+	cont "types to the port."
+	para "Lv.50. Win three"
+	line "rounds."
+	done
+
+.RisingCup:
+	text "Rising Star Cup"
+	para "Route 36 gate to"
+	line "National Park."
+	para "Choose three of"
+	line "your #mon."
+	para "Lv.30. Win three"
+	line "rounds."
+	done
+
+.KimonoCup:
+	text "Kimono Cup"
+	para "Ecruteak Dance"
+	line "Theatre."
+	para "Today's type is"
+	line "@"
+	text_ram wStringBuffer3
+	text "."
+	para "Bring three of"
+	line "that type. Lv.50."
+	done
+
+.DragonCup:
+	text "Dragon Masters Cup"
+	para "Dragon house in"
+	line "Blackthorn. Bring"
+	cont "Rising Badge."
+	para "Three to six at"
+	line "Lv.50. At least"
+	cont "one Dragon type."
+	done
+
+.RentalCup:
+	text "Rental Cup"
+	para "Goldenrod Dept."
+	line "Store, floor 6F."
+	para "Borrow three"
+	line "#mon at Lv.50."
+	cont "Preview your team"
+	cont "before you enter."
 	done
 
 .Final:

@@ -487,8 +487,24 @@ def main():
               f'{res[name][2]} bits flipped')
     problems = compare(res['A'][1], res['B'][1])
     n = min(len(res['A'][1]), len(res['B'][1]))
-    print('\n'.join(problems[:10]) if problems else f'in sync at all {n} action exchanges both sides made')
-    return 1 if problems else 0
+    if not n:
+        problems.append('No action exchange completed on both sides.')
+    sync_stops = []
+    for name in 'AB':
+        result = res[name][0]
+        if result.startswith(('error:', 'timeout', 'battle over, real party back: False')):
+            problems.append(f'Side {name} did not finish successfully.')
+        if result.startswith('stopped: out of sync'):
+            sync_stops.append(name)
+    if args.desync_at and not sync_stops:
+        problems.append('The injected desync did not stop the battle.')
+    if sync_stops and not (args.corrupt or args.unplug or args.desync_at):
+        problems.append(f'Unexpected sync stop on side {", ".join(sync_stops)}.')
+    if problems:
+        print('\n'.join(problems[:10]))
+        return 1
+    print(f'In sync at all {n} action exchanges both sides made.')
+    return 0
 
 
 if __name__ == '__main__':

@@ -17,6 +17,9 @@ def main(path):
                                 'SPAWN_OLIVINE', 'SPROUT_TOWER', 'DARK_CAVE', 'RUINS_OF_ALPH',
                                 'OLIVINE_CITY', 'CERULEAN_CAVE', 'CINNABAR_ISLAND', 'WARM_BEACH',
                                 'SHAMOUTI_ISLAND', 'SHRINE_RUINS', 'ICE_ISLAND', 'LIGHTNING_ISLAND',
+                                'GOLDENROD_CITY', 'ECRUTEAK_CITY', 'NATIONAL_PARK', 'PALLET_TOWN',
+                                'SPAWN_ECRUTEAK', 'CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2',
+                                'CUPWON_RISING_STAR_F', 'CUPWON_RENTAL_F', 'CUPWON_DRAGON_F', 'WATER',
                                 'ROUTE_31','ROUTE_39','CERULEAN_CITY','VERMILION_CITY','NEW_BARK_TOWN',
                                 'SPAWN_AZALEA','SPAWN_VIOLET','GROUP_VIOLET_POKECENTER_1F','MAP_VIOLET_POKECENTER_1F'}, None)
     def bit(var, n, on=True):
@@ -62,7 +65,7 @@ def main(path):
             bit('wEventFlags', k[flag], False)
         g.wr('wJohtoBadges', 0)
         g.wr('wKantoBadges', 0)
-        for suffix in ('GOLDENROD', 'OLIVINE', 'VIOLET', 'AZALEA'):
+        for suffix in ('GOLDENROD', 'OLIVINE', 'VIOLET', 'AZALEA', 'ECRUTEAK'):
             bit('wVisitedSpawns', k['SPAWN_' + suffix], False)
         for f in ('POKEGEAR_MAP_CARD_F', 'POKEGEAR_OBTAINED_F'):
             bit('wPokegearFlags', k[f])
@@ -175,17 +178,72 @@ def main(path):
         assert set(leads) == {'Surge','Sabrina','Erika','Janine','Plant'}, leads
         browse()
         pin('VERMILION_CITY', 0xec)
+
+        g.load(early)
+        for city in ('GOLDENROD', 'ECRUTEAK'):
+            bit('wVisitedSpawns', k['SPAWN_' + city])
+        g.wr('wJohtoBadges', 0xff)
+        g.wr('wCupRecordsMagic', 0)
+        g.wr('wCupRecords', 0xff)  # an older save's party data, before cup records exist
+        g.wr('wRTCDayLo', 2)
+        g.wr('wRTCHours', 12)
+        cups = g.state()
+        leads = open_map()
+        assert {'RisingCup', 'RentalCup', 'KimonoCup', 'DragonCup'} <= set(leads), leads
+        assert g.rd('wCupRecords') == 0xff and g.rd('wCupRecordsMagic') == 0
+        browse()
+        select(leads, 'RentalCup')
+        pin('GOLDENROD_CITY', 0xec)
+        select(leads, 'KimonoCup')
+        pin('ECRUTEAK_CITY', 0xec)
+        g.wr('wCupFoeType', 0xff)
+        g.press('a', 60)
+        assert g.rd('wCupFoeType') == k['WATER']
+
+        g.load(cups)
+        for i, marker in enumerate(('CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2')):
+            g.wr('wCupRecordsMagic', k[marker], i)
+        g.wr('wCupRecords', sum(1 << k['CUPWON_' + s + '_F'] for s in ('RISING_STAR', 'RENTAL', 'DRAGON')))
+        event('RISING_STAR_PRIZE_PENDING')
+        leads = open_map()
+        assert {'RisingCup', 'KimonoCup'} <= set(leads), leads
+        assert not {'RentalCup', 'DragonCup'} & set(leads), leads
+
+        g.load(cups)
+        g.highlight_start_option('FieldBookString')
+        g.press('a', 50)
+        for _ in range(3):
+            g.press('down', 20)
+        g.press('a', 45)
+        for _ in range(2):
+            g.press('down', 20)
+        shown = []
+        g.pb.hook_register(*g.sym['MapTextbox'], lambda _: shown.append(g.pb.register_file.HL), None)
+        g.wr('wCupFoeType', 0xff)
+        g.press('a', 65)
+        g.pb.hook_deregister(*g.sym['MapTextbox'])
+        assert g.sym['FieldBookNotes.KimonoCup'][1] in shown and g.rd('wCupFoeType') == k['WATER']
+
         g.load(early)
         for flag in ('GOT_MYSTICTICKET_FROM_RED','WON_PALLET_INVITATIONAL','RESCUED_PROF_HALE',
                      'BEAT_IRON_MASK_MARAUDER','BEAT_MEWTWO_CLONES','BEAT_DRAKE','WON_WHIRL_CUP'):
             event(flag)
+        finale = g.state()
+        event('WHIRL_CUP_PRIZE_PENDING')
+        leads = open_map()
+        assert set(leads) == {'Sammy', 'Cup'}, leads
+        browse()
+        select(leads, 'Sammy')
+        pin('PALLET_TOWN', 0xec)
+        g.load(finale)
+        event('OAK_WAS_SAMMY')
         assert not open_map()
         browse()
         g.press('b', 50)
         g.press('b', 60)
         assert not g.rd('wInPokegear')
         g.load(base)
-        print('Passed early progression, parallel gyms, separate errands, map pins, cross-region browsing, directions, completion and exit.')
+        print('Passed progression pins, cup and reward leads, the Kimono type in both guides, cross-region browsing, completion and exit.')
     finally:
         g.pb.stop(save=False)
 

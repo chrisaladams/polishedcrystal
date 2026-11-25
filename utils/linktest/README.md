@@ -6,6 +6,8 @@ save, sit at the Colosseum table and fight (each picks its moves in rotation
 and sends in the next healthy Pokémon when one faints). At the start of every
 turn each side records both active Pokémon and both parties' HP; the two
 records must agree, mirrored, or the battle has desynced.
+The check fails if setup never reaches a shared action exchange, a side
+times out, or a finished battle changes either real party.
 
 `--corrupt N` adds line noise: about 1 in N bytes side B receives during the
 battle gets one bit flipped. `--rom-b` runs side B on a different ROM.

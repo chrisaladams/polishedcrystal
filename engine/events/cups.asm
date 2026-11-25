@@ -324,13 +324,8 @@ CupWin::
 CupCheckRecords::
 ; Older saves may have an old party species list where wCupRecords are:
 ; clear them the first time.
-	ld a, [wCupRecordsMagic]
-	cp CUP_RECORDS_MAGIC_1
-	jr nz, .reset
-	ld a, [wCupRecordsMagic + 1]
-	cp CUP_RECORDS_MAGIC_2
+	call ValidCupRecords
 	ret z
-.reset
 	ld hl, wCupRecords
 	ld bc, CUP_RECORDS_LENGTH
 	xor a
@@ -339,6 +334,22 @@ CupCheckRecords::
 	ld [wCupRecordsMagic], a
 	ld a, CUP_RECORDS_MAGIC_2
 	ld [wCupRecordsMagic + 1], a
+	ret
+
+GetCupFirstWinFlags::
+; The quest map reads the records without changing an older save.
+	call ValidCupRecords
+	ld a, 0
+	ret nz
+	ld a, [wCupRecords]
+	ret
+
+ValidCupRecords:
+	ld a, [wCupRecordsMagic]
+	cp CUP_RECORDS_MAGIC_1
+	ret nz
+	ld a, [wCupRecordsMagic + 1]
+	cp CUP_RECORDS_MAGIC_2
 	ret
 
 CupBackupParty:
