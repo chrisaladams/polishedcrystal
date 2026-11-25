@@ -109,9 +109,12 @@ cups, your party comes back as it was, and losing costs nothing. You can
 also look the team over, go to the other friend's, or remove one (your link
 records stay). When both places hold other friends' teams, a third friend's
 isn't kept until you remove one.
+A kept team is checked before it's used: one with anything the game can't
+use counts as an empty place, and if the power goes while a team is being
+kept, that place is left empty rather than holding a wrong team.
 `python3 utils/anime_events/test_friend_battles.py SAVE.sav` checks the desk,
-and `utils/linktest/linktest.py` checks what each side keeps after a link
-battle.
+`python3 utils/anime_events/test_friend_records.py SAVE.sav` the records, and
+`utils/linktest/linktest.py` what each side keeps after a link battle.
 
 ### Link battles that can't silently desync
 

@@ -16,8 +16,10 @@ GetFriendTeam:
 	ret
 
 CheckFriendTeam:
-; Carry if friend team a holds a team (SRAM open).
+; Carry if friend team a holds a team (SRAM open): marked, checked, and every
+; field one the game can use. Anything else counts as an empty slot.
 	call GetFriendTeam
+	push hl
 	ld a, [hli]
 	cp FRIEND_TEAM_MAGIC_1
 	jr nz, .no
@@ -29,10 +31,119 @@ CheckFriendTeam:
 	call FriendTeamSum
 	cp c
 	jr nz, .no
+	pop hl
+	jr CheckFriendTeamFields
+.no
+	pop hl
+	and a
+	ret
+
+CheckFriendTeamFields:
+; Carry if the record at hl has usable values: kept rules (not Random), a
+; player gender, one to six Pokemon (three for Rising Star), and for each a
+; species, no egg, an item, moves (the first one set) and a nature.
+	push hl
+	ld de, FRIEND_TEAM_RULE
+	add hl, de
+	ld a, [hli]
+	cp NUM_LINK_BATTLE_RULES
+	jr nc, .bad
+	cp LINK_RULE_RANDOM
+	jr z, .bad
+	ld b, a
+	assert FRIEND_TEAM_GENDER == FRIEND_TEAM_RULE + 1
+	ld a, [hl]
+	cp NUM_PLAYER_GENDERS
+	jr nc, .bad
+	pop hl
+	push hl
+	ld de, FRIEND_TEAM_COUNT
+	add hl, de
+	ld a, [hli]
+	and a
+	jr z, .bad
+	cp PARTY_LENGTH + 1
+	jr nc, .bad
+	ld c, a
+	ld a, b
+	cp LINK_RULE_RISING_STAR
+	jr nz, .mon
+	ld a, c
+	cp 3
+	jr nz, .bad
+.mon
+	call .Mon
+	jr c, .bad
+	dec c
+	jr nz, .mon
+	pop hl
 	scf
 	ret
-.no
+.bad
+	pop hl
 	and a
+	ret
+
+.Mon:
+; Carry if the packed Pokemon at hl isn't usable; else hl = the next.
+	assert HIGH(NUM_SPECIES) == 1 && NUM_ITEMS < $ff && NUM_ATTACKS <= $ff
+	push hl
+	ld a, [hli] ; species: 1-$fe ($00 and $ff aren't species)
+	ld b, a
+	and a
+	jr z, .mon_bad
+	inc a
+	jr z, .mon_bad
+	ld a, [hli] ; form
+	assert FRIENDMON_FORM == FRIENDMON_SPECIES + 1
+	bit MON_IS_EGG_F, a
+	jr nz, .mon_bad
+	and EXTSPECIES_MASK
+	jr z, .species_ok
+	ld a, b ; (an extended species: up to NUM_SPECIES)
+	cp LOW(NUM_SPECIES) + 1
+	jr nc, .mon_bad
+.species_ok
+	ld a, [hli] ; item
+	assert FRIENDMON_ITEM == FRIENDMON_FORM + 1
+	cp NUM_ITEMS + 1
+	jr nc, .mon_bad
+	ld a, [hli] ; moves: the first one set
+	assert FRIENDMON_MOVES == FRIENDMON_ITEM + 1
+	and a
+	jr z, .mon_bad
+if NUM_ATTACKS < $ff ; (with $ff moves, every byte is one, or none)
+	cp NUM_ATTACKS + 1
+	jr nc, .mon_bad
+	ld b, NUM_MOVES - 1
+.moves
+	ld a, [hli]
+	cp NUM_ATTACKS + 1
+	jr nc, .mon_bad
+	dec b
+	jr nz, .moves
+else
+	inc hl
+	inc hl
+	inc hl
+endc
+	assert FRIENDMON_PERSONALITY == FRIENDMON_MOVES + NUM_MOVES + 1 + 3
+	inc hl ; PP Ups
+	inc hl ; DVs
+	inc hl
+	inc hl
+	ld a, [hl] ; personality: a nature
+	and NATURE_MASK
+	cp NUM_NATURES
+	jr nc, .mon_bad
+	pop hl
+	ld de, FRIENDMON_LENGTH
+	add hl, de
+	and a
+	ret
+.mon_bad
+	pop hl
+	scf
 	ret
 
 FriendTeamSum:
@@ -109,11 +220,13 @@ KeepFriendTeam::
 	ld a, 1
 	jmp c, CloseSRAM
 .keep
+	; The marker goes first and comes back last: if the power goes while the
+	; record is being written, the slot reads as empty (that friend's team is
+	; lost), never as a team with the wrong data.
 	call GetFriendTeam
 	push hl
-	ld a, FRIEND_TEAM_MAGIC_1
+	xor a
 	ld [hli], a
-	ld a, FRIEND_TEAM_MAGIC_2
 	ld [hli], a
 	inc hl ; checksum, below
 	ld a, [wLinkBattleRules]
@@ -169,9 +282,15 @@ KeepFriendTeam::
 	add hl, de
 	call FriendTeamSum
 	pop hl
+	push hl
 	inc hl
 	inc hl
-	ld [hl], a
+	ld [hl], a ; checksum
+	pop hl
+	inc hl
+	ld [hl], FRIEND_TEAM_MAGIC_2
+	dec hl
+	ld [hl], FRIEND_TEAM_MAGIC_1 ; (last: the record is whole)
 	jmp CloseSRAM
 
 .Field:
@@ -228,13 +347,15 @@ PackFriendMon:
 	call .CopyN
 	ld a, MON_HAPPINESS
 	call .Copy1
-	; hyper training (the first of the OT's three extra bytes)
+	; hyper training (in the first of the OT's three extra bytes, with two
+	; bits that aren't)
 	pop af
 	push hl
 	ld hl, wOTPartyMonOTs + PLAYER_NAME_LENGTH
 	ld bc, PLAYER_NAME_LENGTH + 3
 	rst AddNTimes
 	ld a, [hl]
+	and HYPER_TRAINING_MASK
 	pop hl
 	ld [hli], a
 	ret
@@ -270,7 +391,7 @@ LoadFriendTeam::
 	ld de, wOTPlayerName
 	ld bc, PLAYER_NAME_LENGTH
 	rst CopyBytes
-	ld a, "@"
+	ld a, '@'
 	ld [de], a
 	ld a, [hli] ; count
 	ld b, a
@@ -359,7 +480,8 @@ UnpackFriendMon:
 	ld a, MON_HAPPINESS
 	ld b, 1
 	call .PutN
-	ld a, [hl] ; hyper training
+	ld a, [hl] ; hyper training (only those bits: GetHyperTraining's)
+	and HYPER_TRAINING_MASK
 	push af
 	; the ID, level and no status
 	ld a, [wOTPlayerID]
@@ -514,7 +636,7 @@ FriendDeskFind:
 	ld de, wStringBuffer3
 	ld bc, PLAYER_NAME_LENGTH
 	rst CopyBytes
-	ld a, "@"
+	ld a, '@'
 	ld [de], a
 	ld a, TRUE
 	scf
@@ -562,7 +684,7 @@ FriendDeskArm::
 	ld de, wOTPlayerName
 	ld bc, PLAYER_NAME_LENGTH
 	rst CopyBytes
-	ld a, "@"
+	ld a, '@'
 	ld [de], a
 	call CloseSRAM
 	ld a, 1
@@ -605,7 +727,7 @@ Special_FriendTeamPreview::
 	ld de, wStringBuffer3
 	ld bc, PLAYER_NAME_LENGTH
 	rst CopyBytes
-	ld a, "@"
+	ld a, '@'
 	ld [de], a
 	pop hl
 	push hl

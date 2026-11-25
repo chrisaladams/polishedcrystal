@@ -178,7 +178,7 @@ AlbumPlaceString:
 .skip
 	ld a, [de]
 	inc de
-	cp "@"
+	cp '@'
 	jr nz, .skip
 	ret
 
@@ -245,7 +245,7 @@ AlbumEntry:
 	push bc
 	ld de, hScriptVar
 	call PrintNum
-	ld [hl], "/"
+	ld [hl], '/'
 	inc hl
 	pop bc
 	ld de, wStringBuffer4
@@ -261,9 +261,9 @@ AlbumEntry:
 	pop de
 	pop hl
 	and a
-	ld a, "-"
+	ld a, '-'
 	jr z, .mark
-	ld a, "★"
+	ld a, '★'
 .mark
 	ld [hli], a
 	inc hl

@@ -78,7 +78,7 @@ LinkReceptionistScript_Trade:
 	; Link Edition: the link rooms are open from the start (upstream waits
 	; until the Mystery Egg has been delivered to Elm)
 	checkevent EVENT_GOT_A_POKEMON_FROM_ELM
-	iffalsefwd Script_TradeCenterClosed
+	iffalse Script_TradeCenterClosed ; (too far for iffalsefwd)
 	special FixPlayerEVsAndStats ; no (trivial) cheating
 	opentext
 	writetext Text_TradeReceptionistIntro

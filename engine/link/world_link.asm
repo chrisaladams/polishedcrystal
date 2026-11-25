@@ -59,7 +59,7 @@ Special_WorldLinkSession::
 	ld de, wStringBuffer3
 	ld bc, PLAYER_NAME_LENGTH
 	rst CopyBytes
-	ld a, "@"
+	ld a, '@'
 	ld [de], a
 	pop af
 	ldh [hScriptVar], a
@@ -810,7 +810,7 @@ WorldLinkOpponent::
 	ld de, wStringBuffer3
 	ld bc, PLAYER_NAME_LENGTH
 	rst CopyBytes
-	ld a, "@"
+	ld a, '@'
 	ld [de], a
 	call WorldLinkDraw
 	ld a, [wWorldLinkRecord + WORLD_LINK_HALF]
