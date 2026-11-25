@@ -36,6 +36,22 @@ An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.
 	scene_end
 ```
 
+## Scenes using it
+
+| Campaign | Where | Scene |
+|---|---|---|
+| Mewtwo Strikes Back | Cerulean Cave B1F | Silence, psychic pulses and purple light while Mewtwo speaks; cry and flash before the clones |
+| The Power of One | Fire, Ice, Lightning Island roofs | Each beacon pulses in its guardian's color as it's tuned (red, blue, gold) |
+| The Power of One | Shamouti shrine ruins | Blue light while Melody's song carries; a flash as Lugia answers |
+| Spell of the Unown | Ruins of Alph inner chamber | The Entei illusion in a dream's purple light |
+| Voice of the Forest | Ilex Forest | The forest darkens around the Marauder. After he's beaten: a flash as he vanishes, the forest dim with Celebi's hurt glow, green pulses from the shrine until the daylight returns, two flashes as Celebi takes Sammy home |
+| Orange League | Warm Beach, Rocky Beach, Shamouti house | A blue surf pulse for Cissy; a cold white haze for Danny; Dragonite's roar, a rumble and a flash for Drake; gold light for the trophy |
+| Pallet Invitational | Pallet Town | Pikachu's spark before Ash's battle; gold light while Tracey sketches the winners |
+
+The Voice of the Forest scenes used to call `BlindingFlash` for their flashes.
+That routine is the Flash field move: it marks the map as lit by Flash.
+They use `scene_flash` now. Upstream's own Cinnabar Lab scene still calls it.
+
 ## How it restores
 
 `scene_begin` copies all 16 target palettes (`wBGPals1`, `wOBPals1`) to
@@ -64,6 +80,7 @@ and after a scene, and that no random number is drawn.
 |---|---:|
 | ROM: the library | 249 |
 | ROM: the Mewtwo scene | 34 |
+| ROM: the other campaigns' scenes | 223 |
 | WRAM0: `wCinematicFlags` | 1 |
 | WRAMX bank 5: `wCinematicSavedPals` | 128 |
 

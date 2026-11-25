@@ -215,9 +215,13 @@ OrangeCrewDannyScript:
 	iftruefwd .Rematch
 	checkevent EVENT_REACHED_DANNYS_SUMMIT
 	iffalse_jumpopenedtext .PeakText
+	scene_begin ; (a cold wind across the summit while he speaks)
+	playsound SFX_WHIRLWIND
+	scene_tint TINT_WHITE
 	writetext .IntroText
 	waitbutton
 	closetext
+	scene_end
 	winlosstext .BeatenText, 0
 	loadtrainer DANNY_T, 1
 	startbattle

@@ -1260,11 +1260,15 @@ endc
 	done
 
 IlexForestIronMaskScript:
-; Link Edition: Celebi: Voice of the Forest
+; Link Edition: Celebi: Voice of the Forest. The forest darkens around him
+; (engine/events/cinematic.asm), and its light is back for the battle.
 	faceplayer
+	scene_begin
 	playsound SFX_PROTECT
+	scene_tint TINT_DARK
 	earthquake 10
 	showtext .IntroText
+	scene_end
 	winlosstext .BeatenText, 0
 	loadtrainer IRON_MASK_T, 1
 	startbattle
@@ -1272,10 +1276,12 @@ IlexForestIronMaskScript:
 	setevent EVENT_BEAT_IRON_MASK_MARAUDER
 	setevent EVENT_MARAUDER_REWARD_PENDING
 	showtext .AfterText
+	scene_begin
 	playsound SFX_WARP_TO
-	callasm BlindingFlash
+	scene_flash 1
 	disappear ILEXFOREST_IRON_MASK
 	waitsfx
+	scene_end
 	cry CELEBI
 	showtext .ForestCalm
 	scall IlexForestSammyScene
@@ -1391,15 +1397,19 @@ IlexForestSammyScene:
 ; Link Edition: the traveler who kept calling from the other side of the
 ; shrine is Sammy, a boy from decades ago. The Dark Ball hurt Celebi; the
 ; shrine heals it, and it takes him home. (Prof. Oak tells the rest.)
+	; (a story scene: the forest dims with Celebi's glow, and the shrine's
+	; green light pulses until the daylight comes back)
+	scene_begin
 	moveobject ILEXFOREST_CELEBI, 10, 25
 	appear ILEXFOREST_CELEBI
 	playsound SFX_BALL_POOF
 	waitsfx
 	cry CELEBI
+	scene_tint TINT_DARK
 	showtext .HurtText
 	playsound SFX_GAME_FREAK_LOGO_GS
-	callasm BlindingFlash
-	callasm BlindingFlash
+	scene_tint TINT_GREEN
+	scene_pulse TINT_GREEN
 	waitsfx
 	applymovement ILEXFOREST_CELEBI, MovementData_CelebiDance
 	cry CELEBI
@@ -1413,10 +1423,11 @@ IlexForestSammyScene:
 	cry CELEBI
 	pause 15
 	playsound SFX_WARP_TO
-	callasm BlindingFlash
+	scene_flash 2
 	disappear ILEXFOREST_SAMMY
 	disappear ILEXFOREST_CELEBI
 	waitsfx
+	scene_end
 	showtext .GoneText
 	end
 

@@ -158,6 +158,11 @@ CameoAshScript:
 	reloadmap
 	iftruefwd .Retry
 	showtext .AshFinal
+	scene_begin ; (Pikachu's spark)
+	cry PIKACHU
+	scene_flash 1
+	waitsfx
+	scene_end
 	winlosstext .BeatenText, .Loss
 	loadtrainer ASH_T, 1
 	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
@@ -166,7 +171,11 @@ CameoAshScript:
 	iftruefwd .Retry
 	special HealParty
 	setevent EVENT_WON_PALLET_INVITATIONAL
-	jumptext .Finish
+	scene_begin ; (the winners in gold light while Tracey sketches)
+	scene_tint TINT_GOLD
+	showtext .Finish
+	scene_end
+	end
 
 .Retry:
 	special HealParty

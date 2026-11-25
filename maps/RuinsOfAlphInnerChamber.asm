@@ -181,6 +181,7 @@ HaleStatueScript:
 	iffalse_jumptext RuinsofAlphStatueText
 	checkevent EVENT_RESCUED_PROF_HALE
 	iftrue_jumptext .Empty
+	scene_begin ; (the illusion in a dream's purple light)
 	showtext .Knocks
 	playsound SFX_PROTECT
 	special Special_FadeBlackQuickly
@@ -191,9 +192,11 @@ HaleStatueScript:
 	appear ALPH_DREAM_ENTEI
 	special Special_ReloadSpritesNoPalettes
 	special Special_FadeInQuickly
+	scene_tint TINT_PURPLE
 	cry ENTEI
 	earthquake 12
 	showtext .Illusion
+	scene_restore
 	special Special_FadeBlackQuickly
 	disappear ALPH_DREAM_ENTEI
 	changeblock 4, 12, $18
@@ -202,6 +205,7 @@ HaleStatueScript:
 	appear ALPH_PROF_HALE
 	special Special_ReloadSpritesNoPalettes
 	special Special_FadeInQuickly
+	scene_end
 	showtext .Rescue
 	disappear ALPH_PROF_HALE
 	setevent EVENT_RESCUED_PROF_HALE

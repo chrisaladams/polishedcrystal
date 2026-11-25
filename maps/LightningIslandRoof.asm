@@ -21,7 +21,10 @@ LightningIslandBeacon:
 	checkevent EVENT_TUNED_LIGHTNING_BEACON
 	iftruefwd .Tuned
 	setevent EVENT_TUNED_LIGHTNING_BEACON
+	scene_begin ; (the beacon's beam pulses in its guardian's color)
 	cry ZAPDOS
+	scene_pulse TINT_GOLD
+	scene_end
 	showtext .Heard
 	farsjump ShamoutiBeaconHandoff
 .Silent:

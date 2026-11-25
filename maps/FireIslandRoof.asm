@@ -21,7 +21,10 @@ FireIslandBeacon:
 	checkevent EVENT_TUNED_FIRE_BEACON
 	iftruefwd .Tuned
 	setevent EVENT_TUNED_FIRE_BEACON
+	scene_begin ; (the beacon's beam pulses in its guardian's color)
 	cry MOLTRES
+	scene_pulse TINT_RED
+	scene_end
 	showtext .Heard
 	farsjump ShamoutiBeaconHandoff
 .Silent:

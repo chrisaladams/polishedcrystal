@@ -272,15 +272,20 @@ ShamoutiTunedBeaconText:
 ShamoutiRestoreBeacons:
 	setevent EVENT_RESTORED_SHAMOUTI_BEACONS
 	callasm SetCurrentWeather
+	; (a story scene: the sea's blue light while the song carries, and a
+	; flash as Lugia answers)
+	scene_begin
 	playmusic MUSIC_LUGIAS_SONG_2000
+	scene_tint TINT_BLUE
 	showtext .Song
 	cry LUGIA
+	scene_flash 1
 	waitsfx
 	showtext .Calm
 	opentext
 	scall ShamoutiGiveSilverWing
 	closetext
-	playmapmusic
+	scene_end ; (the map's music back)
 	end
 
 .Song:

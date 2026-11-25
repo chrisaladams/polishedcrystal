@@ -21,7 +21,10 @@ IceIslandBeacon:
 	checkevent EVENT_TUNED_ICE_BEACON
 	iftruefwd .Tuned
 	setevent EVENT_TUNED_ICE_BEACON
+	scene_begin ; (the beacon's beam pulses in its guardian's color)
 	cry ARTICUNO
+	scene_pulse TINT_BLUE
+	scene_end
 	showtext .Heard
 	farsjump ShamoutiBeaconHandoff
 .Silent:

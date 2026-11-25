@@ -35,16 +35,25 @@ OrangeLeagueDrakeScript:
 	writetext .IntroText
 	waitbutton
 	closetext
+	scene_begin ; (his Dragonite's roar shakes the room)
+	cry DRAGONITE
+	earthquake 8
+	scene_flash 1
+	waitsfx
+	scene_end
 	winlosstext .BeatenText, 0
 	loadtrainer DRAKE_T, 1
 	startbattle
 	reloadmapafterbattle
 	setevent EVENT_BEAT_DRAKE
+	scene_begin ; (the trophy in gold light)
+	scene_tint TINT_GOLD
 	opentext
 	writetext .TrophyText
 	playsound SFX_GET_BADGE
 	waitsfx
 	promptbutton
+	scene_end
 	farscall GiveNextStoryLead
 .Prize:
 	checkevent EVENT_GOT_ORANGE_LEAGUE_PRIZE

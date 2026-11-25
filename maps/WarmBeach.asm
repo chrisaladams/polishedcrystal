@@ -209,6 +209,11 @@ OrangeCrewCissyScript:
 	writetext .IntroText
 	waitbutton
 	closetext
+	scene_begin ; (the surf breaks around her)
+	playsound SFX_SURF
+	scene_pulse TINT_BLUE
+	waitsfx
+	scene_end
 	winlosstext .BeatenText, 0
 	loadtrainer CISSY_T, 1
 	startbattle
