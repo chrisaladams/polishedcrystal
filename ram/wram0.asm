@@ -1539,6 +1539,11 @@ wLinkBattleLevel:: db
 wRandomTypeCounts:: ds NUM_RANDOM_TYPES
 wRandomWeakCounts:: ds NUM_RANDOM_TYPES
 wRandomTries:: db
+; how many times the team was started over; past RANDOM_MAX_START_OVERS the
+; sets are taken in order instead (wRandomSeqIndex: two passes, the second
+; with the type rules relaxed), so building a team always ends
+wRandomStartOvers:: db
+wRandomSeqIndex:: dw
 ; Fingerprint of our party as sent before a link battle.
 wLinkSentPartyHash:: dw
 ; Nonzero if the two games didn't receive the same battle.

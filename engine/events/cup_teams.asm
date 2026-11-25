@@ -11,6 +11,10 @@ CupMakeTeam::
 	ld [wCupMakeCount], a
 	ld a, c
 	ld [wCupFoeType], a
+	xor a
+	ld [wRandomStartOvers], a
+	ld [wRandomSeqIndex], a
+	ld [wRandomSeqIndex + 1], a
 .start_over
 	xor a
 	ld [wOTPartyCount], a
@@ -19,6 +23,27 @@ CupMakeTeam::
 	ld bc, NUM_RANDOM_TYPES * 2
 	rst ByteFill
 .next
+	ld a, [wRandomStartOvers]
+	cp RANDOM_MAX_START_OVERS
+	jr c, .random_pick
+	; past the limit: the next set in order (RandomNextInOrder), the type
+	; rules kept on the first pass only; out of sets, the team is as full as
+	; it can be (with today's sets every type fills six: test_team_generation)
+	call RandomNextInOrder
+	ret c
+	ld a, b
+	and a
+	jr z, .picked
+	push hl
+	ld a, [hli]
+	ld c, a
+	ld b, [hl]
+	pop hl
+	call .HaveSpecies
+	jr z, .next
+	jr .add
+
+.random_pick
 	; a set: 10 random bits, tried again until below the number of sets
 	call Random
 	and %11
@@ -39,6 +64,7 @@ CupMakeTeam::
 	assert RANDOM_SET_LENGTH == 9
 	ld de, RandomBattleSets
 	add hl, de
+.picked
 	; one of each species
 	ld a, [hli]
 	ld c, a
@@ -178,12 +204,18 @@ CupMakeTeam::
 	ret
 
 .reject
-	; if nothing fits after many tries, start the team over
+	; in order, just the next one; else if nothing fits after many tries,
+	; start the team over (and count it)
+	ld a, [wRandomStartOvers]
+	cp RANDOM_MAX_START_OVERS
+	jmp nc, .next
 	ld hl, wRandomTries
 	inc [hl]
 	ld a, [hl]
 	cp RANDOM_MAX_TRIES
 	jmp c, .next
+	ld hl, wRandomStartOvers
+	inc [hl]
 	jmp .start_over
 
 .HaveSpecies:

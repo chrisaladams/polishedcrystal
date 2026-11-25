@@ -12,6 +12,10 @@
 INCLUDE "data/link/random_battle_sets.asm"
 
 LinkRandomBattle_MakeTeam::
+	xor a
+	ld [wRandomStartOvers], a
+	ld [wRandomSeqIndex], a
+	ld [wRandomSeqIndex + 1], a
 .start_over
 	xor a
 	ld [wPartyCount], a
@@ -20,6 +24,32 @@ LinkRandomBattle_MakeTeam::
 	ld bc, NUM_RANDOM_TYPES * 2
 	rst ByteFill
 .next
+	ld a, [wRandomStartOvers]
+	cp RANDOM_MAX_START_OVERS
+	jr c, .random_pick
+	; past the limit: the next set in order (RandomNextInOrder), the type
+	; spread checked on the first pass only; out of sets, the team is as full
+	; as it can be (a short team is refused at the other desk, not hung on)
+	call RandomNextInOrder
+	jr c, .out_of_sets
+	ld a, b
+	and a
+	jr z, .picked ; (first pass: the usual checks)
+	; the second pass: one of each species, whatever the spread
+	push hl
+	ld a, [hli]
+	ld c, a
+	ld b, [hl]
+	pop hl
+	call .HaveSpecies
+	jr z, .next
+	jr .add_set
+.out_of_sets
+	xor a
+	ld [wCurPartyMon], a
+	ret
+
+.random_pick
 	; pick a set: 10 random bits, tried again until below the number of sets
 	call Random
 	and %11
@@ -40,6 +70,7 @@ LinkRandomBattle_MakeTeam::
 	add hl, de
 	ld de, RandomBattleSets
 	add hl, de
+.picked
 	; one of each species, and a decent type spread
 	ld a, [hli]
 	ld c, a
@@ -50,6 +81,7 @@ LinkRandomBattle_MakeTeam::
 	call .TypeSpreadOK
 	jmp c, .reject
 	call .CountTypes
+.add_set
 	ld a, [hli] ; species and form again (the checks used b and c)
 	ld c, a
 	ld a, [hld]
@@ -131,12 +163,18 @@ LinkRandomBattle_MakeTeam::
 	ret
 
 .reject
-	; if nothing fits after many tries, start the team over
+	; in order, just the next one; else if nothing fits after many tries,
+	; start the team over (and count it)
+	ld a, [wRandomStartOvers]
+	cp RANDOM_MAX_START_OVERS
+	jmp nc, .next
 	ld hl, wRandomTries
 	inc [hl]
 	ld a, [hl]
 	cp RANDOM_MAX_TRIES
 	jmp c, .next
+	ld hl, wRandomStartOvers
+	inc [hl]
 	jmp .start_over
 
 .TypeSpreadOK:
@@ -303,4 +341,50 @@ LinkRandomBattle_MakeTeam::
 	pop de
 	pop hl
 	ret ; z
+
+RandomNextInOrder::
+; The next Random Battle set in order, for a team past RANDOM_MAX_START_OVERS
+; (LinkRandomBattle_MakeTeam, CupMakeTeam): hl = the set, b = 0 on the first
+; pass through them, 1 on the second; carry once both passes are done.
+	ld hl, wRandomSeqIndex
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ld de, -2 * NUM_RANDOM_BATTLE_SETS
+	push hl
+	add hl, de ; (carry if the index is 2 * NUM_RANDOM_BATTLE_SETS or more)
+	pop hl
+	ret c ; (both passes done)
+	; the index for next time
+	push hl
+	inc hl
+	ld a, l
+	ld [wRandomSeqIndex], a
+	ld a, h
+	ld [wRandomSeqIndex + 1], a
+	pop hl
+	; which pass, and the set within it
+	ld b, 0
+	ld de, -NUM_RANDOM_BATTLE_SETS
+	push hl
+	add hl, de
+	pop de ; (de = the index)
+	jr nc, .first
+	inc b ; the second pass: hl = index - NUM_RANDOM_BATTLE_SETS
+	jr .got
+.first
+	ld h, d
+	ld l, e
+.got
+	; hl = RandomBattleSets + hl * RANDOM_SET_LENGTH (9)
+	ld d, h
+	ld e, l
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, de
+	ld de, RandomBattleSets
+	add hl, de
+	and a
+	ret
 

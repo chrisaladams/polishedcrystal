@@ -16,10 +16,18 @@ times over, each within a time limit (Caller's 600 frames):
 If someone trims the Random Battle sets so a type has too few species, this
 fails, instead of a Kimono Cup hanging on that type's day.
 
+And the bound itself (RANDOM_MAX_START_OVERS, RandomNextInOrder), forced by
+starting each generator past the limit:
+- the sets taken in order make a full, legal team, the same every time;
+- a type no set has (an impossible pool) falls to the second, relaxed pass,
+  and still ends with a full team of different species;
+- out of sets (both passes done), it returns with what it has: it ends.
+
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_team_generation.py SAVE.sav
 """
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -82,6 +90,64 @@ def main():
     make('CupMakeTeam', {'B': K['RENTAL_CUP_TEAM_SIZE'], 'C': K['CUPTYPE_ANY']}, 'wOTParty',
          K['RENTAL_CUP_TEAM_SIZE'], 'the Rental Cup team')
     make('LinkRandomBattle_MakeTeam', {}, 'wParty', 6, 'the Random Battle team')
+
+    # the bound: start each generator past RANDOM_MAX_START_OVERS (a hook at
+    # its .start_over, the first time), optionally with the in-order index
+    # near the end, and see that it ends with a legal team
+    sets = int(re.search(r'DEF NUM_RANDOM_BATTLE_SETS EQU (\d+)', open(os.path.join(
+        os.path.dirname(os.path.dirname(HERE)), 'data', 'link', 'random_battle_sets.asm')).read()).group(1))
+    K.update(rgbasm_values(['RANDOM_MAX_START_OVERS'], None))
+
+    def forced(label, regs, prefix, size, what, index=0, foe_type=None):
+        hook = g.sym[label + '.start_over']
+        state = {'done': False}
+
+        def past_limit(_):
+            if not state['done']:
+                state['done'] = True
+                g.wr('wRandomStartOvers', K['RANDOM_MAX_START_OVERS'])
+                g.wr('wRandomSeqIndex', index & 0xff)
+                g.wr('wRandomSeqIndex', index >> 8, 1)
+                if foe_type is not None:
+                    g.wr('wCupFoeType', foe_type)
+        g.load(base)
+        g.pb.hook_register(*hook, past_limit, None)
+        try:
+            caller.call(label, **regs)
+        except AssertionError:
+            fails.append(f'{what}: did not end')
+            return None
+        finally:
+            g.pb.hook_deregister(*hook)
+        got = team(prefix)
+        species = [(s, f & K['EXTSPECIES_MASK']) for s, f in got]
+        if len(set(species)) != len(species):
+            fails.append(f'{what}: a species twice: {species}')
+        if size is not None and len(got) != size:
+            fails.append(f'{what}: {len(got)} Pokemon, not {size}')
+        return got
+
+    first = forced('LinkRandomBattle_MakeTeam', {}, 'wParty', 6, 'Random Battle, in order')
+    again = forced('LinkRandomBattle_MakeTeam', {}, 'wParty', 6, 'Random Battle, in order (again)')
+    if first is not None and first != again:
+        fails.append('Random Battle, in order: not the same team twice')
+    for t in ('FIRE', 'DRAGON', 'FAIRY'):
+        got = forced('CupMakeTeam', {'B': 4, 'C': K[t]}, 'wOTParty', 4, f'4 {t} type, in order')
+        if got:
+            off = [s for s, f in got if K[t] not in types_of(s, f)]
+            if off:
+                fails.append(f'4 {t} type, in order: species {off} are not of the type')
+    # an impossible pool: a type no set has (wCupFoeType set to $7e after the
+    # entry stored it), so only the relaxed second pass can fill the team
+    forced('CupMakeTeam', {'B': 6, 'C': K['FIRE']}, 'wOTParty', 6, 'an impossible type (relaxed)', foe_type=0x7e)
+    # out of sets: two picks from the end of the second pass, then it ends
+    got = forced('CupMakeTeam', {'B': 6, 'C': K['CUPTYPE_ANY']}, 'wOTParty', None, 'out of sets',
+                 index=2 * sets - 2)
+    if got is not None and len(got) > 2:
+        fails.append(f'out of sets: {len(got)} Pokemon from 2 sets left?')
+    got = forced('LinkRandomBattle_MakeTeam', {}, 'wParty', None, 'Random Battle out of sets', index=2 * sets)
+    if got is not None and len(got) != 0:
+        fails.append(f'Random Battle out of sets: {len(got)} Pokemon with no sets left?')
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')
