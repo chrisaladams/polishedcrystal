@@ -1,5 +1,7 @@
 # Link Edition 2.0 development roadmap
 
+> Superseded as the forward plan by [`link-edition-master-roadmap.md`](link-edition-master-roadmap.md); kept for its history. Current memory figures are in [`memory-baseline.md`](memory-baseline.md).
+
 The release keeps the 2 MiB Game Boy Color ROM and prioritizes the original
 hardware target. Start with the storage and clock changes. Build the solo
 tournament system and prove it works before extending the cable protocol.
@@ -54,9 +56,13 @@ quest-map build. The clock changes recovered another 601 bytes. The first
 ecology pass used 779 bytes and left 28,333 bytes free. The solo World
 Championship and broadcasts used 1,282 bytes. The Orange League challenges
 used another 1,229 bytes. The Cable Club formats used 396 bytes, leaving
-17,489 bytes free in the 2 MiB build. The largest areas are one empty 16 KiB
-bank and 863 bytes in another bank. Keeping a 7 KiB reserve leaves 10,321
-bytes for remaining work.
+17,489 bytes free in the 2 MiB build. Measured since (see
+[`memory-baseline.md`](memory-baseline.md)): the bedroom achievements used
+815 bytes, Friend Battles 1,544 and the linked championship 2,138, leaving
+12,993 bytes free at `b47b74a31`, 12,741 of them in ROMX bank $7f. Keeping a
+7 KiB reserve leaves 5,825 bytes for remaining work. Friend Battles took 272
+bytes of save space and the linked championship 20, leaving 152 (largest gap
+84); two of the fixed work RAM's bytes went to Friend Battles, leaving 16.
 
 Battery-backed save space is separate. The current link map reports 444 free
 bytes across four save banks, with 422 bytes split across three gaps in bank 0.

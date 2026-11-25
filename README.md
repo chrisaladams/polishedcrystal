@@ -501,6 +501,7 @@ These apply to every trainer battle, not just link play:
 Build exactly as Polished Crystal does (see [INSTALL.md](INSTALL.md)); RGBDS 1.0.4 is required. On top of that:
 
 - `make test` builds the ROM and runs a small test suite against the real assembled code under the PyBoy emulator, plus a static check for cross-bank calls. CI runs it on every push. It needs `pip install pyboy`.
+- `python3 utils/memory_report.py polishedcrystal-3.2.3.map` reports free ROM, SRAM, WRAM, HRAM and VRAM bank by bank, with each bank's largest free gap; `--compare OLD.map` gives the change. The current figures are in [docs/memory-baseline.md](docs/memory-baseline.md); the plan ahead is [docs/link-edition-master-roadmap.md](docs/link-edition-master-roadmap.md).
 
 ## Upgrading old saves
 
