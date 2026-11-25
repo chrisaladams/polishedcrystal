@@ -799,3 +799,8 @@ INCLUDE "engine/menus/lure_menu.asm"
 SECTION "Link Rules Text", ROMX
 
 INCLUDE "data/text/link_rules_text.asm"
+
+
+SECTION "World Cup Text", ROMX
+
+INCLUDE "data/text/world_cup_text.asm"

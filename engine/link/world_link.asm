@@ -919,6 +919,90 @@ WorldLinkOpponent::
 	ldh [hScriptVar], a
 	ret
 
+WorldLinkLastResult::
+; Before the semifinal or the final (WorldLinkOpponent has just run): who the
+; opponent beat to get here, in wStringBuffer5; hScriptVar = TRUE if that was
+; an upset (the weaker trainer won).
+	call WorldLinkDraw ; (WorldLinkOpponent wrote over slot 1)
+	ld a, [wWorldLinkRecord + WORLD_LINK_HALF]
+	add a
+	add a
+	ld e, a ; my slot
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	cp WORLDLINK_SEMIFINAL
+	jr z, .semifinal
+	; the final: the other half's finalist beat the partner, or a trainer
+	ld a, [wWorldLinkRecord + WORLD_LINK_PARTNER_STATUS]
+	cp WORLDLINK_OUT_QF
+	jr z, .trainers_semifinal
+	ld hl, wStringBuffer3
+	ld de, wStringBuffer5
+	ld bc, STRING_BUFFER_LENGTH
+	rst CopyBytes
+	xor a
+	ldh [hScriptVar], a
+	ret
+
+.trainers_semifinal
+	ld a, e
+	xor 4
+	ld d, a ; that half's first slot
+	add 2
+	call WorldLinkStronger ; (keeps bc, de)
+	ld c, a
+	ld a, d
+	inc a
+	call WorldLinkSlot
+	ld b, a
+	ld a, d
+	rrca
+	rrca
+	add 4 ; that half's semifinal
+	ld e, a
+	jr WorldCupAnnounce
+
+.semifinal
+	ld a, e
+	add 2
+	ld d, a
+	call WorldLinkSlot
+	ld b, a
+	ld a, d
+	inc a
+	call WorldLinkSlot
+	ld c, a
+	srl d
+	ld e, d ; that quarterfinal
+	ld hl, wWorldLinkRecord + WORLD_LINK_SEED
+	jr WorldCupAnnounceSeeded
+
+WorldCupAnnounce:
+	ld hl, wWorldLinkRecord + WORLD_LINK_SEED
+WorldCupAnnounceSeeded:
+; Trainers b and c's match e, with the seed at hl: the loser's name in
+; wStringBuffer5; hScriptVar = TRUE for an upset.
+	push bc
+	call WorldCupWinner
+	pop bc
+	cp b
+	jr nz, .b_lost
+	ld b, c
+.b_lost
+	ld c, a ; the winner; b, the loser
+	ld a, b
+	push bc
+	ld de, wStringBuffer5
+	call WorldCupCopyName
+	pop bc
+	ld a, c
+	cp b ; (the weaker won: an upset)
+	ld a, FALSE
+	jr nc, .done
+	ld a, TRUE
+.done
+	ldh [hScriptVar], a
+	ret
+
 WorldLinkSlot:
 ; a = the trainer in slot a.
 	ld hl, wWorldCupBracket

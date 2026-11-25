@@ -56,6 +56,48 @@ WorldCupNextPair::
 	ldh [hScriptVar], a
 	ret
 
+WorldCupNextResult::
+; After you win a round (before WorldCupAdvance), the trainers' own matches in
+; turn, from wWorldCupPairCursor (set it to 2 first): the winner's name in
+; wStringBuffer4, the loser's in wStringBuffer5; hScriptVar = FALSE when
+; there are no more, TRUE for a win, 2 for an upset.
+	ld hl, wWorldCupPairCursor
+	ld a, [wWorldCupRoundSize]
+	cp [hl]
+	jr z, .none
+	jr c, .none
+	ld a, [hl]
+	inc [hl]
+	inc [hl]
+	push af ; the pair's first slot
+	srl a
+	dec a ; which of the trainers' pairs, from 0
+	ld c, a
+	ld a, [wWorldCupRoundSize]
+	ld b, a
+	ld a, WORLD_CUP_CONTESTANTS + 1
+	sub b
+	add c
+	ld e, a ; its match (as WorldCupAdvance numbers them)
+	pop af
+	call WorldCupBracketSlot
+	ld a, [hli]
+	ld b, a
+	ld c, [hl]
+	ld hl, wWorldCupSeed
+	call WorldCupAnnounceSeeded ; (c = the winner)
+	ldh a, [hScriptVar]
+	inc a
+	ldh [hScriptVar], a
+	ld a, c
+	ld de, wStringBuffer4
+	jr WorldCupCopyName
+
+.none
+	xor a
+	ldh [hScriptVar], a
+	ret
+
 WorldCupCopyName:
 	and a
 	ld hl, wPlayerName

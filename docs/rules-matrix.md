@@ -99,6 +99,12 @@ both players out:
 | Wins it | 0.9% | 1.6% | 3.5% | 8.2% | 16.0% | 27.5% | 42.3% |
 
 About 26% of the trainers' matches are upsets.
+
+The desks report these results, so upsets can be seen. After each of your
+wins, the offline cup reports every match of that round ("Cynthia beat
+Lance." or "Ash upset Red!"; `WorldCupNextResult`). Before a linked semifinal
+or final, the desk says who your opponent beat to get there, upset or not;
+if they knocked out your partner, it says that (`WorldLinkLastResult`).
 `utils/anime_events/test_bracket.py` checks that the game gives the model's
 result in 203 cases, in either order and twice over, and that the offline
 cup's rounds follow it.

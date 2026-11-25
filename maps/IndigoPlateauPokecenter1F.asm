@@ -530,13 +530,23 @@ IndigoPlateauLinkedCup:
 	ifequalfwd WORLDDESK_CLAIMED, .Claimed
 	ifequalfwd WORLDDESK_QUARTERFINAL, .Quarterfinal
 	ifequalfwd WORLDDESK_SEMIFINAL, .Semifinal
+	callasm WorldLinkLastResult ; (who the finalist beat)
+	iftruefwd .FinalUpset
 	writetext .FinalText
+	sjumpfwd .Ready
+.FinalUpset:
+	writetext .FinalUpsetText
 	sjumpfwd .Ready
 .Quarterfinal:
 	writetext .QuarterfinalText
 	sjumpfwd .Ready
 .Semifinal:
+	callasm WorldLinkLastResult ; (who the opponent beat)
+	iftruefwd .SemifinalUpset
 	writetext .SemifinalText
+	sjumpfwd .Ready
+.SemifinalUpset:
+	writetext .SemifinalUpsetText
 .Ready:
 	yesorno
 	iffalsefwd .NotNow
@@ -616,28 +626,13 @@ IndigoPlateauLinkedCup:
 	done
 
 .SemifinalText:
-	text "Your bracket with"
-	line "@"
-	text_ram wStringBuffer3
-	text "!"
-
-	para "Semifinal:"
-	line "@"
-	text_ram wStringBuffer4
-	text ". Ready?"
-	done
-
+	text_farend _WorldLinkSemifinalText
+.SemifinalUpsetText:
+	text_farend _WorldLinkSemifinalUpsetText
 .FinalText:
-	text "@"
-	text_ram wStringBuffer3
-	text " is out,"
-	line "so the final is"
-
-	para "against @"
-	text_ram wStringBuffer4
-	text "."
-	line "Ready?"
-	done
+	text_farend _WorldLinkFinalText
+.FinalUpsetText:
+	text_farend _WorldLinkFinalUpsetText
 
 .LaterText:
 	text "Come back when"
@@ -746,6 +741,17 @@ IndigoPlateauWorldCup:
 	startbattle
 	reloadmap
 	iftruefwd .Lost
+	loadmem wWorldCupPairCursor, 2 ; (the trainers' own matches this round)
+.Results:
+	callasm WorldCupNextResult
+	iffalsefwd .Advance
+	ifequalfwd 2, .Upset
+	showtext .ResultText
+	sjump .Results
+.Upset:
+	showtext .UpsetText
+	sjump .Results
+.Advance:
 	callasm WorldCupAdvance
 	iftrue .NextRound
 	callasm CupEnd
@@ -803,6 +809,10 @@ IndigoPlateauWorldCup:
 	line "vs. @"
 	text_ram wStringBuffer4
 	text_end
+.ResultText:
+	text_farend _WorldCupResultText
+.UpsetText:
+	text_farend _WorldCupUpsetText
 .WinText:
 	text "You had my number."
 	done
