@@ -17,7 +17,10 @@ checks a real battle's keeping).
 - LoadFriendTeam unpacks it so every Pokemon matches its original at level
   50: species, form, item, moves, PP (with PP Ups), DVs, personality, EVs,
   happiness, and the stats the game itself gives the original at level 50
-  (BT_SetLevel), hyper training included, at full HP.
+  (BT_SetLevel), hyper training included, at full HP;
+- an Unrestricted team keeps each Pokemon's own level beside the record
+  (with a check byte tied to the record's checksum), unpacks at those
+  levels, and reads as empty if a level or the check byte is wrong.
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_friend_records.py SAVE.sav
@@ -61,6 +64,7 @@ class Caller:
             rf.PC = addr
             self.state = 'running'
         elif self.state == 'running' and rf.SP == self.sp:
+            self.out = {'A': rf.A, 'carry': bool(rf.F & 0x10), 'zero': bool(rf.F & 0x80)}  # (what it returned)
             g.m[0x2000] = self.bank
             g.m[0xff87] = self.bank
             rf.A, rf.F, rf.B, rf.C, rf.D, rf.E, rf.HL = self.saved
@@ -82,13 +86,16 @@ def main():
                        'MON_EVS', 'MON_HAPPINESS', 'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_IS_EGG_F',
                        'NUM_STATS', 'LINK_RULE_STANDARD', 'LINK_RULE_RANDOM', 'LINK_RULE_RISING_STAR',
                        'LINK_RULE_UNRESTRICTED', 'LINK_RULE_WORLD', 'NUM_ITEMS', 'NUM_NATURES',
-                       'EXTSPECIES_MASK'], None)
+                       'EXTSPECIES_MASK', 'FRIEND_LEVELS_LENGTH', 'FRIEND_LEVELS_MAGIC', 'CUP_OWN_LEVELS',
+                       'MAX_LEVEL'], None)
     L, N, R = K['PARTYMON_STRUCT_LENGTH'], K['PLAYER_NAME_LENGTH'], K['FRIEND_TEAM_LENGTH']
     g = Game(save)
     g.boot()
     call = Caller(g).call
     fails = []
     slots = (g.sym['sFriendTeam1'][1], g.sym['sFriendTeam2'][1])
+    levels = (g.sym['sFriendTeamLevels1'][1], g.sym['sFriendTeamLevels2'][1])
+    LV = K['FRIEND_LEVELS_LENGTH']
 
     def check(cond, where, what):
         if not cond:
@@ -204,7 +211,9 @@ def main():
         g.pb.hook_deregister(*hook)
         after = sram(0xa000, 0x2000)
         lo, hi = slots[i] - 0xa000, slots[i] - 0xa000 + R
-        outside = [hex(0xa000 + k) for k in range(0x2000) if not lo <= k < hi and bank0[k] != after[k]]
+        llo, lhi = levels[i] - 0xa000, levels[i] - 0xa000 + LV  # (and its levels)
+        outside = [hex(0xa000 + k) for k in range(0x2000)
+                   if not lo <= k < hi and not llo <= k < lhi and bank0[k] != after[k]]
         check(not outside, 'bounds', f'slot {i + 1}: bytes outside it changed: {outside[:6]}')
         check(markers and all(m == (0, 0) for m in markers), 'marker',
               f'slot {i + 1}: the marker was set while the record was written: {markers}')
@@ -275,6 +284,46 @@ def main():
         check([p & 0xc0 for p in pp] == [p & 0xc0 for p in m[K['MON_PP']:K['MON_PP'] + 4]]
               and all(p & 0x3f for p, mv in zip(pp, o[K['MON_MOVES']:K['MON_MOVES'] + 4]) if mv),
               'round trip', f'#{i + 1} PP {pp.hex()}')
+
+    # Unrestricted: each Pokemon's own level is kept beside the record, and
+    # checked; a Friend Battle unpacks them at those levels
+    g.load(base)
+    clear_slots()
+    for i in range(len(mine)):  # (varied levels, so they're told apart)
+        g.m[1, g.addr('wPartyMon1') + i * L + K['MON_LEVEL']] = 20 + 7 * i
+    varied = party()
+    opponent('A', K['LINK_RULE_UNRESTRICTED'], 0, varied)
+    call('KeepFriendTeam')
+    want = [m[K['MON_LEVEL']] for m, _ in varied if not m[K['MON_FORM']] & (1 << K['MON_IS_EGG_F'])]
+    lv = sram(levels[0], LV)
+    check(lv[:len(want)] == want and lv[2] == want[2], 'levels', f'kept levels {lv}, not {want}')
+    check(lv[6] == (K['FRIEND_LEVELS_MAGIC'] + sum(lv[:6]) + kept(0)[2]) & 0xff, 'levels', 'its check byte')
+    call('FriendDeskFirst')
+    check(g.m[g.sym['hScriptVar'][1]] != 0, 'levels', 'an Unrestricted team reads as empty')
+    good_levels = list(lv)
+    g.wr('wFriendBattleSlot', 1)
+    g.wr('wCupLevel', K['CUP_OWN_LEVELS'])
+    call('LoadFriendTeam')
+    g.wr('wFriendBattleSlot', 0)
+    g.wr('wCupLevel', 0)
+    got = [g.m[1, g.addr('wOTPartyMon1') + i * L + K['MON_LEVEL']] for i in range(g.rd('wOTPartyCount'))]
+    check(got == want, 'levels', f'unpacked at levels {got}, not {want}')
+    for what, k, value in (('a level 0', 0, 0), ('a level past the most', 1, K['MAX_LEVEL'] + 1),
+                           ('a changed level, check byte not', 2, (good_levels[2] + 1) & 0xff),
+                           ('a wrong check byte', 6, good_levels[6] ^ 0x5a)):
+        bad = list(good_levels)
+        bad[k] = value
+        set_sram(levels[0], bad)
+        call('FriendDeskFirst')
+        check(g.m[g.sym['hScriptVar'][1]] == 0, 'levels', f'{what}: read as a team')
+    # (other rules don't use the levels: a Standard team with bad ones reads)
+    set_sram(levels[0], [0] * LV)
+    rec = kept(0)
+    rec[3] = K['LINK_RULE_STANDARD']
+    rec[2] = (0x46 + sum(rec[3:])) & 0xff
+    set_sram(slots[0], rec)
+    call('FriendDeskFirst')
+    check(g.m[g.sym['hScriptVar'][1]] != 0, 'levels', 'a Standard team needed its levels')
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

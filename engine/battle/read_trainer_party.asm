@@ -60,6 +60,8 @@ ReadTrainerParty:
 	ld a, [wCupLevel]
 	and a
 	jr z, .not_cup
+	cp CUP_OWN_LEVELS
+	jr z, .not_cup
 	ld [wCurPartyLevel], a
 .not_cup
 

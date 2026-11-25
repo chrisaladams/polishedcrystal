@@ -27,7 +27,8 @@ def main():
     checks += [[f'utils/anime_events/test_{name}.py', str(save)]
               for name in ('story', 'quest_map', 'engine_cleanup', 'software_clock', 'orange_league',
                            'cameos', 'whirl_cup', 'movie_events', 'campaigns', 'shadow_encounters', 'cups',
-                           'cup_spotlight', 'achievements', 'friend_battles', 'friend_records')]
+                           'cup_spotlight', 'achievements', 'friend_battles', 'friend_records',
+                           'link_rules')]
     checks.append(['utils/wild_mons/test_wild_mons.py', str(save)]
                   + ([] if args.full else ['--quick']))
     audit = ['utils/audit/audit_reachability.py', str(save)]

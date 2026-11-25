@@ -2048,16 +2048,18 @@ BattleCommand_checkhit:
 	ld b, 7
 
 .not_external_acc
-	; In restricted link formats, cap the target's evasion boost at +2 (c <= 9,
-	; neutral is 7) so Double Team / Minimize / Bright Powder still help but
-	; can't be stacked into an accuracy stall. Replaces the old Evasion Clause
-	; that ignored evasion entirely; evasion drops below neutral still apply.
+	; In every link format, and in Friend Battles (which replay one), cap the
+	; target's evasion boost at +2 (c <= 9, neutral is 7) so Double Team /
+	; Minimize / Bright Powder still help but can't be stacked into an
+	; accuracy stall. Replaces the old Evasion Clause that ignored evasion
+	; entirely; evasion drops below neutral still apply.
 	ld a, [wLinkMode]
 	and a
+	jr nz, .evasion_cap
+	ld a, [wFriendBattleSlot]
+	and a
 	jr z, .skip_evasion_cap
-	ld a, [wLinkBattleRules]
-	cp LINK_RULE_UNRESTRICTED
-	jr z, .skip_evasion_cap
+.evasion_cap
 	ld a, c
 	cp 10
 	jr c, .skip_evasion_cap

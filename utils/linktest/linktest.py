@@ -255,8 +255,10 @@ class Side:
         form = self.sym['wPartyMon1Form'][1] - base
         mons = [(self.mem[1, base + i * stride], self.mem[1, base + i * stride + form])
                 for i in range(n) if not self.mem[1, base + i * stride + form] & 0x40]  # (eggs aside)
+        level = self.sym['wPartyMon1Level'][1] - base
+        levels = {self.mem[1, base + i * stride + level] for i in range(n)}
         name = bytes(self.rd('wPlayerName', i) for i in range(8))
-        return {'teams': teams, 'mons': mons, 'name': name}
+        return {'teams': teams, 'mons': mons, 'name': name, 'levels': levels}
 
     def party_ids(self):
         n = self.rd('wPartyCount')
@@ -598,11 +600,18 @@ def main():
     if not n:
         problems.append('No action exchange completed on both sides.')
     elif not args.rom_b:
-        expected_level = 30 if formats[0] == 'rising' else 50
+        expected_level = {'rising': 30, 'unrestricted': None}.get(formats[0], 50)
         expected_size = {'rising': 3, 'random': 6, 'world': 6}.get(formats[0])
-        for name in 'AB':
+        for name, other in (('A', 'B'), ('B', 'A')):
             for exchange in res[name][1]:
-                if exchange['levels'] != (expected_level, expected_level):
+                if expected_level is None:  # (Unrestricted: each at its own level)
+                    mine, theirs = exchange['levels']
+                    if friends[name] and friends[other] and (
+                            mine not in friends[name]['levels'] or theirs not in friends[other]['levels']):
+                        problems.append(f'Side {name} battled at levels {exchange["levels"]}, not their own '
+                                        f'({sorted(friends[name]["levels"])} and {sorted(friends[other]["levels"])}).')
+                        break
+                elif exchange['levels'] != (expected_level, expected_level):
                     problems.append(f'Side {name} did not battle at level {expected_level}.')
                     break
                 if expected_size and any(len(exchange[key]) != expected_size for key in ('party', 'otparty')):

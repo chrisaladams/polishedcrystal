@@ -109,6 +109,13 @@ SECTION "World Link", SRAM[$b1d5], BANK[0]
 sWorldLink:: ds WORLD_LINK_LENGTH
 	assert sWorldLink + WORLD_LINK_LENGTH <= $b200
 
+; Each kept team's levels, for Unrestricted (engine/link/friend_teams.asm),
+; in the gap after the World Link record. Cartridge lifetime, as the teams.
+SECTION "Friend Team Levels", SRAM[$b1e9], BANK[0]
+sFriendTeamLevels1:: ds FRIEND_LEVELS_LENGTH
+sFriendTeamLevels2:: ds FRIEND_LEVELS_LENGTH
+
+
 SECTION "Friend Team 2", SRAM[$bf24], BANK[0]
 sFriendTeam2:: ds FRIEND_TEAM_LENGTH
 

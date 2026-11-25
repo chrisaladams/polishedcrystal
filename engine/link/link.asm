@@ -686,6 +686,14 @@ LinkBattle_SetPartyMonLevelAndExp:
 	ld bc, MON_LEVEL
 	add hl, bc
 	ld a, [wLinkBattleLevel]
+	and a
+	jr nz, .normalize
+	; Unrestricted: its own level and experience (stats are still recalculated)
+	ld a, [hl]
+	ld [wCurPartyLevel], a
+	pop hl
+	ret
+.normalize
 	ld [hl], a
 	ld [wCurPartyLevel], a
 	pop hl

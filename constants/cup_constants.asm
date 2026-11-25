@@ -12,7 +12,10 @@
 	const CUP_LUANA       ; two Pokémon, singles rules
 	const CUP_FRIEND      ; a Friend Battle: your party at level 50
 	const CUP_FRIEND_RISING_STAR ; a Friend Battle under Rising Star rules
+	const CUP_FRIEND_UNRESTRICTED ; a Friend Battle under Unrestricted rules
 DEF NUM_CUPS EQU const_value
+; a cup "level" for battles at everyone's own levels (wCupLevel)
+DEF CUP_OWN_LEVELS EQU $ff
 DEF NUM_BROADCAST_CUPS EQU CUP_WORLD + 1
 DEF RENTAL_CUP_TEAM_SIZE EQU 3
 DEF WORLD_CUP_CONTESTANTS EQU 8
@@ -44,6 +47,7 @@ DEF NUM_KIMONO_TYPES EQU 18
 	const CUPTEAM_TYPE   ; doesn't meet the type rule
 	const CUPTEAM_DUPLICATE ; chose the same party slot twice
 	const CUPTEAM_EGG   ; chose an Egg
+	const CUPTEAM_RULES ; breaks the Cable Club rules of a Friend Battle
 
 ; wCupRecords: first wins (byte 0); Kimono Cup wins by type (bytes 1-3)
 	const_def

@@ -126,8 +126,11 @@ endc
 ; Bump whenever battle-affecting link logic changes (party normalization,
 ; healing, clauses, base stats, abilities, damage) so mismatched builds can't
 ; connect and desync. Link Edition 1.0 (first family release) is version 1;
-; the Christmas release is 2. The expanded Cable Club formats are version 3.
-DEF LINK_VERSION EQU 3
+; the Christmas release is 2. The expanded Cable Club formats are version 3;
+; 4 has the unified rules (docs/rules-matrix.md): Standard allows one
+; legendary, Unrestricted keeps levels, Rising Star has the Species and Item
+; Clauses, and evasion stops at +2 in every format.
+DEF LINK_VERSION EQU 4
 ; This is the minimum link version allowed for trading (the party layout
 ; hasn't changed since version 1, so trades with 1.0 still work)
 DEF LINK_MIN_TRADE_VERSION EQU 1
@@ -141,6 +144,14 @@ DEF LINK_MIN_TRADE_VERSION EQU 1
 	const LINK_RULE_WORLD ; Link Edition: the linked World Championship
 DEF NUM_LINK_BATTLE_RULES EQU const_value
 assert NUM_LINK_BATTLE_RULES <= 16
+
+; what a format allows beyond its level and team size (LinkBattleRuleTable,
+; engine/link/link_rules.asm)
+	const_def
+	shift_const LINKRULE_NO_EGGS   ; no Eggs in the party
+	shift_const LINKRULE_NO_UBERS  ; none of UberMons (Mewtwo, Mew, Lugia, Ho-Oh, Celebi)
+	shift_const LINKRULE_ONE_LEGEND ; at most one of LegendaryMons (with the Ubers)
+	shift_const LINKRULE_CLAUSES   ; no two of a species, nor two holding the same item
 
 ; Friend Battles (engine/link/friend_teams.asm): a link opponent's team,
 ; kept on the cartridge (sFriendTeam1, sFriendTeam2)
@@ -171,6 +182,11 @@ DEF FRIENDMON_HAPPINESS   rb
 DEF FRIENDMON_HYPER       rb ; hyper training
 DEF FRIENDMON_LENGTH EQU _RS
 DEF FRIEND_TEAM_LENGTH EQU FRIEND_TEAM_HEADER_LENGTH - 1 + FRIENDMON_LENGTH * PARTY_LENGTH
+; beside each record (sFriendTeamLevels1, 2): its Pokemon's levels, kept for
+; Unrestricted battles, then a check byte (this plus the levels and the
+; record's checksum)
+DEF FRIEND_LEVELS_MAGIC EQU $4c
+DEF FRIEND_LEVELS_LENGTH EQU PARTY_LENGTH + 1
 
 ; The linked World Championship (engine/link/world_link.asm): a bracket two
 ; players share, kept on each cartridge (sWorldLink)

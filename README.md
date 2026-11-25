@@ -32,7 +32,7 @@ A pass at tightening up the meta for L50 link battles:
 - **Eviolite restricted** to genuine not-fully-evolved mons (closed a couple of edge-case loopholes). The restriction check used to wipe the attacking move's power, so every hit on an Eviolite holder did 1 damage; that's fixed.
 - **Moody removed.**
 - **Upstream battle bugs fixed:** Thunder never missed in harsh sunlight (it's 50% now), harsh sunlight didn't stop freezing (it let a freeze chance skip every check instead), and Low Kick gave 80 power to anything between 5 kg and 100 kg (it now follows the weight table: 40 power above 10 kg, 60 above 25 kg, 80 above 50 kg). In link battles, Sleep Talk picked its move with each Game Boy's own random numbers instead of the shared battle ones, so the two games could pick different moves and the battle split; it now uses the shared ones.
-- **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
+- **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Applies to every link format (Unrestricted included) and to Friend Battles; singleplayer, the cups and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
 - **Link-battle healing and leveling** — Pokémon are healed and set to the format's level before a match.
 - A few mart/item tweaks to go with the above.
 
@@ -52,14 +52,17 @@ party at registration and validates the received team before the battle.
 
 | Format | Level | Team |
 | --- | --- | --- |
-| Standard | 50 | Up to six from your party, with the existing balance rules |
+| Standard | 50 | Up to six from your party, at most one of them legendary |
 | Random teams | 50 | Six generated Pokémon |
-| Rising Star | 30 | Bring exactly three. Eggs, Mewtwo, Mew, Lugia, Ho-Oh and Celebi sit this out |
-| Unrestricted | 50 | Up to six from your party. Legendary and mythical Pokémon and the full range of evasion boosts are allowed |
+| Rising Star | 30 | Bring exactly three. Eggs, Mewtwo, Mew, Lugia, Ho-Oh and Celebi sit this out, and no two may be one species or hold the same item |
+| Unrestricted | their own | Up to six from your party, at the levels they are, any Pokémon at all |
 | Championship | 50 | Six, no Eggs: the linked World Championship (below) |
 
-Battling restores your party after the match. All four formats use the
-same synchronization protections. Both players need the same build.
+In every format, evasion boosts stop at +2. Battling restores your party
+after the match. All the formats use the same synchronization protections,
+and both players need the same build. The full rules, and how the offline
+cups differ, are in [`docs/rules-matrix.md`](docs/rules-matrix.md);
+`utils/anime_events/test_link_rules.py` checks them.
 
 ### The linked World Championship
 
@@ -104,7 +107,8 @@ the cable: it's the team the battle already received.
 
 The Cable Club's third receptionist (where the Time Capsule was) lets you
 battle a kept team on your own, under the rules it was kept with: your whole
-party at level 50, or three of yours at level 30 for Rising Star. As in the
+party at level 50 (one legendary at most, for Standard), three of yours at
+level 30 for Rising Star, or everyone at their own levels for Unrestricted. As in the
 cups, your party comes back as it was, and losing costs nothing. You can
 also look the team over, go to the other friend's, or remove one (your link
 records stay). When both places hold other friends' teams, a third friend's

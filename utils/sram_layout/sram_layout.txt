@@ -512,6 +512,8 @@
 00:b14d sBoxMons2BEnd
 00:b14d sFriendTeam1
 00:b1d5 sWorldLink
+00:b1e9 sFriendTeamLevels1
+00:b1f0 sFriendTeamLevels2
 00:b200 sBackupOptions
 00:b207 sBackupCheckValue1
 00:b208 sBackupGameData

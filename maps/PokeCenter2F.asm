@@ -254,7 +254,8 @@ LinkReceptionistScript_Battle:
 	ifequalfwd LINK_RULE_RISING_STAR, .RisingRules
 	ifequalfwd LINK_RULE_UNRESTRICTED, .UnrestrictedRules
 	ifequalfwd LINK_RULE_WORLD, .WorldRules
-	sjumpfwd .Validate
+	writetext Text_StandardRules
+	sjumpfwd .ReadRules
 
 .WorldRules:
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
@@ -282,7 +283,10 @@ LinkReceptionistScript_Battle:
 	readmem wLinkBattleRules
 	ifequalfwd LINK_RULE_RISING_STAR, .InvalidRising
 	ifequalfwd LINK_RULE_WORLD, .InvalidWorld
+	ifequalfwd LINK_RULE_STANDARD, .InvalidStandard
 	jumpopenedtext Text_NoLinkTeam
+.InvalidStandard:
+	jumpopenedtext Text_InvalidStandard
 .InvalidWorld:
 	jumpopenedtext Text_InvalidWorld
 .InvalidRising:
@@ -481,31 +485,16 @@ Text_WhichRules:
 	done
 
 Text_RandomRules:
-	text "Random teams: you"
-	line "each get six ran-"
-	cont "dom #mon at"
-	cont "level 50."
+	text_farend _RandomRulesText
 
-	para "Your own team is"
-	line "safe. It's back"
-	cont "after the battle."
-	done
+Text_StandardRules:
+	text_farend _StandardRulesText
 
 Text_RisingRules:
-	text "Bring three #mon"
-	line "for Lv.30 battles."
-	para "No Eggs, Mewtwo,"
-	line "Mew, Lugia, Ho-Oh"
-	cont "or Celebi."
-	done
+	text_farend _RisingRulesText
 
 Text_UnrestrictedRules:
-	text "Bring up to six at"
-	line "level 50."
-	para "Legendaries and"
-	line "any evasion boost"
-	cont "are allowed."
-	done
+	text_farend _UnrestrictedRulesText
 
 Text_NoLinkTeam:
 	text "Bring at least one"
@@ -513,11 +502,10 @@ Text_NoLinkTeam:
 	done
 
 Text_InvalidRising:
-	text "This format needs"
-	line "three eligible"
-	cont "#mon in your"
-	cont "party."
-	done
+	text_farend _InvalidRisingText
+
+Text_InvalidStandard:
+	text_farend _InvalidStandardText
 
 Text_WrongRules:
 	text "You and your"

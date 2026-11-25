@@ -794,3 +794,8 @@ INCLUDE "audio/music/printer.asm"
 SECTION "LureMenu", ROMX
 
 INCLUDE "engine/menus/lure_menu.asm"
+
+
+SECTION "Link Rules Text", ROMX
+
+INCLUDE "data/text/link_rules_text.asm"

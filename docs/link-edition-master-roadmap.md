@@ -202,10 +202,10 @@ Measure net savings individually; historic numbers are rough gross estimates, no
 | Unrestricted | 50 | 1–6 |
 | Championship | 50 | 6, no eggs |
 
-- [ ] Define one authoritative rules policy covering level, team size, eggs, species/form eligibility, duplicate species, held-item duplication, legendary/mythical restrictions, evasion and healing.
-- [ ] Reuse rules validation across link registration, received teams, Friend Battles and compatible cups. Keep intentional differences (typed cups, rental generation, etc.) explicit.
-- [ ] Decide whether Unrestricted's full evasion boosts are intentional; preserve universal bug fixes and synchronization protections in every format.
-- [ ] Verify Rising Star offline selection and live link eligibility are consistent or clearly documented.
+- [x] Define one authoritative rules policy covering level, team size, eggs, species/form eligibility, duplicate species, held-item duplication, legendary/mythical restrictions, evasion and healing. *([`rules-matrix.md`](rules-matrix.md); one table, `LinkBattleRuleTable`, with a flags column. Decided: Standard is level 50 with one legendary at most, and Unrestricted keeps levels and allows anything. Link version 4.)*
+- [x] Reuse rules validation across link registration, received teams, Friend Battles and compatible cups. Keep intentional differences (typed cups, rental generation, etc.) explicit. *(One checker for the desk, received teams and your Friend Battle team (`CheckFriendBattleTeam`, from the cup runner). The cups' deliberate differences are listed in the matrix. Tested: `test_link_rules.py`, 65 checks.)*
+- [x] Decide whether Unrestricted's full evasion boosts are intentional; preserve universal bug fixes and synchronization protections in every format. *(Decided: no. Evasion stops at +2 in every link format and in Friend Battles. Tested: `test_link_rules.py` runs the accuracy check with +6 evasion in each case.)*
+- [x] Verify Rising Star offline selection and live link eligibility are consistent or clearly documented. *(They differed: the cup's Battle Tower picker had the Species and Item Clauses, and the link desk didn't. Link Rising Star has them now.)*
 - [ ] Keep battle RNG deterministic on both consoles; avoid cosmetic or NPC bracket RNG interfering with combat.
 - [ ] Replace fixed stronger-index NPC victories with deterministic weighted outcomes, seeded per bracket and match ID. Use the same results on both cartridges; allow upsets and provide regression fixtures. Calibrate probabilities later with simulation.
 - [ ] Review early cup rewards, repeated rewards, difficulty progression, free healing and team-generation constraints.

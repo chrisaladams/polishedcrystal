@@ -15,9 +15,32 @@ GetFriendTeam:
 	ld hl, sFriendTeam2
 	ret
 
+GetFriendLevels:
+; hl = friend team a's levels (SRAM bank 0).
+	ld hl, sFriendTeamLevels1
+	and a
+	ret z
+	ld hl, sFriendTeamLevels2
+	ret
+
+FriendLevelsFor:
+; hl = the levels beside the record at hl.
+	ld a, l
+	cp LOW(sFriendTeam1)
+	jr nz, .two
+	ld a, h
+	cp HIGH(sFriendTeam1)
+	jr nz, .two
+	xor a
+	jr GetFriendLevels
+.two
+	ld a, 1
+	jr GetFriendLevels
+
 CheckFriendTeam:
 ; Carry if friend team a holds a team (SRAM open): marked, checked, and every
-; field one the game can use. Anything else counts as an empty slot.
+; field one the game can use (for Unrestricted, its levels too). Anything else
+; counts as an empty slot.
 	call GetFriendTeam
 	push hl
 	ld a, [hli]
@@ -32,10 +55,121 @@ CheckFriendTeam:
 	cp c
 	jr nz, .no
 	pop hl
-	jr CheckFriendTeamFields
+	push hl
+	push bc
+	call CheckFriendTeamFields
+	pop bc
+	pop hl
+	ret nc
+	push hl
+	ld de, FRIEND_TEAM_RULE
+	add hl, de
+	ld a, [hl]
+	pop hl
+	cp LINK_RULE_UNRESTRICTED
+	scf
+	ret nz
+	jr CheckFriendLevels
 .no
 	pop hl
 	and a
+	ret
+
+CheckFriendLevels:
+; Carry if the levels beside the record at hl (checksum c) are whole: each of
+; its Pokemon's is 1 to MAX_LEVEL, and the check byte matches.
+	push hl
+	ld de, FRIEND_TEAM_COUNT
+	add hl, de
+	ld b, [hl] ; (1-6: CheckFriendTeamFields)
+	pop hl
+	call FriendLevelsFor
+	push hl
+.level
+	ld a, [hli]
+	and a
+	jr z, .bad
+	cp MAX_LEVEL + 1
+	jr nc, .bad
+	dec b
+	jr nz, .level
+	pop hl
+	ld a, c
+	call FriendLevelsSum
+	cp [hl]
+	scf
+	ret z
+	and a
+	ret
+.bad
+	pop hl
+	and a
+	ret
+
+FriendLevelsSum:
+; a = the check byte for the levels at hl, from a (the record's checksum);
+; hl = the check byte's address.
+	add FRIEND_LEVELS_MAGIC
+	ld b, PARTY_LENGTH
+.sum
+	add [hl]
+	inc hl
+	dec b
+	jr nz, .sum
+	ret
+
+WriteFriendLevels:
+; Keep the levels of wOTParty's Pokemon (eggs aside, as the record keeps
+; them) beside the record at hl, and their check byte from a (its checksum).
+	push af
+	call FriendLevelsFor
+	push hl
+	xor a
+	ld bc, PARTY_LENGTH
+	rst ByteFill
+	pop hl
+	push hl
+	ld a, [wOTPartyCount]
+	and a
+	jr z, .check
+	ld b, a
+	ld de, wOTPartyMon1
+.mon
+	push de
+	ld a, MON_IS_EGG
+	add e
+	ld e, a
+	adc d
+	sub e
+	ld d, a
+	ld a, [de]
+	pop de
+	bit MON_IS_EGG_F, a
+	jr nz, .next
+	push de
+	ld a, MON_LEVEL
+	add e
+	ld e, a
+	adc d
+	sub e
+	ld d, a
+	ld a, [de]
+	pop de
+	ld [hli], a
+.next
+	push hl
+	ld hl, PARTYMON_STRUCT_LENGTH
+	add hl, de
+	ld d, h
+	ld e, l
+	pop hl
+	dec b
+	jr nz, .mon
+.check
+	pop hl
+	pop af
+	call FriendLevelsSum
+	ld [hl], a
 	ret
 
 CheckFriendTeamFields:
@@ -283,6 +417,11 @@ KeepFriendTeam::
 	call FriendTeamSum
 	pop hl
 	push hl
+	push af
+	call WriteFriendLevels ; (while the marker is still clear)
+	pop af
+	pop hl
+	push hl
 	inc hl
 	inc hl
 	ld [hl], a ; checksum
@@ -493,6 +632,23 @@ UnpackFriendMon:
 	ld a, MON_ID + 1
 	call .Put
 	ld a, [wCupLevel]
+	cp CUP_OWN_LEVELS
+	jr nz, .not_own
+	; Unrestricted: its own level, kept beside the record
+	push hl
+	ld a, [wFriendBattleSlot]
+	dec a
+	call GetFriendLevels
+	ld a, [wCurPartyMon]
+	add l
+	ld l, a
+	adc h
+	sub l
+	ld h, a
+	ld a, [hl]
+	pop hl
+	jr .level
+.not_own
 	and a
 	jr nz, .level
 	ld a, LINK_BATTLE_FORCED_LEVEL
@@ -664,8 +820,12 @@ FriendDeskArm::
 	ld de, FRIEND_TEAM_RULE
 	add hl, de
 	ld a, [hli]
+	ld [wLinkBattleRules], a ; (CupSelectTeam checks your team against them)
 	cp LINK_RULE_RISING_STAR
 	ld b, CUP_FRIEND_RISING_STAR
+	jr z, .cup
+	cp LINK_RULE_UNRESTRICTED
+	ld b, CUP_FRIEND_UNRESTRICTED
 	jr z, .cup
 	ld b, CUP_FRIEND
 .cup

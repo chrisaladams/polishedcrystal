@@ -15,11 +15,11 @@ Measured with `utils/memory_report.py` (after the padding change below):
 | 0 | `$bd84-$bf0c` | 393 | backup save padding (`ds 393`) |
 | 0 | `$bfac-$bfff` | 84 | after Friend Team 2 |
 | 0 | `$a5e9-$a5ff` | 23 | before "SRAM Mail" |
-| 0 | `$b1e9-$b1ff` | 23 | after the World Link record |
+| 0 | `$b1f7-$b1ff` | 9 | after the Friend Team levels (23 before them) |
 | 1 | `$ab84-$ad0b` | 392 | main save padding (`ds 392`) |
 | 1 | `$bffc-$bfff` | 4 | |
 | 2, 3 | `$bff7-$bfff` | 9 each | end of the box database banks |
-| | **Total** | **937** | 152 before |
+| | **Total** | **923** | 152 before; 14 since used for the Friend Team levels |
 
 The two padding blocks sat between the end of each save's data and its
 checksum. Nothing read or wrote them: the save writes named fields, the
@@ -66,5 +66,6 @@ padding is still empty, an upstream merge that grows the save links as before.
 | Friend Team 1 | `0:$b14d` | 136 | cartridge | marker, checksum, field validation |
 | World Link | `0:$b1d5` | 20 | cartridge | status byte, receipt checks |
 | Friend Team 2 | `0:$bf24` | 136 | cartridge | as Friend Team 1 |
+| Friend Team levels | `0:$b1e9` | 2 × 7 | cartridge | check byte tied to its record's checksum; read only for Unrestricted |
 | Link Card Records | `0:$bf10` | 20 | cartridge | marker |
 | Link Card Players | bank 1 (linker) | | cartridge | tag |

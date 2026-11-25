@@ -17,6 +17,7 @@ CupRules:
 	db 50, 2, 2, CUPPICK_SMALL, CUPRULE_ANY, 0 ; CUP_LUANA
 	db LINK_BATTLE_FORCED_LEVEL, 1, PARTY_LENGTH, CUPPICK_PARTY, CUPRULE_ANY, 0 ; CUP_FRIEND
 	db 30, 3, 3, CUPPICK_THREE, CUPRULE_ANY, 0 ; CUP_FRIEND_RISING_STAR
+	db CUP_OWN_LEVELS, 1, PARTY_LENGTH, CUPPICK_PARTY, CUPRULE_ANY, 0 ; CUP_FRIEND_UNRESTRICTED
 .End:
 	rsreset
 DEF CUPRULE_LEVEL rb
@@ -40,6 +41,7 @@ CupRecordMasks:
 	db 0                         ; CUP_LUANA (Orange Crew badge)
 	db 0 ; CUP_FRIEND
 	db 0 ; CUP_FRIEND_RISING_STAR
+	db 0 ; CUP_FRIEND_UNRESTRICTED
 .End:
 	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
 
@@ -156,6 +158,8 @@ CupSelectTeam::
 	ld a, CUPTEAM_TYPE
 	jr z, .done
 .ok
+	call CupFriendRules
+	jr c, .done
 	ld a, CUPTEAM_OK
 .done
 	ldh [hScriptVar], a
@@ -318,6 +322,19 @@ CupCountType:
 	jr nz, .loop
 	ret
 
+CupFriendRules:
+; For a Friend Battle, the Cable Club's own checks under the kept team's rules:
+; carry and a = CUPTEAM_RULES if your team breaks them.
+	assert CUP_FRIEND_RISING_STAR > CUP_FRIEND && CUP_FRIEND_UNRESTRICTED > CUP_FRIEND
+	assert NUM_CUPS == CUP_FRIEND_UNRESTRICTED + 1
+	ld a, [wCupId]
+	cp CUP_FRIEND
+	ccf
+	ret nc
+	farcall CheckFriendBattleTeam
+	ld a, CUPTEAM_RULES
+	ret
+
 CupBegin::
 ; Keep your party aside, and bring out the team from CupSelectTeam at the
 ; cup's level, healed.
@@ -331,7 +348,10 @@ CupBegin::
 	call GetCupRules
 	ld a, [hl]
 	ld [wCupLevel], a
+	cp CUP_OWN_LEVELS
+	jr z, .own_levels
 	farcall BT_SetLevel
+.own_levels
 	farjp HealParty
 
 CupHealTeam::
