@@ -7,6 +7,8 @@ from the best-set optimiser, made friendly for casual play:
 - Choice items (which lock the user into one move), Life Orb and the status
   orbs (which hurt the user) become a type-boosting item for the set's first
   attack, or Leftovers. A Toxic Orb stays on a Poison Heal user.
+- An Assault Vest on a set with a status move becomes Leftovers: the vest
+  stops its holder using status moves, which the optimiser doesn't model.
 - Sets with Trick or Switcheroo (they swap items around) or Hidden Power
   (its type depends on DVs) are skipped.
 - Up to two different sets per species, for variety.
@@ -104,6 +106,8 @@ def main():
         if item in REPLACE_ITEMS and not (item == 'TOXIC_ORB' and st['ability'] == 'POISON_HEAL'):
             attack = next((m for m in st['moves'] if moves[m]['cat'] != 'STATUS'), None)
             item = type_item.get(moves[attack]['type'], 'LEFTOVERS') if attack else 'LEFTOVERS'
+        if item == 'ASSAULT_VEST' and any(moves[m]['cat'] == 'STATUS' for m in st['moves']):
+            item = 'LEFTOVERS'
         ab = mon['abilities']
         slot = ABILITY_SLOTS[ab.index(st['ability'])] if st['ability'] in ab else 'ABILITY_1'
         entry = (tuple(st['moves']), item, slot, tuple(mon['types']),

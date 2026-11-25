@@ -181,6 +181,10 @@ def candidates(b, moves):
     # status moves (setup, walls, support...) can't use them
     if sum(moves[mv]['cat'] == 'STATUS' for mv in b.moves) >= 2:
         items_ = [i for i in items_ if not i.startswith('CHOICE_')]
+    # an Assault Vest stops its holder using status moves (the simulator
+    # models only its Special Defense), so it's no choice for a build with one
+    if any(moves[mv]['cat'] == 'STATUS' for mv in b.moves):
+        items_ = [i for i in items_ if i != 'ASSAULT_VEST']
     attacks = A._attacks(mon, moves, n=10)
     if 'HIDDEN_POWER' in mon['_pool'] and 'HIDDEN_POWER' not in attacks:
         attacks.append('HIDDEN_POWER')

@@ -384,6 +384,12 @@ class Side:
                     for _ in range(k):
                         self.press('down', 6)
                     self.press('a', 30)
+                elif any(w in joined for w in ('prevents usage', 'no PP left', 'disabled!')) and 'no more' not in joined:
+                    # the game refused that move (an item, Disable, no PP...):
+                    # back to the Fight menu, where the next move is chosen
+                    self.say('    (move refused: choosing another)')
+                    for _ in range(3):
+                        self.press('b', 20)
                 elif 'Use next' in joined:
                     self.press('a', 40)
                 elif 'Choose a' in joined or 'Which' in joined and in_battle:

@@ -2,7 +2,9 @@
 """Check Random Battle teams: run the game's own LinkRandomBattle_MakeTeam
 many times in an emulator and check every team against the rules (six
 different species, no type on more than RANDOM_MAX_SAME_TYPE members, no
-weakness shared by more than RANDOM_MAX_SAME_WEAK).
+weakness shared by more than RANDOM_MAX_SAME_WEAK). First, every set in the
+table is checked for a held item that blocks its own moves (an Assault Vest
+with a status move).
 
 Run from the repository root after `make`:
 
@@ -57,6 +59,25 @@ def load_sets():
     return sets
 
 
+def table_problems():
+    """Sets whose item stops them using one of their moves: an Assault Vest
+    (no status moves while holding it) with a status move."""
+    import json
+    cats = {k: v['cat'] for k, v in json.load(open(os.path.join(ROOT, 'meta_sim', 'data', 'moves.json'))).items()}
+    lines = open(os.path.join(ROOT, 'data/link/random_battle_sets.asm')).read().splitlines()
+    out = []
+    for i, line in enumerate(lines):
+        m = re.match(r'\s*dp (\w+), (\w+)', line)
+        if not m:
+            continue
+        moves = [x.strip() for x in lines[i + 1].split('db')[1].split(',')]
+        item = lines[i + 2].split('db')[1].split(',')[0].strip()
+        status = [mv for mv in moves if cats.get(mv) == 'STATUS']
+        if item == 'ASSAULT_VEST' and status:
+            out.append(f'{m.group(1)} {m.group(2)}: an Assault Vest with {", ".join(status)}')
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -109,6 +130,10 @@ def main():
     stride = sym['wPartyMon2'][1] - base
     off = {f: sym['wPartyMon1' + f][1] - base for f in ('Species', 'Form', 'Moves', 'Level', 'HP', 'MaxHP')}
     bad = 0
+    table = table_problems()
+    for p in table:
+        print('set table:', p)
+    bad += len(table)
     type_freq = collections.Counter()
     species_freq = collections.Counter()
     worst_type = worst_weak = 0
