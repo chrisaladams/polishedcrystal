@@ -190,6 +190,7 @@ DEF FRIEND_LEVELS_LENGTH EQU PARTY_LENGTH + 1
 
 ; The linked World Championship (engine/link/world_link.asm): a bracket two
 ; players share, kept on each cartridge (sWorldLink)
+DEF WORLD_LINK_RECEIPT_MARK EQU 'W' ; (wWorldLinkReceipt)
 DEF WORLD_LINK_MAGIC_1 EQU $57
 DEF WORLD_LINK_MAGIC_2 EQU $43
 rsreset

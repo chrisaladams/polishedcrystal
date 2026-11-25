@@ -80,3 +80,10 @@ _WorldLinkFinalUpsetText::
 
 	para "Ready?"
 	done
+
+_WorldLinkMakeRoomText::
+	text "Make room in your"
+	line "Bag, then come"
+	cont "back for your"
+	cont "prize."
+	done

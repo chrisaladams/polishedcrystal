@@ -1410,7 +1410,12 @@ wTimerEventStartDay:: db
 
 wFruitTreeFlags:: flag_array NUM_FRUIT_TREES
 
-	ds 19 ; unused
+; Link Edition: the linked championship whose prize this game was given
+; ("W" and its bracket ID: engine/link/world_link.asm). Saved with the prize,
+; so the two are kept, or lost, together. (Formerly unused: zero in old saves.)
+wWorldLinkReceipt:: ds 3
+
+	ds 16 ; unused
 
 wHiddenGrottoContents::
 ; dbw content type, content id

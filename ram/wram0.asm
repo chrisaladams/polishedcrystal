@@ -1630,7 +1630,6 @@ wFriendTeamSlot:: db
 wFriendBattleSlot:: db
 ; the linked championship's prize, given since the last save (the save then
 ; closes the bracket: engine/link/world_link.asm)
-wWorldLinkClaimPending:: db
 ; a generated team for the next trainer battle: how many (then cleared), of
 ; what type (CUPTYPE_ANY: any); and CupMakeTeam's count
 wCupFoeSize:: db

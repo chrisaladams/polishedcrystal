@@ -630,23 +630,43 @@ WorldLinkClose::
 	jmp WorldLinkSave
 
 WorldLinkClaim::
-; The champion's prize is being given: the next save closes the bracket, so
-; until then (or if the power goes before then) the prize stays unclaimed.
-	ld a, TRUE
-	ld [wWorldLinkClaimPending], a
+; The champion's prize has been given (or is held at the desk): this game's
+; receipt names the bracket. The receipt is saved with the game, so the prize
+; and the receipt are kept together, or both lost if the power goes before a
+; save; a game with the receipt is never given the prize again.
+	ld hl, wWorldLinkReceipt
+	ld a, WORLD_LINK_RECEIPT_MARK
+	ld [hli], a
+	ld a, [wWorldLinkRecord + WORLD_LINK_ID]
+	ld [hli], a
+	ld a, [wWorldLinkRecord + WORLD_LINK_ID + 1]
+	ld [hl], a
+	ret
+
+WorldLinkHasReceipt:
+; z if this game's receipt names the bracket in wWorldLinkRecord.
+	ld hl, wWorldLinkReceipt
+	ld a, [hli]
+	cp WORLD_LINK_RECEIPT_MARK
+	ret nz
+	ld a, [wWorldLinkRecord + WORLD_LINK_ID]
+	cp [hl]
+	ret nz
+	inc hl
+	ld a, [wWorldLinkRecord + WORLD_LINK_ID + 1]
+	cp [hl]
 	ret
 
 WorldLinkCommitClaim::
-; From SaveGameData, once the game (with the prize in it) is saved.
-	ld a, [wWorldLinkClaimPending]
-	and a
-	ret z
-	xor a
-	ld [wWorldLinkClaimPending], a
+; From SaveGameData, once the game is saved: a champion whose prize is in
+; that save (its receipt) closes the bracket. (Tidying only: the receipt
+; already stops a second prize, even if the power goes before this.)
 	call WorldLinkLoad
 	ret nc
 	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
-	cp WORLDLINK_CHAMPION
+	cp WORLDLINK_CHAMPION ; (and not closed: the closed bit is set in a closed record)
+	ret nz
+	call WorldLinkHasReceipt
 	ret nz
 	jr WorldLinkClose
 
@@ -834,10 +854,12 @@ WorldLinkOpponent::
 	jr z, .final
 	cp WORLDLINK_CHAMPION
 	jr nz, .not_champion
-	ld a, [wWorldLinkClaimPending]
-	and a
+	; (this game's receipt: the prize is already in it, or held at the desk)
+	push de
+	call WorldLinkHasReceipt
+	pop de
 	ld a, WORLDDESK_CLAIMED
-	jmp nz, .done
+	jmp z, .done
 	ld a, WORLDDESK_CHAMPION
 	jr .done
 .not_champion

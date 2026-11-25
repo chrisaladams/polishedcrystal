@@ -29,6 +29,7 @@ def main():
                            'cameos', 'whirl_cup', 'movie_events', 'campaigns', 'shadow_encounters', 'cups',
                            'cup_spotlight', 'achievements', 'friend_battles', 'friend_records',
                            'link_rules', 'bracket', 'cinematic', 'team_generation')]
+    checks.append(['utils/linktest/test_world_prize.py', str(save)])
     checks.append(['utils/wild_mons/test_wild_mons.py', str(save)]
                   + ([] if args.full else ['--quick']))
     audit = ['utils/audit/audit_reachability.py', str(save)]

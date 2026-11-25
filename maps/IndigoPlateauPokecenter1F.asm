@@ -602,16 +602,25 @@ IndigoPlateauLinkedCup:
 	jumpopenedtext .ClaimedText
 
 .Champion:
-	; the prize: the bracket closes when the game is next saved, so the prize
-	; and the closing are kept (or lost to a power cut) together
-	callasm WorldLinkClaim
+	; the prize, and this game's receipt for it (engine/link/world_link.asm):
+	; saved together, so the prize is kept or lost with the receipt, and a
+	; game with the receipt never gets the prize again
 	loadmem wCupId, CUP_WORLD
 	callasm CupWin
-	iffalse IndigoPlateauWorldCup.Again
-	setevent EVENT_WORLD_CUP_PRIZE_PENDING
+	iffalsefwd .RepeatPrize
+	setevent EVENT_WORLD_CUP_PRIZE_PENDING ; (held at the desk if the Bag is full)
+	callasm WorldLinkClaim
 	writetext IndigoPlateauWorldCup.ChampionText
 	promptbutton
 	sjump IndigoPlateauWorldCup.FirstPrize
+.RepeatPrize:
+	writetext IndigoPlateauWorldCup.ChampionText
+	promptbutton
+	verbosegiveitem BOTTLE_CAP, iffalse_jumpopenedtext .MakeRoomText
+	callasm WorldLinkClaim ; (only once it's in the Bag)
+	jumpopenedtext IndigoPlateauWorldCup.ReturnText
+.MakeRoomText:
+	text_farend _WorldLinkMakeRoomText
 
 .QuarterfinalText:
 	text "Your bracket with"
