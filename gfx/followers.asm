@@ -536,9 +536,6 @@ NidoranFWalk:: INCBIN "gfx/followers/nidoran_f.2bpp.lzp"
 SECTION "NidoranM Walking Sprite", ROMX
 NidoranMWalk:: INCBIN "gfx/followers/nidoran_m.2bpp.lzp"
 
-SECTION "Nidorina Walking Sprite", ROMX
-NidorinaWalk:: INCBIN "gfx/followers/nidorina.2bpp.lzp"
-
 SECTION "Nidorino Walking Sprite", ROMX
 NidorinoWalk:: INCBIN "gfx/followers/nidorino.2bpp.lzp"
 

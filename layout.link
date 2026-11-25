@@ -284,10 +284,14 @@ SRAM $0
 	"PokeDB bank 2B"
 	org $b200
 	"Backup Save"
+	org $bf0d ; (the backup's checksum and check value keep their addresses)
+	"Backup Save Checksum"
 	"Link Card Records"
 
 SRAM $1
 	"Save"
+	org $ad0c ; (the access count, checksum and check value keep their addresses)
+	"Save Checksum"
 	"SRAM Hall of Fame"
 	"Box metadata"
 	"PokeDB bank 1C"

@@ -34,6 +34,8 @@ SHARE = {
     # shaped like a relative: its sprite in their own colours
     'Sneasler': 'Sneasel', 'Farigiraf': 'Girafarig', 'Clodsire': 'Quagsire',
     'ExeggutorAlolan': 'Exeggutor', 'ZapdosGalarian': 'Zapdos',
+    # the same sprite (its picture was byte for byte Nidoran F's, 249 bytes)
+    'Nidorina': 'NidoranF',
 }
 SECTION = re.compile(r'SECTION "(\w+) Mini Icon", ROMX\n(.*?)(?=\n\n|\nSECTION|\Z)', re.S)
 

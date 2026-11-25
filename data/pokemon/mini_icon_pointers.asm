@@ -40,7 +40,7 @@ MiniIconPointers:
 	walking_mon Sandshrew
 	walking_mon Sandslash
 	walking_mon NidoranF
-	walking_mon Nidorina
+	walking_mon NidoranF
 	walking_mon Nidoqueen
 	walking_mon NidoranM
 	walking_mon Nidorino

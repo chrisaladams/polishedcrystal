@@ -54,7 +54,7 @@ DoKeyItemEffect::
 	ld a, 1
 	ld [wItemEffectSucceeded], a
 	ld a, KEYITEMATTR_EFFECT
-	farcall GetKeyItemAttr
+	call GetKeyItemAttr ; (same section, so same bank)
 	and ~KEYITEM_SELECTABLE
 	call StackJumpTable
 

@@ -70,7 +70,7 @@ Measured from the linker map at `b47b74a31` (RGBDS 1.0.4, `make` from a tidy tre
 |---|---:|---:|---|
 | ROM free | 12,993 B (12.69 KiB) | 12,741 B | Measured. 12,741 B in ROMX bank $7f; other ROMX banks 0-4 B; ROM0 199 B. Achievements, Friend Battles and the linked championship cost 4,497 B (measured) since the 17,489 B figure |
 | ROM reserve | 7 KiB | | Planning target, not an allocation: 5,825 B usable after it |
-| SRAM free | 152 B | 84 B | Measured (matches 444 - 2 × 136 - 20) |
+| SRAM free | 152 B | 84 B | Measured (matches 444 - 2 × 136 - 20). **Now 937 B, largest gap 393 B**, after Phase 2 freed the save padding ([`sram-allocation.md`](sram-allocation.md)) |
 | Fixed WRAM free | 16 B | 16 B | Measured; the "Misc 404" union holding the championship buffers did not grow (404 B) |
 | WRAMX bank 1 free | 13 B | 13 B | Measured |
 | WRAMX bank 2 free | 1,643 B | 1,628 B | Measured |
@@ -164,11 +164,11 @@ Measure net savings individually; historic numbers are rough gross estimates, no
 | Shared battle/cup routines | TBD | Unify redundant team generation, rounds, rewards and text |
 | Sprite/animation/music data | TBD | Hash identical assets; deduplicate frames/patterns; preserve animation |
 
-- [ ] Audit current linker sections, references and compressed binary sizes.
-- [ ] Remove/alias one candidate at a time, rebuild and record measured net savings.
+- [x] Audit current linker sections, references and compressed binary sizes. *([`rom-reclamation-audit.md`](rom-reclamation-audit.md): every candidate measured and its reachability traced; all of them are reachable, so each removal changes what players see or hear and needs approval.)*
+- [ ] Remove/alias one candidate at a time, rebuild and record measured net savings. *(Lossless so far: Nidorina's walking sprite was byte for byte Nidoran♀'s and is now shared, saving 249 B (measured). The rest wait on which candidates to drop.)*
 - [ ] Test menus, legacy saves, forms, trade data and visual/audio regressions after each change.
 - [ ] Preserve front-sprite animations, move animations, cries, environmental tile animation and story-specific music unless explicitly approved otherwise.
-- [ ] Audit ROM bank packing; an empty bank may be more valuable than scattered bytes.
+- [x] Audit ROM bank packing; an empty bank may be more valuable than scattered bytes. *(All free ROM but ROM0's 199 B is one gap in bank $7f, 12,602 B; freed bytes elsewhere are repacked into it.)*
 
 ### SRAM reclamation
 
@@ -182,9 +182,9 @@ Measure net savings individually; historic numbers are rough gross estimates, no
 | Pokémon database record compression | 414 B per byte at current 414 records | Audit 49-byte format, extra/OT fields, checksum, migration and copy-on-write slack |
 | PC storage reduction | ~1,046 B per box (gross) | Last resort; do not discard existing Pokémon; preserve 400 slots if possible |
 
-- [ ] Inspect `ram/sram.asm`, `layout.link`, `macros/ram.asm`, `constants/pokemon_data_constants.asm`, `engine/menus/save.asm`, PC database routines and save upgrade code. Verify historic layout documentation against current constants (older newbox docs describe a smaller database).
-- [ ] Establish ownership of reserved bytes before reuse. Keep fixed addresses unchanged where possible; do not just delete `ds` padding and shift later fields.
-- [ ] Add a named, versioned allocation plan with integrity checks, reset/erase policy and migration tests. Distinguish cartridge-lifetime records from adventure-specific state.
+- [ ] Inspect `ram/sram.asm`, `layout.link`, `macros/ram.asm`, `constants/pokemon_data_constants.asm`, `engine/menus/save.asm`, PC database routines and save upgrade code. Verify historic layout documentation against current constants (older newbox docs describe a smaller database). *(Done for the save padding: nothing in `save.asm`, `init.asm`, `home/sram.asm` or the save upgrader reads or writes it. The PC database, Hall of Fame and mailbox are not audited yet.)*
+- [x] Establish ownership of reserved bytes before reuse. Keep fixed addresses unchanged where possible; do not just delete `ds` padding and shift later fields. *(The two padding blocks (392 + 393 B) are now linker-visible free space: each save's checksum and check value moved to its own section at its old address. All 1,511 guarded SRAM labels are unchanged, checked by the new `utils/sram_layout/check_sram_layout.py` in `make test`. SRAM free went from 152 to 937 B, and the largest gap from 84 to 393.)*
+- [ ] Add a named, versioned allocation plan with integrity checks, reset/erase policy and migration tests. Distinguish cartridge-lifetime records from adventure-specific state. *(Plan and rules in [`sram-allocation.md`](sram-allocation.md), and the layout check guards addresses. Migration tests come with the first record placed in the reclaimed space.)*
 - [ ] Preserve primary and backup saves, existing box contents, original trainer data, nicknames, capture metadata and corruption safeguards.
 - [ ] Reassess cache expansion only after championship recovery and maintenance reserves are secured.
 

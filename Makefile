@@ -140,6 +140,7 @@ test:
 	python3 utils/farcheck.py $(NAME)-debug-$(VERSION).sym
 	$(MAKE) tidy
 	$(MAKE) crystal
+	python3 utils/sram_layout/check_sram_layout.py $(NAME)-$(VERSION).sym
 	python3 test/test_ai_scoring.py
 
 freespace: crystal tools/bankends

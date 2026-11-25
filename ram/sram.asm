@@ -24,9 +24,17 @@ sGameDataEnd::
 
 sOptions3:: db
 
-	ds 392 ; unused
+; The 392 bytes after sOptions3 ($ab84-$ad0b) were padding nothing reads or
+; writes. The section ends here so the linker can place new records in them;
+; "Save Checksum" stays at its address (layout.link and the asserts). A record
+; placed there must check itself (a marker and checksum), as an older save's
+; bytes there are whatever was left. See docs/sram-allocation.md.
+
+
+SECTION "Save Checksum", SRAM
 
 sSRAMAccessCount:: db
+	assert sSRAMAccessCount == $ad0c, "SRAM access count has shifted."
 
 sChecksum:: dw
 	assert sChecksum == $ad0d, "Checksum has shifted."
@@ -53,7 +61,11 @@ sBackupGameDataEnd::
 
 sBackupOptions3:: db
 
-	ds 393 ; unused
+; The 393 bytes after sBackupOptions3 ($bd84-$bf0c): padding, now free for the
+; linker as above; "Backup Save Checksum" stays at its address.
+
+
+SECTION "Backup Save Checksum", SRAM
 
 sBackupChecksum:: dw
 	assert sBackupChecksum == $bf0d, "Backup checksum has shifted."
