@@ -104,6 +104,7 @@ MACRO def_trainer
 	; Reset trainer macro state.
 	def _tr_flags = 0
 	def _tr_mons = 0
+	def _tr_pool = FALSE ; (set for a pool picked from, not a party: Inver's)
 	def _tr_nick_lengths = 0
 	assert \1 == _tr_party, "Trainer party ID mismatch"
 	redef _tr_name EQUS \2
@@ -275,6 +276,11 @@ ENDM
 
 MACRO end_trainer
 ; Write out the party data from stored trainer buffer.
+	; A party has at most six, in each build (a party with an if/else lists
+	; more tr_mon lines than either build gets: Clair's rematch, for one).
+	; A pool a party is picked from may hold more.
+	assert _tr_pool || _tr_mons <= PARTY_LENGTH, \
+		"{_tr_name} has {d:_tr_mons} Pokémon in a party, more than {d:PARTY_LENGTH}"
 	; First, write the byte length of the party.
 	; Pokémon data
 	def _tr_size += 3 ; level, species, form
