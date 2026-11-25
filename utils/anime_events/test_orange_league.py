@@ -98,9 +98,17 @@ def finish_challenge_battle(game, k, *, win=True):
             game.wr('wBattleMonHP', game.rd('wBattleMonMaxHP'))
             game.wr('wBattleMonHP', game.rd('wBattleMonMaxHP', 1), 1)
 
+    def skip_learning(_):
+        # (the family saves' level 10 teams level up here; a new move's
+        # "forget a move?" prompt would take the A presses, so skip it)
+        rf = game.pb.register_file
+        rf.PC = game.m[rf.SP] | (game.m[rf.SP + 1] << 8)
+        rf.SP += 2
+
     game.wr('wBattleMonMoves', k['TACKLE'])
     game.wr('wBattleMonPP', 35)
     game.pb.hook_register(*game.sym['ResolveFaints'], faint_team, None)
+    game.pb.hook_register(*game.sym['LearnMove'], skip_learning, None)
     try:
         for _ in range(270):
             if not game.rd('wBattleMode'):
@@ -109,6 +117,7 @@ def finish_challenge_battle(game, k, *, win=True):
         assert not game.rd('wBattleMode'), 'the challenge battle did not finish'
     finally:
         game.pb.hook_deregister(*game.sym['ResolveFaints'])
+        game.pb.hook_deregister(*game.sym['LearnMove'])
 
 
 def expected_parties():
@@ -137,11 +146,15 @@ def main():
                 ('SEAGALLOP_FERRY_VERMILION_GATE', 'SEAGALLOP_FERRY_SHAMOUTI_GATE', 'VALENCIA_PORT'))]
     for leader in LEADERS + (DRAKE,):
         names += [leader[5], leader[6], 'GROUP_' + leader[1], 'MAP_' + leader[1]]
-    K = rgbasm_values(names, None)
+    K = rgbasm_values(names + ['STATUSFLAGS_NO_WILD_ENCOUNTERS_F'], None)
     L = K['PARTYMON_STRUCT_LENGTH']
     g = Game(save)
     g.boot()
     fails = []
+
+    # (none of this is about wild Pokemon, and one walking up to a level 10
+    # team waiting out a dialogue would start a battle)
+    g.wr('wStatusFlags', g.rd('wStatusFlags') | (1 << K['STATUSFLAGS_NO_WILD_ENCOUNTERS_F']))
 
     def flag(name):
         n = K[name]
