@@ -577,8 +577,12 @@ RuinsOfAlphResearchCenterMollyScript:
 	closetext
 	checkevent EVENT_BEAT_MOLLY
 	iftruefwd .StartBattle
+	scene_begin ; (the Unown's power gathers around her: engine/events/cinematic.asm)
+	scene_tint TINT_PURPLE
 	playsound SFX_PROTECT
+	showemote EMOTE_SPARKLE_PURPLE, LAST_TALKED, 20
 	earthquake 12
+	scene_end
 .StartBattle:
 	winlosstext .BeatenText, 0
 	loadtrainer LASS, MOLLY_HALE

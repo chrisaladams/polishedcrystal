@@ -116,9 +116,17 @@ CeruleanCaveCloneBattle:
 	scene_pulse TINT_PURPLE
 	scene_tint TINT_PURPLE
 	showtext .ClonesText
+	; (shadows rise from the pool)
+	playsound SFX_PROTECT
+	earthquake 8
+	scene_silhouette
+	pause 30
+	scene_restore
+	scene_tint TINT_PURPLE
+	showtext .ClonesText2
 	cry MEWTWO
 	scene_flash 1
-	scene_end
+	scene_end_keep_music ; (the silence lasts until the battle)
 	winlosstext .ClonesBeatenText, 0
 	loadtrainer MEWTWO_T, 1
 	startbattle
@@ -139,7 +147,10 @@ CeruleanCaveCloneBattle:
 	cont "me to hurt her."
 	para "I copied your team"
 	line "in the pool. Look."
-	para "They have the same"
+	done
+
+.ClonesText2:
+	text "They have the same"
 	line "strength. I want"
 	cont "to see what your"
 	cont "friends choose."

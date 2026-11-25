@@ -18,6 +18,7 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_silhouette` | Every sprite black (`SetBlackObjectPals`) |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
 | `scene_end` | Fades back to the starting palettes and restarts the map's music if the scene changed it |
+| `scene_end_keep_music` | The same, but leaves the music as the scene left it, for a scene that leads straight into a battle |
 
 Tints: `TINT_DARK`, `TINT_GREEN`, `TINT_RED`, `TINT_BLUE`, `TINT_PURPLE`,
 `TINT_GOLD`, `TINT_WHITE`.
@@ -45,9 +46,11 @@ An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.
 
 | Campaign | Where | Scene |
 |---|---|---|
-| Mewtwo Strikes Back | Cerulean Cave B1F | Silence, psychic pulses and purple light while Mewtwo speaks; cry and flash before the clones |
+| Mewtwo Strikes Back | Pokémon Mansion B1F | The lab's lights flicker and dim while you read the flight log; a distant cry and a psychic pulse answer |
+| Mewtwo Strikes Back | Cerulean Cave B1F | Silence, psychic pulses and purple light while Mewtwo speaks; at "Look.", a rumble and every sprite a black shadow, rising from the pool; cry and flash, the silence lasting into the clone battle |
 | The Power of One | Fire, Ice, Lightning Island roofs | Each beacon pulses in its guardian's color as it's tuned (red, blue, gold) |
-| The Power of One | Shamouti shrine ruins | Blue light while Melody's song carries; a flash as Lugia answers |
+| The Power of One | Shamouti shrine ruins | A storm gathers while Lawrence speaks: darkness, thunder and a flash, his theme playing on into the battle. Later, blue light while Melody's song carries, and a flash as Lugia answers |
+| Spell of the Unown | Ruins of Alph Research Center | Before Molly's first battle, the Unown's power gathers around her: purple light, a purple sparkle, a rumble |
 | Spell of the Unown | Ruins of Alph inner chamber | The Entei illusion in a dream's purple light, a purple sparkle as it breaks into letters |
 | Voice of the Forest | Ilex Forest | The forest darkens around the Marauder. After he's beaten: a flash as he vanishes, the forest dim with Celebi's hurt glow, green pulses from the shrine until the daylight returns, a green sparkle as it heals, another and two flashes as it takes Sammy home |
 | Orange League | Warm Beach, Rocky Beach, Beautiful Beach, Valencia, Shamouti house | A blue surf pulse for Cissy; a cold white haze for Danny; each of Rudy's rounds opens in its type's color (green, red, blue); hearts over Luana and you, partners; Dragonite's roar, a rumble and a flash for Drake; gold light and a sparkle for the trophy |
@@ -83,10 +86,9 @@ and after a scene, and that no random number is drawn.
 
 | | Bytes |
 |---|---:|
-| ROM: the library | 249 |
-| ROM: the Mewtwo scene | 34 |
-| ROM: the other campaigns' scenes | 291 |
+| ROM: the library | 255 |
 | ROM: the sparkle emote (graphic and three table entries) | 57 |
+| ROM: every scene's script, all campaigns | 429 |
 | WRAM0: `wCinematicFlags` | 1 |
 | WRAMX bank 5: `wCinematicSavedPals` | 128 |
 

@@ -21,6 +21,12 @@ MACRO scene_end
 	callasm CinematicEnd
 ENDM
 
+MACRO scene_end_keep_music
+; As scene_end, but leave the music as the scene left it: for a scene that
+; leads straight into a battle, whose music takes over.
+	callasm CinematicEndKeepMusic
+ENDM
+
 MACRO scene_tint
 ; Blend everything on screen halfway toward TINT_* \1.
 	setval \1

@@ -14,6 +14,14 @@ CinematicBegin::
 	ld bc, 16 palettes
 	jmp FarCopyColorWRAM
 
+CinematicEndKeepMusic::
+; As CinematicEnd, but the music is left as it is (a battle comes next).
+	ld hl, wCinematicFlags
+	bit CINEMATIC_ACTIVE_F, [hl]
+	ret z
+	ld [hl], 0
+	jr CinematicEnd.palettes
+
 CinematicEnd::
 ; Fade back to the palettes the scene began with, and restart the map's
 ; music if the scene changed it.

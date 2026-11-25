@@ -9,7 +9,8 @@ game (PyBoy), calling them as the scene macros do:
   palette aside, and two tints compound;
 - scene_flash and scene_pulse come back to the scene's starting palettes;
 - scene_end brings back the palettes exactly as they were, and the map's
-  music, restarting it only if the scene changed it;
+  music, restarting it only if the scene changed it; scene_end_keep_music
+  brings back the palettes and leaves the music alone;
 - nothing draws a random number.
 
 Usage (from the repository root, after make):
@@ -118,6 +119,21 @@ def main():
         g.pb.hook_deregister(*hook)
         check(not restarts, "scene_end restarted the map's music when it hadn't changed")
         del music
+
+    # scene_end_keep_music: the palettes back, the scene's music left playing
+    start_screen = pals('wBGPals2')
+    call('CinematicBegin')
+    call('CinematicTint', K['TINT_PURPLE'])
+    other = (g.rd('wMapMusic') + 1) & 0xff
+    g.wr('wMusicIDLo', other)
+    restarts = []
+    hook = g.sym['RestartMapMusic']
+    g.pb.hook_register(*hook, lambda _: restarts.append(1), None)
+    call('CinematicEndKeepMusic')
+    g.pb.hook_deregister(*hook)
+    check(not restarts and g.rd('wMusicIDLo') == other, 'scene_end_keep_music: the music was changed')
+    check(pals('wBGPals2') == start_screen, 'scene_end_keep_music: the palettes not as they were')
+    check(not g.rd('wCinematicFlags'), 'scene_end_keep_music: still marked active')
 
     # (and outside a scene, lightning still strikes)
     whites = []

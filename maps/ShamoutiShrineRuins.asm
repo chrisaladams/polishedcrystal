@@ -42,8 +42,16 @@ ShamoutiShrineRuinsLawrenceScript:
 .Battle:
 	special Special_FadeOutMusic
 	pause 15
+	; Link Edition: a storm gathers over the shrine while he speaks
+	; (engine/events/cinematic.asm); the light is back for the battle
+	scene_begin
+	scene_tint TINT_DARK
+	playsound SFX_THUNDER_OW
+	scene_flash 1
+	scene_tint TINT_DARK
 	playmusic MUSIC_ZINNIA_ENCOUNTER_ORAS
 	showtextfaceplayer .SeenText
+	scene_end_keep_music
 	winlosstext .BeatenText, 0
 	setlasttalked SHAMOUTISHRINERUINS_LAWRENCE
 	loadtrainer LAWRENCE, 1

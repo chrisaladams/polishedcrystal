@@ -69,7 +69,15 @@ ScientistBraydonBeatenText:
 PokemonMansionDiary:
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalse_jumptext PokemonMansionDiaryText
+	; (a story scene: the lab's lights flicker and dim while you read, and a
+	; psychic pulse answers from far away: engine/events/cinematic.asm)
+	scene_begin
+	scene_pulse TINT_DARK
+	scene_tint TINT_DARK
 	showtext .Report
+	cry MEWTWO
+	scene_pulse TINT_PURPLE
+	scene_end
 	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
 	iftrue DoNothingScript
 	setevent EVENT_READ_CINNABAR_CLONE_REPORT
