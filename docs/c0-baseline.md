@@ -54,9 +54,9 @@ Run by `c0/run_suite.sh` (scratchpad) on Ben's, Sam's and Dereck's saves:
 | Link battle with corrupted bytes | pass, recovered | 16 s |
 | `utils/linktest/test_world_link.py` (every linked Championship scenario) | 0 problems* | 395 s |
 
-\* Its last scenarios ran after the C0 text fixes were rebuilt: those
-changed only text, not link code, and the suite is rerun on the C0 commit
-below.
+\* Its last scenarios ran after the C0 text fixes were rebuilt (those
+changed only text, not link code). Rerun in full on the C0 commit
+`6770748db`: 0 problems.
 
 ## Defects found by C0
 
@@ -81,6 +81,7 @@ Run by `c0/run_post.sh` (scratchpad):
 | Link, different rules chosen, 3 a side | pass: both desks report "different rules" |
 | Link, Rising Star with an ineligible party | pass: both desks refuse it |
 | `test_movie_events.py`, `test_orange_league.py`, `test_campaigns.py` with `LE_SHOTS` (frames saved) | pass |
+| `test_world_link.py`, every linked Championship scenario, on `6770748db` | 0 problems |
 
 ### Scenes as they play (before any visual change)
 
