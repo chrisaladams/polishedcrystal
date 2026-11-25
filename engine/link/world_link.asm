@@ -782,7 +782,12 @@ WorldLinkDraw::
 	ret
 
 WorldLinkStronger:
-; a = the stronger of the trainers in slots a and a+1 (the larger index).
+; a = the winner of the trainers in slots a and a+1 (a even: quarterfinal
+; a / 2), as WorldCupWinner decides it from the bracket's seed. Keeps bc, de.
+	push bc
+	push de
+	ld e, a
+	srl e
 	ld hl, wWorldCupBracket
 	add l
 	ld l, a
@@ -790,9 +795,12 @@ WorldLinkStronger:
 	sub l
 	ld h, a
 	ld a, [hli]
-	cp [hl]
-	ret nc
-	ld a, [hl]
+	ld b, a
+	ld c, [hl]
+	ld hl, wWorldLinkRecord + WORLD_LINK_SEED
+	call WorldCupWinner
+	pop de
+	pop bc
 	ret
 
 WorldLinkOpponent::
@@ -829,7 +837,7 @@ WorldLinkOpponent::
 	ld a, [wWorldLinkClaimPending]
 	and a
 	ld a, WORLDDESK_CLAIMED
-	jr nz, .done
+	jmp nz, .done
 	ld a, WORLDDESK_CHAMPION
 	jr .done
 .not_champion
@@ -886,10 +894,17 @@ WorldLinkOpponent::
 	push bc
 	call WorldLinkSlot
 	pop bc
-	cp c
-	jr nc, .stronger
-	ld a, c
-.stronger
+	ld b, a ; who beat the partner, against that quarterfinal's winner
+	push de
+	ld a, e
+	xor 4
+	rrca
+	rrca
+	add 4 ; that half's semifinal: 4 or 5
+	ld e, a
+	ld hl, wWorldLinkRecord + WORLD_LINK_SEED
+	call WorldCupWinner
+	pop de
 	ld b, WORLDDESK_FINAL
 .opponent
 	push bc

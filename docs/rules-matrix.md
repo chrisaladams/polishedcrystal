@@ -71,9 +71,39 @@ deliberate differences:
 In every cup, no items are used and no experience is gained. The evasion cap
 doesn't apply: cups play by the single-player battle rules.
 
+## Trainer-vs-trainer matches in the championship brackets
+
+In both the linked Championship and the offline Indigo cup, a match between
+two visiting trainers is decided by `WorldCupWinner`
+(`engine/events/world_cup.asm`). The stronger trainer, the one with the larger
+`WorldCupTrainers` index, wins with these odds:
+
+| Places between them | 1 | 2 | 3 | 4 or more |
+|---|---:|---:|---:|---:|
+| Stronger wins | 60% | 70% | 80% | 90% |
+
+The roll comes from the bracket's seed and the match's number alone: 0–3 are
+the quarterfinals (slot / 2), 4 and 5 the semifinals, and 6 the final. It
+uses a 16-bit xorshift that steps once more for each later match. No clock,
+battle random number or order of calculation is involved, so both
+cartridges, and every visit to the desk, give the same result. The linked
+bracket uses the seed both players already share. The offline cup draws its
+own seed with the bracket (`wWorldCupSeed`).
+
+`utils/world_cup/bracket.py` does the same in Python. Over every seed, with
+both players out:
+
+| Trainer | 1 (weakest) | 2 | 3 | 4 | 5 | 6 | 7 (strongest) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Reaches the final | 6.7% | 10.2% | 16.1% | 25.1% | 36.2% | 47.4% | 58.2% |
+| Wins it | 0.9% | 1.6% | 3.5% | 8.2% | 16.0% | 27.5% | 42.3% |
+
+About 26% of the trainers' matches are upsets.
+`utils/anime_events/test_bracket.py` checks that the game gives the model's
+result in 203 cases, in either order and twice over, and that the offline
+cup's rounds follow it.
+
 ## Not yet decided
 
 - Early and repeated cup rewards, difficulty progression and free healing:
   the roadmap's last Phase 3 item.
-- How strong the computer trainers in a championship bracket are: weighted
-  outcomes are next. Their randomness stays separate from battle randomness.

@@ -35,6 +35,8 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'utils', 'wild_mons'))
 from test_wild_mons import Game, rgbasm_values  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, 'utils', 'world_cup'))
+from bracket import draw, winner  # noqa: E402
 
 RECORD = 0x11d5  # sWorldLink's offset in the save (SRAM bank 0, $b1d5)
 QF, SF, FINAL, OUT_QF, OUT_SF, CHAMPION, RUNNER_UP = range(7)
@@ -50,26 +52,19 @@ def record(sav):
             'name': r[10:18], 'status': r[18] & 0x7f, 'closed': bool(r[18] & 0x80), 'partner_status': r[19]}
 
 
-def draw(seed):
-    order = list(range(1, 8))
-    s = seed
-    for c in range(6, 0, -1):
-        s = (s * 5 + 1) & 0xffff
-        j = (s >> 8) % (c + 1)
-        order[c], order[j] = order[j], order[c]
-    return [0] + order[:3] + [0] + order[3:6]
-
-
 def opponent(rec, round_):
-    b, me = draw(rec['seed']), 4 * rec['half']
+    """Who the game should send out (WorldLinkOpponent), the trainers' own
+    matches decided as WorldCupWinner does (utils/world_cup/bracket.py)."""
+    seed = rec['seed']
+    b, me = draw(seed), 4 * rec['half']
     other = me ^ 4
     if round_ == QF:
         return b[me + 1]
     if round_ == SF:
-        return max(b[me + 2], b[me + 3])
-    finalist = max(b[other + 2], b[other + 3])
+        return winner(seed, (me + 2) // 2, b[me + 2], b[me + 3])
+    finalist = winner(seed, (other + 2) // 2, b[other + 2], b[other + 3])
     if rec['partner_status'] == OUT_QF:
-        finalist = max(finalist, b[other + 1])
+        finalist = winner(seed, 4 + other // 4, b[other + 1], finalist)
     return finalist
 
 

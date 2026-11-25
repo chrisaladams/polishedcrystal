@@ -1640,6 +1640,8 @@ wCupMakeCount:: db
 wWorldCupBracket:: ds WORLD_CUP_CONTESTANTS
 wWorldCupRoundSize:: db
 wWorldCupPairCursor:: db
+wWorldCupSeed:: dw ; its draw's: who wins the trainers' own matches (WorldCupWinner)
+wWorldCupMatch:: db ; the next trainers' match (WorldCupAdvance)
 ; Sweet Honey's remaining player steps and where it was used.
 wWildHoneySteps:: db
 wWildHoneyX:: db

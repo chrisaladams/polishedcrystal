@@ -51,6 +51,8 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'utils', 'wild_mons'))
 from test_wild_mons import Game, rgbasm_values  # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, 'utils', 'world_cup'))
+from bracket import winner  # noqa: E402
 
 ROUNDS = (('BUG_CATCHER', 'RS_ELLIS'), ('PICNICKER', 'RS_RUTH'), ('COOLTRAINERM', 'RS_REX'))
 KIMONO_ROUNDS = (('SAYO', 3), ('ZUKI', 3), ('MIKI', 4))
@@ -615,7 +617,10 @@ def main():
             for team in ('wParty', 'wOTParty'):
                 assert g.rd(team + 'Count') == 6
                 assert all(g.rd(team + 'Mon1Level', j * L) == 50 for j in range(6))
-            bracket = [0] + [max(bracket[j:j + 2]) for j in range(2, len(bracket), 2)]
+            seed = g.rd('wWorldCupSeed') | g.rd('wWorldCupSeed', 1) << 8
+            first = 8 - len(bracket) + 1  # (this round's first trainers' match: WorldCupWinner)
+            bracket = [0] + [winner(seed, first + (j - 2) // 2, *bracket[j:j + 2])
+                             for j in range(2, len(bracket), 2)]
             loss = lose and i == rounds - 1
             finish(not loss, faint_party=loss)
         settle()

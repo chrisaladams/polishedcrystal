@@ -94,6 +94,13 @@ Plateau desk, which forfeits your next match: your partner hears it the next
 time you link up. A finished or abandoned bracket is kept on the cartridge as
 closed, so your partner's copy can't start it up again, until you both join a
 new one. The bracket doesn't depend on either Game Boy's clock.
+
+When two visiting trainers meet, the stronger usually goes through, but not
+always. They win 60% of the time against the next trainer down, rising 10% a
+place to 90% at most. The bracket's seed and the match decide it, so both
+Game Boys always agree. Over every possible draw, the strongest trainer
+reaches the final 58% of the time and wins it 42%; about a quarter of the
+trainers' matches are upsets (`python3 utils/world_cup/bracket.py`).
 `PYTHONPATH=/tmp/pyboy_cable python3 utils/linktest/test_world_link.py A.sav B.sav`
 plays it all through over the virtual cable.
 
@@ -381,7 +388,8 @@ no items or experience in its battles, and come back exactly as they were
 - **World Championship**, at Indigo Plateau after Red. Talk to the Ace
   Trainer in the League lobby with six Pokémon. The draw matches you and
   seven visiting trainers in an elimination bracket. Win the quarterfinal,
-  semifinal and final at level 50. The first win earns an Ability Patch.
+  semifinal and final at level 50. The trainers' own matches can end in
+  upsets, as in the linked bracket. The first win earns an Ability Patch.
   The registrar holds it if your Bag is full. Repeat wins earn a Bottle Cap.
 
 TV news and Oak's Pokémon Talk feature one open tournament each in-game day.
