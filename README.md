@@ -368,8 +368,9 @@ no items or experience in its battles, and come back exactly as they were
 - **Rising Star Cup**, in the Route 36 gate to the National Park, open from
   the start: choose three Pokémon (as at the Battle Tower: no two of a
   species or holding the same item) to battle at level 30 against Bug Catcher
-  Ellis, Picnicker Ruth and Cooltrainer Rex. The first win gives Leftovers,
-  each one after a Rare Candy.
+  Ellis, Picnicker Ruth and Cooltrainer Rex. The first win gives Leftovers. After
+  that, the first win each day gives a Rare Candy, and any more that day a
+  Poké Ball, so levels can't be farmed early.
 - **Whirl Cup**, at Olivine Port after Red: below.
 - **Kimono Cup**, in the Ecruteak Dance Theatre, open from the start: each
   day has a type, all 18 in turn (by the world clock's day). Choose three of

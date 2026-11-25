@@ -88,7 +88,8 @@ def main():
     species = sorted({sp for p in parties.values() for _, sp in p})
     K = rgbasm_values(species + [c for c, _ in ROUNDS] + [t for _, t in ROUNDS] + [
         'GROUP_ROUTE_36_NATIONAL_PARK_GATE', 'MAP_ROUTE_36_NATIONAL_PARK_GATE', 'PARTYMON_STRUCT_LENGTH',
-        'EXTSPECIES_MASK', 'LEFTOVERS', 'RARE_CANDY', 'CUPWON_RISING_STAR_F', 'CUP_RECORDS_LENGTH',
+        'EXTSPECIES_MASK', 'LEFTOVERS', 'RARE_CANDY', 'POKE_BALL', 'ENGINE_RISING_STAR_CANDY',
+        'ENGINE_KURT_MAKING_BALLS', 'CUPWON_RISING_STAR_F', 'CUP_RECORDS_LENGTH',
         'CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2', 'EVENT_RISING_STAR_PRIZE_PENDING',
         'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_EXP', 'MON_SPECIES', 'TACKLE'], None)
     L = K['PARTYMON_STRUCT_LENGTH']
@@ -270,12 +271,24 @@ def main():
         if items(expect_item) != before_count + 1:
             fails.append(('the cup', f'{expect_item}: {before_count} -> {items(expect_item)}, not +1'))
 
-    # win twice: Leftovers, then a Rare Candy
+    # win four times: Leftovers, then a Rare Candy, then (the same day) a Poke
+    # Ball, and the next day a Rare Candy again
+    candy_bit = 1 << (K['ENGINE_RISING_STAR_CANDY'] - K['ENGINE_KURT_MAKING_BALLS'])  # (in wDailyFlags)
+
+    def new_day():
+        g.wr('wDailyFlags', g.rd('wDailyFlags') & ~candy_bit)
+
     g.load(base)
+    new_day()
     run('LEFTOVERS', items('LEFTOVERS'))
     rec = g.rd('wCupRecords')
     if not (rec >> K['CUPWON_RISING_STAR_F']) & 1:
         fails.append(('records', 'the first win was not recorded'))
+    run('RARE_CANDY', items('RARE_CANDY'))
+    if not g.rd('wDailyFlags') & candy_bit:
+        fails.append(('daily candy', "today's Rare Candy was not marked"))
+    run('POKE_BALL', items('POKE_BALL'))
+    new_day()
     run('RARE_CANDY', items('RARE_CANDY'))
 
     # choose the 3rd, 1st and 5th: that order

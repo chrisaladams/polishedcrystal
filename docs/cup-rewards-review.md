@@ -1,14 +1,14 @@
 # Cup rewards, difficulty and healing: review
 
 The last Phase 3 item. This is the state of each cup, as the map scripts give
-it, with what deserves a change. Nothing here has been changed yet: the
-recommendations wait on a decision.
+it, with what deserves a change. **Decided and done:** the Rising Star Cup's
+Rare Candy is now once a day (finding 1). Everything else stays as it is.
 
 ## Prizes and when each cup opens
 
 | Cup | Opens | Level | First win | Each win after |
 |---|---|---:|---|---|
-| Rising Star (Route 36 gate) | from the start | 30 | Leftovers | **Rare Candy** |
+| Rising Star (Route 36 gate) | from the start | 30 | Leftovers | Rare Candy once a day, else a Poké Ball |
 | Kimono (Ecruteak) | from the start; three of the day's type | 50 | that type's item (18 in all) | Big Pearl |
 | Rental (Goldenrod 6F) | from the start | 50 | Bottle Cap | Big Pearl |
 | Dragon Masters (Blackthorn) | Rising Badge | 50 | Dragon Scale | PP Up |
@@ -46,13 +46,10 @@ there's room.
    badge gate keep early players out. The Rising Star Cup is meant to be the
    first. Keep, apart from finding 1.
 
-## Recommendation
+## Decision
 
-Change only the Rising Star Cup's repeat prize, in one of these ways:
-
-- **A Rare Candy once a day**, and a lesser prize otherwise (a Poké Ball or
-  an Oran Berry). This keeps the reward but caps the farming.
-- **A different repeat prize**, such as a Big Pearl like the Kimono and
-  Rental Cups, with no Rare Candies.
-- **Rare Candies only after a badge count**, for example once the player
-  has eight badges.
+The Rising Star Cup's repeat prize is a Rare Candy for the first win each
+day, and a Poké Ball for any more that day. It uses `ENGINE_RISING_STAR_CANDY`,
+a daily flag in a bit `wDailyFlags` had left unused, so older saves start
+with it clear. `test_cups.py` wins four times: Leftovers, a Rare Candy, a
+Poké Ball the same day, and a Rare Candy the next.

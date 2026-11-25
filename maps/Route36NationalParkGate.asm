@@ -541,8 +541,15 @@ RisingStarCupScript:
 	jumpopenedtext .ComeBackText
 
 .Again:
+	; a Rare Candy once a day (no farming levels early), else a Poke Ball
+	checkflag ENGINE_RISING_STAR_CANDY
+	iftruefwd .AgainToday
 	verbosegiveitem RARE_CANDY, iffalse_endtext
+	setflag ENGINE_RISING_STAR_CANDY
 	jumpopenedtext .ComeBackText
+.AgainToday:
+	verbosegiveitem POKE_BALL, iffalse_endtext
+	jumpopenedtext .TomorrowText
 
 .Lost:
 	callasm CupEnd
@@ -610,6 +617,13 @@ RisingStarCupScript:
 	text "Your #mon are as"
 	line "they were. Come"
 	cont "back anytime!"
+	done
+
+.TomorrowText:
+	text "Your #mon are as"
+	line "they were. Win"
+	cont "again tomorrow for"
+	cont "a Rare Candy!"
 	done
 
 .OutText:
