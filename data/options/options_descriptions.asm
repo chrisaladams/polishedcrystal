@@ -11,6 +11,7 @@ OptionsDescriptions:
 	dw .Nicknames
 	dw .RunningShoes
 	dw .Follower
+	dw .FlashShake
 	dw .TurningSpeed
 	dw .ClockFormat
 	dw .PokedexUnits
@@ -88,6 +89,12 @@ OptionsDescriptions:
 	text "Your first healthy"
 	line "#mon follows"
 	cont "you around."
+	prompt
+
+.FlashShake:
+	text "Off: no screen"
+	line "flashes, lightning"
+	cont "or shaking."
 	prompt
 
 .TurningSpeed:

@@ -11,6 +11,7 @@ OptionNames:
 	dw .Nicknames
 	dw .RunningShoes
 	dw .Follower
+	dw .FlashShake
 	dw .TurningSpeed
 	dw .ClockFormat
 	dw .PokedexUnits
@@ -38,6 +39,8 @@ OptionNames:
 	db "Running Shoes@"
 .Follower:
 	db "Follower@"
+.FlashShake:
+	db "Flash & Shake@"
 .TurningSpeed:
 	db "Turning Speed@"
 .ClockFormat:

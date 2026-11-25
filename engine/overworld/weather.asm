@@ -1231,6 +1231,10 @@ Lightning:
 	ld a, [wCinematicFlags] ; Link Edition: none during a story scene
 	and a
 	ret nz
+	ld a, [wOptions3] ; Link Edition: with Flash & Shake off, thunder only
+	bit CALM_SCREEN_F, a
+	ld de, SFX_THUNDER_OW
+	jmp nz, PlaySFX
 	ld a, 1
 	ld [wPalWhiteState], a
 	call SetWhitePals

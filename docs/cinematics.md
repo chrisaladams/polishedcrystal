@@ -20,6 +20,12 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_end` | Fades back to the starting palettes and restarts the map's music if the scene changed it |
 | `scene_end_keep_music` | The same, but leaves the music as the scene left it, for a scene that leads straight into a battle |
 
+**Flash & Shake** (Options, Link Edition): with it off, `scene_flash` and
+`scene_pulse` do nothing, weather lightning is only its thunder, and
+`earthquake` doesn't shake the screen (its pause still happens). Tints, fades
+and silhouettes are steady changes and stay. Battle animations have their own
+option (Battle Effects). The setting is `CALM_SCREEN_F` in `wOptions3`.
+
 Tints: `TINT_DARK`, `TINT_GREEN`, `TINT_RED`, `TINT_BLUE`, `TINT_PURPLE`,
 `TINT_GOLD`, `TINT_WHITE`.
 

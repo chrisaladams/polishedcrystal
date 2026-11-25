@@ -73,7 +73,10 @@ CinematicTint::
 	jmp FadePalettes
 
 CinematicPulse::
-; Tint toward TINT_* hScriptVar and back, three times.
+; Tint toward TINT_* hScriptVar and back, three times (not with Flash &
+; Shake off).
+	call CinematicCalm
+	ret nz
 	ld b, 3
 .pulse
 	push bc
@@ -88,7 +91,9 @@ CinematicPulse::
 	ret
 
 CinematicFlash::
-; hScriptVar white flashes (1 to 3).
+; hScriptVar white flashes (1 to 3), not with Flash & Shake off.
+	call CinematicCalm
+	ret nz
 	ldh a, [hScriptVar]
 	and a
 	ret z
@@ -110,6 +115,12 @@ CinematicFlash::
 	pop bc
 	dec b
 	jr nz, .flash
+	ret
+
+CinematicCalm:
+; nz if the player turned Flash & Shake off.
+	ld a, [wOptions3]
+	and 1 << CALM_SCREEN_F
 	ret
 
 CinematicTintPals:

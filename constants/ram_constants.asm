@@ -25,6 +25,7 @@ DEF JOYPAD_DISABLE_SGB_TRANSFER_F EQU 7
 	const NICKNAMES_NEVER    ; 2
 	const_skip ; 3, formerly autosave
 	const FOLLOWER_OFF_F     ; 4 (Link Edition)
+	const CALM_SCREEN_F      ; 5 (Link Edition: "Flash & Shake" off)
 
 ; wOptions1::
 	const_def 3

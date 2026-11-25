@@ -14,15 +14,20 @@ game (PyBoy), calling them as the scene macros do:
 - nothing draws a random number;
 - the lifecycle guards: a scene_begin inside a scene keeps the first one's
   palettes; a script ending with a scene still on ends it (Script_endall,
-  Script_end); a new map drops it (RunMapSetupScript).
+  Script_end); a new map drops it (RunMapSetupScript);
+- the Options row "Flash & Shake": left/right turns it Off and On (only
+  CALM_SCREEN_F changes), shown as it is. (What Off does to a real scene is
+  in test_movie_events.py, the clone scene.)
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_cinematic.py SAVE.sav
 """
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, HERE)
 from test_friend_records import Caller, Game, rgbasm_values  # noqa: E402
 
@@ -38,7 +43,8 @@ def blend(x, t):
 
 
 def main():
-    K = rgbasm_values(['OW_WEATHER_LIGHTNING_DISABLED_F', 'OW_WEATHER_DO_FLY_F', 'CINEMATIC_ACTIVE_F', *TINTS], None)
+    K = rgbasm_values(['OW_WEATHER_LIGHTNING_DISABLED_F', 'OW_WEATHER_DO_FLY_F', 'CINEMATIC_ACTIVE_F',
+                       'CALM_SCREEN_F', *TINTS], None)
     g = Game(open(sys.argv[1], 'rb').read())
     g.boot()
     caller = Caller(g)
@@ -167,6 +173,35 @@ def main():
          & ~(1 << K['OW_WEATHER_DO_FLY_F']))
     caller.call('Lightning')
     check(whites, 'lightning no longer strikes outside a scene')
+
+    # the Options row
+    def plain(label):
+        bank, addr = g.sym[label]
+        return bytes(g.m[bank, addr + i] for i in range(20)).split(b'\x53', 1)[0]
+    g.tick(60)
+    g.highlight_start_option('OptionString')
+    g.press('a', 90)
+    name = plain('OptionNames.FlashShake')
+    order = re.findall(r'dw \.(\w+)', open(os.path.join(ROOT, 'data', 'options', 'option_names.asm')).read())
+    item = order.index('FlashShake') + 1  # (wMenuSelection counts from 1)
+    for _ in range(20):
+        if g.rd('wMenuSelection') == item:
+            break
+        g.press('down', 12)
+    screen = bytes(g.rd('wTilemap', i) for i in range(20 * 18))
+    at = screen.find(name)
+    if g.rd('wMenuSelection') != item or at < 0:
+        fails.append('Options: no "Flash & Shake" row reached')
+    else:
+        before = g.rd('wOptions3')
+        for press, calm, shown in (('right', True, 'OffString'), ('left', False, 'OnString')):
+            g.press(press, 20)
+            value_row = bytes(g.rd('wTilemap', (at // 20 + 1) * 20 + i) for i in range(20))  # (under the name)
+            o = g.rd('wOptions3')
+            check(bool(o & 1 << K['CALM_SCREEN_F']) == calm and (o ^ before) & ~(1 << K['CALM_SCREEN_F']) == 0,
+                  f'Options {press}: wOptions3 {before:08b} -> {o:08b}')
+            check(plain(shown) in value_row, f'Options {press}: the value shows {value_row}')
+    g.press('b', 60)
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

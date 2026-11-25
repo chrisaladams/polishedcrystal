@@ -40,7 +40,7 @@ OptionsMenu:
 .BGPalettes:
 INCLUDE "gfx/options/options_bg.pal"
 
-DEF NUM_OPTIONS EQU 14
+DEF NUM_OPTIONS EQU 15
 
 OptionsMenu_CallOptionRoutine:
 	ld a, [wMenuSelection]
@@ -60,6 +60,7 @@ OptionsMenu_CallOptionRoutine:
 	dw Options_Nicknames
 	dw Options_RunningShoes
 	dw Options_Follower
+	dw Options_FlashShake
 	dw Options_TurningSpeed
 	dw Options_ClockFormat
 	dw Options_PokedexUnits
@@ -329,6 +330,24 @@ Options_Follower:
 .SetOn:
 	res FOLLOWER_OFF_F, [hl]
 	ld de, OnString
+.Display:
+	jmp OptionsShared_PlaceStringAtValueCoord
+
+Options_FlashShake:
+; Link Edition: Off keeps the screen calm: no white flashes, pulses,
+; lightning or screen shaking outside battle (Battle Effects covers battle).
+	ld hl, wOptions3
+	ldh a, [hJoyPressed]
+	and PAD_LEFT | PAD_RIGHT
+	jr z, .show
+	ld a, [hl]
+	xor 1 << CALM_SCREEN_F
+	ld [hl], a
+.show
+	bit CALM_SCREEN_F, [hl]
+	ld de, OnString
+	jr z, .Display
+	ld de, OffString
 .Display:
 	jmp OptionsShared_PlaceStringAtValueCoord
 

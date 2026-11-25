@@ -300,7 +300,9 @@ ShowEmote:
 
 ShakeScreenStep:
 	call JumpMovementPointer
-	call ShakeScreen
+	ld hl, wOptions3 ; Link Edition: not with Flash & Shake off
+	bit CALM_SCREEN_F, [hl]
+	call z, ShakeScreen
 	jmp ContinueReadingMovement
 
 TurnHead:

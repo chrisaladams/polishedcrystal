@@ -62,7 +62,8 @@ def main():
                        'PLAYER_CAUGHT_MEWTWO_F', 'EVENT_MARAUDER_REWARD_PENDING', 'EVENT_MOLLY_PATCH_PENDING',
                        'EVENT_RESCUED_PROF_HALE', 'GROUP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAP_RUINS_OF_ALPH_INNER_CHAMBER', 'MAX_ITEMS', 'MAX_ITEM_STACK',
                        'MON_SPECIES', 'MON_ITEM', 'MON_MOVES', 'MON_LEVEL', 'MON_FORM', 'MON_IS_EGG_F',
-                       'MON_STATUS', 'MON_HP', 'MON_MAXHP', 'MON_STATS', 'MON_DVS', 'MON_EVS']
+                       'MON_STATUS', 'MON_HP', 'MON_MAXHP', 'MON_STATS', 'MON_DVS', 'MON_EVS',
+                       'CALM_SCREEN_F']
     for e in EVENTS:
         names += [e[5], 'GROUP_' + e[1], 'MAP_' + e[1]]
     K = rgbasm_values(names, None)
@@ -369,6 +370,31 @@ def main():
                 fails.append(('Mewtwo', f'wild battle with species {got[0]} level {got[1]}, not Mewtwo 80'))
         if not flag('EVENT_BEAT_MEWTWO_CLONES'):
             fails.append(('Mewtwo', 'clone victory was not recorded'))
+
+    # The clone scene pulses, shakes and flashes the screen; with Flash &
+    # Shake off (Options), none of that, and the battle still starts
+    for calm in (False, True):
+        g.load(base)
+        flag('EVENT_GOT_MYSTICTICKET_FROM_RED', True)
+        flag('EVENT_READ_CINNABAR_CLONE_REPORT', True)
+        o = g.rd('wOptions3') & ~(1 << K['CALM_SCREEN_F'])
+        g.wr('wOptions3', o | (1 << K['CALM_SCREEN_F']) if calm else o)
+        seen = {'ShakeScreen': 0, 'SetWhitePals': 0, 'CinematicPulse.pulse': 0}
+        hooks = []
+        for label in seen:
+            hooks.append(g.sym[label])
+            g.pb.hook_register(*g.sym[label], lambda lbl: seen.__setitem__(lbl, seen[lbl] + 1), label)
+        visit(mewtwo)
+        started = until_battle(mewtwo[4])
+        for h in hooks:
+            g.pb.hook_deregister(*h)
+        what = 'Flash & Shake off' if calm else 'Flash & Shake on'
+        if not started:
+            fails.append(('Mewtwo', f'{what}: no clone battle'))
+        elif calm and any(seen.values()):
+            fails.append(('Mewtwo', f'{what}: the screen still pulsed, shook or flashed {seen}'))
+        elif not calm and not all(seen.values()):
+            fails.append(('Mewtwo', f'{what}: a pulse, shake or flash missing {seen}'))
 
     # Existing saves: Mewtwo is already gone. Its old location must still
     # offer the clone story after Red, even after Leaf, without another catch.
