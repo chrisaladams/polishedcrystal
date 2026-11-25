@@ -10,6 +10,8 @@
 	const CUP_WORLD       ; Indigo Plateau: six at level 50
 	const CUP_RUDY        ; one Pokémon of the round's type
 	const CUP_LUANA       ; two Pokémon, singles rules
+	const CUP_FRIEND      ; a Friend Battle: your party at level 50
+	const CUP_FRIEND_RISING_STAR ; a Friend Battle under Rising Star rules
 DEF NUM_CUPS EQU const_value
 DEF NUM_BROADCAST_CUPS EQU CUP_WORLD + 1
 DEF RENTAL_CUP_TEAM_SIZE EQU 3

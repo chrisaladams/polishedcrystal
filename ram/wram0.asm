@@ -1611,6 +1611,9 @@ wWildReachHalf:: db ; 2 in a block's bottom half
 ; experience or items in its battles), else 0; and which cup
 wCupLevel:: db
 wCupId:: db
+; Friend Battles: the desk's friend team, and (plus one) the one battling
+wFriendTeamSlot:: db
+wFriendBattleSlot:: db
 ; a generated team for the next trainer battle: how many (then cleared), of
 ; what type (CUPTYPE_ANY: any); and CupMakeTeam's count
 wCupFoeSize:: db

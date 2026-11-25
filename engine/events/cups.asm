@@ -15,6 +15,8 @@ CupRules:
 	db 50, PARTY_LENGTH, PARTY_LENGTH, CUPPICK_PARTY, CUPRULE_ANY, 0 ; CUP_WORLD
 	db 50, 1, 1, CUPPICK_SMALL, CUPRULE_ALL_TYPE, CUPTYPE_SCRIPTED ; CUP_RUDY
 	db 50, 2, 2, CUPPICK_SMALL, CUPRULE_ANY, 0 ; CUP_LUANA
+	db LINK_BATTLE_FORCED_LEVEL, 1, PARTY_LENGTH, CUPPICK_PARTY, CUPRULE_ANY, 0 ; CUP_FRIEND
+	db 30, 3, 3, CUPPICK_THREE, CUPRULE_ANY, 0 ; CUP_FRIEND_RISING_STAR
 .End:
 	rsreset
 DEF CUPRULE_LEVEL rb
@@ -36,6 +38,8 @@ CupRecordMasks:
 	db 1 << CUPWON_WORLD_F       ; CUP_WORLD
 	db 0                         ; CUP_RUDY (Orange Crew badge)
 	db 0                         ; CUP_LUANA (Orange Crew badge)
+	db 0 ; CUP_FRIEND
+	db 0 ; CUP_FRIEND_RISING_STAR
 .End:
 	assert CupRecordMasks.End - CupRecordMasks == NUM_CUPS
 

@@ -8246,6 +8246,7 @@ ShowLinkBattleResult:
 	call ReadAndPrintLinkBattleRecord
 
 	call CloseSRAM
+	farcall KeepFriendTeam ; Link Edition: for Friend Battles
 
 	call WaitPressAorB_BlinkCursor
 	jmp ClearTileMap

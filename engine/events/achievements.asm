@@ -115,6 +115,8 @@ ENDM
 
 Special_AdventureAlbum::
 	call FadeToMenu_BackupSprites
+	call LoadStandardFont
+	call LoadFrame
 	call _AdventureAlbum
 	jmp ExitAllMenus
 

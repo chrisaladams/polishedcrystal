@@ -25,6 +25,12 @@ ReadTrainerParty:
 	ld c, a
 	farjp CupMakeTeam
 .not_generated
+	; Link Edition: a Friend Battle's kept team (engine/link/friend_teams.asm)
+	ld a, [wFriendBattleSlot]
+	and a
+	jr z, .not_friend
+	farjp LoadFriendTeam
+.not_friend
 
 	ld a, [wOtherTrainerClass]
 	cp MEWTWO_T
@@ -430,8 +436,9 @@ SetDynamicForm:
 	ret
 
 Battle_GetTrainerName::
-	ld a, [wInBattleTowerBattle]
-	and a
+	ld a, [wFriendBattleSlot] ; Link Edition: a friend's name, as at the Battle Tower
+	ld hl, wInBattleTowerBattle
+	or [hl]
 	ld hl, wOTPlayerName
 	ld a, BANK(Battle_GetTrainerName) ; make FarCopyBytes act like CopyBytes
 	ld [wTrainerGroupBank], a

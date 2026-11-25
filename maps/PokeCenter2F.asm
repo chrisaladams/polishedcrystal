@@ -20,7 +20,7 @@ PokeCenter2F_MapScriptHeader:
 	def_object_events
 	object_event  5,  2, SPRITE_LINK_RECEPTIONIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, LinkReceptionistScript_Trade, -1
 	object_event  9,  2, SPRITE_LINK_RECEPTIONIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, LinkReceptionistScript_Battle, -1
-	object_event 13,  3, SPRITE_LINK_RECEPTIONIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, Text_TimeCapsuleClosed, -1
+	object_event 13,  3, SPRITE_LINK_RECEPTIONIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, FriendBattleDeskScript, -1
 
 	object_const_def
 	const POKECENTER2F_TRADE_RECEPTIONIST
@@ -499,8 +499,155 @@ Text_IncompatibleRooms:
 	line "were chosen."
 	prompt
 
-Text_TimeCapsuleClosed:
-	text "I'm sorry--the"
-	line "Time Capsule is"
-	cont "inoperative."
+FriendBattleDeskScript:
+; Link Edition: Friend Battles (engine/link/friend_teams.asm), at the desk
+; that was the Time Capsule's.
+	faceplayer
+	opentext
+	callasm FriendDeskFirst
+	iffalse_jumpopenedtext .NoneText
+	writetext .WelcomeText
+	promptbutton
+.Team:
+	writetext .TeamText
+	loadmenu .Menu
+	verticalmenu
+	closewindow
+	ifequalfwd 1, .Battle
+	ifequalfwd 2, .Look
+	ifequalfwd 3, .Remove
+	ifequalfwd 4, .Next
+	endtext
+
+.Look:
+	closetext
+	special Special_FriendTeamPreview
+	opentext
+	sjump .Team
+
+.Next:
+	callasm FriendDeskNext
+	sjump .Team
+
+.Remove:
+	writetext .RemoveText
+	yesorno
+	iffalse .Team
+	callasm FriendDeskRemove
+	writetext .RemovedText
+	promptbutton
+	callasm FriendDeskFirst
+	iftrue .Team
+	endtext
+
+.Battle:
+	callasm FriendDeskArm
+	callasm CupSelectTeam
+	ifequalfwd CUPTEAM_OK, .Begin
+	callasm FriendDeskDone
+	ifequal CUPTEAM_CANCEL, .Team
+	writetext .RulesText
+	promptbutton
+	sjump .Team
+
+.Begin:
+	writetext .BeginText
+	waitbutton
+	closetext
+	callasm CupBegin
+	callasm FriendDeskArm ; (again, after the party's swapped)
+	winlosstext .WinText, .LossText
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm FriendDeskDone
+	callasm CupEnd
+	jumptext .WonText
+
+.Lost:
+	callasm FriendDeskDone
+	callasm CupEnd
+	jumptext .LostText
+
+.Menu:
+	db MENU_BACKUP_TILES
+	menu_coords 0, 0, 10, 9
+	dw .Choices
+	db 1
+.Choices:
+	db STATICMENU_CURSOR
+	db 4
+	db "Battle@"
+	db "Look@"
+	db "Remove@"
+	db "Next@"
+
+.NoneText:
+	text "Friend Battles!"
+
+	para "Battle a friend in"
+	line "the Colosseum, and"
+
+	para "we'll keep their"
+	line "team here, so you"
+
+	para "can battle it"
+	line "any time."
+	done
+
+.WelcomeText:
+	text "Friend Battles!"
+	line "Your friends'"
+	cont "teams are here."
+	done
+
+.TeamText:
+	text "This is"
+	line "@"
+	text_ram wStringBuffer3
+	text "'s team."
+	done
+
+.RemoveText:
+	text "Remove @"
+	text_ram wStringBuffer3
+	text "'s"
+	line "team? Your link"
+	cont "records stay."
+	done
+
+.RemovedText:
+	text "Removed."
+	done
+
+.RulesText:
+	text "Your team doesn't"
+	line "fit the rules"
+	cont "this team kept."
+	done
+
+.BeginText:
+	text "Please enjoy"
+	line "your battle!"
+	done
+
+.WinText:
+	text "Good game!"
+	done
+
+.LossText:
+	text "Good game!"
+	done
+
+.WonText:
+	text "You won! Your"
+	line "#mon are back"
+	cont "to normal."
+	done
+
+.LostText:
+	text "So close! Your"
+	line "#mon are back"
+	cont "to normal."
 	done

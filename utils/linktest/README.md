@@ -7,7 +7,10 @@ and sends in the next healthy Pokémon when one faints). At the start of every
 turn each side records both active Pokémon and both parties' HP; the two
 records must agree, mirrored, or the battle has desynced.
 The check fails if setup never reaches a shared action exchange, a side
-times out, or a finished battle changes either real party.
+times out, or a finished battle changes either real party. After a finished
+battle each side must also have kept the other's team for Friend Battles
+(sFriendTeam1 or 2: the species and forms sent, the format, a good
+checksum), except after a Random Battle, where neither keeps one.
 
 `--corrupt N` adds line noise: about 1 in N bytes side B receives during the
 battle gets one bit flipped. `--rom-b` runs side B on a different ROM.

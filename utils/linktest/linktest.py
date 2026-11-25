@@ -215,6 +215,24 @@ class Side:
             self.mem[a] = (self.mem[a] - 1) & 0xff
             self.say(f'    (test) changed our HP at exchange {self.desync_at}')
 
+    def friend_report(self):
+        """The teams this side kept for Friend Battles (sFriendTeam1 and 2,
+        in SRAM bank 0), and its own party, to check against the other's."""
+        teams = []
+        for label in ('sFriendTeam1', 'sFriendTeam2'):
+            if label not in self.sym:
+                return {}
+            a = self.sym[label][1]
+            teams.append(bytes(self.mem[0, a + i] for i in range(FRIEND_TEAM_LENGTH)))
+        n = self.rd('wPartyCount')
+        stride = self.sym['wPartyMon2'][1] - self.sym['wPartyMon1'][1]
+        base = self.sym['wPartyMon1'][1]
+        form = self.sym['wPartyMon1Form'][1] - base
+        mons = [(self.mem[1, base + i * stride], self.mem[1, base + i * stride + form])
+                for i in range(n) if not self.mem[1, base + i * stride + form] & 0x40]  # (eggs aside)
+        name = bytes(self.rd('wPlayerName', i) for i in range(8))
+        return {'teams': teams, 'mons': mons, 'name': name}
+
     def party_ids(self):
         n = self.rd('wPartyCount')
         stride = self.sym['wPartyMon2'][1] - self.sym['wPartyMon1'][1]
@@ -416,12 +434,15 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
         if not (expect_rejection and result.startswith('rejected:')):
             cable.mm[127] = 1
         q.put((name, f'{result} ({getattr(s, "setup_retries", 0)} swap retries, '
-                     f'{s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
+                     f'{s.setup_errors} setup errors)', s.exchanges, cable.flips(slot), s.friend_report()))
         s.pb.stop(save=False)
     except Exception as e:                       # noqa: BLE001
         cable.mm[127] = 1
         import traceback
-        q.put((name, 'error: ' + traceback.format_exc(), [], 0))
+        q.put((name, 'error: ' + traceback.format_exc(), [], 0, {}))
+
+
+FRIEND_TEAM_LENGTH = 16 + 20 * 6  # (constants/serial_constants.asm)
 
 
 def compare(ta, tb):
@@ -501,9 +522,11 @@ def main():
         p.start()
         ctx_procs.append(p)
     res = {}
+    friends = {}
     for _ in ctx_procs:
-        name, result, turns, flips = q.get(timeout=args.seconds + 120)
+        name, result, turns, flips, friend = q.get(timeout=args.seconds + 120)
         res[name] = (result, turns, flips)
+        friends[name] = friend
     for p in ctx_procs:
         p.join(timeout=30)
     for name in 'AB':
@@ -530,6 +553,30 @@ def main():
                 if expected_size and any(len(exchange[key]) != expected_size for key in ('party', 'otparty')):
                     problems.append(f'Side {name} did not enter with {expected_size} Pokémon per party.')
                     break
+    # Friend Battles: after a finished battle, each side keeps the other's team
+    # (not a Random Battle's generated one)
+    for name, other in (('A', 'B'), ('B', 'A')):
+        if not res[name][0].startswith('battle over') or not friends[name] or args.rom_b:
+            continue
+        kept = [team for team in friends[name]['teams'] if team[:2] == b'FB']
+        if formats[0] == 'random':
+            if kept:
+                problems.append(f'Side {name} kept a Random Battle team.')
+            continue
+        theirs = friends[other]
+        match = [team for team in kept if team[7:15] == theirs['name']]
+        if len(match) != 1:
+            problems.append(f'Side {name} kept {len(match)} teams for {other}.')
+            continue
+        team = match[0]
+        if sum(team[3:]) + 0x46 & 0xff != team[2]:
+            problems.append(f'Side {name} kept a team with a bad checksum.')
+        if team[3] != ('normal', 'random', 'rising', 'unrestricted').index(formats[0]):
+            problems.append(f'Side {name} kept the wrong rules: {team[3]}.')
+        mons = [(team[16 + 20 * i], team[17 + 20 * i]) for i in range(team[15])]
+        sent = theirs['mons'][:args.party_size] if args.party_size else theirs['mons']
+        if mons != sent:
+            problems.append(f'Side {name} kept {mons}, not {other}\'s {sent}.')
     sync_stops = []
     for name in 'AB':
         result = res[name][0]

@@ -170,6 +170,11 @@ INCLUDE "engine/overworld/follower.asm"
 INCLUDE "gfx/followers.asm"
 
 
+SECTION "Friend Teams", ROMX
+
+INCLUDE "engine/link/friend_teams.asm"
+
+
 SECTION "Achievements", ROMX
 
 INCLUDE "engine/events/achievements.asm"

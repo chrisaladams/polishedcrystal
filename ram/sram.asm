@@ -87,6 +87,15 @@ sLinkCardYear:: ds 3 * 3
 sLinkCardEnd::
 	assert BANK(sLinkCardMarker) == BANK(sLinkBattleStats)
 
+; Link Edition: Friend Battles (engine/link/friend_teams.asm), in bank 0's
+; free space: after the second PokeDB part, and after the link card records.
+SECTION "Friend Team 1", SRAM[$b14d], BANK[0]
+sFriendTeam1:: ds FRIEND_TEAM_LENGTH
+	assert sFriendTeam1 + FRIEND_TEAM_LENGTH <= $b200
+
+SECTION "Friend Team 2", SRAM[$bf24], BANK[0]
+sFriendTeam2:: ds FRIEND_TEAM_LENGTH
+
 SECTION "Link Card Players", SRAM
 
 sLinkCardPlayerTag:: dw

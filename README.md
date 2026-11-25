@@ -60,6 +60,25 @@ party at registration and validates the received team before the battle.
 Battling restores your party after the match. All four formats use the
 same synchronization protections. Both players need the same build.
 
+### Friend Battles
+
+After a link battle with your own teams (Standard, Rising Star or
+Unrestricted; not Random, whose teams are generated), the cartridge keeps
+your friend's team: up to two friends, each kept under their name and ID and
+brought up to date every time you battle them again. Nothing extra goes over
+the cable: it's the team the battle already received.
+
+The Cable Club's third receptionist (where the Time Capsule was) lets you
+battle a kept team on your own, under the rules it was kept with: your whole
+party at level 50, or three of yours at level 30 for Rising Star. As in the
+cups, your party comes back as it was, and losing costs nothing. You can
+also look the team over, go to the other friend's, or remove one (your link
+records stay). When both places hold other friends' teams, a third friend's
+isn't kept until you remove one.
+`python3 utils/anime_events/test_friend_battles.py SAVE.sav` checks the desk,
+and `utils/linktest/linktest.py` checks what each side keeps after a link
+battle.
+
 ### Link battles that can't silently desync
 
 In a link battle each Game Boy works out every turn itself; the two only swap
