@@ -10,6 +10,9 @@ Emotes:
 	fardw BoltEmote
 	fardw SleepEmote
 	fardw FishEmote
+	fardw SparkleEmote ; EMOTE_SPARKLE
+	fardw SparkleEmote ; EMOTE_SPARKLE_GREEN
+	fardw SparkleEmote ; EMOTE_SPARKLE_PURPLE
 	assert_table_length NUM_EMOTES
 
 EmotePalettes:
@@ -23,4 +26,7 @@ EmotePalettes:
 	db PAL_OW_EMOTE_ORANGE ; EMOTE_BOLT
 	db PAL_OW_EMOTE_BLUE   ; EMOTE_SLEEP
 	db PAL_OW_EMOTE_BLUE   ; EMOTE_FISH
+	db PAL_OW_EMOTE_ORANGE ; EMOTE_SPARKLE
+	db PAL_OW_EMOTE_GREEN  ; EMOTE_SPARKLE_GREEN
+	db PAL_OW_EMOTE_PURPLE ; EMOTE_SPARKLE_PURPLE
 	assert_table_length NUM_EMOTES

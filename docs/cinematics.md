@@ -22,6 +22,11 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 Tints: `TINT_DARK`, `TINT_GREEN`, `TINT_RED`, `TINT_BLUE`, `TINT_PURPLE`,
 `TINT_GOLD`, `TINT_WHITE`.
 
+Sparkles are emotes, so `showemote` draws them over a character:
+`EMOTE_SPARKLE` (gold), `EMOTE_SPARKLE_GREEN` and `EMOTE_SPARKLE_PURPLE`.
+They share one 16×16 graphic (`gfx/emotes/sparkle.png`, a four-point star
+with two glints and no speech bubble), each with its own emote palette.
+
 An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.asm`):
 
 ```
@@ -43,10 +48,10 @@ An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.
 | Mewtwo Strikes Back | Cerulean Cave B1F | Silence, psychic pulses and purple light while Mewtwo speaks; cry and flash before the clones |
 | The Power of One | Fire, Ice, Lightning Island roofs | Each beacon pulses in its guardian's color as it's tuned (red, blue, gold) |
 | The Power of One | Shamouti shrine ruins | Blue light while Melody's song carries; a flash as Lugia answers |
-| Spell of the Unown | Ruins of Alph inner chamber | The Entei illusion in a dream's purple light |
-| Voice of the Forest | Ilex Forest | The forest darkens around the Marauder. After he's beaten: a flash as he vanishes, the forest dim with Celebi's hurt glow, green pulses from the shrine until the daylight returns, two flashes as Celebi takes Sammy home |
-| Orange League | Warm Beach, Rocky Beach, Shamouti house | A blue surf pulse for Cissy; a cold white haze for Danny; Dragonite's roar, a rumble and a flash for Drake; gold light for the trophy |
-| Pallet Invitational | Pallet Town | Pikachu's spark before Ash's battle; gold light while Tracey sketches the winners |
+| Spell of the Unown | Ruins of Alph inner chamber | The Entei illusion in a dream's purple light, a purple sparkle as it breaks into letters |
+| Voice of the Forest | Ilex Forest | The forest darkens around the Marauder. After he's beaten: a flash as he vanishes, the forest dim with Celebi's hurt glow, green pulses from the shrine until the daylight returns, a green sparkle as it heals, another and two flashes as it takes Sammy home |
+| Orange League | Warm Beach, Rocky Beach, Beautiful Beach, Valencia, Shamouti house | A blue surf pulse for Cissy; a cold white haze for Danny; each of Rudy's rounds opens in its type's color (green, red, blue); hearts over Luana and you, partners; Dragonite's roar, a rumble and a flash for Drake; gold light and a sparkle for the trophy |
+| Pallet Invitational | Pallet Town | Pikachu's spark before Ash's battle; gold light and a sparkle while Tracey sketches the winners |
 
 The Voice of the Forest scenes used to call `BlindingFlash` for their flashes.
 That routine is the Flash field move: it marks the map as lit by Flash.
@@ -80,7 +85,8 @@ and after a scene, and that no random number is drawn.
 |---|---:|
 | ROM: the library | 249 |
 | ROM: the Mewtwo scene | 34 |
-| ROM: the other campaigns' scenes | 223 |
+| ROM: the other campaigns' scenes | 291 |
+| ROM: the sparkle emote (graphic and three table entries) | 57 |
 | WRAM0: `wCinematicFlags` | 1 |
 | WRAMX bank 5: `wCinematicSavedPals` | 128 |
 
@@ -92,8 +98,8 @@ Each use costs about 4 to 6 bytes of script.
   pan. Panning would need changes to the overworld's scrolling, which has a
   larger budget and more risk. Scenes move the player or other objects with
   `applymovement`, as the original game does.
-- **Particles** (sparkles, dust, magic, water). These need new graphics. A
-  sparkle could be an emote, through the existing `showemote` pipeline, for
-  about 64 bytes of graphics each.
+- **More particles** (dust, water). The sparkle emote is in. Each new shape
+  would cost about 50 to 64 bytes of graphics. A sparkle needs a character to
+  appear over, so the beacons and Lugia keep their color pulses.
 - **Reduced-flash or reduced-motion settings.** Flashes are capped at three
   short ones per command; a setting would need an options bit.

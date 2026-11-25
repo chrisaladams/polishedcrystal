@@ -173,6 +173,7 @@ CameoAshScript:
 	setevent EVENT_WON_PALLET_INVITATIONAL
 	scene_begin ; (the winners in gold light while Tracey sketches)
 	scene_tint TINT_GOLD
+	showemote EMOTE_SPARKLE, PLAYER, 20
 	showtext .Finish
 	scene_end
 	end

@@ -1410,6 +1410,7 @@ IlexForestSammyScene:
 	playsound SFX_GAME_FREAK_LOGO_GS
 	scene_tint TINT_GREEN
 	scene_pulse TINT_GREEN
+	showemote EMOTE_SPARKLE_GREEN, ILEXFOREST_CELEBI, 20
 	waitsfx
 	applymovement ILEXFOREST_CELEBI, MovementData_CelebiDance
 	cry CELEBI
@@ -1421,7 +1422,7 @@ IlexForestSammyScene:
 	showtext .SammyText
 	turnobject ILEXFOREST_SAMMY, LEFT
 	cry CELEBI
-	pause 15
+	showemote EMOTE_SPARKLE_GREEN, ILEXFOREST_CELEBI, 15
 	playsound SFX_WARP_TO
 	scene_flash 2
 	disappear ILEXFOREST_SAMMY

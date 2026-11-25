@@ -50,6 +50,9 @@ OrangeCrewLuanaScript:
 	ifnotequal CUPTEAM_OK, .InvalidPair
 	closetext
 	callasm CupBegin
+	; (partners: a heart over her, then over you)
+	showemote EMOTE_HEART, LAST_TALKED, 15
+	showemote EMOTE_HEART, PLAYER, 15
 	winlosstext .BeatenText, .LossText
 	loadtrainer LUANA_T, 1
 	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE

@@ -211,15 +211,25 @@ OrangeCrewRudyScript:
 	ifnotequal CUPTEAM_OK, .WrongType
 	closetext
 	callasm CupBegin
+	; (each round opens in its type's color: engine/events/cinematic.asm)
 	readmem wCupFoeType
 	ifequalfwd GRASS, .GrassBattle
 	ifequalfwd FIRE, .FireBattle
+	scene_begin
+	scene_pulse TINT_BLUE
+	scene_end
 	loadtrainer RUDY_T, RUDY_WATER
 	sjumpfwd .Battle
 .GrassBattle:
+	scene_begin
+	scene_pulse TINT_GREEN
+	scene_end
 	loadtrainer RUDY_T, RUDY_GRASS
 	sjumpfwd .Battle
 .FireBattle:
+	scene_begin
+	scene_pulse TINT_RED
+	scene_end
 	loadtrainer RUDY_T, RUDY_FIRE
 .Battle:
 	winlosstext .BeatenText, .LossText

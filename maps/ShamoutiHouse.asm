@@ -48,6 +48,7 @@ OrangeLeagueDrakeScript:
 	setevent EVENT_BEAT_DRAKE
 	scene_begin ; (the trophy in gold light)
 	scene_tint TINT_GOLD
+	showemote EMOTE_SPARKLE, PLAYER, 20
 	opentext
 	writetext .TrophyText
 	playsound SFX_GET_BADGE

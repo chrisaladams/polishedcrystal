@@ -195,6 +195,7 @@ HaleStatueScript:
 	scene_tint TINT_PURPLE
 	cry ENTEI
 	earthquake 12
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_DREAM_ENTEI, 20
 	showtext .Illusion
 	scene_restore
 	special Special_FadeBlackQuickly
