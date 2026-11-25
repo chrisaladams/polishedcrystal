@@ -210,38 +210,54 @@ LinkReceptionistScript_Battle:
 	writetext Text_BattleReceptionistIntro
 	yesorno
 	iffalse_endtext
-	; Link Edition: normal rules, or Random Battle
 	writetext Text_WhichRules
 	loadmenu .RulesMenuHeader
 	verticalmenu
 	closewindow
-	ifequalfwd 1, .NormalRules
-	ifequalfwd 2, .RandomRules
-	endtext
-
-.NormalRules:
-	loadmem wLinkBattleRules, 0
-	sjumpfwd .GotRules
+	iffalse_endtext
+	addval -1
+	writemem wLinkBattleRules
+	ifequalfwd LINK_RULE_RANDOM, .RandomRules
+	ifequalfwd LINK_RULE_RISING_STAR, .RisingRules
+	ifequalfwd LINK_RULE_UNRESTRICTED, .UnrestrictedRules
+	sjumpfwd .Validate
 
 .RandomRules:
-	loadmem wLinkBattleRules, 1
 	writetext Text_RandomRules
+	sjumpfwd .ReadRules
+.RisingRules:
+	writetext Text_RisingRules
+	sjumpfwd .ReadRules
+.UnrestrictedRules:
+	writetext Text_UnrestrictedRules
+.ReadRules:
 	promptbutton
-.GotRules:
+.Validate:
+	callasm CheckLocalLinkBattleParty
+	iffalsefwd .InvalidParty
 	special Special_SetBitsForBattleRequest
 	sjump LinkReceptionistScript_DoTradeOrBattle
 
+.InvalidParty:
+	readmem wLinkBattleRules
+	ifequalfwd LINK_RULE_RISING_STAR, .InvalidRising
+	jumpopenedtext Text_NoLinkTeam
+.InvalidRising:
+	jumpopenedtext Text_InvalidRising
+
 .RulesMenuHeader:
 	db MENU_BACKUP_TILES
-	menu_coords 0, 4, 14, 9
+	menu_coords 0, 3, 15, 12
 	dw .RulesMenuData
 	db 1 ; default option
 
 .RulesMenuData:
 	db $80 ; flags
-	db 2 ; items
-	db "Normal@"
+	db NUM_LINK_BATTLE_RULES ; items in wire ID order
+	db "Standard@"
 	db "Random teams@"
+	db "Rising Star@"
+	db "Unrestricted@"
 
 .BattleRoomClosed:
 	jumpthistextfaceplayer
@@ -429,6 +445,34 @@ Text_RandomRules:
 	para "Your own team is"
 	line "safe. It's back"
 	cont "after the battle."
+	done
+
+Text_RisingRules:
+	text "Bring three #mon"
+	line "for Lv.30 battles."
+	para "No Eggs, Mewtwo,"
+	line "Mew, Lugia, Ho-Oh"
+	cont "or Celebi."
+	done
+
+Text_UnrestrictedRules:
+	text "Bring up to six at"
+	line "level 50."
+	para "Legendaries and"
+	line "any evasion boost"
+	cont "are allowed."
+	done
+
+Text_NoLinkTeam:
+	text "Bring at least one"
+	line "usable #mon."
+	done
+
+Text_InvalidRising:
+	text "This format needs"
+	line "three eligible"
+	cont "#mon in your"
+	cont "party."
 	done
 
 Text_WrongRules:

@@ -2048,12 +2048,15 @@ BattleCommand_checkhit:
 	ld b, 7
 
 .not_external_acc
-	; In link battles, cap the target's evasion boost at +2 stages (c <= 9,
+	; In restricted link formats, cap the target's evasion boost at +2 (c <= 9,
 	; neutral is 7) so Double Team / Minimize / Bright Powder still help but
 	; can't be stacked into an accuracy stall. Replaces the old Evasion Clause
 	; that ignored evasion entirely; evasion drops below neutral still apply.
 	ld a, [wLinkMode]
 	and a
+	jr z, .skip_evasion_cap
+	ld a, [wLinkBattleRules]
+	cp LINK_RULE_UNRESTRICTED
 	jr z, .skip_evasion_cap
 	ld a, c
 	cp 10

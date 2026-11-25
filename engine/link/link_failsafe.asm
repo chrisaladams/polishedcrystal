@@ -65,6 +65,14 @@ LinkFailsafe_Hash:
 LinkFailsafe_VerifySetup::
 ; Call once the opponent's party and the random numbers are in place.
 ; Sets [wLinkSetupFailed] to 0 if both games received the same battle.
+	; Check party rules before the serial exchange. The two parties can have
+	; different sizes, so this work must finish before the link synchronizes.
+	call CheckReceivedLinkBattleParty
+	ld a, LINK_CHECK_OK
+	jr nc, .save_verdict
+	ld a, LINK_CHECK_BAD
+.save_verdict
+	ld [wLinkSetupFailed], a
 	; our fingerprints: sent party, received party, random numbers
 	ld a, [wOTPartyCount]
 	ld hl, wOTPartyMons
@@ -138,7 +146,7 @@ LinkFailsafe_VerifySetup::
 	jr c, .bad
 	cp c
 	jr nz, .bad
-	ld a, LINK_CHECK_OK
+	ld a, [wLinkSetupFailed]
 	jr .verdict
 
 .bad_pop1

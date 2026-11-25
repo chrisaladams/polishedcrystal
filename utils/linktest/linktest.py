@@ -97,6 +97,7 @@ class Side:
         self.setup_errors = 0
         self.rules = 'normal'
         self.rules_chosen = False
+        self.party_size = None
         self.desync_at = 0
         self.shot_every = 5
         self.unplug_at = self.unplug_delay = self.unplug_frames = 0
@@ -183,6 +184,9 @@ class Side:
                     self.mem[a] = v
             self.mem[0xff92] = 0xf1        # hMapEntryMethod = MAPSETUP_WARP
             self.tick(600)
+        if self.party_size is not None:
+            assert self.party_size <= self.rd('wPartyCount'), 'save has too few Pokémon for the fixture'
+            self.mem[1, self.sym['wPartyCount'][1]] = self.party_size
         self.say(f'booted at {self.where()} party {self.rd("wPartyCount")}')
         self.party_before = self.party_ids()
 
@@ -215,7 +219,10 @@ class Side:
         n = self.rd('wPartyCount')
         stride = self.sym['wPartyMon2'][1] - self.sym['wPartyMon1'][1]
         base = self.sym['wPartyMon1'][1]
-        mons = [(self.mem[1, base + i * stride], self.mem[1, base + i * stride + 21])
+        form = self.sym['wPartyMon1Form'][1] - base
+        level = self.sym['wPartyMon1Level'][1] - base
+        mons = [(self.mem[1, base + i * stride], self.mem[1, base + i * stride + form],
+                 self.mem[1, base + i * stride + level])
                 for i in range(n)]
         dex = sum(bin(self.rd('wPokedexCaught', k)).count('1') for k in range(32))
         return {'mons': mons, 'dex': dex}
@@ -227,6 +234,7 @@ class Side:
                 'rn': self.rd('wLinkBattleRNCount'),
                 'me': (self.rd('wBattleMonSpecies'), self.rd16('wBattleMonHP')),
                 'foe': (self.rd('wEnemyMonSpecies'), self.rd16('wEnemyMonHP')),
+                'levels': (self.rd('wBattleMonLevel'), self.rd('wEnemyMonLevel')),
                 'party': [self.party_hp(i) for i in range(self.rd('wPartyCount'))],
                 'otparty': [self.ot_hp(i) for i in range(self.rd('wOTPartyCount'))]}
 
@@ -290,6 +298,10 @@ class Side:
                 if setup_error:
                     self.setup_errors += 1
                     seated = False        # back in the Colosseum: sit down again
+                if 'different rules' in text:
+                    return 'rejected: different rules'
+                if 'three eligible' in text:
+                    return 'rejected: illegal Rising Star party'
             in_battle = self.rd('wBattleMode') != 0
             here = self.where()
             if in_battle:
@@ -341,7 +353,7 @@ class Side:
                 return f'battle over, real party back: {same}'
             if 'Random teams' in joined and not self.rules_chosen:
                 self.rules_chosen = True
-                if self.rules == 'random':
+                for _ in range(('normal', 'random', 'rising', 'unrestricted').index(self.rules)):
                     self.press('down', 10)
                 self.press('a', 30)
                 self.say(f'--- chose {self.rules} rules')
@@ -389,17 +401,20 @@ class Side:
 
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
-           desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None):
+           desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None,
+           party_size=None, expect_rejection=False):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         s.desync_at = desync_at
         s.shot_every = shot_every
         s.unplug_at, s.unplug_delay, s.unplug_frames = unplug
         s.rules = rules
+        s.party_size = party_size
         if force_moves:
             s.force_moves = force_moves
         result = s.run(turns, time.time() + seconds)
-        cable.mm[127] = 1
+        if not (expect_rejection and result.startswith('rejected:')):
+            cable.mm[127] = 1
         q.put((name, f'{result} ({getattr(s, "setup_retries", 0)} swap retries, '
                      f'{s.setup_errors} setup errors)', s.exchanges, cable.flips(slot)))
         s.pb.stop(save=False)
@@ -421,6 +436,8 @@ def compare(ta, tb):
                             f'foe {a["foestat"]}, B me {b["mestat"]} foe {b["foestat"]}')
         elif a.get('rn') != b.get('rn'):
             problems.append(f'exchange {i + 1}: random number position differs: A {a["rn"]} B {b["rn"]}')
+        elif a['levels'] != b['levels'][::-1]:
+            problems.append(f'exchange {i + 1}: active levels differ: A {a["levels"]}, B {b["levels"]}')
         elif a['party'] != b['otparty'] or a['otparty'] != b['party']:
             problems.append(f'exchange {i + 1}: party HP differs: A {a["party"]}/{a["otparty"]}, '
                             f'B {b["party"]}/{b["otparty"]}')
@@ -441,7 +458,11 @@ def main():
     ap.add_argument('--force-moves', default='',
                     help='comma-separated move constants every party Pokemon gets before the swap')
     ap.add_argument('--rules', default='normal', help='rules each side picks at the desk: '
-                    'normal, random, or A,B (e.g. random,normal)')
+                    'normal, random, rising, unrestricted, or A,B (e.g. rising,unrestricted)')
+    ap.add_argument('--party-size', type=int, choices=range(1, 7),
+                    help='limit both test parties before visiting the desk, using only the in-memory save')
+    ap.add_argument('--expect-rejection', choices=('mismatch', 'rising-party'),
+                    help='both desks should refuse the match for this reason')
     ap.add_argument('--unplug', default='',
                     help='AT,DELAY,FRAMES: at action exchange AT (side A), wait DELAY frames, '
                          'then unplug the cable for FRAMES frames')
@@ -452,6 +473,9 @@ def main():
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--out', default='linktest_out')
     args = ap.parse_args()
+    formats = args.rules.split(',')
+    if len(formats) not in (1, 2) or any(rule not in ('normal', 'random', 'rising', 'unrestricted') for rule in formats):
+        ap.error('invalid battle format')
     os.makedirs(args.out, exist_ok=True)
     force_ids = None
     if args.force_moves:
@@ -473,7 +497,7 @@ def main():
                                             args.desync_at if slot else 0, args.shot_every,
                                             tuple(map(int, args.unplug.split(','))) if args.unplug and not slot
                                             else (0, 0, 0),
-                                            (args.rules.split(',') * 2)[slot], force_ids))
+                                            (formats * 2)[slot], force_ids, args.party_size, bool(args.expect_rejection)))
         p.start()
         ctx_procs.append(p)
     res = {}
@@ -485,10 +509,27 @@ def main():
     for name in 'AB':
         print(f'{name}: {res[name][0]} after {len(res[name][1])} action exchanges, '
               f'{res[name][2]} bits flipped')
+    if args.expect_rejection:
+        wanted = 'rejected: ' + {'mismatch': 'different rules', 'rising-party': 'illegal Rising Star party'}[args.expect_rejection]
+        if all(res[name][0].startswith(wanted) and not res[name][1] for name in 'AB'):
+            return 0
+        print(f'Expected both desks to report {wanted}.')
+        return 1
     problems = compare(res['A'][1], res['B'][1])
     n = min(len(res['A'][1]), len(res['B'][1]))
     if not n:
         problems.append('No action exchange completed on both sides.')
+    elif not args.rom_b:
+        expected_level = 30 if formats[0] == 'rising' else 50
+        expected_size = {'rising': 3, 'random': 6}.get(formats[0])
+        for name in 'AB':
+            for exchange in res[name][1]:
+                if exchange['levels'] != (expected_level, expected_level):
+                    problems.append(f'Side {name} did not battle at level {expected_level}.')
+                    break
+                if expected_size and any(len(exchange[key]) != expected_size for key in ('party', 'otparty')):
+                    problems.append(f'Side {name} did not enter with {expected_size} Pokémon per party.')
+                    break
     sync_stops = []
     for name in 'AB':
         result = res[name][0]

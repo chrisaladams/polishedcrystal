@@ -12,6 +12,12 @@ times out, or a finished battle changes either real party.
 `--corrupt N` adds line noise: about 1 in N bytes side B receives during the
 battle gets one bit flipped. `--rom-b` runs side B on a different ROM.
 
+Use `--rules normal`, `random`, `rising`, or `unrestricted` to choose the
+format. The harness checks the level on both ends and the fixed team sizes
+for Random and Rising Star. Use `--rules rising --party-size 3` to test with
+three Pokémon from each save. Use `--rules rising,unrestricted --party-size 3
+--expect-rejection mismatch` to exercise the desk's format mismatch check.
+
 ## The cable
 
 PyBoy's own shared-memory link swaps bytes whenever both sides finish a

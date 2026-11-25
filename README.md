@@ -33,7 +33,7 @@ A pass at tightening up the meta for L50 link battles:
 - **Moody removed.**
 - **Upstream battle bugs fixed:** Thunder never missed in harsh sunlight (it's 50% now), harsh sunlight didn't stop freezing (it let a freeze chance skip every check instead), and Low Kick gave 80 power to anything between 5 kg and 100 kg (it now follows the weight table: 40 power above 10 kg, 60 above 25 kg, 80 above 50 kg). In link battles, Sleep Talk picked its move with each Game Boy's own random numbers instead of the shared battle ones, so the two games could pick different moves and the battle split; it now uses the shared ones.
 - **Evasion capped in link battles** — Double Team/Minimize/Bright Powder still help, but the target's evasion boost can't stack past +2 stages, so it can't be abused into an accuracy stall. Gated to real link play only, so singleplayer and the Battle Tower are untouched. (Trapping abilities — Shadow Tag, Arena Trap — and sleep are left as Polished Crystal ships them; Ghost-types, Shed Shell, and Run Away already give trapped mons an out.)
-- **Link-battle healing/leveling** — mons get forced to L50 and topped off before a link battle, so games aren't decided by who happened to grind more.
+- **Link-battle healing and leveling** — Pokémon are healed and set to the format's level before a match.
 - A few mart/item tweaks to go with the above.
 
 ### Easier Cable Club connections
@@ -44,6 +44,21 @@ Linking up used to need both players to be almost perfectly in sync. Now:
 - The receptionist waits about 26 seconds for your friend instead of about 8.
 - If your friend isn't ready, or the link times out, you're asked whether to keep waiting instead of being kicked out, so neither player has to start over.
 - The handshake after saving is more tolerant of one player saving slower than the other.
+
+### Cable Club battle formats
+
+Both players choose the same format at the battle desk. The game checks the
+party at registration and validates the received team before the battle.
+
+| Format | Level | Team |
+| --- | --- | --- |
+| Standard | 50 | Up to six from your party, with the existing balance rules |
+| Random teams | 50 | Six generated Pokémon |
+| Rising Star | 30 | Bring exactly three. Eggs, Mewtwo, Mew, Lugia, Ho-Oh and Celebi sit this out |
+| Unrestricted | 50 | Up to six from your party. Legendary and mythical Pokémon and the full range of evasion boosts are allowed |
+
+Battling restores your party after the match. All four formats use the
+same synchronization protections. Both players need the same build.
 
 ### Link battles that can't silently desync
 

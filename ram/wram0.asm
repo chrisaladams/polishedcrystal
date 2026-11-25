@@ -1517,8 +1517,9 @@ SECTION "Link Failsafe", WRAM0
 ; The first serial tag of the current action exchange's set; exchanges cycle
 ; through four sets so a stale byte is never taken for this exchange's.
 wLinkBattleExchangeTag:: db
-; The rules chosen at the battle desk: 0 normal, 1 Random Battle.
+; The format chosen at the battle desk and its agreed battle level.
 wLinkBattleRules:: db
+wLinkBattleLevel:: db
 ; Random Battle team building: how many team members have each type and are
 ; weak to each type, and picks rejected in a row.
 wRandomTypeCounts:: ds NUM_RANDOM_TYPES

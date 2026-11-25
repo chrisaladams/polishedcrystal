@@ -33,8 +33,8 @@ LinkCommunications:
 	cp LINK_COLOSSEUM
 	jr nz, .not_random
 	ld a, [wLinkBattleRules]
-	and a
-	jr z, .not_random
+	cp LINK_RULE_RANDOM
+	jr nz, .not_random
 	farcall LinkRandomBattle_MakeTeam
 .not_random
 	; fallthrough
@@ -283,7 +283,7 @@ Gen2ToGen2LinkComms:
 	ldh [rIF], a
 
 	call LinkBattle_BackUpPlayerPartyMonsToLinkData
-	call LinkBattle_SetPlayerPartyMonsToLevel50
+	call LinkBattle_NormalizePlayerParty
 	ld a, LINK_FIRST_TAG
 	ld [wLinkBattleExchangeTag], a
 	farcall StartBattle
@@ -469,7 +469,7 @@ Link_PrepPartyData_Gen2:
 	cp LINK_COLOSSEUM
 	jr nz, .skip_link_battle_level
 	call LinkBattle_BackUpPlayerPartyMonsToOTData
-	call LinkBattle_SetPlayerPartyMonsToLevel50
+	call LinkBattle_NormalizePlayerParty
 
 .skip_link_battle_level
 	ld de, wLinkData
@@ -629,7 +629,7 @@ LinkBattle_CopyPlayerPartyMons:
 	rst CopyBytes
 	ret
 
-LinkBattle_SetPlayerPartyMonsToLevel50:
+LinkBattle_NormalizePlayerParty:
 	ld a, [wPartyCount]
 	and a
 	ret z
@@ -642,7 +642,7 @@ LinkBattle_SetPlayerPartyMonsToLevel50:
 	ld hl, wPartyMon1
 	push de
 	call GetPartyLocation
-	call LinkBattle_SetPartyMonToLevel50
+	call LinkBattle_NormalizePartyMon
 	pop de
 	ld a, e
 	and a
@@ -650,7 +650,7 @@ LinkBattle_SetPlayerPartyMonsToLevel50:
 	dec e
 	jr .loop
 
-LinkBattle_SetPartyMonToLevel50:
+LinkBattle_NormalizePartyMon:
 	push hl
 	ld bc, MON_IS_EGG
 	add hl, bc
@@ -685,7 +685,7 @@ LinkBattle_SetPartyMonLevelAndExp:
 	push hl
 	ld bc, MON_LEVEL
 	add hl, bc
-	ld a, LINK_BATTLE_FORCED_LEVEL
+	ld a, [wLinkBattleLevel]
 	ld [hl], a
 	ld [wCurPartyLevel], a
 	pop hl
@@ -693,7 +693,7 @@ LinkBattle_SetPartyMonLevelAndExp:
 	ld bc, MON_EXP
 	add hl, bc
 	push hl
-	ld d, LINK_BATTLE_FORCED_LEVEL
+	ld d, a
 	farcall CalcExpAtLevel
 	pop hl
 	ldh a, [hProduct + 1]

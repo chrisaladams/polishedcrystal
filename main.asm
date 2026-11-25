@@ -160,6 +160,7 @@ INCLUDE "engine/movie/trade_animation.asm"
 SECTION "Link Failsafe Code", ROMX
 
 INCLUDE "engine/link/link_failsafe.asm"
+INCLUDE "engine/link/link_rules.asm"
 
 
 SECTION "Follower Code", ROMX
