@@ -11,7 +11,10 @@ game (PyBoy), calling them as the scene macros do:
 - scene_end brings back the palettes exactly as they were, and the map's
   music, restarting it only if the scene changed it; scene_end_keep_music
   brings back the palettes and leaves the music alone;
-- nothing draws a random number.
+- nothing draws a random number;
+- the lifecycle guards: a scene_begin inside a scene keeps the first one's
+  palettes; a script ending with a scene still on ends it (Script_endall,
+  Script_end); a new map drops it (RunMapSetupScript).
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_cinematic.py SAVE.sav
@@ -134,6 +137,28 @@ def main():
     check(not restarts and g.rd('wMusicIDLo') == other, 'scene_end_keep_music: the music was changed')
     check(pals('wBGPals2') == start_screen, 'scene_end_keep_music: the palettes not as they were')
     check(not g.rd('wCinematicFlags'), 'scene_end_keep_music: still marked active')
+
+    # a scene_begin inside a scene keeps the first one's palettes
+    start = pals('wBGPals1')
+    call('CinematicBegin')
+    call('CinematicTint', K['TINT_DARK'])
+    call('CinematicBegin')
+    check(pals('wCinematicSavedPals') == start, 'nested scene_begin: kept the tinted palettes')
+    call('CinematicEnd')
+    check(pals('wBGPals1') == start, 'nested scene_begin: not back to the first palettes')
+
+    # a script that ends with a scene still on ends it
+    call('CinematicBegin')
+    call('CinematicTint', K['TINT_PURPLE'])
+    call('Script_endall')
+    check(not g.rd('wCinematicFlags'), 'Script_endall: the scene still on')
+    check(pals('wBGPals1') == start, 'Script_endall: the palettes not back')
+
+    # a new map drops a scene still on
+    call('CinematicBegin')
+    call('CinematicTint', K['TINT_GREEN'])
+    g.warp(g.rd('wMapGroup'), g.rd('wMapNumber'), g.rd('wXCoord'), g.rd('wYCoord'))
+    check(not g.rd('wCinematicFlags'), 'a new map: the scene still on')
 
     # (and outside a scene, lightning still strikes)
     whites = []

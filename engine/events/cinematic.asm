@@ -6,7 +6,13 @@
 
 CinematicBegin::
 ; Keep the palettes to come back to. While a scene is on, weather lightning
-; doesn't strike (Lightning checks wCinematicFlags).
+; doesn't strike (Lightning checks wCinematicFlags). A scene_begin inside a
+; scene changes nothing: the palettes kept are the first scene_begin's.
+; (A script that ends with a scene still on ends it: Script_end; a new map
+; drops it: RunMapSetupScript.)
+	ld a, [wCinematicFlags]
+	bit CINEMATIC_ACTIVE_F, a
+	ret nz
 	ld a, 1 << CINEMATIC_ACTIVE_F
 	ld [wCinematicFlags], a
 	ld hl, wBGPals1

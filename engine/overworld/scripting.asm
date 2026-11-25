@@ -2377,6 +2377,7 @@ Script_stopandsjump:
 Script_end:
 	call ExitScriptSubroutine
 	ret nc
+	farcall CinematicEnd ; Link Edition: a story scene left on ends with its script
 	xor a
 	ld [wScriptRunning], a
 	ld a, SCRIPT_OFF
@@ -2422,6 +2423,7 @@ ExitScriptSubroutine:
 	ret
 
 Script_endall:
+	farcall CinematicEnd ; Link Edition: a story scene left on ends with its script
 	xor a
 	ld [wScriptStackSize], a
 	ld [wScriptRunning], a

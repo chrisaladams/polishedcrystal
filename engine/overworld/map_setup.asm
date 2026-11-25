@@ -1,4 +1,8 @@
 RunMapSetupScript::
+	; Link Edition: a new map's palettes replace a story scene's, so a scene
+	; still on is dropped (engine/events/cinematic.asm)
+	xor a
+	ld [wCinematicFlags], a
 	ldh a, [hMapEntryMethod]
 	and $f
 	dec a
