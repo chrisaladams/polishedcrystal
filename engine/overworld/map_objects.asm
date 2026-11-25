@@ -605,7 +605,7 @@ endr
 .WildMon:
 ; Use normal map movement unless the wild Pokémon is lunging at the player.
 	farcall GetWildMonStep ; a = direction, or carry to wait
-	jmp c, RandomStepDuration_Fast
+	jr c, .wild_mon_pause
 	call InitStep
 	farcall CheckWildMonStepTile
 	jr c, .wild_mon_stay
@@ -653,8 +653,15 @@ endr
 	add hl, bc
 	ld a, [hl]
 	and a
-	jmp z, RandomStepDuration_Fast
 	ld a, 4 ; reacting: soon try another way
+	jmp nz, SetRandomStepDuration
+.wild_mon_pause
+	; 4-64 frames (RandomStepDuration_Fast can give 0, which is 256 frames:
+	; a wild Pokemon that had just spotted you stood still for 4 seconds)
+	call Random
+	ldh a, [hRandomAdd]
+	and $3c
+	add 4
 	jmp SetRandomStepDuration
 
 .RandomWalkY:

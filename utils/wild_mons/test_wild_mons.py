@@ -22,7 +22,11 @@ In the emulator (PyBoy), from a save:
   can start a battle with a Chansey they get close to;
 - Sweet Honey can be used from the Bag and leaves a local scent;
 - saving with some out, then Continue, leaves no stale ones;
-- the Bug-Catching Contest's are from the contest's list.
+- the Bug-Catching Contest's are from the contest's list;
+- throughout, no wild Pokemon is told to stand still for 0 frames (which
+  counts down from 256: over 4 seconds, as when one that had just spotted
+  you froze);
+- the behavior table lists no species twice, and only ones seen in the wild.
 
 Usage (from the repository root, after make):
   python3 utils/wild_mons/test_wild_mons.py SAVE.sav [--quick]
@@ -212,6 +216,13 @@ def main():
     rom = open(ROM, 'rb').read()
     sym = g.sym
     fails = []
+    # the behavior table (data/wild/behaviors.asm): no species twice, and
+    # each one listed really appears in the wild (else its bytes are wasted)
+    listed = re.findall(r'^\tdb (\w+), WILD_', open(os.path.join(WILD, 'behaviors.asm')).read(), re.M)
+    for s in sorted({s for s in listed if listed.count(s) > 1}):
+        fails.append(('behaviors', f'{s} listed twice'))
+    for s in sorted(set(listed) - species_names):
+        fails.append(('behaviors', f'{s} is never a wild Pokemon'))
 
     def species_of(sp, form):
         return by_value.get(sp | (0x100 if form & K['EXTSPECIES_MASK'] else 0), f'#{sp}')
@@ -270,6 +281,16 @@ def main():
 
     g.boot()
     base = g.state()
+    # every wild Pokemon's pause (SetRandomStepDuration with bc = its object)
+    long_pauses = []
+
+    def pause_set(_):
+        r = g.pb.register_file
+        bc = r.B << 8 | r.C
+        idx = g.m[1, bc + K['OBJECT_MAP_OBJECT_INDEX']]
+        if K['FIRST_WILD_OBJECT'] <= idx < K['FIRST_WILD_OBJECT'] + K['NUM_WILD_MONS'] and r.A == 0:
+            long_pauses.append(idx - K['FIRST_WILD_OBJECT'])
+    g.pb.hook_register(*g.sym['SetRandomStepDuration'], pause_set, None)
     tile_ok = {K['HABITAT_GRASS']: {K['COLL_TALL_GRASS'], K['COLL_LONG_GRASS']},
                K['HABITAT_FLOOR']: {K['COLL_TALL_GRASS'], K['COLL_LONG_GRASS'], K['COLL_FLOOR']},
                K['HABITAT_WATER']: {K['COLL_WATER']}}
@@ -631,6 +652,8 @@ def main():
     if not seen:
         fails.append(('Bug-Catching Contest', 'none appeared'))
 
+    if long_pauses:
+        fails.append(('pauses', f'{len(long_pauses)} wild Pokemon told to stand still for 256 frames'))
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')
     for f in fails:

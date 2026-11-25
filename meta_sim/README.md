@@ -216,8 +216,9 @@ Re-run at link version 4 (the consolidation, 2026-11): `oracle.py` 333/333,
 `oracle_damage.py` 0/30,276 pairs differ, `oracle_pipeline.py` 3,000/3,000,
 `oracle_accuracy.py` 2,000/2,000, `oracle_status.py` 4,000/4,000,
 `oracle_speed.py` 3,000/3,000, and `oracle_turn.py` 47/48 matchups: the 48th
-stops at the Pokémon-to-send-in menu Baton Pass opens, which the oracle
-doesn't script yet (a gap in the oracle, not a difference).
+stops after Baton Pass: the oracle's stand-in for choosing who comes in
+(fine for a fainted Pokémon) leaves the ROM in an animation that never ends,
+so those samples can't be compared (a gap in the oracle, not a difference).
 
 On the current build `oracle.py` matches 333/333 species, `oracle_damage.py`
 finds calc.py's core formula matches the ROM on all 30,276 fully-evolved pairs
