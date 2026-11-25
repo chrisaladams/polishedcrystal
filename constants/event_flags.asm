@@ -2223,7 +2223,7 @@
 	const EVENT_LAWRENCE_SHAMOUTI_SHRINE_RUINS
 	const EVENT_LAWRENCE_FARAWAY_ISLAND
 	const EVENT_RENTAL_CUP_PRIZE_PENDING ; formerly EVENT_ROUTE_22_PAST_LYRA, unused since 2022 or earlier
-	const EVENT_LINK_SPARE_16 ; Link Edition: was EVENT_ROUTE_22_PAST_CELEBI, unused since 2022 or earlier
+	const EVENT_WORLD_CUP_PRIZE_PENDING ; formerly EVENT_ROUTE_22_PAST_CELEBI, unused since 2022 or earlier
 	const EVENT_LINK_SPARE_17 ; Link Edition: was EVENT_ROUTE_22_PAST_SILVER, unused since 2022 or earlier
 	const EVENT_LINK_SPARE_18 ; Link Edition: was EVENT_ROUTE_22_PAST_GIOVANNI, unused since 2022 or earlier
 	const EVENT_CINNABAR_LAB_CELEBI

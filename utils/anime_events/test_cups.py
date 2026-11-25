@@ -33,6 +33,10 @@ The Rental Cup (Goldenrod Department Store 6F) supplies both sides with
 three generated level-50 Pokémon. The original party returns after losses
 and wins, and a full Bag leaves the first prize at the desk.
 
+The World Championship opens after Red. Seven visiting trainers form an
+eight-person bracket with the player, using six level-50 Pokémon each.
+Test the draw, advancement, a semifinal loss and retry, and both prizes.
+
 The choice in the Battle Tower's party menu is made by a hook (the first
 three of the party, or as given), and the battles are won or lost by setting
 HP in RAM.
@@ -140,7 +144,7 @@ def main():
             g.tick(2)
         return False
 
-    def finish(win):
+    def finish(win, *, faint_party=False):
         menu = []
         g.pb.hook_register(*g.sym['LoadBattleMenu'], menu.append, True)
         for _ in range(40):
@@ -150,19 +154,21 @@ def main():
         g.pb.hook_deregister(*g.sym['LoadBattleMenu'])
         assert menu, 'the battle did not show its command menu'
         g.tick(45)
-        if win:
-            def faint_opponents(_):
-                for i in range(g.rd('wOTPartyCount')):
-                    g.wr('wOTPartyMon1HP', 0, i * L)
-                    g.wr('wOTPartyMon1HP', 0, i * L + 1)
-                g.wr('wEnemyMonHP', 0)
-                g.wr('wEnemyMonHP', 0, 1)
-                g.wr('wBattleMonHP', 3)
-                g.wr('wBattleMonHP', 0xe7, 1)
+        if win or faint_party:
+            def force_faints(_):
+                party, active = ('wOTParty', 'wEnemyMonHP') if win else ('wParty', 'wBattleMonHP')
+                for i in range(g.rd(party + 'Count')):
+                    g.wr(party + 'Mon1HP', 0, i * L)
+                    g.wr(party + 'Mon1HP', 0, i * L + 1)
+                g.wr(active, 0)
+                g.wr(active, 0, 1)
+                if win:
+                    g.wr('wBattleMonHP', 3)
+                    g.wr('wBattleMonHP', 0xe7, 1)
 
             g.wr('wBattleMonMoves', K['TACKLE'])
             g.wr('wBattleMonPP', 35)
-            g.pb.hook_register(*g.sym['ResolveFaints'], faint_opponents, None)
+            g.pb.hook_register(*g.sym['ResolveFaints'], force_faints, None)
         else:
             for button in ('down', 'right', 'a', 'down'):
                 g.press(button, 40)
@@ -170,7 +176,7 @@ def main():
             if not g.rd('wBattleMode'):
                 break
             g.press('a', 35)
-        if win:
+        if win or faint_party:
             g.pb.hook_deregister(*g.sym['ResolveFaints'])
         assert not g.rd('wBattleMode'), 'the battle did not finish'
 
@@ -536,6 +542,109 @@ def main():
     g.press('a', 50)
     settle()
     assert not g.rd('wEventFlags', prize_byte) & (1 << prize_bit) and items('BOTTLE_CAP') == 1
+
+    roster = (('ASH_T', 1), ('DRAKE_T', 1), ('LEAF', 1), ('BLUE', 2),
+              ('CHAMPION', 'LANCE'), ('CYNTHIA', 2), ('RED', 1))
+    K.update(rgbasm_values([cls for cls, _ in roster] + [
+        'LANCE', 'ABILITYPATCH', 'CUPWON_WORLD_F', 'MON_IS_EGG_F', 'NAME_LENGTH', 'MON_NAME_LENGTH',
+        'GROUP_INDIGO_PLATEAU', 'MAP_INDIGO_PLATEAU', 'GROUP_INDIGO_PLATEAU_POKECENTER_1F',
+        'MAP_INDIGO_PLATEAU_POKECENTER_1F',
+        'EVENT_GOT_MYSTICTICKET_FROM_RED', 'EVENT_WORLD_CUP_PRIZE_PENDING'], None))
+    world_map = (K['GROUP_INDIGO_PLATEAU_POKECENTER_1F'], K['MAP_INDIGO_PLATEAU_POKECENTER_1F'])
+    world_win = 1 << K['CUPWON_WORLD_F']
+
+    def event(name):
+        byte, bit = divmod(K[name], 8)
+        return byte, 1 << bit
+
+    def world_talk():
+        g.warp(K['GROUP_INDIGO_PLATEAU'], K['MAP_INDIGO_PLATEAU'], 11, 6)
+        g.face('up')
+        g.press('up', 90)
+        assert (g.rd('wMapGroup'), g.rd('wMapNumber')) == world_map
+        g.press('up', 20)
+        g.face('left')
+        for _ in range(3):
+            g.press('left', 20)
+        assert (g.rd('wXCoord'), g.rd('wYCoord')) == (6, 12)
+
+    g.load(base)
+    # Support the same fixture as the other cups, which may have five Pokémon.
+    count = g.rd('wPartyCount')
+    for i in range(count, 6):
+        for field, length in (('wPartyMon1', L), ('wPartyMonOTs', K['NAME_LENGTH']),
+                              ('wPartyMonNicknames', K['MON_NAME_LENGTH'])):
+            for j in range(length):
+                g.wr(field, g.rd(field, j), i * length + j)
+    g.wr('wPartyCount', 6)
+    before = party_block()
+    red_byte, red_flag = event('EVENT_GOT_MYSTICTICKET_FROM_RED')
+    prize_byte, prize_flag = event('EVENT_WORLD_CUP_PRIZE_PENDING')
+    g.wr('wEventFlags', g.rd('wEventFlags', red_byte) & ~red_flag, red_byte)
+    g.wr('wEventFlags', g.rd('wEventFlags', prize_byte) & ~prize_flag, prize_byte)
+    world_talk()
+    assert not until_battle(12), 'registration opened before Red'
+    settle()
+
+    g.wr('wEventFlags', g.rd('wEventFlags', red_byte) | red_flag, red_byte)
+    g.wr('wCupRecords', g.rd('wCupRecords') & ~world_win)
+    for count, egg in ((5, False), (6, True)):
+        g.wr('wPartyCount', count)
+        egg_offset = 5 * L
+        original = g.rd('wPartyMon1IsEgg', egg_offset)
+        if egg:
+            g.wr('wPartyMon1IsEgg', original | (1 << K['MON_IS_EGG_F']), egg_offset)
+        assert not until_battle(12), 'registered without six eligible Pokémon'
+        settle()
+        assert not g.rd('wCupLevel')
+        g.wr('wPartyMon1IsEgg', original, egg_offset)
+    g.wr('wPartyCount', 6)
+
+    def world_run(rounds, lose=False):
+        bracket = None
+        for i in range(rounds):
+            assert until_battle(45), f'World Championship round {i + 1} did not start'
+            assert g.rd('wWorldCupRoundSize') == 8 >> i
+            actual = [g.rd('wWorldCupBracket', j) for j in range(8 >> i)]
+            if bracket is None:
+                assert actual[0] == 0 and sorted(actual) == list(range(8)), actual
+                bracket = actual
+            assert bracket == actual
+            cls, tid = roster[bracket[1] - 1]
+            assert (g.rd('wOtherTrainerClass'), g.rd('wOtherTrainerID')) == (K[cls], K[tid] if isinstance(tid, str) else tid)
+            for team in ('wParty', 'wOTParty'):
+                assert g.rd(team + 'Count') == 6
+                assert all(g.rd(team + 'Mon1Level', j * L) == 50 for j in range(6))
+            bracket = [0] + [max(bracket[j:j + 2]) for j in range(2, len(bracket), 2)]
+            loss = lose and i == rounds - 1
+            finish(not loss, faint_party=loss)
+        settle()
+        compare_party('World Championship after finishing')
+        assert (g.rd('wMapGroup'), g.rd('wMapNumber')) == world_map and not g.rd('wCupLevel')
+
+    world_run(2, lose=True)
+    assert not g.rd('wCupRecords') & world_win
+    fill_items()
+    world_run(3)
+    assert g.rd('wCupRecords') & world_win
+    assert g.rd('wEventFlags', prize_byte) & prize_flag and not items('ABILITYPATCH')
+    g.manual_save()
+    saved = g.sram()
+    g.pb.stop(save=False)
+    g = Game(saved)
+    g.boot()
+    assert g.rd('wCupRecords') & world_win and g.rd('wEventFlags', prize_byte) & prize_flag
+    world_talk()
+    free_item_slot()
+    g.press('a', 50)
+    settle()
+    assert not g.rd('wEventFlags', prize_byte) & prize_flag and items('ABILITYPATCH') == 1
+    # Move the claimed prize to the first slot before freeing another slot.
+    g.wr('wItems', K['ABILITYPATCH'])
+    g.wr('wItems', 1, 1)
+    free_item_slot()
+    world_run(3)
+    assert items('BOTTLE_CAP') == 1 and items('ABILITYPATCH') == 1
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

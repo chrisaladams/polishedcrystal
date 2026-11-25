@@ -172,6 +172,8 @@ INCLUDE "gfx/followers.asm"
 SECTION "Cup Code", ROMX
 
 INCLUDE "engine/events/cups.asm"
+INCLUDE "engine/events/world_cup.asm"
+INCLUDE "engine/events/cup_spotlight.asm"
 
 
 SECTION "Wild Mons Code", ROMX

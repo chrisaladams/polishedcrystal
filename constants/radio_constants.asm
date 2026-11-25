@@ -86,6 +86,9 @@ DEF NUM_RADIO_CHANNELS EQU const_value
 	const BUENAS_PASSWORD_20     ; 4d
 	const BUENAS_PASSWORD_21     ; 4e
 	const RADIO_SCROLL           ; 4f
+	const OAKS_CUP_SPOTLIGHT     ; 50
+	const OAKS_CUP_NAME          ; 51
+	const OAKS_CUP_VENUE         ; 52
 DEF NUM_RADIO_SEGMENTS EQU const_value
 
 ; PlayRadioStationPointers indexes (see engine/pokegear/pokegear.asm)

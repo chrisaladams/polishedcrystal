@@ -26,7 +26,7 @@ IndigoPlateauPokecenter1F_MapScriptHeader:
 	mart_clerk_event  1,  9, MARTTYPE_STANDARD, MART_INDIGO_PLATEAU
 	object_event  6,  9, SPRITE_GRAMPS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IndigoPlateauTeleportGuyScript, EVENT_TELEPORT_GUY
 	pokemon_event  5,  9, ABRA, SPRITEMOVEDATA_POKEMON, -1, PAL_MON_BROWN, IndigoPlateauAbraText, EVENT_TELEPORT_GUY
-	object_event  5, 12, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_WANDER, 1, 1, -1, PAL_NPC_BLUE, OBJECTTYPE_COMMAND, jumptextfaceplayer, IndigoPlateauCooltrainermText, -1
+	object_event  5, 12, SPRITE_ACE_TRAINER_M, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, IndigoPlateauWorldCup, -1
 
 	object_const_def
 	const INDIGOPLATEAUPOKECENTER1F_RIVAL
@@ -517,6 +517,128 @@ IndigoPlateauTeleportGuyScript:
 
 IndigoPlateauAbraText::
 	text "Abra: Aabra…"
+	done
+
+IndigoPlateauWorldCup:
+	faceplayer
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iffalse_jumptext IndigoPlateauCooltrainermText
+	opentext
+	checkevent EVENT_WORLD_CUP_PRIZE_PENDING
+	iftruefwd .FirstPrize
+	writetext .WelcomeText
+	yesorno
+	iffalse_endtext
+	loadmem wCupId, CUP_WORLD
+	callasm CupSelectTeam
+	ifnotequal CUPTEAM_OK, .WrongSize
+	closetext
+	callasm CupBegin
+	callasm WorldCupDraw
+	showtext .QuarterfinalText
+	sjumpfwd .Pairings
+.NextRound:
+	callasm CupHealTeam
+	readmem wWorldCupRoundSize
+	ifequalfwd 2, .Final
+	showtext .SemifinalText
+	sjumpfwd .Pairings
+.Final:
+	showtext .FinalText
+.Pairings:
+	callasm WorldCupNextPair
+	iffalsefwd .Battle
+	showtext .PairText
+	sjump .Pairings
+.Battle:
+	winlosstext .WinText, .LossText
+	callasm WorldCupLoadOpponent
+	loadvar VAR_BATTLETYPE, BATTLETYPE_CANLOSE
+	startbattle
+	reloadmap
+	iftruefwd .Lost
+	callasm WorldCupAdvance
+	iftrue .NextRound
+	callasm CupEnd
+	callasm CupWin
+	opentext
+	iffalsefwd .Again
+	setevent EVENT_WORLD_CUP_PRIZE_PENDING
+	writetext .ChampionText
+	promptbutton
+.FirstPrize:
+	verbosegiveitem ABILITYPATCH, iffalse_jumpopenedtext .PendingText
+	clearevent EVENT_WORLD_CUP_PRIZE_PENDING
+	jumpopenedtext .ReturnText
+.Again:
+	writetext .ChampionText
+	promptbutton
+	verbosegiveitem BOTTLE_CAP, iffalse_endtext
+	jumpopenedtext .ReturnText
+.Lost:
+	callasm CupEnd
+	jumptext .OutText
+.WrongSize:
+	jumpopenedtext .SizeText
+
+.WelcomeText:
+	text "Welcome to the"
+	line "World Championship"
+	para "Eight entrants."
+	line "Six #mon each,"
+	cont "at level 50."
+	para "Win three rounds."
+	line "We'll heal your"
+	cont "team between them."
+	para "Entry is free."
+	line "Ready for a draw?"
+	done
+.SizeText:
+	text "Bring a full team"
+	line "of six #mon."
+	para "Eggs can't enter."
+	done
+.QuarterfinalText:
+	text "Quarterfinals"
+	para "Your match comes"
+	line "first in the draw."
+	done
+.SemifinalText:
+	text "Semifinals"
+	done
+.FinalText:
+	text "Championship Final"
+	done
+.PairText:
+	text_ram wStringBuffer3
+	line "vs. @"
+	text_ram wStringBuffer4
+	text_end
+.WinText:
+	text "You had my number."
+	done
+.LossText:
+	text "It was my round."
+	done
+.ChampionText:
+	text "You won the"
+	line "World Championship"
+	done
+.PendingText:
+	text "I'll hold your"
+	line "prize at the desk."
+	done
+.ReturnText:
+	text "Come back anytime"
+	line "for a new draw."
+	done
+.OutText:
+	text "You're out of"
+	line "this bracket."
+	para "Your team is back"
+	line "in good health."
+	line "You can try again"
+	cont "whenever you like."
 	done
 
 IndigoPlateauCooltrainermText:

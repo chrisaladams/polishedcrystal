@@ -245,7 +245,19 @@ TVScript:
 	readvar VAR_FACING
 	ifnotequal UP, WrongSideScript
 	callasm GetTodaysSightingNames ; Link Edition: the news
-	farjumptext TVText
+	opentext
+	farwritetext TVText
+	promptbutton
+CupTVScript::
+	callasm BufferTodaysCupSpotlight
+	jumpthisopenedtext
+
+	text "Tournament news"
+	para ""
+	text_ram wStringBuffer3
+	line ""
+	text_ram wStringBuffer4
+	text_end
 
 WrongSideScript:
 	farjumptext WrongSideText

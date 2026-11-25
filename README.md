@@ -213,8 +213,8 @@ have reached, shows your current destination, then previews the next
 unfinished step. It works when continuing an existing save. **Side quests**
 offers leads for Kenya's mail, Moomoo Farm, Copycat's doll, and the Shamouti
 beacons as they become available. The book on the table in Prof. Oak's lab
-opens the same guide. **Cups** lists all five regional tournaments, their
-rules and locations, and today's Kimono Cup type.
+opens the same guide. **Cups** lists all six solo tournaments, their rules
+and locations, and today's Kimono Cup type.
 
 After Red, Molly's search at the Ruins of Alph leads into the disturbance
 at Ilex Shrine. Oak's investigation takes you to the old Cinnabar Mansion
@@ -301,10 +301,17 @@ no items or experience in its battles, and come back exactly as they were
   three generated level-50 Pokémon before entering. Take that team through
   three rounds against Jack, Gina and Rex, who also use rentals. The first
   win earns a Bottle Cap. Repeat wins earn a Big Pearl.
+- **World Championship**, at Indigo Plateau after Red. Talk to the Ace
+  Trainer in the League lobby with six Pokémon. The draw matches you and
+  seven visiting trainers in an elimination bracket. Win the quarterfinal,
+  semifinal and final at level 50. The first win earns an Ability Patch.
+  The registrar holds it if your Bag is full. Repeat wins earn a Bottle Cap.
+
+TV news and Oak's Pokémon Talk feature one open tournament each in-game day.
 
 Everyone in a cup battles at its level, the cup's trainers too.
 `python3 utils/anime_events/test_cups.py SAVE.sav` checks the Rising Star,
-Kimono, Dragon Masters and Rental Cups.
+Kimono, Dragon Masters and Rental Cups, plus the World Championship.
 
 ### The Whirl Cup
 

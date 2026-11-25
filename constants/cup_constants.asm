@@ -7,8 +7,10 @@
 	const CUP_KIMONO      ; Ecruteak Dance Theatre: 3 of today's type at level 50
 	const CUP_DRAGON      ; Blackthorn: 3-6 with a Dragon type at level 50
 	const CUP_RENTAL      ; Goldenrod: three generated Pokémon at level 50
+	const CUP_WORLD       ; Indigo Plateau: six at level 50
 DEF NUM_CUPS EQU const_value
 DEF RENTAL_CUP_TEAM_SIZE EQU 3
+DEF WORLD_CUP_CONTESTANTS EQU 8
 
 ; how a cup's team is chosen
 	const_def

@@ -59,6 +59,7 @@ FieldBookCups:
 	ifequalfwd 3, .Kimono
 	ifequalfwd 4, .Dragon
 	ifequalfwd 5, .Rental
+	ifequalfwd 6, .World
 	endtext
 .Kimono:
 	callasm KimonoCupToday
@@ -71,19 +72,22 @@ FieldBookCups:
 	jumpopenedtext FieldBookNotes.DragonCup
 .Rental:
 	jumpopenedtext FieldBookNotes.RentalCup
+.World:
+	jumpopenedtext FieldBookNotes.WorldCup
 .Menu:
 	db MENU_BACKUP_TILES
-	menu_coords 0, 0, 17, 11
+	menu_coords 0, 0, 17, 13
 	dw .Choices
 	db 1
 .Choices:
 	db STATICMENU_CURSOR
-	db 5
+	db 6
 	db "Rising Star@"
 	db "Whirl Cup@"
 	db "Kimono Cup@"
 	db "Dragon Masters@"
 	db "Rental Cup@"
+	db "World Champ.@"
 
 ; Resolve all three views from the same read-only itinerary. DE holds the
 ; most recent completed step on this route. For a preview, skip the first
@@ -1037,6 +1041,18 @@ FieldBookNotes:
 	line "#mon at Lv.50."
 	cont "Preview your team"
 	cont "before you enter."
+	done
+
+.WorldCup:
+	text "World Championship"
+	para "Indigo Plateau."
+	line "Ace Trainer in"
+	cont "the League lobby."
+	para "Opens after Red"
+	line "at Mt.Silver."
+	para "Six #mon at"
+	line "Lv.50. Eight play."
+	cont "Win three rounds."
 	done
 
 .Final:

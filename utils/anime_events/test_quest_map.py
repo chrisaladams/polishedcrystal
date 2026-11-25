@@ -19,7 +19,8 @@ def main(path):
                                 'SHAMOUTI_ISLAND', 'SHRINE_RUINS', 'ICE_ISLAND', 'LIGHTNING_ISLAND',
                                 'GOLDENROD_CITY', 'ECRUTEAK_CITY', 'NATIONAL_PARK', 'PALLET_TOWN',
                                 'SPAWN_ECRUTEAK', 'CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2',
-                                'CUPWON_RISING_STAR_F', 'CUPWON_RENTAL_F', 'CUPWON_DRAGON_F', 'WATER',
+                                'CUPWON_RISING_STAR_F', 'CUPWON_RENTAL_F', 'CUPWON_DRAGON_F',
+                                'CUPWON_WORLD_F', 'INDIGO_PLATEAU', 'WATER',
                                 'ROUTE_31','ROUTE_39','CERULEAN_CITY','VERMILION_CITY','NEW_BARK_TOWN',
                                 'SPAWN_AZALEA','SPAWN_VIOLET','GROUP_VIOLET_POKECENTER_1F','MAP_VIOLET_POKECENTER_1F'}, None)
     def bit(var, n, on=True):
@@ -124,7 +125,7 @@ def main(path):
         bit('wVisitedSpawns', k['SPAWN_OLIVINE'])
         late = g.state()
         leads = open_map()
-        assert set(leads) == set('Alph Mask CloneReport Cup Cissy Danny Rudy Luana Deliver Berries Copycat'.split()), leads
+        assert set(leads) == set('Alph Mask CloneReport Cup Cissy Danny Rudy Luana WorldCup Deliver Berries Copycat'.split()), leads
         pin('RUINS_OF_ALPH', 0xec)
         pin('OLIVINE_CITY', 0x9f)
         pin('ROUTE_31', 0x9f)
@@ -133,6 +134,8 @@ def main(path):
         select(leads, 'CloneReport')
         assert g.rd('wQuestMapRegion') == 1
         pin('CINNABAR_ISLAND', 0xec)
+        select(leads, 'WorldCup')
+        pin('INDIGO_PLATEAU', 0xec)
         select(leads, 'Cissy')
         assert g.rd('wQuestMapRegion') == 2
         pin('WARM_BEACH', 0xec)
@@ -190,6 +193,7 @@ def main(path):
         cups = g.state()
         leads = open_map()
         assert {'RisingCup', 'RentalCup', 'KimonoCup', 'DragonCup'} <= set(leads), leads
+        assert 'WorldCup' not in leads
         assert g.rd('wCupRecords') == 0xff and g.rd('wCupRecordsMagic') == 0
         browse()
         select(leads, 'RentalCup')
@@ -224,6 +228,20 @@ def main(path):
         g.pb.hook_deregister(*g.sym['MapTextbox'])
         assert g.sym['FieldBookNotes.KimonoCup'][1] in shown and g.rd('wCupFoeType') == k['WATER']
 
+        g.load(cups)
+        g.highlight_start_option('FieldBookString')
+        g.press('a', 50)
+        for _ in range(3):
+            g.press('down', 20)
+        g.press('a', 45)
+        for _ in range(5):
+            g.press('down', 20)
+        shown.clear()
+        g.pb.hook_register(*g.sym['MapTextbox'], lambda _: shown.append(g.pb.register_file.HL), None)
+        g.press('a', 65)
+        g.pb.hook_deregister(*g.sym['MapTextbox'])
+        assert g.sym['FieldBookNotes.WorldCup'][1] in shown
+
         g.load(early)
         for flag in ('GOT_MYSTICTICKET_FROM_RED','WON_PALLET_INVITATIONAL','RESCUED_PROF_HALE',
                      'BEAT_IRON_MASK_MARAUDER','BEAT_MEWTWO_CLONES','BEAT_DRAKE','WON_WHIRL_CUP'):
@@ -231,12 +249,19 @@ def main(path):
         finale = g.state()
         event('WHIRL_CUP_PRIZE_PENDING')
         leads = open_map()
-        assert set(leads) == {'Sammy', 'Cup'}, leads
+        assert set(leads) == {'Sammy', 'Cup', 'WorldCup'}, leads
         browse()
         select(leads, 'Sammy')
         pin('PALLET_TOWN', 0xec)
         g.load(finale)
         event('OAK_WAS_SAMMY')
+        for i, marker in enumerate(('CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2')):
+            g.wr('wCupRecordsMagic', k[marker], i)
+        g.wr('wCupRecords', 1 << k['CUPWON_WORLD_F'])
+        championship_won = g.state()
+        event('WORLD_CUP_PRIZE_PENDING')
+        assert open_map() == ['WorldCup']
+        g.load(championship_won)
         assert not open_map()
         browse()
         g.press('b', 50)

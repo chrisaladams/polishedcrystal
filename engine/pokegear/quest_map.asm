@@ -371,8 +371,12 @@ QuestMapCupLeads:
 	ld a, QMAP_KimonoCup
 	call nz, AddQuestMapLead
 	flagcheck wJohtoBadges, (ENGINE_RISINGBADGE - ENGINE_BADGES)
-	ret z
+	jr z, .world
 	map_cup_lead CUPWON_DRAGON_F, EVENT_DRAGON_MASTERS_PRIZE_PENDING, DragonCup
+.world
+	eventflagcheck EVENT_GOT_MYSTICTICKET_FROM_RED
+	ret z
+	map_cup_lead CUPWON_WORLD_F, EVENT_WORLD_CUP_PRIZE_PENDING, WorldCup
 	ret
 
 ; Return HL at the caption and E at its landmark. Until the Valencia ferry

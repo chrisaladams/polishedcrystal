@@ -110,6 +110,9 @@ PlayRadioShow:
 	dw BuenasPassword20 ; $4d
 	dw BuenasPassword21 ; $4e
 	dw RadioScroll ; $4f
+	dw OaksCupSpotlight ; $50
+	dw OaksCupName      ; $51
+	dw OaksCupVenue     ; $52
 	assert_table_length NUM_RADIO_SEGMENTS
 
 NextRadioLine:
@@ -168,8 +171,40 @@ OaksPkmnTalk2:
 
 OaksPkmnTalk3:
 	ld hl, OPT_IntroText3
-	ld a, OAKS_POKEMON_TALK_4
+	ld a, OAKS_CUP_SPOTLIGHT
 	jr NextRadioLine
+
+OaksCupSpotlight:
+	farcall GetCupSpotlight
+	ld [wRadioCupSpotlight], a
+	ld hl, .Text
+	ld a, OAKS_CUP_NAME
+	jmp NextRadioLine
+.Text:
+	line "Tournament news!"
+	done
+
+OaksCupName:
+	ld a, [wRadioCupSpotlight]
+	farcall BufferCupSpotlight
+	ld hl, .Text
+	ld a, OAKS_CUP_VENUE
+	jmp NextRadioLine
+.Text:
+	line ""
+	text_ram wStringBuffer3
+	done
+
+OaksCupVenue:
+	ld a, [wRadioCupSpotlight]
+	farcall BufferCupSpotlight
+	ld hl, .Text
+	ld a, OAKS_POKEMON_TALK_4
+	jmp NextRadioLine
+.Text:
+	line ""
+	text_ram wStringBuffer4
+	done
 
 OaksPkmnTalk4:
 ; Choose a random route, and a random Pokemon from that route.
@@ -541,7 +576,7 @@ OaksPkmnTalk14:
 	farcall RadioMusicRestart
 	ld hl, EmptyString
 	call PrintText
-	ld a, OAKS_POKEMON_TALK_4
+	ld a, OAKS_CUP_SPOTLIGHT
 	ld [wNextRadioLine], a
 	xor a
 	ld [wNumRadioLinesPrinted], a

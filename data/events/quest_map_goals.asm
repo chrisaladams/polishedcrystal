@@ -84,3 +84,4 @@
 	map_goal KimonoCup, ECRUTEAK_CITY, "Kimono Cup"
 	map_goal DragonCup, BLACKTHORN_CITY, "Dragon Masters Cup"
 	map_goal RentalCup, GOLDENROD_CITY, "Rental Cup"
+	map_goal WorldCup, INDIGO_PLATEAU, "World Championship"

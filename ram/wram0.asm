@@ -1615,6 +1615,10 @@ wCupId:: db
 wCupFoeSize:: db
 wCupFoeType:: db
 wCupMakeCount:: db
+; World Championship: remaining seeds in bracket order, player at index 0.
+wWorldCupBracket:: ds WORLD_CUP_CONTESTANTS
+wWorldCupRoundSize:: db
+wWorldCupPairCursor:: db
 ; Sweet Honey's remaining player steps and where it was used.
 wWildHoneySteps:: db
 wWildHoneyX:: db

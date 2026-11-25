@@ -127,8 +127,12 @@ PlayersHouse1FStoveText:
 
 PlayersHouse1FTVScript:
 	callasm GetTodaysSightingNames ; Link Edition: then the news
-	jumpthistext
+	opentext
+	writetext .NewsText
+	promptbutton
+	farsjump CupTVScript
 
+.NewsText:
 	text "There's a movie on"
 	line "TV: Stars dot the"
 
