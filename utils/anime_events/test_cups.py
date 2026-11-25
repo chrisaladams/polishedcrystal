@@ -217,14 +217,15 @@ def main():
     before = party_block()
     before_mons = [mon('wPartyMon1', i, 'MON_SPECIES') for i in range(g.rd('wPartyCount'))]
 
-    def compare_party(where):
+    def compare_party(where, ref=None):
+        before_ = before if ref is None else ref
         after = party_block()
-        if after == before:
+        if after == before_:
             return
         # healed is fine: compare all but HP, status and PP
         n = g.rd('wPartyCount')
-        if after[0] != before[0]:
-            fails.append((where, f'party count {after[0]}, not {before[0]}'))
+        if after[0] != before_[0]:
+            fails.append((where, f'party count {after[0]}, not {before_[0]}'))
             return
         start = g.addr('wPartyMon1') - g.addr('wPartyCount')
         healed = set()
@@ -236,7 +237,7 @@ def main():
         # (and the cup records, which follow the party count)
         records = set(range(g.addr('wCupRecords') - g.addr('wPartyCount'),
                             g.addr('wCupRecordsMagic') + 2 - g.addr('wPartyCount')))
-        diff = [i for i in range(len(before)) if before[i] != after[i] and i not in healed | records]
+        diff = [i for i in range(len(before_)) if before_[i] != after[i] and i not in healed | records]
         if diff:
             fails.append((where, f'party changed at offsets {diff[:8]}'))
 
@@ -353,11 +354,14 @@ def main():
     for sp, form in set_types:
         by_value[KK[sp], KK[form]] = (sp, form)
 
+    talked = {}
+
     def kimono_talk(day, species):
         g.wr('wRTCDayLo', day)
         for i in range(g.rd('wPartyCount')):
             g.wr('wPartyMon1Species', K[species], i * L)
             g.wr('wPartyMon1Form', g.rd('wPartyMon1Form', i * L) & ~K['EXTSPECIES_MASK'], i * L)
+        talked['party'] = party_block()  # (the party the cup must give back)
         g.warp(K['GROUP_DANCE_THEATRE'], K['MAP_DANCE_THEATRE'], 4, 13)
         g.press('up', 2, 3)
         g.tick(30)
@@ -401,6 +405,7 @@ def main():
             kimono_round(k, kind)
             finish(True)
         settle()
+        compare_party(f'kimono {kind} after winning', talked['party'])
         if prize and items(prize) != before + 1:
             fails.append((f'kimono {kind}', f'{prize}: {before} -> {items(prize)}, not +1'))
         if g.rd('wCupLevel') or g.rd('wCupFoeSize'):
@@ -456,6 +461,7 @@ def main():
         for i in range(g.rd('wPartyCount')):
             g.wr('wPartyMon1Species', K[species[i] if i < len(species) else 'RATTATA'], i * L)
             g.wr('wPartyMon1Form', g.rd('wPartyMon1Form', i * L) & ~K['EXTSPECIES_MASK'], i * L)
+        talked['party'] = party_block()  # (the party the cup must give back)
         g.warp(K['GROUP_BLACKTHORN_DRAGON_SPEECH_HOUSE'], K['MAP_BLACKTHORN_DRAGON_SPEECH_HOUSE'], 5, 3)
         g.press('up', 2, 3)
         g.tick(30)
@@ -478,6 +484,7 @@ def main():
                 fails.append((where, f'levels: theirs {theirs}, yours {ours}'))
             finish(True)
         settle()
+        compare_party('dragon after winning', talked['party'])
         if items(prize) != before + 1:
             fails.append(('dragon', f'{prize}: {before} -> {items(prize)}, not +1'))
         return party
