@@ -18,6 +18,9 @@ checks a real battle's keeping).
   50: species, form, item, moves, PP (with PP Ups), DVs, personality, EVs,
   happiness, and the stats the game itself gives the original at level 50
   (BT_SetLevel), hyper training included, at full HP;
+- a power cut partway through rewriting a record: SRAM as it was at that
+  moment (taken while the third Pokemon is packed) reads that slot as empty
+  and the other slot's record (and its levels) exactly as before;
 - an Unrestricted team keeps each Pokemon's own level beside the record
   (with a check byte tied to the record's checksum), unpacks at those
   levels, and reads as empty if a level or the check byte is wrong.
@@ -284,6 +287,45 @@ def main():
         check([p & 0xc0 for p in pp] == [p & 0xc0 for p in m[K['MON_PP']:K['MON_PP'] + 4]]
               and all(p & 0x3f for p, mv in zip(pp, o[K['MON_MOVES']:K['MON_MOVES'] + 4]) if mv),
               'round trip', f'#{i + 1} PP {pp.hex()}')
+
+    # a power cut partway through rewriting friend A's record: SRAM as it was
+    # then reads A's slot as empty, B's as before
+    g.load(base)
+    clear_slots()
+    opponent('A', K['LINK_RULE_STANDARD'])
+    call('KeepFriendTeam')
+    opponent('B', K['LINK_RULE_UNRESTRICTED'])
+    call('KeepFriendTeam')
+    b_before = (kept(1), sram(levels[1], LV))
+    snap = {}
+    packs = []
+
+    def mid_write(_):
+        packs.append(1)
+        if len(packs) == 3:
+            snap['bank0'] = sram(0xa000, 0x2000)
+    hook = g.sym['PackFriendMon']
+    g.pb.hook_register(*hook, mid_write, None)
+    changed = [(m, h) for m, h in mine[1:]] + [mine[0]]  # (a rematch with the team reordered)
+    opponent('A', K['LINK_RULE_STANDARD'], 0, changed)
+    call('KeepFriendTeam')
+    g.pb.hook_deregister(*hook)
+    check('bank0' in snap, 'power cut', '(no snapshot taken mid-write)')
+    if 'bank0' in snap:
+        set_sram(0xa000, snap['bank0'])  # the cartridge as the power cut left it
+
+        def slot_ok(i):
+            g.wr('wFriendTeamSlot', i)
+            g.m[g.sym['hScriptVar'][1]] = 0
+            call('FriendDeskFirst')
+            return g.m[g.sym['hScriptVar'][1]] != 0
+        check(kept(0)[:2] != [ord('F'), ord('B')], 'power cut', "the interrupted slot's marker was set")
+        check((kept(1), sram(levels[1], LV)) == b_before, 'power cut', "the other friend's record changed")
+        set_sram(slots[0], [0] * R)
+        check(slot_ok(1), 'power cut', "the other friend's record no longer reads as a team")
+        set_sram(0xa000, snap['bank0'])
+        set_sram(slots[1], [0] * R)
+        check(not slot_ok(0), 'power cut', 'the interrupted record reads as a team')
 
     # Unrestricted: each Pokemon's own level is kept beside the record, and
     # checked; a Friend Battle unpacks them at those levels
