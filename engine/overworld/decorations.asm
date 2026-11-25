@@ -151,8 +151,16 @@ CheckAllDecorationFlags:
 
 	push hl
 	push af
+	cp DECO_CUP_TROPHY_DOLL
+	jr nz, .flag
+	; Link Edition: the Cup Trophy is yours once you've won a cup
+	farcall CountCupsWon
+	ld c, a
+	jr .got_flag
+.flag
 	ld b, CHECK_FLAG
 	call DecorationFlagAction
+.got_flag
 	ld a, c
 	and a
 	pop bc
@@ -322,6 +330,8 @@ FindOwnedOrnaments:
 	db DECO_EEVEE_DOLL ; 3b
 	db DECO_GOLD_TROPHY_DOLL ; 3c
 	db DECO_SILVER_TROPHY_DOLL ; 3d
+	db DECO_ORANGE_TROPHY_DOLL
+	db DECO_CUP_TROPHY_DOLL
 	db -1
 
 DecoBigDollMenu:
@@ -505,10 +515,21 @@ _GetDecorationSprite:
 	ld c, a
 	push de
 	push hl
+	cp DECO_CUP_TROPHY_DOLL
+	jr z, .cup_trophy
 	call GetDecorationSprite
 	pop hl
 	pop de
 	ld a, c
+	ret
+
+.cup_trophy
+	; Link Edition: bronze, silver or gold for the cups you've won
+	push bc
+	farcall CupTrophySprite
+	pop bc
+	pop hl
+	pop de
 	ret
 
 INCLUDE "data/decorations/attributes.asm"
@@ -980,6 +1001,10 @@ DecorationDesc_Ornament:
 	jr z, DecorationDesc_Console.go
 	cp DECO_SILVER_TROPHY_DOLL
 	jr z, DecorationDesc_Console.go
+	cp DECO_ORANGE_TROPHY_DOLL
+	jr z, DecorationDesc_Console.go
+	cp DECO_CUP_TROPHY_DOLL
+	jr z, .cup_trophy
 	ld de, wStringBuffer3
 	call GetDecorationName_c_de
 	ld b, BANK(.OrnamentScript)
@@ -988,6 +1013,11 @@ DecorationDesc_Ornament:
 
 .OrnamentScript:
 	farjumptext _LookAdorableDecoText
+
+.cup_trophy
+	ld b, BANK(CupTrophyDescScript)
+	ld de, CupTrophyDescScript
+	ret
 
 DecorationDesc_Console:
 	ld a, [wDecoConsole]

@@ -221,6 +221,8 @@
 	const SPRITE_CAMPFIRE ; d9
 	const SPRITE_CABLE_CAR ; da
 	const SPRITE_LILYPAD ; db
+	const SPRITE_ORANGE_TROPHY ; dc (Link Edition)
+	const SPRITE_BRONZE_TROPHY ; dd (Link Edition)
 DEF NUM_OVERWORLD_SPRITES EQU const_value - 1
 
 ; special GetMonSprite values (see engine/overworld/overworld.asm)

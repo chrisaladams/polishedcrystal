@@ -32,6 +32,8 @@ DEF NUM_DECO_TYPES EQU const_value - 1
 	const WII
 	const GOLD_TROPHY
 	const SILVER_TROPHY
+	const ORANGE_TROPHY ; Link Edition
+	const CUP_TROPHY    ; Link Edition
 	const SURF_PIKA_DOLL
 	const _BED
 	const _CARPET
@@ -148,5 +150,7 @@ ENDM
 DEF NUM_NON_TROPHY_DECOS EQU __deco_value__
 	deco  GOLD_TROPHY_DOLL
 	deco  SILVER_TROPHY_DOLL
+	deco  ORANGE_TROPHY_DOLL ; Link Edition: the Orange League (engine/events/achievements.asm)
+	deco  CUP_TROPHY_DOLL    ; Link Edition: the regional cups, upgraded as you win more
 DEF NUM_DECOS EQU __deco_value__
 DEF NUM_DECO_CATEGORIES EQU const_value - 1 - NUM_DECOS

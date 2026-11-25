@@ -344,6 +344,23 @@ Bottle Cap on repeat wins. If your bag is full on your first win, the
 official keeps the Mystic Water for you and the win counts immediately.
 `python3 utils/anime_events/test_whirl_cup.py SAVE.sav` checks it.
 
+### Trophies and the Adventure Album
+
+Besides the Silver or Gold Trophy from the Hall of Fame, two more trophies
+can stand on your bedroom table (set them out from the bedroom PC's
+Decoration menu, with the dolls):
+
+- the **Orange Trophy**, yours once you've beaten Drake;
+- the **Cup Trophy**, yours once you've won any regional cup: bronze at
+  first, silver once you've won three of the six cups, gold with all six.
+  Look at it to see how many.
+
+The bedroom PC also has an **Album**: three pages (Leagues, Stories and
+Cups) with a star by each thing done, and counts for your badges, the
+Orange Crew's badges and the Kimono Cup's types. All of it comes from what
+the game already keeps, so an older save's wins show up at once.
+`python3 utils/anime_events/test_achievements.py SAVE.sav` checks them.
+
 ### Anime cameos
 
 Once you've beaten both Red and the Orange League (Drake), five

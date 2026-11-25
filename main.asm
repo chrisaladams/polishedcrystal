@@ -170,6 +170,11 @@ INCLUDE "engine/overworld/follower.asm"
 INCLUDE "gfx/followers.asm"
 
 
+SECTION "Achievements", ROMX
+
+INCLUDE "engine/events/achievements.asm"
+
+
 SECTION "Cup Code", ROMX
 
 INCLUDE "engine/events/cups.asm"

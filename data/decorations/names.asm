@@ -14,6 +14,8 @@ DecorationNames:
 	li "Wii"
 	li "Gold Trophy"
 	li "Silver Trophy"
+	li "Orange Trophy"
+	li "Cup Trophy"
 	li "Surf Pikachu Doll"
 	li " Bed"
 	li " Carpet"

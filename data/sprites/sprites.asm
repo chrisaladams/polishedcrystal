@@ -226,4 +226,6 @@ SpriteHeaders:
 	overworld_sprite CampfireSpriteGFX, STANDING_SPRITE, PAL_OW_CAMPFIRE
 	overworld_sprite CableCarSpriteGFX, STANDING_SPRITE, PAL_OW_CABLE_CAR
 	overworld_sprite LilypadSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_GRASS
+	overworld_sprite GoldTrophySpriteGFX, STANDING_SPRITE, PAL_OW_ORANGE
+	overworld_sprite SilverTrophySpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
 	assert_table_length NUM_OVERWORLD_SPRITES

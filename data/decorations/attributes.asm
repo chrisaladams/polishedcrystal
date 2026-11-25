@@ -70,4 +70,6 @@ DecorationAttributes:
 	decoration DECO_DOLL,     EEVEE,             SET_UP_DOLL,        EVENT_DECO_EEVEE_DOLL,              SPRITE_MON_DOLL_1
 	decoration DECO_PLANT,    GOLD_TROPHY,       SET_UP_DOLL,        EVENT_DECO_GOLD_TROPHY,             SPRITE_GOLD_TROPHY
 	decoration DECO_PLANT,    SILVER_TROPHY,     SET_UP_DOLL,        EVENT_DECO_SILVER_TROPHY,           SPRITE_SILVER_TROPHY
+	decoration DECO_PLANT,    ORANGE_TROPHY,     SET_UP_DOLL,        EVENT_BEAT_DRAKE,                   SPRITE_ORANGE_TROPHY ; (yours once Drake is beaten)
+	decoration DECO_PLANT,    CUP_TROPHY,        SET_UP_DOLL,        EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1, SPRITE_BRONZE_TROPHY ; (yours once you've won a cup: CheckAllDecorationFlags; sprite: CupTrophySprite)
 	assert_table_length NUM_DECOS + NUM_DECO_CATEGORIES + 1

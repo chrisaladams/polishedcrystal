@@ -232,6 +232,7 @@ PlayersPCMenuData:
 	dw PlayerDecorationMenu,   .Decoration
 	dw PlayerLogOffMenu,       .LogOff
 	dw PlayerLogOffMenu,       .TurnOff
+	dw PlayerAlbumMenu,        .Album
 
 .WithdrawItem: db "Withdraw Item@"
 .DepositItem:  db "Deposit Item@"
@@ -240,6 +241,7 @@ PlayersPCMenuData:
 .Decoration:   db "Decoration@"
 .TurnOff:      db "Turn Off@"
 .LogOff:       db "Log Off@"
+.Album:        db "Album@"
 
 DEF WITHDRAW_ITEM EQU 0
 DEF DEPOSIT_ITEM  EQU 1
@@ -248,6 +250,7 @@ DEF MAIL_BOX      EQU 3
 DEF DECORATION    EQU 4
 DEF TURN_OFF      EQU 5
 DEF LOG_OFF       EQU 6
+DEF ALBUM         EQU 7 ; Link Edition: the Adventure Album
 
 .PlayersPCMenuList1:
 	db 5
@@ -258,12 +261,13 @@ DEF LOG_OFF       EQU 6
 	db TURN_OFF
 	db -1
 ;.PlayersPCMenuList2:
-	db 6
+	db 7
 	db WITHDRAW_ITEM
 	db DEPOSIT_ITEM
 	db TOSS_ITEM
 	db MAIL_BOX
 	db DECORATION
+	db ALBUM
 	db LOG_OFF
 	db -1
 
@@ -377,6 +381,14 @@ PlayerDecorationMenu:
 	ret
 
 PlayerLogOffMenu:
+	xor a
+	scf
+	ret
+
+PlayerAlbumMenu:
+; Link Edition: the Adventure Album (engine/events/achievements.asm); the
+; PC turns off after it.
+	farcall Special_AdventureAlbum
 	xor a
 	scf
 	ret
