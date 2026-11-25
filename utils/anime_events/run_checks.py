@@ -28,7 +28,7 @@ def main():
               for name in ('story', 'quest_map', 'engine_cleanup', 'software_clock', 'orange_league',
                            'cameos', 'whirl_cup', 'movie_events', 'campaigns', 'shadow_encounters', 'cups',
                            'cup_spotlight', 'achievements', 'friend_battles', 'friend_records',
-                           'link_rules', 'bracket', 'cinematic', 'team_generation')]
+                           'link_rules', 'bracket', 'cinematic', 'team_generation', 'link_options')]
     checks.append(['utils/linktest/test_world_prize.py', str(save)])
     checks.append(['utils/wild_mons/test_wild_mons.py', str(save)]
                   + ([] if args.full else ['--quick']))

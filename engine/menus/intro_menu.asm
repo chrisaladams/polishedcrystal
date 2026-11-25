@@ -441,6 +441,10 @@ Continue_CheckEGO_ResetInitialOptions:
 	jr z, .skip_reset_initial_options
 	farcall SetInitialOptions
 .skip_reset_initial_options
+	; Link Edition: the settings that change battles, as on every cartridge
+	; (a game from before with others: continuing then redoes the party's EVs
+	; and stats for them, as it always does, in FixPlayerEVsAndStats)
+	farcall LockLinkOptions
 	; fallthrough
 Continue_FinishReset:
 	xor a

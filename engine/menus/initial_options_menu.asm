@@ -51,6 +51,7 @@ SetInitialOptions:
 	inc a ; TRUE
 	ld [wOptionsMenuIsInitial], a
 	call OptionsShared_RunLoop
+	call LockLinkOptions
 
 	pop af
 	ldh [hInMenu], a
@@ -60,6 +61,29 @@ SetInitialOptions:
 	text_farend _InitialOptionsText
 .BGPalettes:
 INCLUDE "gfx/options/initial_options_bg.pal"
+
+LockLinkOptions::
+; Link Edition: the settings that change battles are the same on every
+; cartridge (LINK_OPTS_LOCKED, LINK_EVS_LOCKED), so any two can link. The
+; New Game screen doesn't offer them; a game from before is corrected when
+; continued. Carry if this game's were different.
+	ld a, [wInitialOptions]
+	ld b, a
+	and ~LINK_OPTMASK
+	or LINK_OPTS_LOCKED
+	ld [wInitialOptions], a
+	xor b
+	ld c, a ; (the bits that changed)
+	ld a, [wInitialOptions2]
+	ld b, a
+	and ~EV_OPTMASK
+	or LINK_EVS_LOCKED
+	ld [wInitialOptions2], a
+	xor b
+	or c
+	ret z
+	scf
+	ret
 
 DEF NUM_INITIAL_MENU_OPTIONS EQU 10
 
@@ -99,10 +123,14 @@ MenuDataHeader_InitialOptions:
 	dba OptionsShared_ResetSelectionDescription
 
 InitialOptionsMenuItems:
-	db NUM_INITIAL_MENU_OPTIONS
-for n, NUM_INITIAL_MENU_OPTIONS
-	db n + 1
-endr
+; Link Edition: natures, abilities, the physical/special split, EVs and
+; perfect IVs are fixed (LockLinkOptions), so only the others are offered
+	db 5
+	db 5 ; InitialOptions_ExpScaling
+	db 6 ; InitialOptions_AffectionBonus
+	db 8 ; InitialOptions_TradedMon
+	db 9 ; InitialOptions_EvolveInBattle
+	db 10 ; InitialOptions_ColorVariation
 	db -1 ; terminator ("Done")
 
 INCLUDE "data/options/initial_option_names.asm"

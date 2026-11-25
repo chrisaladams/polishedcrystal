@@ -129,6 +129,13 @@ DEF LINK_OPTMASK EQU (1 << NATURES_OPT) | (1 << ABILITIES_OPT) | (1 << PERFECT_I
 	const EVS_OPT_MODERN   ; %10
 DEF EV_OPTMASK EQU %11
 
+; Link Edition: the settings that change battles are fixed, the same on every
+; cartridge, so any two can link (LockLinkOptions): natures, abilities and
+; the physical/special split on, perfect IVs off, Modern EVs
+DEF LINK_OPTS_LOCKED EQU (1 << NATURES_OPT) | (1 << ABILITIES_OPT) | (1 << PSS_OPT)
+DEF LINK_EVS_LOCKED EQU EVS_OPT_MODERN
+	assert LINK_OPTS_LOCKED & ~LINK_OPTMASK == 0
+
 ; wOptionsMenuDescriptionState::
 	const_def
 	const OPTDESCSTATE_PAGE   ; 0 (stopped at '<PARA>')
