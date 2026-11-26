@@ -25,8 +25,7 @@ CinematicEndKeepMusic::
 	ld hl, wCinematicFlags
 	bit CINEMATIC_ACTIVE_F, [hl]
 	ret z
-	ld [hl], 0
-	call CinematicUnshadowAll
+	call CinematicOff
 	jr CinematicEnd.palettes
 
 CinematicEnd::
@@ -35,8 +34,7 @@ CinematicEnd::
 	ld hl, wCinematicFlags
 	bit CINEMATIC_ACTIVE_F, [hl]
 	ret z ; (no scene)
-	ld [hl], 0
-	call CinematicUnshadowAll
+	call CinematicOff
 	ld a, [wMusicIDHi]
 	and a
 	jr nz, .music
@@ -51,6 +49,36 @@ CinematicEnd::
 	ld c, 12
 	jr CinematicFadeBack
 
+CinematicOff:
+; The scene flag off ([hl]); the map's own weather back if the scene changed
+; it, and every shadow's colors.
+	ld a, [hl]
+	ld [hl], 0
+	and CINEMATIC_WEATHER_MASK
+	jr z, .weather_done
+	farcall SetCurrentWeather
+.weather_done
+	jmp CinematicUnshadowAll
+
+CinematicWeather::
+; The scene's weather: OW_WEATHER_* hScriptVar (OW_WEATHER_NONE for a clear
+; sky) until scene_end, which brings back the map's own. Only in a scene.
+	ld hl, wCinematicFlags
+	bit CINEMATIC_ACTIVE_F, [hl]
+	ret z
+	ldh a, [hScriptVar]
+	cp NUM_OW_WEATHERS
+	ret nc
+	inc a
+	assert CINEMATIC_WEATHER_SHIFT == 1
+	add a
+	ld b, a
+	ld a, [hl]
+	and ~CINEMATIC_WEATHER_MASK
+	or b
+	ld [hl], a
+	farjp SetCurrentWeather
+
 CinematicRestoreNow::
 ; The scene's starting palettes back, quickly, the scene still on.
 	ld c, 4
@@ -64,6 +92,7 @@ CinematicFadeBack:
 	call FarCopyColorWRAM
 	farcall ClearSavedObjPals
 	farcall EnableDynPalUpdatesNoApply ; (into wOBPals1, for the fade)
+	farcall LoadWeatherPalNoApply ; (its slot as the weather now is)
 	pop bc
 	jmp FadePalettes
 

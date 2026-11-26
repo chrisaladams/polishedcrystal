@@ -104,12 +104,14 @@ music restoration, the Flash & Shake accessibility option. Then:
   black in a palette slot of its own while the rest keep their colors;
 - offscreen character entrances: `scene_enter`, from past any edge of the
   screen, wherever the player stands;
-- title cards: `scene_title`, a centered line, white on black, between fades.
+- title cards: `scene_title`, a centered line, white on black, between fades;
+- environmental transformations: `scene_weather`, a scene's own weather (rain,
+  snow, storm, sand, blossoms or a clear sky) until its end; map blocks change
+  with the engine's `changeblock` and `refreshmap`.
 
 See [`cinematics.md`](cinematics.md).
 
-Pending: reusable particle effects, environmental transformations, scene
-framing (letterbox bars).
+Pending: reusable particle effects, scene framing (letterbox bars).
 
 Investigate the existing overworld movement and scrolling systems before
 designing camera functionality. Effects share graphics and cleanly restore

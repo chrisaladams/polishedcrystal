@@ -30,6 +30,10 @@ game (PyBoy), calling them as the scene macros do:
 - scene_title, run as a real script: the line centered on a blank card, white
   on black, for about two seconds; the script goes on past its pointer; the
   map and its palettes come back exactly; A skips it;
+- scene_weather: only a scene changes the weather; rain with its palette in
+  the weather slot; snow's palette kept through scene_restore (not the one
+  kept from before the snow); an unknown weather ignored;
+  NONE clears the sky; scene_end brings back the map's own weather;
 - the Options row "Flash & Shake": left/right turns it Off and On (only
   CALM_SCREEN_F changes), shown as it is. (What Off does to a real scene is
   in test_movie_events.py, the clone scene.)
@@ -420,6 +424,46 @@ def main():
     check(waited < 60, f'scene_title: A did not skip it ({waited} frames more)')
     g.tick(40)
     check(not g.rd('wScriptRunning'), 'scene_title: after skipping, a script still running')
+
+    # scene_weather: the scene's weather until scene_end, the map's own after
+    K.update(rgbasm_values(['OW_WEATHER_NONE', 'OW_WEATHER_RAIN', 'OW_WEATHER_SNOW', 'PAL_OW_WEATHER',
+                            'PAL_OW_RAIN'], None))
+    own_weather = g.rd('wCurWeather')
+    call('CinematicWeather', K['OW_WEATHER_RAIN'])
+    check(g.rd('wCurWeather') == own_weather, 'scene_weather outside a scene changed the weather')
+    call('CinematicBegin')
+    call('CinematicWeather', K['OW_WEATHER_RAIN'])
+    g.tick(4)
+    check(g.rd('wCurWeather') == K['OW_WEATHER_RAIN'], f'scene_weather: weather {g.rd("wCurWeather")}, not rain')
+    check(g.m[1, g.sym['wLoadedObjPal0'][1] + K['PAL_OW_WEATHER']] == K['PAL_OW_RAIN'],
+          'scene_weather: the rain palette not loaded in the weather slot')
+    call('CinematicEnd')
+    g.tick(120)
+    # (a scene kept the palettes from before its weather: scene_restore must
+    # put the weather's slot back as the weather is now, not as it was kept)
+    slot = slice((8 + K['PAL_OW_WEATHER']) * 4, (8 + K['PAL_OW_WEATHER']) * 4 + 4)
+    call('CinematicBegin')
+    kept = pals('wBGPals2')[slot]
+    call('CinematicWeather', K['OW_WEATHER_SNOW'])
+    g.tick(4)
+    snow_pal = [c & 0x7fff for c in pals('wBGPals2')[slot]]  # (bit 15 isn't a color)
+    check(snow_pal != [c & 0x7fff for c in kept], 'the test wants the snow palette to differ from the one kept')
+    call('CinematicRestoreNow')
+    g.tick(4)
+    check([c & 0x7fff for c in pals('wBGPals2')[slot]] == snow_pal, 'scene_weather: scene_restore put back a stale palette for the snow')
+    call('CinematicWeather', 99)
+    check(g.rd('wCurWeather') == K['OW_WEATHER_SNOW'], 'scene_weather: an unknown weather changed it')
+    call('CinematicWeather', K['OW_WEATHER_NONE'])
+    g.tick(4)
+    check(g.rd('wCurWeather') == K['OW_WEATHER_NONE'], 'scene_weather NONE: the sky not cleared')
+    call('CinematicWeather', K['OW_WEATHER_RAIN'])
+    g.tick(4)
+    check(g.rd('wCurWeather') == K['OW_WEATHER_RAIN'], 'scene_weather: the rain not back')
+    call('CinematicEnd')
+    g.tick(20)
+    check(g.rd('wCurWeather') == own_weather, f'scene_end: weather {g.rd("wCurWeather")}, not the map\'s {own_weather}')
+    check(not g.rd('wCinematicFlags'), 'scene_end: the scene flags not cleared')
+    g.tick(120)  # (the rain clears)
 
     # the Options row
     def plain(label):

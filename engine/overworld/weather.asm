@@ -1277,7 +1277,7 @@ LoadWeatherGraphics:
 	jmp Get2bpp
 
 SetCurrentWeather::
-	call ShamoutiStoryStorm ; (Link Edition: the beacons' storm)
+	call ShamoutiStoryStorm ; (Link Edition: a scene's weather, the beacons' storm)
 	jr c, .set_weather
 	farcall GetOvercastIndex
 	and a
@@ -1407,6 +1407,17 @@ SetCurrentWeather::
 INCLUDE "data/sprites/weather.asm"
 
 ShamoutiStoryStorm:
+; Link Edition: carry and a = OW_WEATHER_* for story weather. A story scene's
+; own (scene_weather) comes first.
+	ld a, [wCinematicFlags]
+	and CINEMATIC_WEATHER_MASK
+	jr z, .no_scene_weather
+	assert CINEMATIC_WEATHER_SHIFT == 1
+	rrca
+	dec a
+	scf
+	ret
+.no_scene_weather
 	ld a, [wMapGroup]
 	cp GROUP_SHAMOUTI_COAST
 	jr z, .coast

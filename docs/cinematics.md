@@ -20,6 +20,7 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_unshadow OBJ` | That character's own colors back: the reveal (`scene_end` gives every shadow its colors back too) |
 | `scene_enter OBJ, DIR` | A character comes on: it appears just past the screen's edge toward `DIR` (`DOWN`, `UP`, `LEFT`, `RIGHT`), in line with the player, and walks up to stand beside them (4 steps, 5 from the right); the script waits. It also does what `appear` does |
 | `scene_title .Line` | A title card: the screen fades to black, the line (one line in the script's bank, up to 18 characters, `@`-terminated) shows centered in white for about two seconds (A or B sooner), and the map comes back |
+| `scene_weather OW_WEATHER_*` | The scene's weather (`RAIN`, `SNOW`, `THUNDERSTORM`, `SANDSTORM`, `CHERRY_BLOSSOMS`, or `NONE` for a clear sky) until `scene_end`, which brings back the map's own. Only inside a scene; no lightning flashes during one |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
 | `scene_pan DIR, n` | The camera moves `n` steps (1–15) toward `DOWN`, `UP`, `LEFT` or `RIGHT`: the player is hidden and walked there (the view follows the player), through walls and people, the follower put away; the script waits until it's there |
 | `scene_pan_back DIR, n` | Back the same way (give it the same `DIR` and `n`): the player shown again on their tile, walls and people solid again, the follower back under them |
@@ -149,6 +150,23 @@ tints, or `scene_begin` after it. About 150 bytes.
 .Title:
 	db "THE POWER OF ONE@"
 ```
+
+## Weather
+
+The scene's weather is kept in `wCinematicFlags` (bits 1–3, the weather plus
+one, so a clear sky can be asked for too). `SetCurrentWeather` asks the story
+weather first (`ShamoutiStoryStorm`), and that now looks at a scene's weather
+before the beacons' storm; `scene_weather` calls it, and the engine moves
+between weathers as it always does (a short change-over unless rain and storm
+swap). `scene_end` clears the flags and calls it again for the map's own
+weather. Every return to the kept palettes (`scene_restore`, pulses, flashes,
+the end) reloads the weather's sprite palette as the weather now is, since
+the kept copy is from before it changed: that also fixes the Shamouti shrine,
+whose storm starts mid-scene. About 70 bytes.
+
+Other changes to the scene's surroundings use the engine's own commands:
+`changeblock` and `refreshmap` change map blocks (a door, crystals, rubble),
+and `appear` and `disappear` show and hide objects.
 
 ## The camera
 

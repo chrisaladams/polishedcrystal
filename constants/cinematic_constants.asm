@@ -16,3 +16,7 @@ DEF NUM_TINTS EQU const_value
 ; wCinematicFlags
 	const_def
 	const CINEMATIC_ACTIVE_F ; between scene_begin and scene_end (no lightning)
+; bits 1-3: the scene's weather (scene_weather), OW_WEATHER_* + 1; 0 for the map's own
+DEF CINEMATIC_WEATHER_SHIFT EQU 1
+DEF CINEMATIC_WEATHER_MASK EQU %111 << CINEMATIC_WEATHER_SHIFT
+assert NUM_OW_WEATHERS + 1 <= %111 + 1

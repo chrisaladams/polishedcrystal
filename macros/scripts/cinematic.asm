@@ -79,6 +79,13 @@ MACRO scene_title
 	dw \1
 ENDM
 
+MACRO scene_weather
+; The scene's weather (OW_WEATHER_RAIN, _SNOW, _THUNDERSTORM, _SANDSTORM,
+; _CHERRY_BLOSSOMS, or _NONE for a clear sky) until scene_end.
+	setval \1
+	callasm CinematicWeather
+ENDM
+
 MACRO scene_restore
 ; The map's own palettes back at once, the scene still on.
 	callasm CinematicRestoreNow
