@@ -397,9 +397,9 @@ no items or experience in its battles, and come back exactly as they were
   seven visiting trainers in an elimination bracket. Win the quarterfinal,
   semifinal and final at level 50. The trainers' own matches can end in
   upsets, as in the linked bracket, and after each of your wins the desk
-  reports how they went. Each round opens on the bracket: everyone in the
-  draw's order, a star for each round they've won and a cross where they
-  went out. If you're knocked out, the rest of the bracket is played out and
+  reports how they went. Each round opens on the bracket: the two halves
+  at the sides, each winner's line carried toward the middle in black, and
+  a cross where each entrant went out. If you're knocked out, the rest of the bracket is played out and
   the screen shows who became champion. The first win earns an Ability
   Patch. The registrar holds it if your Bag is full. Repeat wins earn a
   Bottle Cap.

@@ -789,7 +789,7 @@ def main():
                       else tiles(CUP_NAMES[champ[0] - 1]) if len(champ) == 1 else None)
         shown = None
         for _ in range(60):
-            row = bytes(g.rd('wTilemap', 16 * 20 + j) for j in range(20))
+            row = bytes(g.rd('wTilemap', 15 * 20 + j) for j in range(20))
             if tiles('Champion:') in row:
                 shown = row
                 if os.environ.get('LE_SHOTS'):
