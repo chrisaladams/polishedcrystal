@@ -223,6 +223,8 @@
 	const SPRITE_LILYPAD ; db
 	const SPRITE_ORANGE_TROPHY ; dc (Link Edition)
 	const SPRITE_BRONZE_TROPHY ; dd (Link Edition)
+	const SPRITE_MOLLY ; de (Link Edition: Spell of the Unown)
+	const SPRITE_IRON_MASK ; df (Link Edition: Voice of the Forest)
 DEF NUM_OVERWORLD_SPRITES EQU const_value - 1
 
 ; special GetMonSprite values (see engine/overworld/overworld.asm)

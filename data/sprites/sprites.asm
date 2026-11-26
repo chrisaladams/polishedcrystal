@@ -228,4 +228,6 @@ SpriteHeaders:
 	overworld_sprite LilypadSpriteGFX, STANDING_SPRITE, PAL_OW_COPY_BG_GRASS
 	overworld_sprite GoldTrophySpriteGFX, STANDING_SPRITE, PAL_OW_ORANGE
 	overworld_sprite SilverTrophySpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
+	overworld_sprite MollySpriteGFX, WALKING_SPRITE, PAL_OW_BROWN ; (Link Edition)
+	overworld_sprite IronMaskSpriteGFX, WALKING_SPRITE, PAL_OW_GRAY ; (Link Edition)
 	assert_table_length NUM_OVERWORLD_SPRITES

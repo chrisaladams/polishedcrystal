@@ -196,6 +196,15 @@ to audit and refine. Candidates: cloning laboratory tiles, crystals,
 corrupted forest, tournament decorations, achievement graphics. Audit existing
 assets first. A custom introduction and title screen remain optional.
 
+*(Started with Phase 5: Molly Hale (`SPRITE_MOLLY`, from the Gen 2 lass, a pale
+headband and a bow) and the Iron-Masked Marauder (`SPRITE_IRON_MASK`, from the
+Gen 2 burglar, an iron mask and helmet), each six frames at 16×16 in the
+game's four shades, used by the Research Center's Molly and the Ilex Forest
+Marauder. No published Gen 2-style sprites of these characters with reuse
+terms were found, so the rest follow the same approach. Evidence:
+[`phase5-screens/molly-and-marauder-sprites.png`](phase5-screens/molly-and-marauder-sprites.png),
+[`phase5-screens/molly-sprite-frames.png`](phase5-screens/molly-sprite-frames.png).)*
+
 ## Phase 7 — Version 2.0 validation (partially verified)
 
 Default and Faithful build on the current MBC5 target. Emulator coverage

@@ -652,3 +652,10 @@ CableCarSpriteGFX:: INCBIN "gfx/sprites/cable_car.2bpp.lzp"
 
 SECTION "LilypadSpriteGFX", ROMX
 LilypadSpriteGFX:: INCBIN "gfx/sprites/lilypad.2bpp.lzp"
+
+; Link Edition: movie characters, edited from Gen 2 sprites (lass, burglar)
+SECTION "MollySpriteGFX", ROMX
+MollySpriteGFX:: INCBIN "gfx/sprites/molly.2bpp.lzp"
+
+SECTION "IronMaskSpriteGFX", ROMX
+IronMaskSpriteGFX:: INCBIN "gfx/sprites/iron_mask.2bpp.lzp"
