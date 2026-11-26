@@ -87,8 +87,8 @@ the game is now built for 4 MiB MBC5; see
 - [x] Deterministic tournament outcomes with weighted NPC upsets.
 - [x] Visual World Championship bracket; standings after elimination.
 - [x] Detailed Rental Cup and Friend Battle team previews.
-- [ ] Verify all eligibility and fallback edge cases.
-- [ ] Calibrate NPC victory probabilities.
+- [x] Verify all eligibility and fallback edge cases. *(Link formats: `test_link_rules.py`, every row of the rules matrix on your team, a received team and a Friend Battle. Offline cups: `test_cups.py`, `test_whirl_cup.py`, `test_orange_league.py`, and `test_cup_eligibility.py` for the whole-party cups' edges: too few, Eggs left out of the count and the staged team, a wrong type among enough, a dual type counting, a Dragon among others, six exactly, Friend Battle rules. Fallbacks: `test_team_generation.py`, each team generator forced past its restart limit.)*
+- [ ] Calibrate NPC victory probabilities. *(Measured over all 65,536 seeds, unchanged from [`rules-matrix.md`](rules-matrix.md): the strongest visiting trainer reaches 58% of finals and wins 42%, the weakest 7% and 1%; 26% of trainer-vs-trainer matches are upsets. The odds (60/70/80/90% by places between them) are kept; changing them is the owner's call.)*
 - [ ] Review rewards and tournament difficulty through natural gameplay.
 
 ## Phase 4 — Cinematic engine (in progress)
