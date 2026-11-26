@@ -277,11 +277,17 @@ class Rom:
             self.w('wBattleAction', self.ids['BATTLEACTION_SWITCH1'] + 1)
             plan['fainted'] = True
         elif name == 'GetPlayerSwitchTarget':
-            # we replace ours with our second one (and if both fainted, the
-            # opponent's choice comes from this same exchange)
-            self.w('wCurPartyMon', 1)
-            self.w('wPlayerSwitchTarget', 2)
-            self.w('wBattleAction', self.ids['BATTLEACTION_SWITCH1'] + 1)
+            # we send in the first of ours that can battle and isn't out:
+            # the bench after a faint or Baton Pass, or the lead again if the
+            # bench came in by Baton Pass and then fainted (always choosing
+            # the second asked forever for a fainted one). If both fainted,
+            # the opponent's choice comes from this same exchange
+            out = self.r('wCurBattleMon')
+            target = next((i for i in range(self.r('wPartyCount'))
+                           if i != out and self.r16('wPartyMon1HP', i * self.stride)), 1)
+            self.w('wCurPartyMon', target)
+            self.w('wPlayerSwitchTarget', target + 1)
+            self.w('wBattleAction', self.ids['BATTLEACTION_SWITCH1'] + target)
             plan['fainted'] = True
         else:
             if name == 'end':                   # the battle is over

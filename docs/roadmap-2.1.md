@@ -52,7 +52,7 @@ Objective: finish, polish and stabilize the existing adventure.
 - [ ] Evaluate stronger interrupted-write recovery (L3).
 - [x] Test trading immediately after championship sessions. *(`linktest.py --trade --last-rules world,normal` and `--last-rules world`: both cartridges reach the Trade Center, with no Championship session and no rules refusal.)*
 - [ ] Expand link interruption and recovery tests. *(Done so far: `test_world_plan.py`, the session plan from 27 crafted message pairs, injected out-of-range values included; trading after a Championship. Still open: disconnects at each commit boundary over the cable.)*
-- [ ] Correct the simulator Baton Pass test harness.
+- [x] Correct the simulator Baton Pass test harness. *(`oracle_turn.py` now answers "who comes in?" with the first Pokémon that can battle and isn't out; 48/48 matchups agree.)*
 - [ ] Audit remaining battle, save and progression defects.
 
 Acceptance: no reproducible save corruption, party loss, unintended reward
