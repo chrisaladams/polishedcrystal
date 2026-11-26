@@ -145,8 +145,10 @@ palettes, music, movement and map state.
 - **Orange League and Pallet Invitational** — done: all four Crew challenges,
   elemental battle introductions, badge progress announcements, Drake's trophy
   effects, wind and snow on Danny's first summit visit, and a splash and chime
-  at each accepted Surf checkpoint. To do: stronger character introductions,
-  championship ceremony, expanded Tracey sketch and ending.
+  at each accepted Surf checkpoint; title cards for the Orange League final
+  and the Invitational; Drake's Dragonite and Ash's Pikachu coming out for
+  their finals; the championship ceremony; a closing card. To do: Tracey
+  himself in the sketch scene (with his sprite, Phase 6).
 
 ## Phase 6 — Character artwork and visual identity (substantial work remaining)
 
