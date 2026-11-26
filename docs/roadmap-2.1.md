@@ -127,8 +127,15 @@ palettes, music, movement and map state.
   Cinnabar research logs, psychic lighting, silence and flashes; individual
   clone appearances (copies of your own team rising as shadows) and Mewtwo's
   reveal (a shadow until its cry); a title card at the Cinnabar flight log,
-  and the lab shaking with falling dust at Mewtwo's answer. To do: a cloning
-  chamber set (needs its own tiles).
+  and the lab shaking with falling dust at Mewtwo's answer. Second pass: in
+  the cave the camera rises over the pool as the copies form, and the silence
+  breaks with the Stadium Mewtwo theme at its reveal, carried into the
+  battle; at the flight log the music falls silent and a vision of the
+  armored clone flickers as a shadow in the lab. Evidence:
+  `test_movie_events.py`, `test_story.py`;
+  [`phase5-screens/mewtwo-clones.png`](phase5-screens/mewtwo-clones.png),
+  [`phase5-screens/mewtwo-flight-log.png`](phase5-screens/mewtwo-flight-log.png).
+  To do: a cloning chamber set (needs its own tiles).
 - **The Power of One** — done: elemental beacon palette effects, Melody's song
   and Lawrence's confrontation; a title card; the escalating storm, the three
   legendary birds as silhouettes in the lightning, Lugia's emergence (a

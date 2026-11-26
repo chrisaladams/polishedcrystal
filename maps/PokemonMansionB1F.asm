@@ -2,6 +2,7 @@ PokemonMansionB1F_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, PokemonMansionB1FCastCallback
 
 	def_warp_events
 	warp_event 25, 24, POKEMON_MANSION_1F, 3
@@ -24,10 +25,20 @@ PokemonMansionB1F_MapScriptHeader:
 	def_object_events
 	object_event 18,  5, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, 0, OBJECTTYPE_TRAINER, 4, TrainerScientistBraydon, -1
 	object_event 18, 22, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, PokemonMansionDiary, -1
+	; Link Edition: the vision while you read the flight log
+	object_event 18, 20, SPRITE_ARMORED_MEWTWO, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 	itemball_event 13,  5, CARBOS, 1, EVENT_POKEMON_MANSION_B1F_CARBOS
 	itemball_event  7,  6, CALCIUM, 1, EVENT_POKEMON_MANSION_B1F_CALCIUM
 	itemball_event 16, 27, HP_UP, 1, EVENT_POKEMON_MANSION_B1F_HP_UP
 	keyitemball_event  4, 23, OLD_SEA_MAP, EVENT_POKEMON_MANSION_B1F_OLD_SEA_MAP
+
+	object_const_def
+	const_skip 2 ; (the scientist, the log)
+	const POKEMONMANSIONB1F_VISION
+
+PokemonMansionB1FCastCallback:
+	setevent EVENT_POST_RED_PERSON_HIDDEN ; (the vision)
+	endcallback
 
 TrainerScientistBraydon:
 	trainer SCIENTIST, BRAYDON, EVENT_BEAT_SCIENTIST_BRAYDON, ScientistBraydonSeenText, ScientistBraydonBeatenText, 0, .Script
@@ -76,14 +87,22 @@ PokemonMansionDiary:
 	scene_title .Title
 .Read:
 	scene_begin
+	musicfadeout MUSIC_NONE, 8
 	scene_pulse TINT_DARK
 	scene_tint TINT_DARK
 	showtext .Report
+	; a vision: the armored clone in its chamber, a shadow that flickers out
+	scene_place POKEMONMANSIONB1F_VISION, 0, -2
+	appear POKEMONMANSIONB1F_VISION
+	scene_shadow POKEMONMANSIONB1F_VISION
+	scene_tint TINT_PURPLE
 	cry MEWTWO
 	earthquake 10 ; (and the lab shakes: plaster dust falls)
 	showemote EMOTE_DUST, PLAYER, 15
+	scene_flash 1
+	disappear POKEMONMANSIONB1F_VISION
 	scene_pulse TINT_PURPLE
-	scene_end
+	scene_end ; (the mansion's own music back)
 	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
 	iftrue DoNothingScript
 	setevent EVENT_READ_CINNABAR_CLONE_REPORT

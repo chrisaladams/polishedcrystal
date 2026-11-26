@@ -132,6 +132,8 @@ CeruleanCaveCloneBattle:
 	scene_pulse TINT_PURPLE
 	scene_tint TINT_PURPLE
 	showtext .ClonesText
+	; the camera rises over the pool, where the copies form
+	scene_pan UP, 2
 	playsound SFX_PROTECT
 	earthquake 8
 	scene_clone CERULEANCAVEB1F_CLONE_1, 0
@@ -150,14 +152,16 @@ CeruleanCaveCloneBattle:
 	scene_shadow CERULEANCAVEB1F_CLONE_3
 	showemote EMOTE_SPARKLE_PURPLE, CERULEANCAVEB1F_CLONE_3, 15
 	pause 20
+	scene_pan_back UP, 2
 	showtext .ClonesText2
+	playmusic MUSIC_MEWTWO_BATTLE_STADIUM ; (the silence breaks)
 	cry MEWTWO
 	scene_flash 1
 	scene_unshadow CERULEANCAVEB1F_MEWTWO
 	disappear CERULEANCAVEB1F_CLONE_1
 	disappear CERULEANCAVEB1F_CLONE_2
 	disappear CERULEANCAVEB1F_CLONE_3
-	scene_end_keep_music ; (the silence lasts until the battle)
+	scene_end_keep_music ; (its theme carries into the battle)
 	winlosstext .ClonesBeatenText, 0
 	loadtrainer MEWTWO_T, 1
 	startbattle

@@ -113,7 +113,7 @@ def main():
         g.tick(30)
         return present(ev[2])
 
-    def until_battle(facing, presses=24):
+    def until_battle(facing, presses=40):  # (the staged scenes have more to read)
         g.face(facing)
         g.tick(30)
         for _ in range(presses):
