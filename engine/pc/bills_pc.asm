@@ -1314,7 +1314,9 @@ GetStorageBoxMon:
 	ret
 
 .read_party
-	and a
+	; (Link Edition fix: was `and a`, but a is always 0 here, so the OT party
+	; was counted as long as yours; going past its end read a non-Pokemon)
+	bit 7, b
 	ld a, [wPartyCount]
 	jr z, .got_partycount
 	ld a, [wOTPartyCount]
