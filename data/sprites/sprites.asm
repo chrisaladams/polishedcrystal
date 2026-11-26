@@ -230,4 +230,5 @@ SpriteHeaders:
 	overworld_sprite SilverTrophySpriteGFX, STANDING_SPRITE, PAL_OW_BROWN
 	overworld_sprite MollySpriteGFX, WALKING_SPRITE, PAL_OW_BROWN ; (Link Edition)
 	overworld_sprite IronMaskSpriteGFX, WALKING_SPRITE, PAL_OW_GRAY ; (Link Edition)
+	overworld_sprite PikachuSpriteGFX, WALKING_SPRITE, PAL_OW_ORANGE ; (Link Edition)
 	assert_table_length NUM_OVERWORLD_SPRITES

@@ -659,3 +659,8 @@ MollySpriteGFX:: INCBIN "gfx/sprites/molly.2bpp.lzp"
 
 SECTION "IronMaskSpriteGFX", ROMX
 IronMaskSpriteGFX:: INCBIN "gfx/sprites/iron_mask.2bpp.lzp"
+
+; Link Edition: Ash's Pikachu, Pokémon Yellow's walking sprite (pret/pokeyellow),
+; its two middle shades swapped for Crystal's palettes
+SECTION "PikachuSpriteGFX", ROMX
+PikachuSpriteGFX:: INCBIN "gfx/sprites/pikachu.2bpp.lzp"

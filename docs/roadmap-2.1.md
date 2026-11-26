@@ -201,7 +201,11 @@ headband and a bow) and the Iron-Masked Marauder (`SPRITE_IRON_MASK`, from the
 Gen 2 burglar, an iron mask and helmet), each six frames at 16×16 in the
 game's four shades, used by the Research Center's Molly and the Ilex Forest
 Marauder. No published Gen 2-style sprites of these characters with reuse
-terms were found, so the rest follow the same approach. Evidence:
+terms were found, so the rest follow the same approach. Ash's Pikachu is
+Pokémon Yellow's walking sprite (`SPRITE_PIKACHU`, from the pret/pokeyellow
+disassembly, its middle shades swapped for Crystal's palettes), replacing
+the icon in the Pallet final ([`phase5-screens/pikachu-sprite.png`](phase5-screens/pikachu-sprite.png));
+Yellow's Jessie, James and Officer Jenny are already in Polished Crystal. Evidence:
 [`phase5-screens/molly-and-marauder-sprites.png`](phase5-screens/molly-and-marauder-sprites.png),
 [`phase5-screens/molly-sprite-frames.png`](phase5-screens/molly-sprite-frames.png).)*
 
