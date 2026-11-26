@@ -138,9 +138,10 @@ palettes, music, movement and map state.
   To do: spreading crystal formations, environmental restoration after the
   rescue.
 - **Celebi: Voice of the Forest** — done: dark forest atmosphere, corrupted
-  encounters, shrine pulses and green sparkles. To do: time distortion,
-  enhanced corruption and healing, cinematic Celebi departure, expanded Sammy
-  and Oak reveal.
+  encounters, shrine pulses and green sparkles; a title card; corruption and
+  healing (Celebi a shadow until the shrine heals it, the forest blooming),
+  time distortion (a white haze as Sammy arrives) and Celebi's departure (it
+  rises before it takes him home). To do: expanded Sammy and Oak reveal.
 - **Orange League and Pallet Invitational** — done: all four Crew challenges,
   elemental battle introductions, badge progress announcements, Drake's trophy
   effects, wind and snow on Danny's first summit visit, and a splash and chime

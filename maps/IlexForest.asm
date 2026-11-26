@@ -838,6 +838,11 @@ IlexForestPlayerStepsDownMovement:
 	remove_fixed_facing
 	step_end
 
+MovementData_CelebiRise:
+	slow_step_up
+	slow_step_up
+	step_end
+
 MovementData_CelebiDance:
 	slow_step_left
 	slow_step_right
@@ -1263,6 +1268,7 @@ IlexForestIronMaskScript:
 ; Link Edition: Celebi: Voice of the Forest. The forest darkens around him
 ; (engine/events/cinematic.asm), and its light is back for the battle.
 	faceplayer
+	scene_title .Title
 	scene_begin
 	playsound SFX_PROTECT
 	scene_tint TINT_DARK
@@ -1296,6 +1302,9 @@ IlexForestIronMaskScript:
 .AnotherLead:
 	farscall TraceyCallsWithALead
 	sjump IlexForestMarauderPrizeScript
+
+.Title:
+	db "VOICE OF THE FOREST@"
 
 .Vision:
 	text "In Celebi's eyes"
@@ -1402,6 +1411,7 @@ IlexForestSammyScene:
 	scene_begin
 	moveobject ILEXFOREST_CELEBI, 10, 25
 	appear ILEXFOREST_CELEBI
+	scene_shadow ILEXFOREST_CELEBI ; (the Dark Ball's harm: a shadow of itself)
 	playsound SFX_BALL_POOF
 	waitsfx
 	cry CELEBI
@@ -1410,19 +1420,26 @@ IlexForestSammyScene:
 	playsound SFX_GAME_FREAK_LOGO_GS
 	scene_tint TINT_GREEN
 	scene_pulse TINT_GREEN
+	scene_unshadow ILEXFOREST_CELEBI ; (healed: its own colors again)
+	scene_weather OW_WEATHER_CHERRY_BLOSSOMS ; (and the forest blooms)
 	showemote EMOTE_SPARKLE_GREEN, ILEXFOREST_CELEBI, 20
 	waitsfx
 	applymovement ILEXFOREST_CELEBI, MovementData_CelebiDance
 	cry CELEBI
 	showtext .HealedText
+	; (time bends: a white haze as Sammy steps out of his own time)
+	scene_tint TINT_WHITE
 	playsound SFX_WARP_FROM
 	appear ILEXFOREST_SAMMY
 	waitsfx
+	scene_restore
 	showemote EMOTE_SHOCK, ILEXFOREST_SAMMY, 15
 	showtext .SammyText
 	turnobject ILEXFOREST_SAMMY, LEFT
 	cry CELEBI
 	showemote EMOTE_SPARKLE_GREEN, ILEXFOREST_CELEBI, 15
+	; (it rises, and takes him home)
+	applymovement ILEXFOREST_CELEBI, MovementData_CelebiRise
 	playsound SFX_WARP_TO
 	scene_flash 2
 	disappear ILEXFOREST_SAMMY
