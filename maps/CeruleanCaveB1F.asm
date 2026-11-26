@@ -2,6 +2,7 @@ CeruleanCaveB1F_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, CeruleanCaveB1FCastCallback
 
 	def_warp_events
 	warp_event  5,  7, CERULEAN_CAVE_1F, 5
@@ -17,9 +18,22 @@ CeruleanCaveB1F_MapScriptHeader:
 	object_event  7, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, MEWTWO, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, PLAIN_FORM, CeruleanCaveMewtwo, EVENT_CERULEAN_CAVE_MEWTWO
 	itemball_event 26,  9, MAX_ELIXIR, 1, EVENT_CERULEAN_CAVE_B1F_MAX_ELIXIR
 	itemball_event 26,  3, ULTRA_BALL, 1, EVENT_CERULEAN_CAVE_B1F_ULTRA_BALL
+	; Link Edition: the copies of your team, seen only in the clone scene
+	object_event  7, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, MEWTWO, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  7, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, MEWTWO, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  7, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, MEWTWO, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const CERULEANCAVEB1F_MEWTWO
+	const CERULEANCAVEB1F_MAX_ELIXIR
+	const CERULEANCAVEB1F_ULTRA_BALL
+	const CERULEANCAVEB1F_CLONE_1
+	const CERULEANCAVEB1F_CLONE_2
+	const CERULEANCAVEB1F_CLONE_3
+
+CeruleanCaveB1FCastCallback:
+	setevent EVENT_POST_RED_PERSON_HIDDEN ; (the clone scene's copies)
+	endcallback
 
 CeruleanCaveMewtwo:
 	faceplayer
@@ -107,25 +121,42 @@ CeruleanCavePsychicEcho:
 	done
 
 CeruleanCaveCloneBattle:
-	; Link Edition: the first story scene (engine/events/cinematic.asm):
-	; silence, psychic pulses, the cave in Mewtwo's light while it speaks,
-	; then a flash, colors and music back, and the clones
+	; Link Edition: a story scene (engine/events/cinematic.asm): silence,
+	; psychic pulses, Mewtwo a shadow in its own light while its voice
+	; speaks; your team's copies rise from the pool one by one, shadows; at
+	; its cry, a flash and Mewtwo in its colors, and the clones' battle
 	scene_begin
 	musicfadeout MUSIC_NONE, 8
+	scene_shadow CERULEANCAVEB1F_MEWTWO ; (if it's here: not after it's caught)
 	pause 20
 	scene_pulse TINT_PURPLE
 	scene_tint TINT_PURPLE
 	showtext .ClonesText
-	; (shadows rise from the pool)
 	playsound SFX_PROTECT
 	earthquake 8
-	scene_silhouette
-	pause 30
-	scene_restore
-	scene_tint TINT_PURPLE
+	scene_clone CERULEANCAVEB1F_CLONE_1, 0
+	scene_place CERULEANCAVEB1F_CLONE_1, -3, -1
+	appear CERULEANCAVEB1F_CLONE_1
+	scene_shadow CERULEANCAVEB1F_CLONE_1
+	showemote EMOTE_SPARKLE_PURPLE, CERULEANCAVEB1F_CLONE_1, 15
+	scene_clone CERULEANCAVEB1F_CLONE_2, 1
+	scene_place CERULEANCAVEB1F_CLONE_2, 3, -1
+	appear CERULEANCAVEB1F_CLONE_2
+	scene_shadow CERULEANCAVEB1F_CLONE_2
+	showemote EMOTE_SPARKLE_PURPLE, CERULEANCAVEB1F_CLONE_2, 15
+	scene_clone CERULEANCAVEB1F_CLONE_3, 2
+	scene_place CERULEANCAVEB1F_CLONE_3, 0, -3
+	appear CERULEANCAVEB1F_CLONE_3
+	scene_shadow CERULEANCAVEB1F_CLONE_3
+	showemote EMOTE_SPARKLE_PURPLE, CERULEANCAVEB1F_CLONE_3, 15
+	pause 20
 	showtext .ClonesText2
 	cry MEWTWO
 	scene_flash 1
+	scene_unshadow CERULEANCAVEB1F_MEWTWO
+	disappear CERULEANCAVEB1F_CLONE_1
+	disappear CERULEANCAVEB1F_CLONE_2
+	disappear CERULEANCAVEB1F_CLONE_3
 	scene_end_keep_music ; (the silence lasts until the battle)
 	winlosstext .ClonesBeatenText, 0
 	loadtrainer MEWTWO_T, 1

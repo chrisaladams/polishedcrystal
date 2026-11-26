@@ -501,6 +501,42 @@ CinematicPlace::
 	ld d, a
 	farjp CopyDECoordsToMapObject
 
+CinematicClone::
+; Make a SPRITE_MON_ICON map object (the script's next byte) look like one of
+; your party (the byte after, from 0; the first if there aren't that many),
+; for the next appear: a scene's copies of your team.
+	call GetScriptByte
+	ld d, a
+	call GetScriptByte
+	ld c, a
+	ld a, [wPartyCount]
+	dec a
+	cp c
+	jr nc, .got_slot
+	ld c, 0
+.got_slot
+	ld a, c
+	ld hl, wPartyMon1 + MON_SPECIES
+	call GetPartyLocation
+	ld e, [hl] ; species
+	ld bc, MON_FORM - MON_SPECIES
+	add hl, bc
+	ld a, [hl]
+	and SPECIESFORM_MASK
+	push af
+	push de
+	ld a, d
+	call GetMapObject
+	pop de
+	ld hl, MAPOBJECT_RADIUS
+	add hl, bc
+	ld [hl], e
+	ld hl, MAPOBJECT_SIGHT_RANGE
+	add hl, bc
+	pop af
+	ld [hl], a
+	ret
+
 CinematicFlash::
 ; hScriptVar white flashes (1 to 3), not with Flash & Shake off.
 	call CinematicCalm

@@ -94,6 +94,13 @@ MACRO scene_place
 	db \1, LOW(\2), LOW(\3)
 ENDM
 
+MACRO scene_clone
+; A SPRITE_MON_ICON object \1 made to look like your party's Pokemon \2 (from
+; 0; the first if there aren't that many), for the next appear.
+	callasm CinematicClone
+	db \1, \2
+ENDM
+
 MACRO scene_restore
 ; The map's own palettes back at once, the scene still on.
 	callasm CinematicRestoreNow

@@ -22,6 +22,7 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_title .Line` | A title card: the screen fades to black, the line (one line in the script's bank, up to 18 characters, `@`-terminated) shows centered in white for about two seconds (A or B sooner), and the map comes back |
 | `scene_weather OW_WEATHER_*` | The scene's weather (`RAIN`, `SNOW`, `THUNDERSTORM`, `SANDSTORM`, `CHERRY_BLOSSOMS`, or `NONE` for a clear sky) until `scene_end`, which brings back the map's own. Only inside a scene; no lightning flashes during one |
 | `scene_place OBJ, dx, dy` | Puts a hidden object `dx` tiles right and `dy` down from the player (negative: left, up), for the next `appear`: a scene's cast placed around the player wherever they stand (on screen: −4 to 5 across, −4 to 4 down) |
+| `scene_clone OBJ, n` | A `SPRITE_MON_ICON` object made to look like your party's Pokémon `n` (from 0; the first if there aren't that many), for the next `appear` |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
 | `scene_pan DIR, n` | The camera moves `n` steps (1–15) toward `DOWN`, `UP`, `LEFT` or `RIGHT`: the player is hidden and walked there (the view follows the player), through walls and people, the follower put away; the script waits until it's there |
 | `scene_pan_back DIR, n` | Back the same way (give it the same `DIR` and `n`): the player shown again on their tile, walls and people solid again, the follower back under them |
@@ -66,7 +67,7 @@ An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.
 | Campaign | Where | Scene |
 |---|---|---|
 | Mewtwo Strikes Back | Pokémon Mansion B1F | The lab's lights flicker and dim while you read the flight log; a distant cry and a psychic pulse answer |
-| Mewtwo Strikes Back | Cerulean Cave B1F | Silence, psychic pulses and purple light while Mewtwo speaks; at "Look.", a rumble and every sprite a black shadow, rising from the pool; cry and flash, the silence lasting into the clone battle |
+| Mewtwo Strikes Back | Cerulean Cave B1F | Silence, psychic pulses and purple light while Mewtwo, a black shadow, speaks in your mind; at "Look.", a rumble and copies of your first three Pokémon rising around you one by one as shadows, each with a purple sparkle; at its cry, a flash and Mewtwo in its own colors, the silence lasting into the clone battle |
 | The Power of One | Fire, Ice, Lightning Island roofs | Each beacon pulses in its guardian's color as it's tuned (red, blue, gold) |
 | The Power of One | Shamouti shrine ruins | A title card, "THE POWER OF ONE", when the keeper first tells of the beacons. A storm gathers while Lawrence speaks: darkness, thunder and a flash, his theme playing on into the battle. When the lights meet: the storm at its height (rain, thunder, a rumble), Articuno, Zapdos and Moltres as black shapes in the lightning with their cries; blue light while Melody's song carries; Lugia rising as a shadow, a flash, and Lugia in its own colors as the storm clears and the daylight returns |
 | Spell of the Unown | Ruins of Alph Research Center | Before Molly's first battle, the Unown's power gathers around her: purple light, a purple sparkle, a rumble |

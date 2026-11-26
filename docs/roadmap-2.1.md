@@ -124,9 +124,10 @@ palettes, music, movement and map state.
 ## Phase 5 — Movie and anime campaign presentation (first pass implemented)
 
 - **Mewtwo Strikes Back** — done: clone battle and psychic introduction,
-  Cinnabar research logs, psychic lighting, silence and flashes. To do:
-  individual clone appearances, laboratory and cloning chamber staging, a
-  distinctive Mewtwo reveal, expanded psychic distortion.
+  Cinnabar research logs, psychic lighting, silence and flashes; individual
+  clone appearances (copies of your own team rising as shadows) and Mewtwo's
+  reveal (a shadow until its cry). To do: laboratory and cloning chamber
+  staging, expanded psychic distortion.
 - **The Power of One** — done: elemental beacon palette effects, Melody's song
   and Lawrence's confrontation; a title card; the escalating storm, the three
   legendary birds as silhouettes in the lightning, Lugia's emergence (a
