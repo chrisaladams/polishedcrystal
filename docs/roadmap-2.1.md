@@ -159,7 +159,14 @@ palettes, music, movement and map state.
   healing (Celebi a shadow until the shrine heals it, the forest blooming),
   time distortion (a white haze as Sammy arrives) and Celebi's departure (it
   rises before it takes him home); Oak's reveal as a memory (white haze, a
-  Celebi's cry, a green sparkle over him).
+  Celebi's cry, a green sparkle over him). Second pass: the corruption as the
+  forest turning dark and sickly purple around Celebi's shadow under the
+  Eterna Forest theme; the healing under the White Treehollow theme; the
+  farewell under the Celestial Tower theme, Sammy gone in a flash and the
+  camera following Celebi up through the trees. Evidence:
+  `test_movie_events.py`;
+  [`phase5-screens/celebi-corruption-healing.png`](phase5-screens/celebi-corruption-healing.png),
+  [`phase5-screens/celebi-departure.png`](phase5-screens/celebi-departure.png).
 - **Orange League and Pallet Invitational** — done: all four Crew challenges,
   elemental battle introductions, badge progress announcements, Drake's trophy
   effects, wind and snow on Danny's first summit visit, and a splash and chime

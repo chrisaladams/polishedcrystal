@@ -1409,15 +1409,21 @@ IlexForestSammyScene:
 	; (a story scene: the forest dims with Celebi's glow, and the shrine's
 	; green light pulses until the daylight comes back)
 	scene_begin
+	musicfadeout MUSIC_ETERNA_FOREST_DPPT, 8 ; (the forest's hurt)
 	moveobject ILEXFOREST_CELEBI, 10, 25
 	appear ILEXFOREST_CELEBI
 	scene_shadow ILEXFOREST_CELEBI ; (the Dark Ball's harm: a shadow of itself)
 	playsound SFX_BALL_POOF
 	waitsfx
 	cry CELEBI
+	; the corruption: the forest dark and sickly purple around it
 	scene_tint TINT_DARK
+	scene_tint TINT_PURPLE
 	showtext .HurtText
+	; the shrine's water: green light pulses out, and the forest heals
+	musicfadeout MUSIC_WHITE_TREEHOLLOW_W2, 8
 	playsound SFX_GAME_FREAK_LOGO_GS
+	scene_restore
 	scene_tint TINT_GREEN
 	scene_pulse TINT_GREEN
 	scene_unshadow ILEXFOREST_CELEBI ; (healed: its own colors again)
@@ -1436,15 +1442,23 @@ IlexForestSammyScene:
 	showemote EMOTE_SHOCK, ILEXFOREST_SAMMY, 15
 	showtext .SammyText
 	turnobject ILEXFOREST_SAMMY, LEFT
+	musicfadeout MUSIC_CELESTIAL_TOWER_BW, 8 ; (a farewell)
 	cry CELEBI
 	showemote EMOTE_SPARKLE_GREEN, ILEXFOREST_CELEBI, 15
-	; (it rises, and takes him home)
+	; it rises, and the camera follows it up through the trees
+	playsound SFX_WARP_TO
+	scene_flash 1
+	disappear ILEXFOREST_SAMMY
 	applymovement ILEXFOREST_CELEBI, MovementData_CelebiRise
+	scene_pan UP, 2
+	applymovement ILEXFOREST_CELEBI, MovementData_CelebiRise
+	showemote EMOTE_SPARKLE_GREEN, ILEXFOREST_CELEBI, 15
 	playsound SFX_WARP_TO
 	scene_flash 2
-	disappear ILEXFOREST_SAMMY
 	disappear ILEXFOREST_CELEBI
 	waitsfx
+	pause 30
+	scene_pan_back UP, 2
 	scene_end
 	showtext .GoneText
 	end
