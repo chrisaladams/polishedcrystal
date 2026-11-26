@@ -71,11 +71,17 @@ PokemonMansionDiary:
 	iffalse_jumptext PokemonMansionDiaryText
 	; (a story scene: the lab's lights flicker and dim while you read, and a
 	; psychic pulse answers from far away: engine/events/cinematic.asm)
+	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
+	iftruefwd .Read
+	scene_title .Title
+.Read:
 	scene_begin
 	scene_pulse TINT_DARK
 	scene_tint TINT_DARK
 	showtext .Report
 	cry MEWTWO
+	earthquake 10 ; (and the lab shakes: plaster dust falls)
+	showemote EMOTE_DUST, PLAYER, 15
 	scene_pulse TINT_PURPLE
 	scene_end
 	checkevent EVENT_READ_CINNABAR_CLONE_REPORT
@@ -86,6 +92,9 @@ PokemonMansionDiary:
 	promptbutton
 	farscall GiveNextStoryLead
 	endtext
+
+.Title:
+	db "MEWTWO STRIKES BACK@"
 
 .Report:
 	text "Lab flight log"

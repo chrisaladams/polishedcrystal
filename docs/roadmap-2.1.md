@@ -126,8 +126,9 @@ palettes, music, movement and map state.
 - **Mewtwo Strikes Back** — done: clone battle and psychic introduction,
   Cinnabar research logs, psychic lighting, silence and flashes; individual
   clone appearances (copies of your own team rising as shadows) and Mewtwo's
-  reveal (a shadow until its cry). To do: laboratory and cloning chamber
-  staging, expanded psychic distortion.
+  reveal (a shadow until its cry); a title card at the Cinnabar flight log,
+  and the lab shaking with falling dust at Mewtwo's answer. To do: a cloning
+  chamber set (needs its own tiles).
 - **The Power of One** — done: elemental beacon palette effects, Melody's song
   and Lawrence's confrontation; a title card; the escalating storm, the three
   legendary birds as silhouettes in the lightning, Lugia's emergence (a
@@ -141,7 +142,8 @@ palettes, music, movement and map state.
   encounters, shrine pulses and green sparkles; a title card; corruption and
   healing (Celebi a shadow until the shrine heals it, the forest blooming),
   time distortion (a white haze as Sammy arrives) and Celebi's departure (it
-  rises before it takes him home). To do: expanded Sammy and Oak reveal.
+  rises before it takes him home); Oak's reveal as a memory (white haze, a
+  Celebi's cry, a green sparkle over him).
 - **Orange League and Pallet Invitational** — done: all four Crew challenges,
   elemental battle introductions, badge progress announcements, Drake's trophy
   effects, wind and snow on Danny's first summit visit, and a splash and chime

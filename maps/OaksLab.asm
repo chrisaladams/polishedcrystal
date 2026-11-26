@@ -49,7 +49,15 @@ Oak:
 	checkevent EVENT_OAK_WAS_SAMMY
 	iftruefwd .NotSammy
 	writetext OakWasSammyText
-	promptbutton
+	waitbutton
+	closetext
+	scene_begin ; (a memory: the light goes white, a Celebi's cry, green sparkle)
+	scene_tint TINT_WHITE
+	cry CELEBI
+	showemote EMOTE_SPARKLE_GREEN, OAKSLAB_OAK, 20
+	showtext OakWasSammyMemoryText
+	scene_end
+	opentext
 	verbosegiveitem MASTER_BALL, iffalse_endtext
 	setevent EVENT_OAK_WAS_SAMMY
 	writetext OakWasSammyThanksText
@@ -672,8 +680,10 @@ OakWasSammyText:
 	line "Sammy, with a"
 	cont "Celebi, in Ilex"
 	cont "Forest?"
+	done
 
-	para "Ha! So it was you!"
+OakWasSammyMemoryText:
+	text "Ha! So it was you!"
 
 	para "When I was a boy,"
 	line "everyone called me"
