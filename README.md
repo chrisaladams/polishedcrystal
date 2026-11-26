@@ -388,7 +388,8 @@ no items or experience in its battles, and come back exactly as they were
   a Dragon type) at level 50 against Dragon Tamers Erick and Aegon, then
   Clair. The first win gives a Dragon Scale, each one after a PP Up.
 - **Rental Cup**, on floor 6F of the Goldenrod Department Store. Preview
-  three generated level-50 Pokémon before entering. Take that team through
+  three generated level-50 Pokémon before entering (Look shows each one's
+  stats, moves, item and ability). Take that team through
   three rounds against Jack, Gina and Rex, who also use rentals. The first
   win earns a Bottle Cap. Repeat wins earn a Big Pearl.
 - **World Championship**, at Indigo Plateau after Red. Talk to the Ace

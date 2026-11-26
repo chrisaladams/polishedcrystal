@@ -124,6 +124,38 @@ ENDM
 	const ALBUMCOUNT_CREW
 	const ALBUMCOUNT_KIMONO
 
+OrangeCrewTally::
+; Link Edition: after a Crew badge, how many of the four you have (as the
+; Adventure Album counts them).
+	callasm .Count
+	ifequalfwd 4, .All
+	writetext .Text
+	promptbutton
+	end
+.All:
+	writetext .AllText
+	promptbutton
+	end
+
+.Count:
+	ld a, ALBUMCOUNT_CREW
+	call AlbumCount
+	ld a, b
+	ldh [hScriptVar], a
+	ret
+
+.Text:
+	text "That's @"
+	text_decimal hScriptVar, 1, 1
+	text " of the"
+	line "four Crew badges."
+	done
+
+.AllText:
+	text "That's all four"
+	line "Crew badges!"
+	done
+
 Special_AdventureAlbum::
 	call FadeToMenu_BackupSprites
 	call LoadStandardFont

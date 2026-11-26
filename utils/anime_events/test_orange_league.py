@@ -187,9 +187,29 @@ def main():
             g.tick(2)
         return False
 
+    def tiles(s):
+        return bytes(0x7f if c == ' ' else 0x9f if c == '!' else 0x80 + ord(c) - 65 if c.isupper()
+                     else 0xa0 + ord(c) - 97 for c in s)
+    tallies = []  # what the Crew tally said after each badge (OrangeCrewTally)
+
+    def watch_tally():
+        screen = bytes(g.rd('wTilemap', i) for i in range(20 * 18))
+        at = screen.find(tiles(' of the'))
+        if at > 0 and 0xe0 <= screen[at - 1] <= 0xe9:
+            seen = screen[at - 1] - 0xe0
+        elif tiles('all four') in screen:
+            seen = 4
+        else:
+            return
+        if not tallies or tallies[-1][1] != seen or tallies[-1][0] != len(badges_won):
+            tallies.append((len(badges_won), seen))
+
+    badges_won = []
+
     def settle():
         # The badge and island hints can outlast a fixed button delay.
         for _ in range(90):
+            watch_tally()
             g.tick(30)
             if not g.rd('wScriptRunning') and not g.rd('wBattleMode'):
                 g.tick(45)
@@ -396,6 +416,9 @@ def main():
             assert location() == map_id(leader[1]) and position() == leader[2:4]
         if not flag(ev):
             fails.append((tag, 'no badge after winning'))
+        badges_won.append(tag)
+        if not any(n == len(badges_won) - 1 and seen == len(badges_won) for n, seen in tallies):
+            fails.append((tag, f'the badge tally did not say {len(badges_won)} of four (saw {tallies})'))
         earned = g.state()
         if tag == 'Rudy':
             select_party(g, 0)

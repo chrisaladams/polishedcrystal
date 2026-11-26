@@ -68,6 +68,7 @@ OrangeCrewLuanaScript:
 	playsound SFX_GET_BADGE
 	waitsfx
 	promptbutton
+	farscall OrangeCrewTally
 	farscall GiveNextStoryLead
 	endtext
 
