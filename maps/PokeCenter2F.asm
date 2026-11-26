@@ -112,6 +112,7 @@ LinkReceptionistScript_DoTradeOrBattle:
 	ifequalfwd LINK_ERR_MISMATCH_BUILD, .WrongBuild
 	ifequalfwd LINK_ERR_MISMATCH_RULES, .WrongRules
 	ifequalfwd LINK_ERR_INCOMPATIBLE_ROOMS, .IncompatibleRooms
+	ifequalfwd LINK_ERR_TRANSFER, .LinkFailed
 	; (the trade desk comes here too, with the rules of the last battle)
 	readmem wChosenCableClubRoom
 	ifnotequal LINK_COLOSSEUM - 1, .ComeIn
@@ -200,6 +201,14 @@ LinkReceptionistScript_DoTradeOrBattle:
 	writetext Text_IncompatibleRooms
 .CloseLink:
 	special Special_CloseLink
+	endtext
+
+.LinkFailed:
+	; Link Edition: what came wasn't whole (the other game wasn't ready yet)
+	special WaitForOtherPlayerToExit
+	writetext Text_LinkFailed
+	yesorno
+	iftrue LinkReceptionistScript_DoTradeOrBattle
 	endtext
 
 .LinkTimedOut:
@@ -404,6 +413,14 @@ Text_MustSaveGame:
 
 Text_PleaseWait:
 	text "Please wait."
+	done
+
+Text_LinkFailed:
+	text "The link didn't"
+	line "go through."
+
+	para "Would you like to"
+	line "try again?"
 	done
 
 Text_LinkTimedOut:

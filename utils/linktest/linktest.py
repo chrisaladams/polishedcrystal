@@ -396,6 +396,10 @@ class Side:
                     return 'rejected: different rules'
                 if 'the same build' in text:
                     return 'rejected: different build'
+                if "didn't" in text and 'go through' in text:
+                    # (the desk's checks got a garbled or missed exchange:
+                    # it offers to try again, and the default A says yes)
+                    self.say('    (desk: the link did not go through; trying again)')
                 if 'three eligible' in text:
                     return 'rejected: illegal Rising Star party'
                 # the linked World Championship's sessions that end at the desk

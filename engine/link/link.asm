@@ -2340,6 +2340,7 @@ PerformLinkChecks:
 
 	; Save other game ID and check link compatibility
 	call .SkipPreambleBytes
+	jmp c, .TransferError
 	ld [wLinkOtherPlayerGameID], a
 	; Is other game ID == our game ID?
 	cp LINK_GAME_ID
@@ -2374,6 +2375,7 @@ PerformLinkChecks:
 
 	; Save version and room bytes
 	call .SkipPreambleBytes
+	jmp c, .TransferError
 	ld [wLinkOtherPlayerVersion], a
 	ld a, [de]
 	ld [wLinkOtherPlayerVersion + 1], a
@@ -2435,7 +2437,22 @@ PerformLinkChecks:
 	jr z, .skip_options
 	; Perform options check
 	call .SkipPreambleBytes
+	jmp c, .TransferError
 	ld b, a
+	; (Link Edition: the build and rules bytes must be nybble bytes, or the
+	; exchange was garbled or missed: say so, not that the games differ)
+	push de
+	inc de ; (past the second options byte)
+	ld c, 4 + 1 ; the checksum's four nybble bytes, then the rules
+.whole
+	ld a, [de]
+	inc de
+	and $f0
+	cp $10
+	jr nz, .not_whole
+	dec c
+	jr nz, .whole
+	pop de
 	ld a, [wInitialOptions]
 	xor b
 	and LINK_OPTMASK
@@ -2509,6 +2526,14 @@ PerformLinkChecks:
 	ld a, LINK_ERR_MISMATCH_BUILD
 	jr .return_result_restore_interrupts
 
+.not_whole
+	pop de
+.TransferError
+; Link Edition: what came wasn't a whole message (the other game wasn't
+; ready, or the line was noisy): the desk offers to try again
+	ld a, LINK_ERR_TRANSFER
+	jr .return_result_restore_interrupts
+
 .WrongRules
 	ld a, LINK_ERR_MISMATCH_RULES
 	jr .return_result_restore_interrupts
@@ -2568,15 +2593,24 @@ PerformLinkChecks:
 
 .SkipPreambleBytes
 ; This sub function skips over the no longer
-; needed preamble bytes.
+; needed preamble bytes: a = the first data byte, de after it. (Link Edition:
+; carry if no preamble came within the most there can be, rather than
+; searching on past the buffer.)
 	ld de, wLinkReceivedPolishedMiscBuffer
+	ld b, SERIAL_POLISHED_MAX_PREAMBLE_LENGTH + 1
 .loop
 	ld a, [de]
 	inc de
 	cp SERIAL_POLISHED_PREAMBLE_BYTE
+	jr z, .found
+	dec b
 	jr nz, .loop
+	scf
+	ret
+.found
 	ld a, [de]
 	inc de
+	and a ; (no carry)
 	ret
 
 CheckCorrectLinkVersion:

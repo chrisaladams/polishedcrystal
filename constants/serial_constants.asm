@@ -262,3 +262,4 @@ DEF WORLD_LINK_BUFFER_LENGTH EQU 2 + 2 * WORLD_LINK_MESSAGE_LENGTH + SERIAL_POLI
 	const LINK_ERR_INCOMPATIBLE_ROOMS    ; 7
 	const LINK_ERR_MISMATCH_BUILD        ; 8 (Link Edition: different ROMs)
 	const LINK_ERR_MISMATCH_RULES        ; 9 (Link Edition: different battle rules)
+	const LINK_ERR_TRANSFER              ; 10 (Link Edition: what came wasn't whole; try again)

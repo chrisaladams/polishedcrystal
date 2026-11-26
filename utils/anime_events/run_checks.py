@@ -29,7 +29,7 @@ def main():
                            'cameos', 'whirl_cup', 'movie_events', 'campaigns', 'shadow_encounters', 'cups',
                            'cup_spotlight', 'achievements', 'friend_battles', 'friend_records',
                            'link_rules', 'bracket', 'cinematic', 'team_generation', 'link_options',
-                           'cup_eligibility')]
+                           'cup_eligibility', 'link_checks')]
     checks.append(['utils/linktest/test_world_prize.py', str(save)])
     checks.append(['utils/linktest/test_world_plan.py', str(save)])
     checks.append(['utils/wild_mons/test_wild_mons.py', str(save)]
