@@ -34,6 +34,9 @@ OrangeCrewLuanaScript:
 .SeasonOpen:
 	checkevent EVENT_BEAT_ORANGE_CREW_LUANA
 	iftruefwd .Rematch
+	closetext
+	scene_title .CrewTitle
+	opentext
 	writetext .IntroText
 	sjumpfwd .Confirm
 .Rematch:
@@ -80,6 +83,9 @@ OrangeCrewLuanaScript:
 .Lost:
 	callasm CupEnd
 	jumptext .ReturnText
+
+.CrewTitle:
+	db "ORANGE CREW: LUANA@"
 
 .IntroText:
 	text "I'm Luana of the"

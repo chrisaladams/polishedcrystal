@@ -172,8 +172,12 @@ palettes, music, movement and map state.
   effects, wind and snow on Danny's first summit visit, and a splash and chime
   at each accepted Surf checkpoint; title cards for the Orange League final
   and the Invitational; Drake's Dragonite and Ash's Pikachu coming out for
-  their finals; the championship ceremony; a closing card. To do: Tracey
-  himself in the sketch scene (with his sprite, Phase 6).
+  their finals; the championship ceremony; a closing card. Second pass: each
+  Crew leader's first challenge opens with a title card (ORANGE CREW: CISSY,
+  DANNY, RUDY, LUANA); Drake's Dragonite is the full Dragonite sprite; the
+  ceremony plays the Hall of Fame theme. Evidence: `test_orange_league.py`;
+  [`phase5-screens/orange-league-cards.png`](phase5-screens/orange-league-cards.png),
+  [`phase5-screens/orange-league-final.png`](phase5-screens/orange-league-final.png).
 
 ## Phase 6 — Character artwork and visual identity (substantial work remaining)
 

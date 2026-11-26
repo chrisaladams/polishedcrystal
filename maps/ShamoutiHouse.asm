@@ -15,7 +15,7 @@ ShamoutiHouse_MapScriptHeader:
 	def_object_events
 	object_event  4,  1, SPRITE_VETERAN_M, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OrangeLeagueDrakeScript, -1
 	; Link Edition: his Dragonite, out for the final and the ceremony
-	object_event  5,  1, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, DRAGONITE, -1, PAL_MON_ORANGE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  5,  1, SPRITE_DRAGONITE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const SHAMOUTIHOUSE_DRAKE
@@ -65,6 +65,7 @@ OrangeLeagueDrakeScript:
 	setevent EVENT_BEAT_DRAKE
 	scene_title .ChampionTitle
 	scene_begin ; (the ceremony: the trophy in gold light, sparkles, a roar)
+	playmusic MUSIC_HALL_OF_FAME
 	scene_tint TINT_GOLD
 	showemote EMOTE_SPARKLE, PLAYER, 20
 	showemote EMOTE_SPARKLE, SHAMOUTIHOUSE_DRAKE, 15

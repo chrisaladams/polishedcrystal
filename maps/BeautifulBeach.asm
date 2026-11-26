@@ -186,6 +186,9 @@ OrangeCrewRudyScript:
 .SeasonOpen:
 	checkevent EVENT_BEAT_ORANGE_CREW_RUDY
 	iftruefwd .Rematch
+	closetext
+	scene_title .CrewTitle
+	opentext
 	writetext .IntroText
 	sjumpfwd .Confirm
 .Rematch:
@@ -261,6 +264,9 @@ OrangeCrewRudyScript:
 .Lost:
 	callasm CupEnd
 	jumptext .RetryText
+
+.CrewTitle:
+	db "ORANGE CREW: RUDY@"
 
 .IntroText:
 	text "I'm Rudy of the"

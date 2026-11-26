@@ -209,6 +209,7 @@ OrangeCrewCissyScript:
 	writetext .IntroText
 	waitbutton
 	closetext
+	scene_title .CrewTitle
 	scene_begin ; (the surf breaks around her)
 	playsound SFX_SURF
 	scene_pulse TINT_BLUE
@@ -246,6 +247,9 @@ OrangeCrewCissyScript:
 .No:
 	closetext
 	end
+
+.CrewTitle:
+	db "ORANGE CREW: CISSY@"
 
 .IntroText:
 	text "Smooth sailing!"

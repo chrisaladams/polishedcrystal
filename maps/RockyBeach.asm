@@ -215,6 +215,9 @@ OrangeCrewDannyScript:
 	iftruefwd .Rematch
 	checkevent EVENT_REACHED_DANNYS_SUMMIT
 	iffalse_jumpopenedtext .PeakText
+	closetext
+	scene_title .CrewTitle
+	opentext
 	scene_begin ; (a cold wind across the summit while he speaks)
 	playsound SFX_WHIRLWIND
 	scene_tint TINT_WHITE
@@ -250,6 +253,9 @@ OrangeCrewDannyScript:
 .No:
 	closetext
 	end
+
+.CrewTitle:
+	db "ORANGE CREW: DANNY@"
 
 .IntroText:
 	text "You made it all"
