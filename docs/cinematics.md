@@ -41,6 +41,11 @@ Sparkles are emotes, so `showemote` draws them over a character:
 They share one 16×16 graphic (`gfx/emotes/sparkle.png`, a four-point star
 with two glints and no speech bubble), each with its own emote palette.
 
+Particles are emotes too: `EMOTE_DUST` (a gray-edged puff, for a landing, a
+rumble or rubble; `gfx/emotes/dust.png`) and `EMOTE_DROPS` (two blue water
+drops, for a splash, the sea or rain; `gfx/emotes/drops.png`), drawn the
+same way over a character (`docs/c0-screens/particle-emotes.png`).
+
 An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.asm`):
 
 ```
@@ -182,6 +187,16 @@ Fifteen steps each way at most (`CinematicPanSteps`). About 140 bytes.
 
 ## Not yet
 
-- **More particles** (dust, water). The sparkle emote is in. Each new shape
-  would cost about 50 to 64 bytes of graphics. A sparkle needs a character to
-  appear over, so the beacons and Lugia keep their color pulses.
+- **Particles away from a character.** Emotes appear over a character, so
+  the beacons and Lugia keep their color pulses.
+
+## Not possible: letterbox bars
+
+Black bars across the top and bottom of the screen were evaluated and set
+aside. A bar needs a layer drawn over the map for some lines only: the
+window, moved per line (the battle animations already write a register per
+line). But the overworld shows a text box by copying the screen onto the
+window and drawing on that, so bars would hide the text box (its second line
+sits where a bottom bar would go). Sprites can't do it either: two bars take
+40 sprites, every one the Game Boy has, and it shows only 10 on a line. Title
+cards (`scene_title`) frame a scene instead.

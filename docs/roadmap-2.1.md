@@ -67,12 +67,12 @@ duplication or unrecoverable tournament state in supported scenarios.
 - [x] Evaluate Rangi's latest compression improvements. *(Merged with upstream through `6aac915e3` (51 commits, November 2026): the simpler LZP copy-offset encoding, the >255-byte `LZ_ALTERNATE` fix, and every LZP file recompressed by the build.)*
 - [x] Evaluate upstream graphics recompression. *(Included in the same merge; the default build went from 8,988 B to 8,313 B free with all 51 commits, their new features included.)*
 - [ ] Integrate relevant upstream engine optimizations. *(Upstream merged through `6aac915e3`: palette glow from streetlights, lanterns, neon and lit doors, the lit Olivine Lighthouse, colored status icons in the party menu, map refinements and map-stitch annotations. Keep merging as upstream moves.)*
-- [ ] Audit duplicated tournament and link routines.
+- [x] Audit duplicated tournament and link routines. *(20 short repeats; the largest, link-message nybble coding in three link paths, is left alone: tens of bytes against protocol risk, with 2 MiB free. [`phase2-audits.md`](phase2-audits.md).)*
 - [ ] Investigate more efficient text and graphics encoding.
-- [ ] Improve ROM bank packing.
+- [ ] Improve ROM bank packing. *(Not needed for space since the move to 4 MiB; left for build tidiness.)*
 - [ ] Audit temporary WRAM allocation lifetimes.
 - [ ] Audit VRAM and OAM usage per screen.
-- [ ] Measure CPU and frame-time costs.
+- [ ] Measure CPU and frame-time costs. *(Overworld measured: visible wild Pokémon cost 3–5% lag frames in grass; their per-step choice now comes after the chance roll (odds unchanged); a spawn's reachability window is the remaining two-frame hitch. Battles, menus and link screens not yet measured. [`phase2-audits.md`](phase2-audits.md).)*
 - [x] Establish the actual memory requirements for the remaining roadmap. *([`memory-requirements.md`](memory-requirements.md): about 34–66 KB of ROM for the remaining phases against 10,171 B free; options for the owner: prioritize within 2 MiB, more lossless savings (1–4 KB likely), or an MBC5 cartridge, which the software clock now makes possible.)*
 
 If cartridge capacity becomes insufficient, present measured options before a
@@ -112,7 +112,10 @@ music restoration, the Flash & Shake accessibility option. Then:
 
 See [`cinematics.md`](cinematics.md).
 
-Pending: reusable particle effects, scene framing (letterbox bars).
+Particle effects: done as emotes, `EMOTE_DUST` and `EMOTE_DROPS` beside the
+sparkles. Scene framing (letterbox bars): evaluated and set aside, since the
+overworld's text boxes are drawn on the window, the only layer a bar could
+use (see [`cinematics.md`](cinematics.md)); title cards frame scenes instead.
 
 Investigate the existing overworld movement and scrolling systems before
 designing camera functionality. Effects share graphics and cleanly restore

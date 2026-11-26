@@ -195,6 +195,8 @@ DEF NUM_FLOORS EQU const_value
 	const EMOTE_SPARKLE        ; gold
 	const EMOTE_SPARKLE_GREEN  ; Celebi, the forest
 	const EMOTE_SPARKLE_PURPLE ; psychic power, the Unown
+	const EMOTE_DUST           ; a puff of dust: a landing, a rumble, rubble
+	const EMOTE_DROPS          ; water drops: a splash, the sea, rain
 DEF NUM_EMOTES EQU const_value
 DEF EMOTE_FROM_MEM EQU -1
 

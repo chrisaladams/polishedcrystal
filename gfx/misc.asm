@@ -150,6 +150,8 @@ BoltEmote::     INCBIN "gfx/emotes/bolt.2bpp.lzp"
 SleepEmote::    INCBIN "gfx/emotes/sleep.2bpp.lzp"
 FishEmote::     INCBIN "gfx/emotes/fish.2bpp.lzp"
 SparkleEmote::  INCBIN "gfx/emotes/sparkle.2bpp.lzp" ; Link Edition: story scenes
+DustEmote::     INCBIN "gfx/emotes/dust.2bpp.lzp"
+DropsEmote::    INCBIN "gfx/emotes/drops.2bpp.lzp"
 
 
 SECTION "Battle Graphics", ROMX

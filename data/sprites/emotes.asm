@@ -13,6 +13,8 @@ Emotes:
 	fardw SparkleEmote ; EMOTE_SPARKLE
 	fardw SparkleEmote ; EMOTE_SPARKLE_GREEN
 	fardw SparkleEmote ; EMOTE_SPARKLE_PURPLE
+	fardw DustEmote    ; EMOTE_DUST
+	fardw DropsEmote   ; EMOTE_DROPS
 	assert_table_length NUM_EMOTES
 
 EmotePalettes:
@@ -29,4 +31,6 @@ EmotePalettes:
 	db PAL_OW_EMOTE_ORANGE ; EMOTE_SPARKLE
 	db PAL_OW_EMOTE_GREEN  ; EMOTE_SPARKLE_GREEN
 	db PAL_OW_EMOTE_PURPLE ; EMOTE_SPARKLE_PURPLE
+	db PAL_OW_EMOTE_GRAY   ; EMOTE_DUST
+	db PAL_OW_EMOTE_BLUE   ; EMOTE_DROPS
 	assert_table_length NUM_EMOTES
