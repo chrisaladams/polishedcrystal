@@ -19,11 +19,11 @@ BANK_SIZE = {'ROM0': 0x4000, 'ROMX': 0x4000, 'VRAM': 0x2000, 'SRAM': 0x2000,
              'WRAM0': 0x1000, 'WRAMX': 0x1000, 'HRAM': 0x7f}
 
 
-def parse(path, rom_size=0x200000):
+def parse(path, rom_size=0x400000):
     """{(region, bank): {'used', 'free', 'gaps': [(start, size)], 'sections': [(name, start, size)]}}
 
     rgblink leaves out ROMX banks nothing was placed in; they count as empty
-    (rom_size: the cartridge's ROM, 2 MiB here)."""
+    (rom_size: the cartridge's ROM, 4 MiB here: MBC5 since Link Edition 2.1)."""
     banks = OrderedDict()
     cur = None
     for line in open(path, encoding='utf-8', errors='replace'):
@@ -78,7 +78,7 @@ def main():
     ap.add_argument('--compare', help='an older .map, for the change')
     ap.add_argument('--markdown', action='store_true', help='Markdown tables')
     ap.add_argument('--rom-banks', type=int, default=12, help='how many of the freest ROMX banks to list')
-    ap.add_argument('--rom-size', type=lambda s: int(s, 0), default=0x200000, help='the ROM size (default 2 MiB)')
+    ap.add_argument('--rom-size', type=lambda s: int(s, 0), default=0x400000, help='the ROM size (default 4 MiB, the MBC5 cartridge)')
     args = ap.parse_args()
     new = parse(args.map, args.rom_size)
     old = parse(args.compare, args.rom_size) if args.compare else None

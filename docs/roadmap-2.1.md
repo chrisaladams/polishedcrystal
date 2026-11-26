@@ -76,6 +76,9 @@ duplication or unrecoverable tournament state in supported scenarios.
 
 If cartridge capacity becomes insufficient, present measured options before a
 significant architectural decision. No existing content removal is authorized.
+*(Decided: the measured needs exceeded 2 MiB, and the owner has 4 MiB carts, so
+the game is now built for 4 MiB MBC5; see
+[`memory-requirements.md`](memory-requirements.md).)*
 
 ## Phase 3 — Competitive rules and tournament foundation (mostly implemented)
 

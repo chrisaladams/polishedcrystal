@@ -7,6 +7,9 @@ phases need, against what the cartridge has. Measured at commit `b63ee4f9a`
 
 ## What's free now
 
+(Before the move to 4 MiB; with it, about 2 MiB more ROM is free: the free
+space report shows 2,107,323 of 4,194,304 bytes.)
+
 | Memory | Free | Largest gap | Notes |
 |---|---:|---:|---|
 | ROM (2 MiB, MBC3) | 10,171 B | 9,954 B (bank `$7f`) | ROM0 has 200 B; ROMX 9,972 B |
@@ -78,6 +81,27 @@ recent features do.
    need moving across: a cartridge architecture decision the roadmap reserves
    for the owner.
 
-Until that decision, work continues on items that fit the current budget:
-the remaining phase 1 and 2 audits, the phase 4 engine pieces, and restrained
-phase 5 staging that reuses existing graphics.
+## Decision: 4 MiB MBC5
+
+The owner has 4 MiB cartridges, so Link Edition moves to MBC5 at 4 MiB (option
+3). That gives about 2 MiB more ROM, room for the whole remaining roadmap
+(34–66 KB) many times over. SRAM stays 32 KiB with the same layout, so saves
+carry over unchanged.
+
+What changed and how it was checked:
+
+- The ROM header says MBC5 + RAM + battery (`Makefile`). The game never
+  touches a real-time clock, and it switches banks by writing `$2000`, which
+  selects any of 256 banks on MBC5 and on 4 MiB MBC3 (MBC30) alike, so one ROM
+  runs on either kind of cart.
+- `tools/bankends` and `utils/memory_report.py` count 4 MiB (256 banks).
+- A stress build with 128 KiB of filler pushed 1,893 real sections (sprites,
+  map data, trainer groups and more) into banks `$80`–`$87`, making a 4 MiB
+  ROM. On it: run_checks 25/25 (once the software clock test expected the
+  MBC5 header), the linked championship test with 0 problems, and a link
+  battle in sync at all 33 exchanges.
+- The ROM stays 2 MiB until its first 128 banks fill; the free-space report
+  then counts the rest.
+
+Still to check on the family's own carts: that each is 4 MiB with at least
+32 KiB of save RAM, and a save copied onto one loads (owner, with hardware).

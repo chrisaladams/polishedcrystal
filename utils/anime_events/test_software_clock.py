@@ -90,7 +90,7 @@ def legacy_save(game, original, *, hardware, bad_primary=False):
 def main(path):
     original = Path(path).read_bytes()
     rom = (Path(ROOT) / 'polishedcrystal-3.2.3.gbc').read_bytes()
-    assert rom[0x147] == 0x13  # MBC3 with battery-backed RAM, no RTC
+    assert rom[0x147] == 0x1b  # MBC5 with battery-backed RAM: no RTC (Link Edition, 4 MiB carts)
     k = rgbasm_values(('MORN', 'DAY', 'EVE', 'NITE', 'SOFTWARE_CLOCK_MARKER', 'WORLD_CLOCK_DAYS',
                        'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'BUG_CONTEST_MINUTES', 'LIGHTNING_ROD',
                        'NORMAL', 'FAIRY'), None)

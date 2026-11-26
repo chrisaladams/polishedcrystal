@@ -286,8 +286,13 @@ Daylight runs from 06:00 to 18:00 in-game. Morning starts at 06:00, day at
 world clock when you quit. Older saves resume from their last saved in-game
 time.
 
-The game uses an MBC3 cartridge with battery-backed save RAM. The clock runs
-in software and pauses during link play. The Bug-Catching Contest still gives
+The game is built for a 4 MiB MBC5 cartridge with 32 KiB of battery-backed
+save RAM (the save layout is unchanged, so saves move between carts as they
+are). The clock runs in software and pauses during link play; with no
+real-time clock needed, MBC3 isn't either. The ROM grows past 2 MiB as the
+roadmap fills it. On the cartridge, both MBC5 and 4 MiB MBC3 (MBC30) carts
+switch banks the same way, so the ROM runs on either; the header says MBC5
+for emulators and flash-cart menus. The Bug-Catching Contest still gives
 you 20 minutes of play, and phone delays use gameplay time. Sightings and
 weekday events follow the in-game day.
 
