@@ -15,7 +15,10 @@ cable), here from the save's own party, under a made-up friend's name:
 - a Rising Star team battles three of yours, at level 30;
 - "Look" shows the team, then each one in the summary screen (Down to the
   next) at its rule's level, leaving nothing set up for a battle; "Next" goes to the other kept team, "Remove"
-  empties the slot and leaves the link records alone.
+  empties the slot and leaves the link records alone;
+- a kept team whose Pokemon has a form no species has (form 31, the field's
+  largest) is still safe: Look, its summary screen and a battle against it
+  all finish, the Pokemon shown and battled as its species' plain data.
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_friend_battles.py SAVE.sav
@@ -274,6 +277,35 @@ def main():
         fails.append(('remove', 'the other team went too'))
     if bytes(g.m[0, g.sym['sLinkBattleStats'][1] + i] for i in range(64)) != records:
         fails.append(('remove', 'the link records changed'))
+
+    # an impossible form (the record check passes it: forms aren't checked
+    # against each species, since the game reads an unknown one as the plain
+    # form). Look, the summary screen and a battle must all finish
+    K.update(rgbasm_values(['FORM_MASK', 'MON_FORM'], None))
+    g.load(base)
+    odd = bytearray(mine[0])
+    odd[K['MON_FORM']] = (odd[K['MON_FORM']] & ~K['FORM_MASK']) | K['FORM_MASK']
+    write_slot(0, pack([bytes(odd)] + mine[1:2], K['LINK_RULE_STANDARD'], 0, FRIEND))
+    write_slot(1, [0] * K['FRIEND_TEAM_LENGTH'])
+    talk()
+    menu(2)  # Look: the list, then the summary screen
+    g.tick(60)
+    g.press('a', 120)
+    g.tick(90)
+    shown = (g.rd('wTempMonSpecies'), g.rd('wTempMonForm') & K['FORM_MASK'])
+    if shown != (odd[K['MON_SPECIES']], K['FORM_MASK']):
+        fails.append(('odd form', f'summary showed {shown}'))
+    g.press('b', 120)
+    menu(1)  # Battle
+    if not until_battle():
+        fails.append(('odd form', 'no battle'))
+    else:
+        if g.rd('wOTPartyMon1Species') != odd[K['MON_SPECIES']]:
+            fails.append(('odd form', f'battled species {g.rd("wOTPartyMon1Species")}'))
+        win()
+        settle()
+        if g.rd("wBattleMode") or party_block() != before:
+            fails.append(('odd form', 'the battle did not finish with your party back'))
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')

@@ -48,7 +48,7 @@ Objective: finish, polish and stabilize the existing adventure.
 - [x] Cup party restoration (L6).
 - [x] Standardized competitive battle settings (L20).
 - [ ] Resolve linked championship prize recovery edge cases (L1).
-- [ ] Complete Friend Battle record validation.
+- [x] Complete Friend Battle record validation. *(`CheckFriendTeamFields` covers marker, checksum, rules, gender, count and each Pokémon. Forms are left unchecked by evaluation: the game reads an unknown form as the plain one, and `test_friend_battles.py` keeps a team with form 31 (no species has it) and plays Look, its summary screen and a battle to the end, the party back.)*
 - [ ] Evaluate stronger interrupted-write recovery (L3).
 - [x] Test trading immediately after championship sessions. *(`linktest.py --trade --last-rules world,normal` and `--last-rules world`: both cartridges reach the Trade Center, with no Championship session and no rules refusal.)*
 - [ ] Expand link interruption and recovery tests.
