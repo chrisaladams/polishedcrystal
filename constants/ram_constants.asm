@@ -130,12 +130,16 @@ DEF LINK_OPTMASK EQU (1 << NATURES_OPT) | (1 << ABILITIES_OPT) | (1 << PERFECT_I
 	const EVS_OPT_MODERN   ; %10
 DEF EV_OPTMASK EQU %11
 
-; Link Edition: the settings that change battles are fixed, the same on every
-; cartridge, so any two can link (LockLinkOptions): natures, abilities and
-; the physical/special split on, perfect IVs off, Modern EVs
-DEF LINK_OPTS_LOCKED EQU (1 << NATURES_OPT) | (1 << ABILITIES_OPT) | (1 << PSS_OPT)
+; Link Edition: every game setting is fixed, the same on every cartridge, so
+; everyone plays the same game and any two can link (LockLinkOptions; no New
+; Game options screen): natures, abilities, color variation and the
+; physical/special split on; perfect IVs, traded Pokemon obeying as your own,
+; the affection bonus, scaled experience and no experience off; Modern EVs;
+; evolving in battle on
+DEF LINK_OPTS_LOCKED EQU (1 << NATURES_OPT) | (1 << ABILITIES_OPT) | (1 << COLOR_VARY_OPT) | (1 << PSS_OPT)
 DEF LINK_EVS_LOCKED EQU EVS_OPT_MODERN
-	assert LINK_OPTS_LOCKED & ~LINK_OPTMASK == 0
+DEF GAME_OPTS2_MASK EQU EV_OPTMASK | (1 << NO_EXP_OPT) | (1 << EVOLVE_IN_BATTLE_OPT) | (1 << RESET_INIT_OPTS)
+DEF GAME_OPTS2_LOCKED EQU LINK_EVS_LOCKED | (1 << EVOLVE_IN_BATTLE_OPT)
 
 ; wOptionsMenuDescriptionState::
 	const_def

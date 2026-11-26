@@ -1,23 +1,31 @@
 #!/usr/bin/env python3
-"""Check the fixed battle settings (LockLinkOptions, engine/menus/
+"""Check the fixed game settings (LockLinkOptions, engine/menus/
 initial_options_menu.asm) in the running game (PyBoy).
 
-Natures, abilities and the physical/special split on, perfect IVs off and
-Modern EVs are the same on every cartridge, so any two can link:
+Every game setting is the same on every cartridge (the owner's decision:
+everyone plays the same game, and any two can link): natures, abilities,
+color variation and the physical/special split on; perfect IVs, traded
+Pokemon obeying as your own, the affection bonus, scaled experience and no
+experience off; Modern EVs; evolving in battle on. There is no New Game
+options screen, and no New Game+:
 
 - continuing a save whose settings differ corrects them before continuing
   redoes the party's EVs and stats (FixPlayerEVsAndStats, as on every
   continue), so the stats are the fixed settings';
 - continuing a save already on them changes no setting;
-- LockLinkOptions, from every mix of those settings, leaves exactly the
-  fixed ones, keeps the others (experience scaling, affection, colors, ...)
-  and says whether anything changed;
-- the New Game screen offers only the others.
+- LockLinkOptions, from every mix of the settings, leaves exactly the fixed
+  ones, keeps the second byte's other bits, and says whether anything
+  changed; the old reset-options request bit is cleared;
+- the main menu offers Continue, New Game, Options and Music Player, never
+  New Game+, even once Leaf is beaten (when New Game+ used to appear);
+- a New Game on a blank cartridge goes straight to Prof. Elm (no options
+  screen) with the fixed settings.
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_link_options.py SAVE.sav
 """
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -26,7 +34,9 @@ from test_friend_records import Caller, Game, rgbasm_values  # noqa: E402
 
 NAMES = ['NATURES_OPT', 'ABILITIES_OPT', 'COLOR_VARY_OPT', 'PERFECT_IVS_OPT', 'TRADED_AS_OT_OPT', 'AFFECTION_OPT',
          'SCALED_EXP_OPT', 'PSS_OPT', 'LINK_OPTMASK', 'EV_OPTMASK', 'EVS_OPT_CLASSIC', 'EVS_OPT_MODERN',
-         'LINK_OPTS_LOCKED', 'LINK_EVS_LOCKED', 'PARTYMON_STRUCT_LENGTH', 'MON_MAXHP', 'NUM_STATS']
+         'LINK_OPTS_LOCKED', 'LINK_EVS_LOCKED', 'PARTYMON_STRUCT_LENGTH', 'MON_MAXHP', 'NUM_STATS',
+         'GAME_OPTS2_MASK', 'GAME_OPTS2_LOCKED', 'NO_EXP_OPT', 'EVOLVE_IN_BATTLE_OPT', 'RESET_INIT_OPTS',
+         'EVENT_BEAT_LEAF']
 
 
 def main():
@@ -47,7 +57,7 @@ def main():
     off1 = sym['wInitialOptions'][1] - sym['wOptions'][1]
     off2 = sym['wInitialOptions2'][1] - sym['wOptions'][1]
     locked1 = K['LINK_OPTS_LOCKED']
-    personal = 1 << K['SCALED_EXP_OPT'] | 1 << K['AFFECTION_OPT'] | 1 << K['COLOR_VARY_OPT']
+    mask2, locked2 = K['GAME_OPTS2_MASK'], K['GAME_OPTS2_LOCKED']
 
     def boot(opts1, opts2):
         s = bytearray(save)
@@ -67,15 +77,18 @@ def main():
             out.append(bytes(g.m[1, a + k] for k in range(2 * K['NUM_STATS'])))
         return out
 
-    # a save from before, with other battle settings (natures off, perfect IVs
-    # on, Classic EVs), and some personal ones
-    other1 = (1 << K['ABILITIES_OPT']) | (1 << K['PERFECT_IVS_OPT']) | (1 << K['PSS_OPT']) | personal
-    other2 = K['EVS_OPT_CLASSIC']
+    # a save from before, with other settings: natures off, perfect IVs on,
+    # scaled experience, the affection bonus and traded-as-own on, color
+    # variation off; Classic EVs, no experience, no evolving in battle, and
+    # the old reset-options request
+    other1 = (1 << K['ABILITIES_OPT']) | (1 << K['PERFECT_IVS_OPT']) | (1 << K['PSS_OPT']) \
+        | (1 << K['SCALED_EXP_OPT']) | (1 << K['AFFECTION_OPT']) | (1 << K['TRADED_AS_OT_OPT'])
+    other2 = K['EVS_OPT_CLASSIC'] | (1 << K['NO_EXP_OPT']) | (1 << K['RESET_INIT_OPTS']) | (save[base + off2] & 0x08)
     g, fixes = boot(other1, other2)
     o1, o2 = g.rd('wInitialOptions'), g.rd('wInitialOptions2')
-    check(o1 & K['LINK_OPTMASK'] == locked1, f'old save: battle settings {o1:08b}, not the fixed ones')
-    check(o2 & K['EV_OPTMASK'] == K['LINK_EVS_LOCKED'], f'old save: EV mode {o2 & 3}, not Modern')
-    check(o1 & personal == personal, 'old save: personal settings were changed')
+    check(o1 == locked1, f'old save: settings {o1:08b}, not the fixed {locked1:08b}')
+    check(o2 & mask2 == locked2, f'old save: second settings {o2 & mask2:08b}, not the fixed {locked2:08b}')
+    check(o2 & ~mask2 == other2 & ~mask2, "old save: the second byte's other bits were changed")
     check(fixes, "old save: the party's EVs and stats weren't redone")
     redone = stats(g)
     caller = Caller(g)
@@ -83,35 +96,64 @@ def main():
     check(stats(g) == redone, "old save: the party's stats weren't what the fixed settings give")
     g.pb.stop(save=False)
 
-    # a save already on the fixed settings: nothing changes
-    same2 = (save[base + off2] & ~K['EV_OPTMASK']) | K['LINK_EVS_LOCKED']
-    g, fixes = boot(locked1 | personal, same2)
-    check(g.rd('wInitialOptions') == locked1 | personal and g.rd('wInitialOptions2') == same2,
+    # a save already on the fixed settings (the family's): nothing changes
+    same2 = (save[base + off2] & ~mask2) | locked2
+    g, fixes = boot(locked1, same2)
+    check(g.rd('wInitialOptions') == locked1 and g.rd('wInitialOptions2') == same2,
           'a save on the fixed settings: settings changed')
 
-    # LockLinkOptions from every mix of the battle settings
+    # LockLinkOptions from every mix of the first byte, and each second
     caller = Caller(g)
-    bits = [K['NATURES_OPT'], K['ABILITIES_OPT'], K['PERFECT_IVS_OPT'], K['PSS_OPT']]
-    for mix in range(16):
-        for ev in (0, K['EVS_OPT_CLASSIC'], K['EVS_OPT_MODERN']):
-            o1 = personal | sum(1 << b for i, b in enumerate(bits) if mix >> i & 1)
-            o2 = ev | (same2 & ~K['EV_OPTMASK'])
+    for o1 in range(256):
+        for extra2 in (0, K['EVS_OPT_CLASSIC'], (1 << K['NO_EXP_OPT']) | K['EVS_OPT_MODERN'],
+                       K['EVS_OPT_MODERN'], locked2, locked2 | (1 << K['RESET_INIT_OPTS'])):
+            o2 = extra2 | (same2 & ~mask2)
             g.wr('wInitialOptions', o1)
             g.wr('wInitialOptions2', o2)
             caller.call('LockLinkOptions')
             n1, n2 = g.rd('wInitialOptions'), g.rd('wInitialOptions2')
-            want_change = (o1 & K['LINK_OPTMASK']) != locked1 or ev != K['LINK_EVS_LOCKED']
-            if n1 != (o1 & ~K['LINK_OPTMASK']) | locked1 or n2 != (o2 & ~K['EV_OPTMASK']) | K['LINK_EVS_LOCKED']:
+            want_change = o1 != locked1 or o2 & mask2 != locked2
+            if n1 != locked1 or n2 != (o2 & ~mask2) | locked2:
                 fails.append(f'LockLinkOptions from {o1:08b}/{o2:08b}: {n1:08b}/{n2:08b}')
             if caller.out['carry'] != want_change:
                 fails.append(f'LockLinkOptions from {o1:08b}/{o2:08b}: said changed={caller.out["carry"]}')
+    g.pb.stop(save=False)
 
-    # the New Game screen's rows: only the settings that aren't fixed
-    bank, addr = g.sym['InitialOptionsMenuItems']
-    rom = open(os.path.join(os.path.dirname(os.path.dirname(HERE)), 'polishedcrystal-3.2.3.gbc'), 'rb').read()
-    at = bank * 0x4000 + addr - 0x4000 if bank else addr
-    items = list(rom[at:at + rom[at] + 2])
-    check(items == [5, 5, 6, 8, 9, 10, 0xff], f'the New Game rows are {items}')
+    # the main menu: no New Game+, even once Leaf is beaten
+    s = bytearray(save)
+    leaf = K['EVENT_BEAT_LEAF']
+    bank, addr = sym['sPlayerData']
+    events = sym['wEventFlags'][1] - sym['wPlayerData'][1]
+    at = bank * 0x2000 + addr - 0xa000 + events + leaf // 8
+    s[at] |= 1 << (leaf % 8)
+    g = Game(bytes(s))
+    g.boot()
+    caller = Caller(g)
+    check(g.rd('wSaveFileExists'), '(the save was not loaded)')
+    caller.call('MainMenu_GetWhichMenu')
+    menus = open(os.path.join(os.path.dirname(os.path.dirname(HERE)), 'engine', 'menus', 'main_menu.asm')).read()
+    menus = re.findall(r'const (MAINMENU_MENU_\w+)', menus)
+    check(menus == ['MAINMENU_MENU_NEW_GAME', 'MAINMENU_MENU_CONTINUE'], f'main menu lists: {menus}')
+    check(caller.out['A'] == menus.index('MAINMENU_MENU_CONTINUE'),
+          f'the main menu with Leaf beaten: menu {caller.out["A"]}, not Continue')
+    check('NewGamePlus' not in g.sym and 'MainMenu_NewGamePlus' not in g.sym, 'New Game+ is still in the ROM')
+    g.pb.stop(save=False)
+
+    # a New Game on a blank cartridge: no options screen, straight to Prof.
+    # Elm, with the fixed settings
+    g = Game(bytes(0x8000))
+    at_elm = []
+    g.pb.hook_register(*g.sym['ProfElmSpeech'],
+                       lambda _: at_elm.append((g.rd('wInitialOptions'), g.rd('wInitialOptions2'))), None)
+    g.tick(900)
+    for _ in range(12):
+        for button in ('start', 'a'):
+            if not at_elm:
+                g.press(button, 120)
+    check(at_elm, 'a New Game did not reach Prof. Elm')
+    if at_elm:
+        n1, n2 = at_elm[0]
+        check(n1 == locked1 and n2 & mask2 == locked2, f'a New Game started with {n1:08b}/{n2:08b}')
     g.pb.stop(save=False)
 
     print(f'{len(fails)} problems')

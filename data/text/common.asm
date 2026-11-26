@@ -3125,13 +3125,6 @@ _MayRegisterItemText::
 	line "on Select Button."
 	done
 
-SECTION "_InitialOptionsText", ROMX
-_InitialOptionsText::
-	text "Please choose how"
-	line "you want to play"
-	cont "Polished Crystal."
-	prompt
-
 SECTION "_ElmText1", ROMX
 _ElmText1::
 	text "Hello! Sorry to"
@@ -3759,12 +3752,6 @@ _ClearAllSaveDataText::
 	text "Clear adventure"
 	line "data? Link Card"
 	cont "totals stay."
-	done
-
-SECTION "ResetInitialOptionsText", ROMX
-ResetInitialOptionsText::
-	text "Reset the initial"
-	line "game options?"
 	done
 
 SECTION "_LearnedMoveText", ROMX

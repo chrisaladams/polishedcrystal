@@ -37,23 +37,20 @@ MainMenu:
 .Strings:
 	db "Continue@"
 	db "New Game@"
-	db "New Game+@"
 	db "Options@"
 	db "Music Player@"
 
 .Jumptable:
 	dw MainMenu_Continue
 	dw MainMenu_NewGame
-	dw MainMenu_NewGamePlus
 	dw MainMenu_Options
 	dw MainMenu_MusicPlayer
 
 	const_def
 	const MAINMENU_ITEM_CONTINUE      ; 0
 	const MAINMENU_ITEM_NEW_GAME      ; 1
-	const MAINMENU_ITEM_NEW_GAME_PLUS ; 2
-	const MAINMENU_ITEM_OPTION        ; 3
-	const MAINMENU_ITEM_MUSIC_PLAYER  ; 4
+	const MAINMENU_ITEM_OPTION        ; 2
+	const MAINMENU_ITEM_MUSIC_PLAYER  ; 3
 
 MainMenuItems:
 ; MAINMENU_MENU_NEW_GAME
@@ -69,37 +66,21 @@ MainMenuItems:
 	db MAINMENU_ITEM_OPTION
 	db MAINMENU_ITEM_MUSIC_PLAYER
 	db -1
-; MAINMENU_MENU_NEW_GAME_PLUS
-	db 5
-	db MAINMENU_ITEM_CONTINUE
-	db MAINMENU_ITEM_NEW_GAME
-	db MAINMENU_ITEM_NEW_GAME_PLUS
-	db MAINMENU_ITEM_OPTION
-	db MAINMENU_ITEM_MUSIC_PLAYER
-	db -1
+; (Link Edition: no New Game+, which overwrote the save but for money,
+; Battle Points and the PC)
 
 	const_def
 	const MAINMENU_MENU_NEW_GAME      ; 0
 	const MAINMENU_MENU_CONTINUE      ; 1
-	const MAINMENU_MENU_NEW_GAME_PLUS ; 2
 
 MainMenu_GetWhichMenu:
 	ld a, [wSaveFileExists]
 	and a
 	ld a, MAINMENU_MENU_NEW_GAME
 	ret z
-
-	ld a, BANK(sPlayerData)
-	call GetSRAMBank
-
-	flagcheck sPlayerData - wPlayerData + wEventFlags, EVENT_BEAT_LEAF
-	ld a, MAINMENU_MENU_NEW_GAME_PLUS
-	jr nz, .done
-
-	assert MAINMENU_MENU_NEW_GAME_PLUS - 1 == MAINMENU_MENU_CONTINUE
-	dec a ; MAINMENU_MENU_CONTINUE
-.done
-	jmp CloseSRAM
+	assert MAINMENU_MENU_NEW_GAME + 1 == MAINMENU_MENU_CONTINUE
+	inc a
+	ret
 
 MainMenuJoypadLoop:
 	call SetUpMenu
@@ -187,9 +168,6 @@ MainMenu_PrintCurrentTimeAndDay:
 
 MainMenu_NewGame:
 	farjp NewGame
-
-MainMenu_NewGamePlus:
-	farjp NewGamePlus
 
 MainMenu_Options:
 	farjp OptionsMenu

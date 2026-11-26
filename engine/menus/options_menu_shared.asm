@@ -119,38 +119,21 @@ OptionsShared_RunLoop:
 	jr .loop
 
 .exit
-	ld a, [wOptionsMenuIsInitial]
-	and a
-	jr z, .common_exit
-	ld hl, wInitialOptions2
-	res RESET_INIT_OPTS, [hl]
-.common_exit
 	ld de, SFX_TRANSACTION
 	call PlaySFX
 	jmp WaitSFX
 
 .DispatchAdvanceDesc:
-	ld a, [wOptionsMenuIsInitial]
-	and a
-	jmp z, OptionsMenu_AdvanceSelectionDescription
-	jmp OptionsShared_SimpleAdvanceDescription
+	; (Link Edition: only the Options menu now: no New Game options screen)
+	jmp OptionsMenu_AdvanceSelectionDescription
 
 OptionsShared_DispatchCallRoutine:
-	ld a, [wOptionsMenuIsInitial]
-	and a
-	jmp z, OptionsMenu_CallOptionRoutine
-	jmp InitialOptions_CallOptionRoutine
+	jmp OptionsMenu_CallOptionRoutine
 
 ; Dispatch to the correct description table based on menu type
 OptionsShared_DispatchLookupDescription:
-	ld a, [wOptionsMenuIsInitial]
-	and a
-	ld hl, InitialOptionDescriptions - 2 * 2
-	ld de, InitialOptionsDoneDescription
-	jr nz, .lookup
 	ld hl, OptionsDescriptions - 2 * 2
 	ld de, OptionsDoneDescription
-.lookup
 	call OptionsShared_LookupString
 	ld h, d
 	ld l, e
@@ -175,12 +158,7 @@ OptionsShared_DispatchLookupDescription:
 ; Dispatches on wOptionsMenuIsInitial to select the correct name table.
 OptionsShared_PlaceOptionName:
 	push de
-	ld a, [wOptionsMenuIsInitial]
-	and a
-	ld hl, InitialOptionNames - 2 * 2
-	jr nz, .lookup
 	ld hl, OptionNames - 2 * 2
-.lookup
 	ld de, .Done
 	call OptionsShared_LookupString
 	pop hl
@@ -236,9 +214,6 @@ OptionsShared_ResetSelectionDescription:
 
 	call OptionsShared_DispatchLookupDescription
 	call SetUpTextbox
-	ld a, [wOptionsMenuIsInitial]
-	and a
-	jmp nz, OptionsShared_PlaceDescriptionTextInstantly
 	call OptionsMenu_GetTextSpeedFlag
 	jmp OptionsShared_PlaceDescriptionText
 

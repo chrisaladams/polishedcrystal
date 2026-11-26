@@ -43,33 +43,6 @@ NewGame_ClearTileMapEtc:
 	call FillTileMap
 	jmp ClearWindowData
 
-NewGamePlus:
-	ld hl, .text
-	call PrintText
-	call YesNoBox
-	jr c, _MainMenu
-	xor a
-	assert NO_BG_MAP_TRANSFER == 0
-	ldh [hBGMapMode], a
-	farcall TryLoadSaveFile
-	ret c
-	jr _NewGame_FinishSetup
-
-.text
-	text "New Game+ will"
-	line "keep your previous"
-
-	para "game's money,"
-	line "Battle Points, and"
-
-	para "any #mon stored"
-	line "in the PC!"
-
-	para "Are you sure you"
-	line "you want to start"
-	cont "New Game+?"
-	done
-
 NewGame:
 	xor a
 	assert NO_BG_MAP_TRANSFER == 0
@@ -440,14 +413,10 @@ Continue_CheckClockReset:
 	jr Continue_FinishReset
 
 Continue_CheckEGO_ResetInitialOptions:
-	ld a, [wInitialOptions2]
-	bit RESET_INIT_OPTS, a
-	jr z, .skip_reset_initial_options
-	farcall SetInitialOptions
-.skip_reset_initial_options
-	; Link Edition: the settings that change battles, as on every cartridge
-	; (a game from before with others: continuing then redoes the party's EVs
-	; and stats for them, as it always does, in FixPlayerEVsAndStats)
+	; Link Edition: every game setting as on every cartridge (a game from
+	; before with others is corrected: continuing then redoes the party's EVs
+	; and stats for them, as it always does, in FixPlayerEVsAndStats). There
+	; is no options screen to reset to.
 	farcall LockLinkOptions
 	; fallthrough
 Continue_FinishReset:
@@ -1123,7 +1092,6 @@ StartTitleScreen:
 	dw CrystalIntroSequence
 	dw CrystalIntroSequence
 	dw ResetClock
-	dw ResetInitialOptions
 
 RunTitleScreen:
 	ld a, [wJumptableIndex]
@@ -1273,12 +1241,6 @@ TitleScreenMain:
 	inc a
 	jr z, .clock_reset
 
-; The early game options can be reset by pressing Left + B.
-	ld a, [hl]
-	or ~(PAD_LEFT + PAD_B)
-	inc a
-	jr z, .early_option_reset
-
 ; Press Start or A to start the game.
 	ld a, [hl]
 	and PAD_START | PAD_A
@@ -1320,10 +1282,6 @@ TitleScreenMain:
 	ld a, 4
 	jr .done
 
-.early_option_reset
-	ld a, 5
-	jr .done
-
 TitleScreenEnd:
 
 ; Wait until the music is done fading.
@@ -1349,10 +1307,6 @@ DeleteSaveData:
 
 ResetClock:
 	farcall _ResetClock
-	jmp Init
-
-ResetInitialOptions:
-	farcall _ResetInitialOptions
 	jmp Init
 
 Copyright:
