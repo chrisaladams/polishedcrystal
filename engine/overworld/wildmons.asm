@@ -169,17 +169,39 @@ TryWildSpawn:
 ; already there when you arrive). Return z with the Pokemon in
 ; wTempWildMonSpecies, wWildMonForm, wCurPartyLevel and wBattleType.
 	ld e, a
+	and a
+	jr nz, .choose ; (no chance to roll)
+	; The chance's roll first, against the most the chance can be (a lead's
+	; ability at most doubles it): most steps end here, before the costly
+	; choice. The same roll is compared with the real chance after, so the
+	; odds are exactly those of TryWildEncounter.
+	push de
+	call .BaseRate
+	sla b
+	jr nc, .bound
+	ld b, $ff
+.bound
+	call Random
+	pop de
+	cp b
+	jr nc, .no
+	ld d, a
+.choose
 	push de
 	call ChooseWildEncounter
 	pop de
 	jr nz, .no
 	push de
-	call TryWildEncounter.EncounterRate ; may choose again for lead abilities
+	call .BaseRate
+	call SetBattlerLevel
+	call ApplyAbilityEffectsOnEncounterMon ; may choose again for lead abilities
 	pop de
-	jr c, .yes
 	inc e
 	dec e
-	jr z, .no
+	jr nz, .yes
+	ld a, d
+	cp b
+	jr nc, .no
 .yes
 	xor a
 	ret
@@ -189,6 +211,12 @@ TryWildSpawn:
 	ld [wBattleType], a
 	inc a
 	ret
+
+.BaseRate:
+; b = the map's chance, after the music and a Cleanse Tag (as .EncounterRate)
+	call GetMapEncounterRate
+	call ApplyMusicEffectOnEncounterRate
+	jmp ApplyCleanseTagEffectOnEncounterRate
 
 TryRoamerSpawn:
 ; Link Edition: when every wild Pokemon you can see is already out, a roaming
