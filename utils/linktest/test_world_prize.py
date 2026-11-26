@@ -18,6 +18,8 @@ so the prize and the receipt are saved, or lost, together.
   has the receipt, so it's told it has the prize, not given it again;
 - power lost before saving: the reloaded game has neither prize nor receipt,
   and is given the prize;
+- after a completed save, corrupting the primary checksum restores the prize
+  and receipt from backup without allowing a second claim;
 - a first win (Ability Patch) with a full Bag: held at the desk with the
   receipt written, and given once there's room.
 
@@ -180,6 +182,24 @@ def main():
     check(d.items('BOTTLE_CAP') == caps, 'window', 'given again after the power cut')
     d.game_save()
     check(d.closed(), 'window', 'the next save did not close the bracket')
+
+    # Damage the primary checksum after a complete save, then Continue.
+    backup_caps = d.items('BOTTLE_CAP')
+    bank, address = d.g.sym['sChecksum']
+    primary_checksum = bank * 0x2000 + address - 0xa000
+    damaged = d.save(os.path.join(out, 'damaged_primary.sav'))
+    with open(damaged, 'r+b') as f:
+        f.seek(primary_checksum)
+        value = f.read(1)[0]
+        f.seek(primary_checksum)
+        f.write(bytes([value ^ 1]))
+    d = Desk(damaged)
+    check(backup_caps == 1 and d.items('BOTTLE_CAP') == backup_caps,
+          'backup recovery', 'the backup did not restore the prize')
+    check(d.closed() and d.receipt()[1:] == (ID & 0xff, ID >> 8),
+          'backup recovery', 'the backup did not restore the receipt for the closed bracket')
+    d.visit('b')
+    check(d.items('BOTTLE_CAP') == backup_caps, 'backup recovery', 'given again after loading the backup')
     d.g.pb.stop(save=False)
 
     # a first win with a full Bag: held at the desk, the receipt written
