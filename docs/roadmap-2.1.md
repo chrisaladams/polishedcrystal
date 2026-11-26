@@ -72,7 +72,7 @@ duplication or unrecoverable tournament state in supported scenarios.
 - [ ] Audit temporary WRAM allocation lifetimes.
 - [ ] Audit VRAM and OAM usage per screen.
 - [ ] Measure CPU and frame-time costs.
-- [ ] Establish the actual memory requirements for the remaining roadmap.
+- [x] Establish the actual memory requirements for the remaining roadmap. *([`memory-requirements.md`](memory-requirements.md): about 34–66 KB of ROM for the remaining phases against 10,171 B free; options for the owner: prioritize within 2 MiB, more lossless savings (1–4 KB likely), or an MBC5 cartridge, which the software clock now makes possible.)*
 
 If cartridge capacity becomes insufficient, present measured options before a
 significant architectural decision. No existing content removal is authorized.
