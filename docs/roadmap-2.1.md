@@ -47,9 +47,9 @@ Objective: finish, polish and stabilize the existing adventure.
 - [x] Party summary out-of-bounds access (L22).
 - [x] Cup party restoration (L6).
 - [x] Standardized competitive battle settings (L20).
-- [ ] Resolve linked championship prize recovery edge cases (L1).
+- [x] Resolve linked championship prize recovery edge cases (L1). *(New Game can no longer inherit the previous trainer's prize; a restored pre-prize backup against a closed bracket is an accepted, documented limit.)*
 - [x] Complete Friend Battle record validation. *(`CheckFriendTeamFields` covers marker, checksum, rules, gender, count and each Pokémon. Forms are left unchecked by evaluation: the game reads an unknown form as the plain one, and `test_friend_battles.py` keeps a team with form 31 (no species has it) and plays Look, its summary screen and a battle to the end, the party back.)*
-- [ ] Evaluate stronger interrupted-write recovery (L3).
+- [x] Evaluate stronger interrupted-write recovery (L3). *(Evaluated: a journal costs 143 B SRAM and about 100 B ROM to keep a friend team one battle restores; not done, by the owner's decision.)*
 - [x] Test trading immediately after championship sessions. *(`linktest.py --trade --last-rules world,normal` and `--last-rules world`: both cartridges reach the Trade Center, with no Championship session and no rules refusal.)*
 - [ ] Expand link interruption and recovery tests. *(Done so far: `test_world_plan.py`, the session plan from 27 crafted message pairs, injected out-of-range values included; trading after a Championship. Still open: disconnects at each commit boundary over the cable.)*
 - [x] Correct the simulator Baton Pass test harness. *(`oracle_turn.py` now answers "who comes in?" with the first Pokémon that can battle and isn't out; 48/48 matchups agree.)*

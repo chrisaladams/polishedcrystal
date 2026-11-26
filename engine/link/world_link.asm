@@ -643,6 +643,19 @@ WorldLinkClaim::
 	ld [hl], a
 	ret
 
+WorldLinkFinishedBefore:
+; z if this is a new adventure (before its first save) and the bracket in
+; wWorldLinkRecord was finished, champion or runner-up, before it began.
+	ld a, [wWorldLinkReceipt]
+	cp WORLD_LINK_NEW_GAME_MARK
+	ret nz
+.status
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	cp WORLDLINK_CHAMPION
+	ret z
+	cp WORLDLINK_RUNNER_UP
+	ret
+
 WorldLinkHasReceipt:
 ; z if this game's receipt names the bracket in wWorldLinkRecord.
 	ld hl, wWorldLinkReceipt
@@ -660,7 +673,20 @@ WorldLinkHasReceipt:
 WorldLinkCommitClaim::
 ; From SaveGameData, once the game is saved: a champion whose prize is in
 ; that save (its receipt) closes the bracket. (Tidying only: the receipt
-; already stops a second prize, even if the power goes before this.)
+; already stops a second prize, even if the power goes before this.) And a
+; new adventure's first save closes a bracket finished before it began.
+	ld a, [wWorldLinkReceipt]
+	cp WORLD_LINK_NEW_GAME_MARK
+	jr nz, .claimed
+	xor a
+	ld [wWorldLinkReceipt], a ; (the next save keeps that)
+	call WorldLinkLoad
+	ret nc
+	call WorldLinkFinishedBefore.status
+	ret nz
+	jr WorldLinkClose
+
+.claimed
 	call WorldLinkLoad
 	ret nc
 	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
@@ -834,6 +860,9 @@ WorldLinkOpponent::
 	bit WORLDLINK_CLOSED_F, a
 	ld a, WORLDDESK_NONE
 	jmp nz, .done
+	call WorldLinkFinishedBefore ; (the previous trainer's)
+	ld a, WORLDDESK_NONE
+	jmp z, .done
 	ld hl, wWorldLinkRecord + WORLD_LINK_PARTNER_NAME
 	ld de, wStringBuffer3
 	ld bc, PLAYER_NAME_LENGTH
@@ -964,6 +993,8 @@ WorldLinkIndigoPending::
 	cp WORLDLINK_CHAMPION
 	jr nz, .no
 	call WorldLinkHasReceipt
+	jr z, .no
+	call WorldLinkFinishedBefore ; (the previous trainer's)
 	jr z, .no
 .yes
 	or 1

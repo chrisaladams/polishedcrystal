@@ -21,7 +21,12 @@ so the prize and the receipt are saved, or lost, together.
 - after a completed save, corrupting the primary checksum restores the prize
   and receipt from backup without allowing a second claim;
 - a first win (Ability Patch) with a full Bag: held at the desk with the
-  receipt written, and given once there's room.
+  receipt written, and given once there's room;
+- a new adventure (New Game marks the receipt WORLD_LINK_NEW_GAME_MARK) never
+  gets the previous trainer's prize: a bracket finished before it began
+  (champion, even with the bracket left open by a power cut, or runner-up)
+  isn't offered or marked on the map, and its first save closes it and clears
+  the mark; a bracket still being played carries on and stays open.
 
 Usage (from the repository root, after make):
   python3 utils/linktest/test_world_prize.py SAVE.sav
@@ -42,7 +47,8 @@ K = rgbasm_values(['WORLD_LINK_ID', 'WORLD_LINK_SEED', 'WORLD_LINK_HALF', 'WORLD
                    'WORLD_LINK_PARTNER_NAME', 'WORLD_LINK_STATUS', 'WORLD_LINK_PARTNER_STATUS', 'WORLD_LINK_LENGTH',
                    'WORLDLINK_CHAMPION', 'WORLDLINK_RUNNER_UP', 'WORLDLINK_CLOSED_F', 'WORLDDESK_CHAMPION',
                    'WORLDDESK_CLAIMED', 'WORLDDESK_NONE', 'CUPWON_WORLD_F', 'MAX_ITEMS', 'MAX_ITEM_STACK',
-                   'BIG_NUGGET', 'BOTTLE_CAP', 'ABILITYPATCH', 'EVENT_WORLD_CUP_PRIZE_PENDING'], None)
+                   'BIG_NUGGET', 'BOTTLE_CAP', 'ABILITYPATCH', 'EVENT_WORLD_CUP_PRIZE_PENDING',
+                   'WORLDLINK_QUARTERFINAL', 'WORLDDESK_QUARTERFINAL', 'WORLD_LINK_NEW_GAME_MARK'], None)
 
 
 def check(cond, where, what):
@@ -218,6 +224,53 @@ def main():
     check(not d.event('EVENT_WORLD_CUP_PRIZE_PENDING'), 'first, room', 'still held after giving it')
     d.visit('b')
     check(d.items('ABILITYPATCH') == 1, 'first, again', 'given twice')
+    d.g.pb.stop(save=False)
+
+    # a new adventure: New Game writes the mark right after clearing the
+    # adventure's data (checked in the built code: call ResetWRAM, then
+    # ld a, WORLD_LINK_NEW_GAME_MARK and ld [wWorldLinkReceipt], a; New Game
+    # can't be called on its own here, and New Game+ shares this code)
+    d = Desk(sav)
+    bank, addr = d.g.sym['_NewGame_FinishSetup']
+    rom = open(os.path.join(ROOT, 'polishedcrystal-3.2.3.gbc'), 'rb').read()
+    at = bank * 0x4000 + addr - 0x4000 if bank else addr
+    reset, receipt = d.g.sym['ResetWRAM'][1], d.g.sym['wWorldLinkReceipt'][1]
+    want = bytes([0xcd, reset & 0xff, reset >> 8, 0x3e, K['WORLD_LINK_NEW_GAME_MARK'],
+                  0xea, receipt & 0xff, receipt >> 8])
+    check(rom[at:at + 8] == want, 'new game', f'New Game does not mark the receipt: {rom[at:at + 8].hex()}')
+    d.g.pb.stop(save=False)
+
+    # the previous trainer's finished bracket: not offered, closed at the
+    # first save (here a champion's, left open as by a power cut after its
+    # prize was saved, and a runner-up's)
+    mark = (K['WORLD_LINK_NEW_GAME_MARK'], 0, 0)
+    for status in ('WORLDLINK_CHAMPION', 'WORLDLINK_RUNNER_UP'):
+        where = f'new adventure, {status[10:].lower()}'
+        d = Desk(sav)
+        d.make_record(ID, status=K[status])
+        d.set_receipt(mark)
+        check(d.call('WorldLinkOpponent') == K['WORLDDESK_NONE'], where, 'the old bracket was offered')
+        d.caller.call('WorldLinkIndigoPending')
+        check(d.caller.out['zero'], where, 'marked on the quest map')
+        d.cup_won(True)
+        d.bag_full(False)
+        caps, patches = d.items('BOTTLE_CAP'), d.items('ABILITYPATCH')
+        d.visit('b')
+        check((d.items('BOTTLE_CAP'), d.items('ABILITYPATCH')) == (caps, patches), where, 'given a prize')
+        d.game_save()
+        check(d.closed(), where, 'the first save did not close it')
+        check(d.receipt()[0] == 0, where, f'the mark not cleared: {d.receipt()}')
+        d.g.pb.stop(save=False)
+
+    # a bracket still being played: the new trainer carries on, it stays open
+    d = Desk(sav)
+    d.make_record(ID, status=K['WORLDLINK_QUARTERFINAL'])
+    d.set_receipt(mark)
+    check(d.call('WorldLinkOpponent') == K['WORLDDESK_QUARTERFINAL'], 'new adventure, playing',
+          'its quarterfinal not offered')
+    d.game_save()
+    check(not d.closed(), 'new adventure, playing', 'the first save closed it')
+    check(d.receipt()[0] == 0, 'new adventure, playing', 'the mark not cleared')
     d.g.pb.stop(save=False)
 
     print(f'{len(fails)} problems')

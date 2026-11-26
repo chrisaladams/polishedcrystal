@@ -77,6 +77,10 @@ NewGame:
 	call ResetWRAM_NotPlus
 _NewGame_FinishSetup:
 	call ResetWRAM
+	; Link Edition: a linked bracket finished before this adventure isn't
+	; its own (engine/link/world_link.asm, until the first save)
+	ld a, WORLD_LINK_NEW_GAME_MARK
+	ld [wWorldLinkReceipt], a
 	farcall ClearSavedObjPals
 	ld a, -1
 	ld [wOvercastRandomDay], a
