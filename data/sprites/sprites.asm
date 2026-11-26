@@ -233,4 +233,10 @@ SpriteHeaders:
 	overworld_sprite PikachuSpriteGFX, WALKING_SPRITE, PAL_OW_ORANGE ; (Link Edition)
 	overworld_sprite MelodySpriteGFX, WALKING_SPRITE, PAL_OW_BROWN ; (Link Edition)
 	overworld_sprite DrakeSpriteGFX, WALKING_SPRITE, PAL_OW_BLUE ; (Link Edition)
+	overworld_sprite CissySpriteGFX, WALKING_SPRITE, PAL_OW_BLUE ; (Link Edition)
+	overworld_sprite DannySpriteGFX, WALKING_SPRITE, PAL_OW_BROWN ; (Link Edition)
+	overworld_sprite RudySpriteGFX, WALKING_SPRITE, PAL_OW_RED ; (Link Edition)
+	overworld_sprite LuanaSpriteGFX, WALKING_SPRITE, PAL_OW_PURPLE ; (Link Edition)
+	overworld_sprite SammySpriteGFX, WALKING_SPRITE, PAL_OW_GREEN ; (Link Edition)
+	overworld_sprite ScenePropsSpriteGFX, STANDING_SPRITE, PAL_OW_TEAL ; (Link Edition)
 	assert_table_length NUM_OVERWORLD_SPRITES

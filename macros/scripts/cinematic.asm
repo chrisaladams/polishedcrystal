@@ -123,3 +123,9 @@ MACRO scene_pan_back
 	callasm CinematicPan
 	callasm CinematicPanEnd
 ENDM
+
+MACRO scene_reload_map
+; The map's palettes as a story event left them become the ones the scene
+; goes back to (scene_restore, scene_end).
+	callasm CinematicReloadMap
+ENDM

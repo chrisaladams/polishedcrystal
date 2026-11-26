@@ -27,6 +27,10 @@ PokemonMansionB1F_MapScriptHeader:
 	object_event 18, 22, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, PokemonMansionDiary, -1
 	; Link Edition: the vision while you read the flight log
 	object_event 18, 20, SPRITE_ARMORED_MEWTWO, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	; Link Edition: the cloning tanks the log tells of (after Red)
+	object_event 15, 20, SPRITE_SCENE_PROPS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_TEAL, OBJECTTYPE_COMMAND, jumptext, PokemonMansionB1FTankText, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
+	object_event 15, 22, SPRITE_SCENE_PROPS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_TEAL, OBJECTTYPE_COMMAND, jumptext, PokemonMansionB1FTankText, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
+	object_event 22, 21, SPRITE_SCENE_PROPS, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_TEAL, OBJECTTYPE_COMMAND, jumptext, PokemonMansionB1FBrokenTankText, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
 	itemball_event 13,  5, CARBOS, 1, EVENT_POKEMON_MANSION_B1F_CARBOS
 	itemball_event  7,  6, CALCIUM, 1, EVENT_POKEMON_MANSION_B1F_CALCIUM
 	itemball_event 16, 27, HP_UP, 1, EVENT_POKEMON_MANSION_B1F_HP_UP
@@ -38,7 +42,30 @@ PokemonMansionB1F_MapScriptHeader:
 
 PokemonMansionB1FCastCallback:
 	setevent EVENT_POST_RED_PERSON_HIDDEN ; (the vision)
+	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
+	iftruefwd .Tanks
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1 ; (the tanks: after Red)
+.Tanks:
 	endcallback
+
+PokemonMansionB1FTankText:
+	text "A glass tank, its"
+	line "fluid long dried."
+
+	para "Wires trail from"
+	line "it to a console"
+	cont "marked GENOME."
+	done
+
+PokemonMansionB1FBrokenTankText:
+	text "This tank is"
+	line "shattered from the"
+	cont "inside."
+
+	para "A plate on its"
+	line "base reads:"
+	cont "SPECIMEN M2."
+	done
 
 TrainerScientistBraydon:
 	trainer SCIENTIST, BRAYDON, EVENT_BEAT_SCIENTIST_BRAYDON, ScientistBraydonSeenText, ScientistBraydonBeatenText, 0, .Script

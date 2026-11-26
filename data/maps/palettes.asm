@@ -75,6 +75,7 @@ SpecialBGPalettes:
 	special_bg_pal map,      NAVEL_ROCK_ROOF,                  TIMEOFDAY,   GRAY,   7, NavelRockPalette
 	special_bg_pal map,      FARAWAY_ISLAND_SOUTH,             TIMEOFDAY,   GRAY,   7, FarawayIslandSouthPalette
 	special_bg_pal map,      YELLOW_FOREST,                    TIMEWEATHER, GRAY,   7, YellowForestPalette
+	special_bg_pal map,      ILEX_FOREST,                      SPECIAL,     GREEN,  4, IlexForestSpecialCase ; * (Link Edition)
 	special_bg_pal map,      VIRIDIAN_FOREST,                  SINGLE,      RED,    5, ViridianForestPalette
 	special_bg_pal map,      CELADON_MANSION_ROOF,             TIMEWEATHER, GRAY,   7, CeladonMansionRoofPalette
 	special_bg_pal map,      CELADON_DEPT_STORE_ROOF,          TIMEWEATHER, GRAY,   7, CeladonMansionRoofPalette
@@ -907,6 +908,17 @@ rept 6
 	MONOCHROME_RGB_FOUR
 endr
 endr
+endc
+
+IlexCorruptionPalettes:
+; Link Edition: Ilex Forest under the Dark Ball (IlexForestSpecialCase):
+; the trees (green) and the paths (brown) at night, gone violet.
+if !DEF(MONOCHROME)
+	RGB 15,14,24, 13,07,17, 07,02,11, 00,00,00 ; green
+	RGB 15,14,24, 11,06,12, 06,02,06, 00,00,00 ; brown
+else
+	MONOCHROME_RGB_FOUR_NIGHT
+	MONOCHROME_RGB_FOUR_NIGHT
 endc
 
 YellowForestPalette:

@@ -135,7 +135,10 @@ palettes, music, movement and map state.
   `test_movie_events.py`, `test_story.py`;
   [`phase5-screens/mewtwo-clones.png`](phase5-screens/mewtwo-clones.png),
   [`phase5-screens/mewtwo-flight-log.png`](phase5-screens/mewtwo-flight-log.png).
-  To do: a cloning chamber set (needs its own tiles).
+  Third pass: after Red, Mansion B1F has the cloning tanks the log tells of,
+  two along the wall and one shattered from the inside ("SPECIMEN M2"),
+  each with its own text. Evidence:
+  [`phase5-screens/mansion-clone-tanks.png`](phase5-screens/mansion-clone-tanks.png).
 - **The Power of One** — done: elemental beacon palette effects, Melody's song
   and Lawrence's confrontation; a title card; the escalating storm, the three
   legendary birds as silhouettes in the lightning, Lugia's emergence (a
@@ -154,6 +157,9 @@ palettes, music, movement and map state.
   flash when Hale is free, the chamber itself again and its own music back.
   Evidence: `test_campaigns.py` (Alph staging);
   [`phase5-screens/unown-statue.png`](phase5-screens/unown-statue.png).
+  Third pass: the crystals are drawn crystal clusters (`SPRITE_SCENE_PROPS`)
+  instead of rock icons. Evidence:
+  [`phase5-screens/alph-crystals.png`](phase5-screens/alph-crystals.png).
 - **Celebi: Voice of the Forest** — done: dark forest atmosphere, corrupted
   encounters, shrine pulses and green sparkles; a title card; corruption and
   healing (Celebi a shadow until the shrine heals it, the forest blooming),
@@ -167,6 +173,14 @@ palettes, music, movement and map state.
   `test_movie_events.py`;
   [`phase5-screens/celebi-corruption-healing.png`](phase5-screens/celebi-corruption-healing.png),
   [`phase5-screens/celebi-departure.png`](phase5-screens/celebi-departure.png).
+  Third pass: the corrupted forest. While the Marauder holds Ilex Forest
+  (after Red and the time travel, until he's beaten) its trees are dark
+  violet through every visit, battle and menu (a special map palette,
+  `IlexForestSpecialCase`); at the shrine the green pulse fades into the
+  forest's own colors (`scene_reload_map`), and it stays healed. Sammy has
+  his own sprite. Evidence: `test_movie_events.py`;
+  [`phase5-screens/ilex-corruption.png`](phase5-screens/ilex-corruption.png)
+  (corrupted on arrival, the Dark Ball's hurt, the pulse, healed, Sammy).
 - **Orange League and Pallet Invitational** — done: all four Crew challenges,
   elemental battle introductions, badge progress announcements, Drake's trophy
   effects, wind and snow on Danny's first summit visit, and a splash and chime
@@ -175,7 +189,8 @@ palettes, music, movement and map state.
   their finals; the championship ceremony; a closing card. Second pass: each
   Crew leader's first challenge opens with a title card (ORANGE CREW: CISSY,
   DANNY, RUDY, LUANA); Drake's Dragonite is the full Dragonite sprite; the
-  ceremony plays the Hall of Fame theme. Evidence: `test_orange_league.py`;
+  ceremony plays the Hall of Fame theme. Third pass: Cissy, Danny, Rudy and
+  Luana have their own sprites. Evidence: `test_orange_league.py`;
   [`phase5-screens/orange-league-cards.png`](phase5-screens/orange-league-cards.png),
   [`phase5-screens/orange-league-final.png`](phase5-screens/orange-league-final.png).
   Pallet second pass: after the Invitational's card the camera pans across
@@ -210,7 +225,18 @@ Melody (`SPRITE_MELODY`, the beauty's long hair with a bow, in brown) and
 Drake (`SPRITE_DRAKE`, the veteran with a plain cap, in blue) followed
 ([`phase5-screens/melody-and-drake-sprites.png`](phase5-screens/melody-and-drake-sprites.png)). Evidence:
 [`phase5-screens/molly-and-marauder-sprites.png`](phase5-screens/molly-and-marauder-sprites.png),
-[`phase5-screens/molly-sprite-frames.png`](phase5-screens/molly-sprite-frames.png).)*
+[`phase5-screens/molly-sprite-frames.png`](phase5-screens/molly-sprite-frames.png).
+The Orange Crew and Sammy followed, each a Gen 2 head on a Gen 2 body, in
+the character's colors: Cissy (the beach girl's ponytail on the cooltrainer,
+blue), Danny (the skier's headband on the sailor, brown), Rudy (Falkner's
+swept hair on the cooltrainer, red), Luana (Lorelei's long hair on the
+lady, purple) and Sammy (Bill's hair on the schoolboy, green)
+([`phase5-screens/crew-and-sammy-sprites.png`](phase5-screens/crew-and-sammy-sprites.png)).
+Environment pieces, drawn for this: a cloning tank, an Unown crystal
+cluster and a thorn bramble, the three facings of one `SPRITE_SCENE_PROPS`
+(the overworld sprite list is full up to the Pokémon sprite range). Ilex
+Forest has no free object slot for brambles, so its corruption is a palette
+instead; the bramble frame is unused for now.)*
 
 ## Phase 7 — Version 2.0 validation (partially verified)
 

@@ -79,6 +79,19 @@ CinematicWeather::
 	ld [hl], a
 	farjp SetCurrentWeather
 
+CinematicReloadMap::
+; The map's own palettes as they are now become the ones the scene goes back
+; to (a story event changed them: Ilex Forest healed, IlexForestSpecialCase),
+; for the next scene_restore or scene_end, which fades to them.
+	ld hl, wCinematicFlags
+	bit CINEMATIC_ACTIVE_F, [hl]
+	ret z
+	farcall LoadMapPals ; (into wBGPals1; the screen shows wBGPals2)
+	ld hl, wBGPals1
+	ld de, wCinematicSavedPals
+	ld bc, 8 palettes
+	jmp FarCopyColorWRAM
+
 CinematicRestoreNow::
 ; The scene's starting palettes back, quickly, the scene still on.
 	ld c, 4

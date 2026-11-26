@@ -672,3 +672,23 @@ MelodySpriteGFX:: INCBIN "gfx/sprites/melody.2bpp.lzp"
 
 SECTION "DrakeSpriteGFX", ROMX
 DrakeSpriteGFX:: INCBIN "gfx/sprites/drake.2bpp.lzp"
+
+; Link Edition: the Orange Crew and Sammy (edited from Gen 2 sprites), and
+; scene pieces drawn for Link Edition (one sprite: facing down a cloning
+; tank, up corrupted thorns, sideways an Unown crystal)
+SECTION "CissySpriteGFX", ROMX
+CissySpriteGFX:: INCBIN "gfx/sprites/cissy.2bpp.lzp"
+
+SECTION "DannySpriteGFX", ROMX
+DannySpriteGFX:: INCBIN "gfx/sprites/danny.2bpp.lzp"
+
+SECTION "RudySpriteGFX", ROMX
+RudySpriteGFX:: INCBIN "gfx/sprites/rudy.2bpp.lzp"
+
+SECTION "LuanaSpriteGFX", ROMX
+LuanaSpriteGFX:: INCBIN "gfx/sprites/luana.2bpp.lzp"
+
+SECTION "SammySpriteGFX", ROMX
+SammySpriteGFX:: INCBIN "gfx/sprites/sammy.2bpp.lzp"
+SECTION "ScenePropsSpriteGFX", ROMX
+ScenePropsSpriteGFX:: INCBIN "gfx/sprites/scene_props.2bpp.lzp"

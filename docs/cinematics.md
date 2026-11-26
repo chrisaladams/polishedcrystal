@@ -24,6 +24,7 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_place OBJ, dx, dy` | Puts a hidden object `dx` tiles right and `dy` down from the player (negative: left, up), for the next `appear`: a scene's cast placed around the player wherever they stand (on screen: −4 to 5 across, −4 to 4 down) |
 | `scene_clone OBJ, n` | A `SPRITE_MON_ICON` object made to look like your party's Pokémon `n` (from 0; the first if there aren't that many), for the next `appear` |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
+| `scene_reload_map` | The map's own palettes, as a story event has just changed them, become the ones the scene goes back to (the next `scene_restore` or `scene_end` fades to them): Ilex Forest's corruption lifting at the shrine |
 | `scene_pan DIR, n` | The camera moves `n` steps (1–15) toward `DOWN`, `UP`, `LEFT` or `RIGHT`: the player is hidden and walked there (the view follows the player), through walls and people, the follower put away; the script waits until it's there |
 | `scene_pan_back DIR, n` | Back the same way (give it the same `DIR` and `n`): the player shown again on their tile, walls and people solid again, the follower back under them |
 | `scene_end` | Fades back to the starting palettes and restarts the map's music if the scene changed it |

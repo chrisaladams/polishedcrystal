@@ -228,6 +228,12 @@
 	const SPRITE_PIKACHU ; e0 (Link Edition: Ash's Pikachu, from Pokémon Yellow)
 	const SPRITE_MELODY ; e1 (Link Edition: The Power of One)
 	const SPRITE_DRAKE ; e2 (Link Edition: the Orange League)
+	const SPRITE_CISSY ; e3 (Link Edition: the Orange League)
+	const SPRITE_DANNY ; e4 (Link Edition: the Orange League)
+	const SPRITE_RUDY ; e5 (Link Edition: the Orange League)
+	const SPRITE_LUANA ; e6 (Link Edition: the Orange League)
+	const SPRITE_SAMMY ; e7 (Link Edition: Voice of the Forest)
+	const SPRITE_SCENE_PROPS ; e8 (Link Edition: facing down a cloning tank, up corrupted thorns, sideways an Unown crystal)
 DEF NUM_OVERWORLD_SPRITES EQU const_value - 1
 
 ; special GetMonSprite values (see engine/overworld/overworld.asm)

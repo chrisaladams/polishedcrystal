@@ -219,6 +219,31 @@ HiddenGrottoSpecialCase:
 	scf
 	ret
 
+IlexForestSpecialCase:
+; Link Edition: while the Iron Mask Marauder holds the forest (after Red,
+; once the time travel is done, until he's beaten), its trees and paths
+; are dark and sickly purple: the Dark Ball's corruption. Celebi's healing
+; brings the forest's own colors back (scene_reload_map, IlexForestSammyScene).
+	eventflagcheck EVENT_GOT_MYSTICTICKET_FROM_RED
+	jr z, .healthy
+	eventflagcheck EVENT_TIME_TRAVEL_FINISHED
+	jr z, .healthy
+	eventflagcheck EVENT_BEAT_IRON_MASK_MARAUDER
+	jr nz, .healthy
+	ld hl, IlexCorruptionPalettes
+	ld de, wBGPals1 palette PAL_BG_GREEN
+	ld bc, 1 palettes
+	call FarCopyColorWRAM
+	ld hl, IlexCorruptionPalettes + 1 palettes
+	ld de, wBGPals1 palette PAL_BG_BROWN
+	ld bc, 1 palettes
+	call FarCopyColorWRAM
+	scf
+	ret
+.healthy
+	and a
+	ret
+
 InitializeSpecialPaletteRegisters:
 	; b, c, d, e = [wMapGroup], [wMapNumber], landmark, [wMapTileset]
 	ld a, [wMapGroup]

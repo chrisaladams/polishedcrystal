@@ -13,7 +13,7 @@ ValenciaHouse_MapScriptHeader:
 
 	def_object_events
 	object_event  2,  3, SPRITE_CUTE_GIRL, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_RED, OBJECTTYPE_COMMAND, jumptextfaceplayer, ValenciaHouseLassText, -1
-	object_event  6,  3, SPRITE_LADY, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, OrangeCrewLuanaScript, -1
+	object_event  6,  3, SPRITE_LUANA, SPRITEMOVEDATA_STANDING_LEFT, 0, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_SCRIPT, 0, OrangeCrewLuanaScript, -1
 
 ValenciaHouseLassText:
 	text "Prof.Ivy is really"
