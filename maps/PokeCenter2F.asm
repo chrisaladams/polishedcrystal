@@ -554,6 +554,7 @@ FriendBattleDeskScript:
 .Look:
 	closetext
 	special Special_FriendTeamPreview
+	callasm FriendTeamSummary ; (Link Edition: then each one in detail)
 	opentext
 	sjump .Team
 

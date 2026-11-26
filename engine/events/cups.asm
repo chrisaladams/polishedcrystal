@@ -357,6 +357,34 @@ CupBegin::
 CupHealTeam::
 	farjp HealParty
 
+FriendTeamSummary::
+; Link Edition: the Friend desk's Look, after the team list: the team of
+; wFriendTeamSlot as you'd battle it (its rule's level), in the summary
+; screen. Nothing is left set up for a battle.
+	farcall FriendDeskArm
+	ld c, CUPRULE_LEVEL
+	call GetCupRules
+	ld a, [hl]
+	ld [wCupLevel], a
+	farcall LoadFriendTeam
+	xor a
+	ld [wCupLevel], a
+	ld [wFriendBattleSlot], a
+	ld [wBattleScriptFlags], a
+	; fallthrough
+
+OTPartySummary::
+; Link Edition: the summary screen (stats, moves, item, ability) for
+; wOTParty, from its first; Up and Down go through the others.
+	call FadeToMenu_BackupSprites
+	call LoadStandardFont
+	ld a, $80 ; (the OT party: GetStorageBoxMon)
+	ld [wTempMonBox], a
+	ld a, 1
+	ld [wTempMonSlot], a
+	farcall _OpenTempmonSummary
+	jmp ExitAllMenus
+
 CupEnd::
 ; Your party back as it was, healed.
 	call CupRestoreParty

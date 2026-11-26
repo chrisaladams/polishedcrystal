@@ -13,7 +13,8 @@ cable), here from the save's own party, under a made-up friend's name:
   50 and full HP; afterwards your party is back as it was, healed, and
   nothing is left set;
 - a Rising Star team battles three of yours, at level 30;
-- "Look" shows the team, "Next" goes to the other kept team, "Remove"
+- "Look" shows the team, then each one in the summary screen (Down to the
+  next) at its rule's level, leaving nothing set up for a battle; "Next" goes to the other kept team, "Remove"
   empties the slot and leaves the link records alone.
 
 Usage (from the repository root, after make):
@@ -244,6 +245,17 @@ def main():
     if bytes(FRIEND[:6]) not in shown:
         fails.append(('look', "the friend's name isn't shown"))
     g.press('a', 120)
+    # then the summary screen: the team as you'd battle it (Standard: 50)
+    g.tick(90)
+    looked = [(g.rd('wTempMonSpecies'), g.rd('wTempMonLevel'))]
+    g.press('down', 60)
+    looked.append((g.rd('wTempMonSpecies'), g.rd('wTempMonLevel')))
+    want = [(g.rd('wOTPartyMon1Species', i * L), 50) for i in range(2)]
+    if g.rd('wOTPartyCount') < 2 or looked != want:
+        fails.append(('look', f'summary showed {looked}, not {want}'))
+    g.press('b', 120)
+    if g.rd('wCupLevel') or g.rd('wFriendBattleSlot') or g.rd('wBattleScriptFlags'):
+        fails.append(('look', 'left a battle set up'))
     menu(4)  # Next
     g.tick(30)
     if g.rd('wFriendTeamSlot') != 1:

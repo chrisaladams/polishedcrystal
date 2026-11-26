@@ -35,7 +35,9 @@ Badge:
 
 The Rental Cup (Goldenrod Department Store 6F) supplies both sides with
 three generated level-50 Pokémon. The original party returns after losses
-and wins, and a full Bag leaves the first prize at the desk.
+and wins, and a full Bag leaves the first prize at the desk. "Look" shows
+each rental in the summary screen (Down to the next), at level 50, and the
+team entered afterwards is the one looked at.
 
 The World Championship opens after Red. Seven visiting trainers form an
 eight-person bracket with the player, using six level-50 Pokémon each.
@@ -594,6 +596,47 @@ def main():
         if not all(entry in by_value for entry in team):
             fails.append(('Rental draw', f'team outside the rental sets {team}'))
         return team
+
+    # Look: each rental in the summary screen, then enter with them
+    g.load(base)
+    rental_talk()
+    LOOK = bytes([0x8b, 0xae, 0xae, 0xaa])  # "Look", on the desk's menu
+    for _ in range(20):
+        if LOOK in bytes(g.rd('wTilemap', i) for i in range(20 * 18)):
+            break
+        g.press('a', 40)
+    g.tick(20)
+
+    def map_pals():
+        a = g.sym['wBGPals2'][1]
+        return bytes(g.m[5, a + k] for k in range(7 * 8))  # (the map's, not the text box's)
+    pals_before = map_pals()
+    g.press('down', 20)
+    g.press('a', 90)
+    looked = []
+    for _ in range(3):
+        looked.append((g.rd('wTempMonSpecies'), g.rd('wTempMonLevel')))
+        g.press('down', 60)
+    want = [(g.rd('wOTPartyMon1Species', i * L), 50) for i in range(3)]
+    if looked != want:
+        fails.append(('Rental look', f'summary showed {looked}, not {want}'))
+    # Down past the last (with a party of six, more than the three rentals)
+    # stays on it (GetStorageBoxMon once counted the OT party as yours)
+    if (g.rd('wTempMonSpecies'), g.rd('wTempMonLevel')) != want[-1] or g.rd('wPartyCount') <= 3:
+        fails.append(('Rental look', f'past the last rental: {g.rd("wTempMonSpecies")}, party {g.rd("wPartyCount")}'))
+    g.press('b', 90)
+    for _ in range(10):
+        if LOOK in bytes(g.rd('wTilemap', i) for i in range(20 * 18)):
+            break
+        g.press('a', 40)
+    if map_pals() != pals_before:
+        fails.append(('Rental look', "the map's colors weren't restored afterwards"))
+    assert until_battle(35), 'Rental Cup did not start after looking'
+    entered = [g.rd('wPartyMon1Species', i * L) for i in range(3)]
+    if entered != [s for s, _ in want]:
+        fails.append(('Rental look', f'entered {entered}, not the rentals looked at {want}'))
+    finish(False)
+    settle()
 
     g.load(base)
     rental_talk()

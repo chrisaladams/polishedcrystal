@@ -60,9 +60,23 @@ GoldenrodRentalCup:
 	iffalse_jumpopenedtext GoldenrodDeptStore6FSuperNerdText
 	loadmem wCupId, CUP_RENTAL
 	callasm CupSelectTeam
+.Choose:
 	writetext .TeamText
-	yesorno
-	iffalse_endtext
+	loadmenu .Menu
+	verticalmenu
+	closewindow
+	ifequalfwd 1, .Enter
+	ifequalfwd 2, .Look
+	endtext
+
+.Look:
+	; Link Edition: each rental's stats, moves, item and ability
+	closetext
+	callasm OTPartySummary
+	opentext
+	sjump .Choose
+
+.Enter:
 	closetext
 	callasm CupBegin
 	showtext .Round1Text
@@ -121,6 +135,18 @@ GoldenrodRentalCup:
 	line "own team waits"
 	cont "here. Want a draw?"
 	done
+.Menu:
+	db MENU_BACKUP_TILES
+	menu_coords 0, 0, 8, 7
+	dw .Choices
+	db 1
+.Choices:
+	db STATICMENU_CURSOR
+	db 3
+	db "Enter@"
+	db "Look@"
+	db "Cancel@"
+
 .TeamText:
 	text "Your rentals are:"
 	line "@"
