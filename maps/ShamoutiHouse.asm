@@ -2,6 +2,7 @@ ShamoutiHouse_MapScriptHeader:
 	def_scene_scripts
 
 	def_callbacks
+	callback MAPCALLBACK_OBJECTS, ShamoutiHouseCastCallback
 
 	def_warp_events
 	warp_event  2,  7, SHAMOUTI_ISLAND, 5
@@ -13,6 +14,16 @@ ShamoutiHouse_MapScriptHeader:
 
 	def_object_events
 	object_event  4,  1, SPRITE_VETERAN_M, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OrangeLeagueDrakeScript, -1
+	; Link Edition: his Dragonite, out for the final and the ceremony
+	object_event  5,  1, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, DRAGONITE, -1, PAL_MON_ORANGE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+
+	object_const_def
+	const SHAMOUTIHOUSE_DRAKE
+	const SHAMOUTIHOUSE_DRAGONITE
+
+ShamoutiHouseCastCallback:
+	setevent EVENT_POST_RED_PERSON_HIDDEN ; (Dragonite comes out in the scenes)
+	endcallback
 
 OrangeLeagueDrakeScript:
 ; Link Edition: the Orange League's Head Leader
@@ -35,10 +46,16 @@ OrangeLeagueDrakeScript:
 	writetext .IntroText
 	waitbutton
 	closetext
-	scene_begin ; (his Dragonite's roar shakes the room)
+	scene_title .FinalTitle
+	scene_begin ; (his Dragonite comes out, a shadow, and its roar shakes the room)
+	scene_place SHAMOUTIHOUSE_DRAGONITE, 1, -1
+	appear SHAMOUTIHOUSE_DRAGONITE
+	scene_shadow SHAMOUTIHOUSE_DRAGONITE
+	pause 15
 	cry DRAGONITE
 	earthquake 8
 	scene_flash 1
+	scene_unshadow SHAMOUTIHOUSE_DRAGONITE
 	waitsfx
 	scene_end
 	winlosstext .BeatenText, 0
@@ -46,15 +63,21 @@ OrangeLeagueDrakeScript:
 	startbattle
 	reloadmapafterbattle
 	setevent EVENT_BEAT_DRAKE
-	scene_begin ; (the trophy in gold light)
+	scene_title .ChampionTitle
+	scene_begin ; (the ceremony: the trophy in gold light, sparkles, a roar)
 	scene_tint TINT_GOLD
 	showemote EMOTE_SPARKLE, PLAYER, 20
+	showemote EMOTE_SPARKLE, SHAMOUTIHOUSE_DRAKE, 15
+	cry DRAGONITE
+	showemote EMOTE_HAPPY, SHAMOUTIHOUSE_DRAGONITE, 20
+	waitsfx
 	opentext
 	writetext .TrophyText
 	playsound SFX_GET_BADGE
 	waitsfx
 	promptbutton
 	scene_end
+	disappear SHAMOUTIHOUSE_DRAGONITE
 	farscall GiveNextStoryLead
 .Prize:
 	checkevent EVENT_GOT_ORANGE_LEAGUE_PRIZE
@@ -70,6 +93,11 @@ OrangeLeagueDrakeScript:
 	line "the Orange League"
 	cont "record book!"
 	done
+
+.FinalTitle:
+	db "ORANGE LEAGUE FINAL@"
+.ChampionTitle:
+	db "A NEW CHAMPION@"
 
 .Beaten:
 	checkevent EVENT_GOT_ORANGE_LEAGUE_PRIZE

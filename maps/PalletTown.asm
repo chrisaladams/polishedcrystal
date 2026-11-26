@@ -24,6 +24,13 @@ PalletTown_MapScriptHeader:
 	object_event 17,  7, SPRITE_SCHOOLBOY, SPRITEMOVEDATA_WALK_UP_DOWN, 2, 0, -1, 0, OBJECTTYPE_COMMAND, jumptextfaceplayer, PalletTownYoungsterText, -1
 	fruittree_event 12, 21, FRUITTREE_ROUTE_21, ENIGMA_BERRY, PAL_NPC_BLACK
 	object_event  9, 12, SPRITE_RED, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, CameoAshScript, EVENT_ANIME_CAMEOS_HIDDEN
+	; Link Edition: Ash's Pikachu, out for the Invitational's final
+	object_event  9, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, PIKACHU, -1, PAL_MON_YELLOW, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+
+	object_const_def
+	const_skip 4 ; (the townspeople and the berry tree)
+	const PALLETTOWN_ASH
+	const PALLETTOWN_PIKACHU
 
 PalletTownFlyPoint:
 	setflag ENGINE_FLYPOINT_PALLET
@@ -82,6 +89,7 @@ BluesHouseSignText:
 
 PalletTownAnimeCameosCallback:
 ; Link Edition: the anime cameos come after Red and the Orange League
+	setevent EVENT_POST_RED_PERSON_HIDDEN ; (Pikachu comes out in the final)
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
 	iffalsefwd .hide
 	checkevent EVENT_BEAT_DRAKE
@@ -150,6 +158,7 @@ CameoAshScript:
 	yesorno
 	iffalse_jumpopenedtext .NoText
 	closetext
+	scene_title .Title
 	special HealParty
 	winlosstext .DrakeBeaten, .Loss
 	loadtrainer DRAKE_T, 1
@@ -158,8 +167,11 @@ CameoAshScript:
 	reloadmap
 	iftruefwd .Retry
 	showtext .AshFinal
-	scene_begin ; (Pikachu's spark)
+	scene_begin ; (Pikachu jumps out beside him: a spark)
+	scene_place PALLETTOWN_PIKACHU, -1, 1
+	appear PALLETTOWN_PIKACHU
 	cry PIKACHU
+	showemote EMOTE_BOLT, PALLETTOWN_PIKACHU, 15
 	scene_flash 1
 	waitsfx
 	scene_end
@@ -174,9 +186,18 @@ CameoAshScript:
 	scene_begin ; (the winners in gold light while Tracey sketches)
 	scene_tint TINT_GOLD
 	showemote EMOTE_SPARKLE, PLAYER, 20
+	showemote EMOTE_SPARKLE, PALLETTOWN_ASH, 15
+	showemote EMOTE_HAPPY, PALLETTOWN_PIKACHU, 15
 	showtext .Finish
 	scene_end
+	disappear PALLETTOWN_PIKACHU
+	scene_title .Ending
 	end
+
+.Title:
+	db "PALLET INVITATIONAL@"
+.Ending:
+	db "TO BE CONTINUED...@"
 
 .Retry:
 	special HealParty
