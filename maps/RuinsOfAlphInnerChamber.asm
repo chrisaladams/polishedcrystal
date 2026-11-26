@@ -58,13 +58,24 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	object_event  6, 12, SPRITE_SCIENTIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_BROWN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
 	object_event  4, 14, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, TEDDIURSA, -1, PAL_MON_BROWN, OBJECTTYPE_SCRIPT, PLAIN_FORM, AlphIllusionTeddiursaScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_4
 	object_event  6, 14, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, PHANPY, -1, PAL_MON_BLUE, OBJECTTYPE_SCRIPT, PLAIN_FORM, AlphIllusionPhanpyScript, EVENT_TEMPORARY_UNTIL_MAP_RELOAD_5
+	; Link Edition: the letters the illusion breaks into (the statue scene)
+	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_M_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_O_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_L_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_Y_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const_skip 4
 	const ALPH_DREAM_ENTEI
 	const ALPH_PROF_HALE
+	const_skip 2 ; (the two illusions)
+	const ALPH_UNOWN_1
+	const ALPH_UNOWN_2
+	const ALPH_UNOWN_3
+	const ALPH_UNOWN_4
 
 HideAlphRescueActors:
+	setevent EVENT_POST_RED_PERSON_HIDDEN ; (the statue scene's letters)
 	disappear ALPH_DREAM_ENTEI
 	disappear ALPH_PROF_HALE
 	; Link Edition: the Unown's illusions guard the statue after Molly's
@@ -190,13 +201,36 @@ HaleStatueScript:
 	changeblock 6, 12, $2b
 	refreshmap
 	appear ALPH_DREAM_ENTEI
+	scene_shadow ALPH_DREAM_ENTEI ; (a dream's shape at first)
 	special Special_ReloadSpritesNoPalettes
 	special Special_FadeInQuickly
 	scene_tint TINT_PURPLE
+	pause 20
 	cry ENTEI
+	scene_unshadow ALPH_DREAM_ENTEI ; (it takes its colors as it roars)
 	earthquake 12
-	showemote EMOTE_SPARKLE_PURPLE, ALPH_DREAM_ENTEI, 20
+	pause 20
+	; it breaks into letters around you
+	scene_shadow ALPH_DREAM_ENTEI
+	playsound SFX_PROTECT
+	scene_place ALPH_UNOWN_1, -2, -2
+	appear ALPH_UNOWN_1
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_UNOWN_1, 8
+	scene_place ALPH_UNOWN_2, 2, -2
+	appear ALPH_UNOWN_2
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_UNOWN_2, 8
+	scene_place ALPH_UNOWN_3, -2, 1
+	appear ALPH_UNOWN_3
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_UNOWN_3, 8
+	scene_place ALPH_UNOWN_4, 2, 1
+	appear ALPH_UNOWN_4
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_UNOWN_4, 8
 	showtext .Illusion
+	scene_flash 1
+	disappear ALPH_UNOWN_1
+	disappear ALPH_UNOWN_2
+	disappear ALPH_UNOWN_3
+	disappear ALPH_UNOWN_4
 	scene_restore
 	special Special_FadeBlackQuickly
 	disappear ALPH_DREAM_ENTEI

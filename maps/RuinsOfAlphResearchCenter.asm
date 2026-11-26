@@ -577,6 +577,7 @@ RuinsOfAlphResearchCenterMollyScript:
 	closetext
 	checkevent EVENT_BEAT_MOLLY
 	iftruefwd .StartBattle
+	scene_title .Title
 	scene_begin ; (the Unown's power gathers around her: engine/events/cinematic.asm)
 	scene_tint TINT_PURPLE
 	playsound SFX_PROTECT
@@ -601,6 +602,9 @@ RuinsOfAlphResearchCenterMollyScript:
 	verbosegiveitem ABILITYPATCH, iffalse_endtext
 	clearevent EVENT_MOLLY_PATCH_PENDING
 	endtext
+
+.Title:
+	db "SPELL OF THE UNOWN@"
 
 .IntroText:
 	text "I'm Molly. Papa"

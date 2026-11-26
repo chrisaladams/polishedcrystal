@@ -132,9 +132,11 @@ palettes, music, movement and map state.
   and Lawrence's confrontation; a title card; the escalating storm, the three
   legendary birds as silhouettes in the lightning, Lugia's emergence (a
   shadow, then revealed) and the storm clearing to daylight.
-- **Spell of the Unown** — done: purple dream lighting, illusion encounters.
-  To do: spreading crystal formations, floating Unown, more elaborate Entei
-  illusion transitions, environmental restoration after the rescue.
+- **Spell of the Unown** — done: purple dream lighting, illusion encounters;
+  a title card; floating Unown and the Entei illusion's transitions (a
+  dream's shadow, its colors as it roars, breaking into letters around you).
+  To do: spreading crystal formations, environmental restoration after the
+  rescue.
 - **Celebi: Voice of the Forest** — done: dark forest atmosphere, corrupted
   encounters, shrine pulses and green sparkles. To do: time distortion,
   enhanced corruption and healing, cinematic Celebi departure, expanded Sammy
