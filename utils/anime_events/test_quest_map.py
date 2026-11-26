@@ -22,7 +22,11 @@ def main(path):
                                 'CUPWON_RISING_STAR_F', 'CUPWON_RENTAL_F', 'CUPWON_DRAGON_F',
                                 'CUPWON_WORLD_F', 'INDIGO_PLATEAU', 'WATER',
                                 'ROUTE_31','ROUTE_39','CERULEAN_CITY','VERMILION_CITY','NEW_BARK_TOWN',
-                                'SPAWN_AZALEA','SPAWN_VIOLET','GROUP_VIOLET_POKECENTER_1F','MAP_VIOLET_POKECENTER_1F'}, None)
+                                'SPAWN_AZALEA','SPAWN_VIOLET','GROUP_VIOLET_POKECENTER_1F','MAP_VIOLET_POKECENTER_1F',
+                                'WORLD_LINK_ID', 'WORLD_LINK_SEED', 'WORLD_LINK_PARTNER_ID', 'WORLD_LINK_STATUS',
+                                'WORLD_LINK_PARTNER_STATUS', 'WORLD_LINK_LENGTH', 'WORLDLINK_QUARTERFINAL',
+                                'WORLDLINK_SEMIFINAL', 'WORLDLINK_FINAL', 'WORLDLINK_OUT_QF', 'WORLDLINK_OUT_SF',
+                                'WORLDLINK_CHAMPION', 'WORLDLINK_CLOSED_F'}, None)
     def bit(var, n, on=True):
         idx, mask = n // 8, 1 << (n % 8)
         v = g.rd(var, idx)
@@ -263,12 +267,45 @@ def main(path):
         assert open_map() == ['WorldCup']
         g.load(championship_won)
         assert not open_map()
+
+        # a linked bracket: marked while a match or the prize waits at the
+        # Indigo Plateau desk (WorldLinkIndigoPending), not otherwise
+        from test_friend_records import Caller
+        caller = Caller(g)
+
+        def linked(status, partner=0xff, claimed=False, closed=False):
+            g.load(championship_won)
+            for j in range(k['WORLD_LINK_LENGTH']):
+                g.wr('wWorldLinkRecord', 0, j)
+            for field, value in (('WORLD_LINK_ID', 0x21), ('WORLD_LINK_SEED', 0x34),
+                                 ('WORLD_LINK_PARTNER_ID', 0x11), ('WORLD_LINK_PARTNER_STATUS', partner),
+                                 ('WORLD_LINK_STATUS', k[status] | (1 << k['WORLDLINK_CLOSED_F'] if closed else 0))):
+                g.wr('wWorldLinkRecord', value, k[field])
+            g.wr('wWorldLinkRecord', 0x43, k['WORLD_LINK_ID'] + 1)
+            caller.call('WorldLinkSave')
+            for j in range(3):
+                g.wr('wWorldLinkReceipt', 0, j)
+            if claimed:
+                caller.call('WorldLinkClaim')
+            return open_map()
+
+        for case, want in ((('WORLDLINK_QUARTERFINAL',), ['WorldCup']),
+                           (('WORLDLINK_SEMIFINAL',), ['WorldCup']),
+                           (('WORLDLINK_FINAL',), []),  # (both in it: a link battle)
+                           (('WORLDLINK_FINAL', k['WORLDLINK_OUT_SF']), ['WorldCup']),
+                           (('WORLDLINK_OUT_QF',), []),
+                           (('WORLDLINK_CHAMPION',), ['WorldCup']),
+                           (('WORLDLINK_CHAMPION', 0xff, True), []),
+                           (('WORLDLINK_QUARTERFINAL', 0xff, False, True), [])):
+            got = linked(*case)
+            assert got == want, (case, got)
+        g.load(championship_won)
         browse()
         g.press('b', 50)
         g.press('b', 60)
         assert not g.rd('wInPokegear')
         g.load(base)
-        print('Passed progression pins, cup and reward leads, the Kimono type in both guides, cross-region browsing, completion and exit.')
+        print('Passed progression pins, cup and reward leads (and a linked bracket\'s), the Kimono type in both guides, cross-region browsing, completion and exit.')
     finally:
         g.pb.stop(save=False)
 

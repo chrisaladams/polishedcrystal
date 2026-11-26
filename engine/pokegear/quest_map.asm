@@ -377,7 +377,11 @@ QuestMapCupLeads:
 	eventflagcheck EVENT_GOT_MYSTICTICKET_FROM_RED
 	ret z
 	map_cup_lead CUPWON_WORLD_F, EVENT_WORLD_CUP_PRIZE_PENDING, WorldCup
-	ret
+	; Link Edition: a linked bracket's match or prize waiting at the desk
+	farcall WorldLinkIndigoPending
+	ret z
+	ld a, QMAP_WorldCup
+	jmp AddQuestMapLead
 
 ; Return HL at the caption and E at its landmark. Until the Valencia ferry
 ; opens, Luana's actionable first stop is Ivy at Shamouti's Pokémon Center.

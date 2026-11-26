@@ -941,6 +941,37 @@ WorldLinkOpponent::
 	ldh [hScriptVar], a
 	ret
 
+WorldLinkIndigoPending::
+; Link Edition (the quest map): nz if the linked bracket has something for
+; you at the Indigo Plateau desk: your quarterfinal or semifinal, the final
+; against the other half's finalist (the partner being out), or the
+; champion's prize not yet in this game. Sets nothing up.
+	call WorldLinkLoad
+	jr nc, .no
+	ld a, [wWorldLinkRecord + WORLD_LINK_STATUS]
+	bit WORLDLINK_CLOSED_F, a
+	jr nz, .no
+	cp WORLDLINK_FINAL
+	jr c, .yes ; a quarterfinal or semifinal
+	jr nz, .champion
+	ld a, [wWorldLinkRecord + WORLD_LINK_PARTNER_STATUS]
+	cp WORLDLINK_OUT_QF
+	jr z, .yes
+	cp WORLDLINK_OUT_SF
+	jr z, .yes
+	jr .no ; (both in the final: that's a link battle)
+.champion
+	cp WORLDLINK_CHAMPION
+	jr nz, .no
+	call WorldLinkHasReceipt
+	jr z, .no
+.yes
+	or 1
+	ret
+.no
+	xor a
+	ret
+
 WorldLinkLastResult::
 ; Before the semifinal or the final (WorldLinkOpponent has just run): who the
 ; opponent beat to get here, in wStringBuffer5; hScriptVar = TRUE if that was
