@@ -51,7 +51,8 @@ Objective: finish, polish and stabilize the existing adventure.
 - [x] Complete Friend Battle record validation. *(`CheckFriendTeamFields` covers marker, checksum, rules, gender, count and each Pokémon. Forms are left unchecked by evaluation: the game reads an unknown form as the plain one, and `test_friend_battles.py` keeps a team with form 31 (no species has it) and plays Look, its summary screen and a battle to the end, the party back.)*
 - [x] Evaluate stronger interrupted-write recovery (L3). *(Evaluated: a journal costs 143 B SRAM and about 100 B ROM to keep a friend team one battle restores; not done, by the owner's decision.)*
 - [x] Test trading immediately after championship sessions. *(`linktest.py --trade --last-rules world,normal` and `--last-rules world`: both cartridges reach the Trade Center, with no Championship session and no rules refusal.)*
-- [ ] Expand link interruption and recovery tests. Crafted messages and trades after Championship are covered. Unplugging at either Championship desk exchange returns control to both players with records intact. Clean retries and recovery from just one persisted registration or final result pass over the virtual cable. Mid-packet cuts, interruption during SRAM writes and physical testing remain open.
+- [x] Expand virtual cable interruption and recovery tests. `test_world_plan.py` covers 27 crafted message pairs, including out-of-range values. `test_world_link.py` checks interruption before either exchange begins and recovery from one persisted registration or final result. `test_world_cuts.py` covers 12 registration and six result cuts across packet and commit boundaries, each followed by a clean session. Every session returned to the desk, and clean reconnects converged on one bracket with results intact. A cut at byte 110 persisted the result on one side and the next session reconciled it.
+- [ ] Verify interruption during SRAM writes and recovery on original hardware.
 - [x] Correct the simulator Baton Pass test harness. *(`oracle_turn.py` now answers "who comes in?" with the first Pokémon that can battle and isn't out; 48/48 matchups agree.)*
 - [ ] Audit remaining battle, save and progression defects.
 
@@ -87,8 +88,8 @@ the game is now built for 4 MiB MBC5; see
 - [x] Deterministic tournament outcomes with weighted NPC upsets.
 - [x] Visual World Championship bracket; standings after elimination.
 - [x] Detailed Rental Cup and Friend Battle team previews.
-- [ ] Verify all eligibility and fallback edge cases.
-- [ ] Calibrate NPC victory probabilities.
+- [x] Verify all eligibility and fallback edge cases. *(Link formats: `test_link_rules.py`, every row of the rules matrix on your team, a received team and a Friend Battle. Offline cups: `test_cups.py`, `test_whirl_cup.py`, `test_orange_league.py`, and `test_cup_eligibility.py` for the whole-party cups' edges: too few, Eggs left out of the count and the staged team, a wrong type among enough, a dual type counting, a Dragon among others, six exactly, Friend Battle rules. Fallbacks: `test_team_generation.py`, each team generator forced past its restart limit.)*
+- [ ] Calibrate NPC victory probabilities. *(Measured over all 65,536 seeds, unchanged from [`rules-matrix.md`](rules-matrix.md): the strongest visiting trainer reaches 58% of finals and wins 42%, the weakest 7% and 1%; 26% of trainer-vs-trainer matches are upsets. The odds (60/70/80/90% by places between them) are kept; changing them is the owner's call.)*
 - [ ] Review rewards and tournament difficulty through natural gameplay.
 
 ## Phase 4 — Cinematic engine (in progress)

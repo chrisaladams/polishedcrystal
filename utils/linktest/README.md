@@ -53,9 +53,24 @@ Run `python3 utils/linktest/test_link_card.py SAVE.sav` against a built ROM
 to check the Trainer Card, per-opponent records, older saves, the yearly reset
 and the full roster. The test uses an in-memory copy of the supplied save.
 
+## Cutting the cable at the Championship desk
+
 Run `python3 utils/linktest/test_world_link.py A.sav B.sav --interruptions-only`
 with the same virtual cable setup and saves with no active bracket. The
 harness unplugs the cable at the start of each Championship desk exchange,
 checks that both players get control back and that neither bracket record
 changes, then retries from the two saved cartridges. Add a third player's
 save and omit `--interruptions-only` to run the full Championship suite.
+
+`--unplug-desk N,FRAMES` unplugs the cable as byte N of the linked
+Championship session starts (counted on side A from `Special_WorldLinkSession`),
+for FRAMES frames. A session is 118 bytes: the first exchange is bytes 1-55,
+the second (the plans, each side's check echoed) 56-118, its data ending near
+byte 110. `LINKTEST_TRACE=WorldLinkSwap,WorldLinkCommit` logs the byte count
+at each step.
+
+`test_world_cuts.py A.sav B.sav --out DIR [--quick]` cuts at each boundary in a
+registration session and a results session, then links cleanly, and checks
+that every session ends at the desk, no cut leaves two brackets, and the clean
+session leaves both cartridges in one bracket with every result kept and
+heard. The full run is 18 cuts (36 sessions, two at a time); `--quick` is 7.

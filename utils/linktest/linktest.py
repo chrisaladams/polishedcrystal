@@ -115,10 +115,18 @@ class Side:
         self.force_moves = None
         bank, addr = sym['Link_PrepPartyData_Gen2']
         self.pb.hook_register(bank, addr, self._on_prep_party, None)
+        # --unplug-desk N,FRAMES (side A): unplug the cable just as the Nth
+        # byte of the Championship session's exchanges starts, for FRAMES
+        # frames (the session's commit boundaries are byte positions)
+        self.desk_unplug = (0, 0)
+        self.desk_bytes = None
+        self.pb.hook_register(*sym['Special_WorldLinkSession'], self._on_world_session, None)
+        self.pb.hook_register(*sym['Serial_ExchangeByte'], self._on_serial_byte, None)
         # LINKTEST_TRACE=Label,Label: log each time these run
         for label in filter(None, os.environ.get('LINKTEST_TRACE', '').split(',')):
             if label in sym:
-                self.pb.hook_register(*sym[label], lambda _, label=label: self.say(f'    (trace) {label}'), None)
+                self.pb.hook_register(*sym[label], lambda _, label=label: self.say(
+                    f'    (trace) {label}' + (f' (session byte {self.desk_bytes})' if self.desk_bytes is not None else '')), None)
 
     # ---- memory helpers
     def rd(self, name, k=0):
@@ -233,6 +241,21 @@ class Side:
                 self.mem[1, base + i * stride + mv + j] = m
                 self.mem[1, base + i * stride + pp + j] = 10
         self.say(f'    (test) forced moves {self.force_moves} on the party')
+
+    def _on_world_session(self, _):
+        if self.desk_unplug[0]:
+            self.desk_bytes = 0
+
+    def _on_serial_byte(self, _):
+        if self.desk_bytes is None:
+            return
+        self.desk_bytes += 1
+        if self.desk_bytes == self.desk_unplug[0]:
+            self.desk_bytes = None
+            self.cable.mm[126] = 1
+            self.unplug_wait, self.unplug_left = 0, self.desk_unplug[1]
+            self.say(f'    (test) cable unplugged at session byte {self.desk_unplug[0]} '
+                     f'for {self.desk_unplug[1]} frames')
 
     def _on_exchange(self, _):
         self.exchanges.append(self.snapshot())
@@ -508,7 +531,7 @@ class Side:
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
            desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None,
            party_size=None, expect_rejection=False, noise_desk=False, day=None, trade=False, last_rules=None,
-           world_unplug=None):
+           world_unplug=None, unplug_desk=(0, 0)):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         s.trade = trade
@@ -519,6 +542,7 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
         s.desync_at = desync_at
         s.shot_every = shot_every
         s.unplug_at, s.unplug_delay, s.unplug_frames = unplug
+        s.desk_unplug = unplug_desk
         s.rules = rules
         s.party_size = party_size
         if force_moves:
@@ -587,8 +611,12 @@ def main():
     ap.add_argument('--unplug', default='',
                     help='AT,DELAY,FRAMES: at action exchange AT (side A), wait DELAY frames, '
                          'then unplug the cable for FRAMES frames')
-    ap.add_argument('--world-unplug', type=int, choices=(1, 2),
-                    help='disconnect at the start of this Championship desk exchange')
+    desk_cut = ap.add_mutually_exclusive_group()
+    desk_cut.add_argument('--world-unplug', type=int, choices=(1, 2),
+                          help='disconnect at the start of this Championship desk exchange')
+    desk_cut.add_argument('--unplug-desk', default='',
+                          help='N,FRAMES: unplug the cable as byte N of the Championship session starts '
+                               '(counted on side A), for FRAMES frames')
     ap.add_argument('--desync-at', type=int, default=0,
                     help="change side B's HP at this action exchange, to test desync detection")
     ap.add_argument('--noise-setup', action='store_true',
@@ -635,7 +663,9 @@ def main():
                                             (formats * 2)[slot], force_ids, args.party_size, bool(args.expect_rejection),
                                             args.noise_desk and slot == 1, args.day_b if slot else None,
                                             args.trade, (last_rules * 2)[slot],
-                                            args.world_unplug if not slot else None))
+                                            args.world_unplug if not slot else None,
+                                            tuple(map(int, args.unplug_desk.split(','))) if args.unplug_desk
+                                            and not slot else (0, 0)))
         p.start()
         ctx_procs.append(p)
     res = {}
