@@ -13,7 +13,7 @@ ShamoutiHouse_MapScriptHeader:
 	def_bg_events
 
 	def_object_events
-	object_event  4,  1, SPRITE_VETERAN_M, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OrangeLeagueDrakeScript, -1
+	object_event  4,  1, SPRITE_DRAKE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, OrangeLeagueDrakeScript, -1
 	; Link Edition: his Dragonite, out for the final and the ceremony
 	object_event  5,  1, SPRITE_DRAGONITE, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 

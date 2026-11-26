@@ -226,6 +226,8 @@
 	const SPRITE_MOLLY ; de (Link Edition: Spell of the Unown)
 	const SPRITE_IRON_MASK ; df (Link Edition: Voice of the Forest)
 	const SPRITE_PIKACHU ; e0 (Link Edition: Ash's Pikachu, from Pokémon Yellow)
+	const SPRITE_MELODY ; e1 (Link Edition: The Power of One)
+	const SPRITE_DRAKE ; e2 (Link Edition: the Orange League)
 DEF NUM_OVERWORLD_SPRITES EQU const_value - 1
 
 ; special GetMonSprite values (see engine/overworld/overworld.asm)

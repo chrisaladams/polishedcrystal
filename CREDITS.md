@@ -144,4 +144,4 @@ Pokémon Polished Crystal would never have been finished without the help of man
 ## Link Edition
 
 * Ash's Pikachu overworld sprite: Pokémon Yellow's walking Pikachu (Game Freak), from the [pret/pokeyellow](https://github.com/pret/pokeyellow) disassembly.
-* Molly Hale and the Iron-Masked Marauder overworld sprites: edited from Pokémon Crystal's lass and burglar sprites.
+* Molly Hale, the Iron-Masked Marauder, Melody and Drake overworld sprites: edited from Pokémon Crystal's lass, burglar, beauty and veteran sprites.

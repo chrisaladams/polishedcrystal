@@ -664,3 +664,11 @@ IronMaskSpriteGFX:: INCBIN "gfx/sprites/iron_mask.2bpp.lzp"
 ; its two middle shades swapped for Crystal's palettes
 SECTION "PikachuSpriteGFX", ROMX
 PikachuSpriteGFX:: INCBIN "gfx/sprites/pikachu.2bpp.lzp"
+
+; Link Edition: Melody (from the beauty, with a bow) and Drake (from the
+; veteran, a plain cap)
+SECTION "MelodySpriteGFX", ROMX
+MelodySpriteGFX:: INCBIN "gfx/sprites/melody.2bpp.lzp"
+
+SECTION "DrakeSpriteGFX", ROMX
+DrakeSpriteGFX:: INCBIN "gfx/sprites/drake.2bpp.lzp"

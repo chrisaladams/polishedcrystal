@@ -205,7 +205,10 @@ terms were found, so the rest follow the same approach. Ash's Pikachu is
 Pokémon Yellow's walking sprite (`SPRITE_PIKACHU`, from the pret/pokeyellow
 disassembly, its middle shades swapped for Crystal's palettes), replacing
 the icon in the Pallet final ([`phase5-screens/pikachu-sprite.png`](phase5-screens/pikachu-sprite.png));
-Yellow's Jessie, James and Officer Jenny are already in Polished Crystal. Evidence:
+Yellow's Jessie, James and Officer Jenny are already in Polished Crystal.
+Melody (`SPRITE_MELODY`, the beauty's long hair with a bow, in brown) and
+Drake (`SPRITE_DRAKE`, the veteran with a plain cap, in blue) followed
+([`phase5-screens/melody-and-drake-sprites.png`](phase5-screens/melody-and-drake-sprites.png)). Evidence:
 [`phase5-screens/molly-and-marauder-sprites.png`](phase5-screens/molly-and-marauder-sprites.png),
 [`phase5-screens/molly-sprite-frames.png`](phase5-screens/molly-sprite-frames.png).)*
 
