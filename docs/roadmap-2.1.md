@@ -132,7 +132,12 @@ palettes, music, movement and map state.
 - **The Power of One** — done: elemental beacon palette effects, Melody's song
   and Lawrence's confrontation; a title card; the escalating storm, the three
   legendary birds as silhouettes in the lightning, Lugia's emergence (a
-  shadow, then revealed) and the storm clearing to daylight.
+  shadow, then revealed) and the storm clearing to daylight. Second pass: the
+  camera rises into the storm to find the guardians one by one, each in its
+  own lightning flash, under the Summoning Dance; it comes back down for
+  Melody's song (Lugia's Song) and rises again for the full-size Lugia
+  sprite. Evidence: `test_campaigns.py`;
+  [`phase5-screens/power-of-one-restoration.png`](phase5-screens/power-of-one-restoration.png).
 - **Spell of the Unown** — done: purple dream lighting, illusion encounters;
   a title card; floating Unown and the Entei illusion's transitions (a
   dream's shadow, its colors as it roars, breaking into letters around you).

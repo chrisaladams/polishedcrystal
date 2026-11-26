@@ -22,7 +22,7 @@ ShamoutiShrineRuins_MapScriptHeader:
 	object_event  7, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, ARTICUNO, -1, PAL_MON_BLUE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 	object_event 10, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, ZAPDOS, -1, PAL_MON_YELLOW, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 	object_event 13, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, MOLTRES, -1, PAL_MON_RED, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
-	object_event 10, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, LUGIA, -1, PAL_MON_AZURE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event 10, 13, SPRITE_BIG_LUGIA, SPRITEMOVEDATA_BIG_LUGIA, 0, 0, -1, PAL_NPC_ENV_WHITE, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const SHAMOUTISHRINERUINS_LAWRENCE
@@ -300,50 +300,70 @@ ShamoutiRestoreBeacons:
 	; lightning, Melody's song, Lugia rising from the dark, and the sky
 	; clearing as the storm ends)
 	scene_begin
+	musicfadeout MUSIC_NONE, 8
 	scene_weather OW_WEATHER_THUNDERSTORM
 	scene_tint TINT_DARK
 	playsound SFX_THUNDER_OW
 	earthquake 30
-	scene_place SHAMOUTISHRINERUINS_ARTICUNO, -3, -3
-	scene_place SHAMOUTISHRINERUINS_ZAPDOS, 0, -4
-	scene_place SHAMOUTISHRINERUINS_MOLTRES, 3, -3
+	; the camera rises into the storm: three shapes in the lightning
+	scene_pan UP, 3
+	playmusic MUSIC_SUMMONING_DANCE_HGSS
+	scene_place SHAMOUTISHRINERUINS_ARTICUNO, -3, -1
+	scene_place SHAMOUTISHRINERUINS_ZAPDOS, 0, -2
+	scene_place SHAMOUTISHRINERUINS_MOLTRES, 3, -1
 	appear SHAMOUTISHRINERUINS_ARTICUNO
 	scene_shadow SHAMOUTISHRINERUINS_ARTICUNO
-	appear SHAMOUTISHRINERUINS_ZAPDOS
-	scene_shadow SHAMOUTISHRINERUINS_ZAPDOS
-	appear SHAMOUTISHRINERUINS_MOLTRES
-	scene_shadow SHAMOUTISHRINERUINS_MOLTRES
-	scene_flash 2
+	playsound SFX_THUNDER_OW
+	scene_flash 1
 	scene_tint TINT_DARK ; (a flash comes back to the scene's own light)
 	cry ARTICUNO
 	waitsfx
-	cry ZAPDOS
-	waitsfx
-	cry MOLTRES
-	waitsfx
-	showtext .Guardians
+	appear SHAMOUTISHRINERUINS_MOLTRES
+	scene_shadow SHAMOUTISHRINERUINS_MOLTRES
 	playsound SFX_THUNDER_OW
 	scene_flash 1
+	scene_tint TINT_DARK
+	cry MOLTRES
+	waitsfx
+	appear SHAMOUTISHRINERUINS_ZAPDOS
+	scene_shadow SHAMOUTISHRINERUINS_ZAPDOS
+	playsound SFX_THUNDER_OW
+	scene_flash 1
+	scene_tint TINT_DARK
+	cry ZAPDOS
+	waitsfx
+	earthquake 16
+	showtext .Guardians
+	playsound SFX_THUNDER_OW
+	scene_flash 2
 	disappear SHAMOUTISHRINERUINS_ARTICUNO
 	disappear SHAMOUTISHRINERUINS_ZAPDOS
 	disappear SHAMOUTISHRINERUINS_MOLTRES
+	scene_pan_back UP, 3
+	; Melody's song carries out where the lights meet
 	playmusic MUSIC_LUGIAS_SONG_2000
 	scene_restore
 	scene_tint TINT_BLUE
 	showtext .Song
-	scene_place SHAMOUTISHRINERUINS_LUGIA, 0, -3
+	; and the guardian of the sea rises: the camera goes up to meet it
+	scene_pan UP, 2
+	scene_place SHAMOUTISHRINERUINS_LUGIA, -1, -3
 	appear SHAMOUTISHRINERUINS_LUGIA
 	scene_shadow SHAMOUTISHRINERUINS_LUGIA
-	earthquake 20
+	earthquake 24
 	cry LUGIA
-	scene_flash 1
-	scene_unshadow SHAMOUTISHRINERUINS_LUGIA
 	waitsfx
-	showtext .Lugia
-	scene_weather OW_WEATHER_NONE
+	playsound SFX_THUNDER_OW
+	scene_flash 2
+	scene_unshadow SHAMOUTISHRINERUINS_LUGIA
+	scene_weather OW_WEATHER_NONE ; (the storm breaks)
 	scene_restore
+	showtext .Lugia
+	cry LUGIA
+	waitsfx
 	pause 30
 	disappear SHAMOUTISHRINERUINS_LUGIA
+	scene_pan_back UP, 2
 	showtext .Calm
 	opentext
 	scall ShamoutiGiveSilverWing
