@@ -2828,6 +2828,34 @@ Serial_ExchangeBytes::
 	jr nz, .loop
 	ret
 
+Serial_ExchangeBytesBounded::
+; hl = send data, de = receive data, c = length (1-255).
+; Championship sessions can abort if the peer never starts this exchange.
+; Keep resending the first byte until the peer's preamble arrives, then
+; use the ordinary byte loop. Carry means the preamble timed out.
+	ld b, 32
+.preamble
+	ld a, [hl]
+	ldh [hSerialSend], a
+	call Serial_ExchangeByte
+	push af
+	ld a, 48
+.wait48
+	dec a
+	jr nz, .wait48
+	pop af
+	cp SERIAL_PREAMBLE_BYTE
+	jr z, .aligned
+	dec b
+	jr nz, .preamble
+	scf
+	ret
+.aligned
+	xor a
+	ld b, a
+	ldh [hSerialIgnoringInitialData], a
+	jr Serial_ExchangeBytes.loop
+
 Serial_ExchangeByte::
 	xor a
 	ldh [hSerialReceivedNewData], a

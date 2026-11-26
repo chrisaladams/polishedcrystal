@@ -25,14 +25,14 @@ approved requirements.
 
 ## Current baseline
 
-Branch head when written: `d7fdddd9` (includes the line bracket, winners
-advancing toward the centre). Implemented and to be maintained, tested and
-refined rather than recreated: software world clock, followers, visible wild
-Pokémon, eight behavior profiles, Field Book and quest map, four movie
-campaigns, Orange League, Pallet Invitational, six regional cups, five
-multiplayer formats, Friend Battles, linked World Championship, lifetime and
-annual link records, bedroom trophies and Adventure Album, competitive
-simulator. Cinematic effects engine: partially complete.
+This review covers `fbbc45025`. The branch has the software world clock,
+followers, visible wild Pokémon with eight behavior profiles, Field Book and
+Quest Map, four movie campaigns, Orange League, Pallet Invitational, six
+regional cups and five multiplayer formats. It also has Friend Battles,
+linked World Championship, lifetime and annual link records, bedroom trophies
+and Adventure Album, and the competitive simulator. The cinematic toolkit
+has weather, camera movements, individual reveals and title cards available
+for further scene work. See the [build and memory baseline](memory-baseline.md).
 
 # Version 2.0 — Complete Edition
 
@@ -51,7 +51,7 @@ Objective: finish, polish and stabilize the existing adventure.
 - [x] Complete Friend Battle record validation. *(`CheckFriendTeamFields` covers marker, checksum, rules, gender, count and each Pokémon. Forms are left unchecked by evaluation: the game reads an unknown form as the plain one, and `test_friend_battles.py` keeps a team with form 31 (no species has it) and plays Look, its summary screen and a battle to the end, the party back.)*
 - [x] Evaluate stronger interrupted-write recovery (L3). *(Evaluated: a journal costs 143 B SRAM and about 100 B ROM to keep a friend team one battle restores; not done, by the owner's decision.)*
 - [x] Test trading immediately after championship sessions. *(`linktest.py --trade --last-rules world,normal` and `--last-rules world`: both cartridges reach the Trade Center, with no Championship session and no rules refusal.)*
-- [ ] Expand link interruption and recovery tests. *(Done so far: `test_world_plan.py`, the session plan from 27 crafted message pairs, injected out-of-range values included; trading after a Championship. Still open: disconnects at each commit boundary over the cable.)*
+- [ ] Expand link interruption and recovery tests. Crafted messages and trades after Championship are covered. Unplugging at either Championship desk exchange returns control to both players with records intact. Clean retries and recovery from just one persisted registration or final result pass over the virtual cable. Mid-packet cuts, interruption during SRAM writes and physical testing remain open.
 - [x] Correct the simulator Baton Pass test harness. *(`oracle_turn.py` now answers "who comes in?" with the first Pokémon that can battle and isn't out; 48/48 matchups agree.)*
 - [ ] Audit remaining battle, save and progression defects.
 
@@ -136,9 +136,9 @@ palettes, music, movement and map state.
   and Oak reveal.
 - **Orange League and Pallet Invitational** — done: all four Crew challenges,
   elemental battle introductions, badge progress announcements, Drake's trophy
-  effects. To do: Surf checkpoint visual feedback, mountain wind and snow,
-  stronger character introductions, championship ceremony, expanded Tracey
-  sketch and ending.
+  effects, wind and snow on Danny's first summit visit, and a splash and chime
+  at each accepted Surf checkpoint. To do: stronger character introductions,
+  championship ceremony, expanded Tracey sketch and ending.
 
 ## Phase 6 — Character artwork and visual identity (substantial work remaining)
 
@@ -151,6 +151,10 @@ corrupted forest, tournament decorations, achievement graphics. Audit existing
 assets first. A custom introduction and title screen remain optional.
 
 ## Phase 7 — Version 2.0 validation (partially verified)
+
+Default and Faithful build on the current MBC5 target. Emulator coverage
+includes old-save and backup recovery, the World bracket, and smoke tests
+in the four other Cable Club formats.
 
 - [ ] Natural Johto and Kanto playthrough; all four movie campaigns; the Orange
   League in different badge orders; Pallet Invitational.
@@ -234,9 +238,10 @@ Field Book and respect completed captures.
 
 ## Phase 15 — Advanced battle AI and competitive simulation (foundation implemented)
 
-Simulator: threat matrix, 6v6 Monte Carlo, set optimization and ROM oracles
-done; to do: complete whole-turn oracle verification, team synergy, stat
-profile comparisons, tournament difficulty and NPC bracket calibration.
+The simulator has a threat matrix, 6v6 Monte Carlo, set optimization and ROM
+oracles, including the recorded 48-matchup whole-turn verification. Team
+synergy, stat profile comparisons, tournament difficulty and NPC bracket
+calibration remain open.
 Trainer AI: expected damage, accuracy and fatal-switch avoidance done; pending:
 switching, hazards, setup timing, recovery, team awareness, weather, endgame;
 optional difficulty profiles proposed. Evaluate CPU cost, behavior and

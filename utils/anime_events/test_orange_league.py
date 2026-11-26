@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Check the Orange League in the running game (PyBoy), from a save:
 
-- the Surf course and ice climb unlock the Cissy and Danny battles;
+- the Surf course shows a brief splash at each valid checkpoint, including
+  after a restart, and the ice climb shows snow before the descent;
 - choose matching types for Rudy's three rounds and two partners for Luana
   using the party menu, then check that the full party is restored;
 - Drake won't battle until all four are beaten; then he battles with his
@@ -285,33 +286,68 @@ def main():
         return tuple(tuple(g.rd('wPartyMon1', i * L + j) for j in range(L) if j not in ignored)
                      for i in range(g.rd('wPartyCount')))
 
-    def surf():
+    def surf(x):
         g.face('down')
         for _ in range(9):
             g.press('a', 40)
             if g.rd('wPlayerState') == K['PLAYER_SURF']:
                 settle()
-                assert position() == (3, 24)
+                assert position() == (x, 24)
                 return
         raise AssertionError('could not Surf from Warm Beach')
 
     def cissy_course():
+        cues, drawn = [], []
+        spawn_hook = g.sym['SpawnPlayerSplash']
+        draw_hook = g.sym['SetFacingPuddleSplash']
+        g.pb.hook_register(*spawn_hook, lambda _: cues.append(position()), None)
+        g.pb.hook_register(*draw_hook, lambda _: drawn.append(position()), None)
+
+        # Surf out from the east end and approach the finish without a start.
+        start = g.state()
+        move('right', 2)
+        move('down')
+        assert position() == (11, 23)
+        surf(11)
+        move('right')
+        assert position() == (12, 24) and not flag(SURF_COURSE)
+        assert not cues
+        g.load(start)
+
         move('left', 6)
         move('down')
         assert position() == (3, 23)
-        surf()
+        surf(3)
         move('down')
         assert position() == (3, 25) and flag('EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2'), position()
+        move('up')
+        move('down')
+        assert cues == [(3, 25)], f'revisiting the start replayed its splash: {cues}'
         move('up', 2)
         settle()
         assert position() == (3, 23) and not flag('EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2')
-        surf()
+        surf(3)
         move('down')
         move('right', 5)
         move('up')
-        move('right', 4)
-        settle()
-        assert position() == (12, 24) and flag(SURF_COURSE)
+        finish = (12, 24)
+        finish_text = []
+        text_hook = g.sym['Script_jumpthistext']
+        g.pb.hook_register(*text_hook, lambda _: finish_text.append(finish in drawn), None)
+        try:
+            move('right', 4)
+            settle()
+        finally:
+            g.pb.hook_deregister(*text_hook)
+        assert position() == finish and flag(SURF_COURSE)
+        assert cues == [(3, 25), (3, 25), (8, 25), finish], f'checkpoint splashes: {cues}'
+        assert set(cues) <= set(drawn), f'splash animation did not run at {set(cues) - set(drawn)}'
+        assert finish_text == [True], 'the finish splash did not play before Course clear'
+        after_finish = len(drawn)
+        g.tick(32)
+        assert len(drawn) == after_finish, 'the finish splash did not clear'
+        g.pb.hook_deregister(*spawn_hook)
+        g.pb.hook_deregister(*draw_hook)
         move('up')
         move('left', 3)
         move('up')
@@ -322,11 +358,32 @@ def main():
         assert position() == (24, 6)
         move('up', delay=60)
         assert location() == map_id('ROCKY_PEAK')
+        peak_weather = g.rd('wCurWeather')
         move('up', delay=65)
-        for direction in ('up', 'left', 'down', 'right', 'up', 'right', 'up'):
+        for direction in ('up', 'left', 'down', 'right', 'up', 'right'):
             move(direction, delay=105)
-        settle()
-        assert flag(SUMMIT) and position() == (13, 3)
+        below_summit = g.state()
+        snow_frames = []
+        g.pb.hook_register(*g.sym['DoOverworldSnow'], snow_frames.append, True)
+        try:
+            move('up', delay=105)
+            settle()
+            assert snow_frames, 'the summit scene did not render snow'
+            assert flag(SUMMIT) and position() == (13, 3)
+            assert g.rd('wCurWeather') == peak_weather and not g.rd('wCinematicFlags')
+            reached_summit = g.state()
+
+            # An adventure that already reached the summit skips the scene.
+            g.load(below_summit)
+            setflag(SUMMIT)
+            snow_frames.clear()
+            move('up', delay=105)
+            # Without dialogue, the slide continues one tile past the trigger.
+            assert position() == (13, 2) and not g.rd('wScriptRunning')
+            assert not snow_frames and not g.rd('wCinematicFlags')
+        finally:
+            g.pb.hook_deregister(*g.sym['DoOverworldSnow'])
+        g.load(reached_summit)
         move('left', delay=90)
         assert location() == map_id('ROCKY_BEACH') and position() == (22, 26)
         move('down')

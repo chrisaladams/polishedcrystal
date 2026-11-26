@@ -23,16 +23,25 @@ RockyPeakSummitScript:
 	checkevent EVENT_REACHED_DANNYS_SUMMIT
 	iftruefwd .Done
 	setevent EVENT_REACHED_DANNYS_SUMMIT
-	jumpthistext
+	scene_begin
+	scene_weather OW_WEATHER_SNOW
+	playsound SFX_WHIRLWIND
+	pause 24
+	opentext
+	writetext .SummitText
+	waitbutton
+	closetext
+	scene_end
+.Done:
+	end
 
+.SummitText:
 	text "The summit shelf!"
 	para "You can see the"
 	line "ferries far below."
 	para "Take the ladder"
 	line "down to Danny."
 	done
-.Done:
-	end
 
 RockyPeakDescentScript:
 	warp ROCKY_BEACH, 22, 26

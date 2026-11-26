@@ -91,7 +91,7 @@ def main(path):
     original = Path(path).read_bytes()
     rom = (Path(ROOT) / 'polishedcrystal-3.2.3.gbc').read_bytes()
     assert rom[0x147] == 0x1b  # MBC5 with battery-backed RAM: no RTC (Link Edition, 4 MiB carts)
-    k = rgbasm_values(('MORN', 'DAY', 'EVE', 'NITE', 'SOFTWARE_CLOCK_MARKER', 'WORLD_CLOCK_DAYS',
+    k = rgbasm_values(('MORN', 'DAY', 'EVE', 'NITE', 'SOFTWARE_CLOCK_MARKER', 'WORLD_CLOCK_DAYS', 'WORLD_CLOCK_SPEED',
                        'STATUSFLAGS2_BUG_CONTEST_TIMER_F', 'BUG_CONTEST_MINUTES', 'LIGHTNING_ROD',
                        'NORMAL', 'FAIRY'), None)
     game = Game(original)
@@ -222,13 +222,28 @@ def main(path):
         game.load(base)
         set_clock(game, (20, 18, 10, 0))
         word(game, 'wGameplaySeconds', 5700)
+        staged, restored = [], []
+
+        def record_time(samples):
+            samples.append((clock(game), word(game, 'wGameplaySeconds')))
+
+        game.pb.hook_register(*game.sym['StageGameClockForSave'], record_time, staged)
         game.manual_save()
+        assert len(staged) == 1, 'manual save did not stage the clock exactly once'
         saved = game.sram()
         game.pb.stop(save=False)
         game = Game(saved)
+        game.pb.hook_register(*game.sym['RestoreGameClock'], record_time, restored)
         game.boot()
-        assert clock(game)[:2] == (20, 18), clock(game)
-        assert 5700 <= word(game, 'wGameplaySeconds') <= 5715
+        assert restored == staged, (staged, restored)
+        # Continue can spend different numbers of frames after loading.
+        # Check that both clocks advance together from the saved values.
+        (day, hour, minute, second), elapsed = staged[0]
+        resumed_day, resumed_hour, resumed_minute, resumed_second = clock(game)
+        assert (resumed_day, resumed_hour) == (day, hour) == (20, 18)
+        seconds_passed = word(game, 'wGameplaySeconds') - elapsed
+        assert seconds_passed > 0
+        assert resumed_minute * 60 + resumed_second == minute * 60 + second + k['WORLD_CLOCK_SPEED'] * seconds_passed
         print('Passed hardware-free clock, legacy and backup saves, day/night, week and day wrap, sightings, phone, contest, link pause and manual Continue.')
     finally:
         game.pb.stop(save=False)

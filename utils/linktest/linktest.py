@@ -246,6 +246,18 @@ class Side:
             self.mem[a] = (self.mem[a] - 1) & 0xff
             self.say(f'    (test) changed our HP at exchange {self.desync_at}')
 
+    def unplug_world_at(self, exchange):
+        remaining = exchange
+
+        def unplug(_):
+            nonlocal remaining
+            remaining -= 1
+            if not remaining:
+                self.cable.mm[126] = 1
+                self.say(f'    (test) cable unplugged at Championship exchange {exchange}')
+
+        self.pb.hook_register(*self.sym['WorldLinkSwap'], unplug, None)
+
     def dump_sram(self, sav):
         """Write this cartridge's battery RAM (and the input save's clock bytes)
         to out/<name>.sav, for the next session."""
@@ -359,6 +371,8 @@ class Side:
                     seated = False        # back in the Colosseum: sit down again
                 if 'different rules' in text:
                     return 'rejected: different rules'
+                if 'the same build' in text:
+                    return 'rejected: different build'
                 if 'three eligible' in text:
                     return 'rejected: illegal Rising Star party'
                 # the linked World Championship's sessions that end at the desk
@@ -373,7 +387,13 @@ class Side:
                                                          for k in range(n)).hex(' '))
                         for _ in range(12):
                             self.press('a', 30)
+                            if not self.rd('wScriptRunning'):
+                                break
                         self.tick(200)
+                        if outcome == 'interrupted' and (self.where() != POKECENTER_2F
+                                or self.rd('wScriptRunning') or self.rd('wLinkMode')
+                                or self.rd('hSerialConnectionStatus') != 0xff):
+                            return 'desk: interruption did not restore control'
                         return 'desk: ' + outcome
             in_battle = self.rd('wBattleMode') != 0
             here = self.where()
@@ -487,7 +507,8 @@ class Side:
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
            desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None,
-           party_size=None, expect_rejection=False, noise_desk=False, day=None, trade=False, last_rules=None):
+           party_size=None, expect_rejection=False, noise_desk=False, day=None, trade=False, last_rules=None,
+           world_unplug=None):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
         s.trade = trade
@@ -502,6 +523,8 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
         s.party_size = party_size
         if force_moves:
             s.force_moves = force_moves
+        if world_unplug is not None:
+            s.unplug_world_at(world_unplug)
         result = s.run(turns, time.time() + seconds)
         # (a session that ends at the desk doesn't stop the other side early)
         if not (expect_rejection and result.startswith('rejected:')) and not result.startswith('desk:') \
@@ -559,11 +582,13 @@ def main():
                     'normal, random, rising, unrestricted, or A,B (e.g. rising,unrestricted)')
     ap.add_argument('--party-size', type=int, choices=range(1, 7),
                     help='limit both test parties before visiting the desk, using only the in-memory save')
-    ap.add_argument('--expect-rejection', choices=('mismatch', 'rising-party'),
+    ap.add_argument('--expect-rejection', choices=('mismatch', 'build', 'rising-party'),
                     help='both desks should refuse the match for this reason')
     ap.add_argument('--unplug', default='',
                     help='AT,DELAY,FRAMES: at action exchange AT (side A), wait DELAY frames, '
                          'then unplug the cable for FRAMES frames')
+    ap.add_argument('--world-unplug', type=int, choices=(1, 2),
+                    help='disconnect at the start of this Championship desk exchange')
     ap.add_argument('--desync-at', type=int, default=0,
                     help="change side B's HP at this action exchange, to test desync detection")
     ap.add_argument('--noise-setup', action='store_true',
@@ -584,6 +609,8 @@ def main():
     last_rules = args.last_rules.split(',') if args.last_rules else [None]
     if len(last_rules) not in (1, 2) or any(r is not None and r not in RULES for r in last_rules):
         ap.error('invalid --last-rules')
+    if args.world_unplug and (any(rule != 'world' for rule in formats) or args.trade or args.unplug):
+        ap.error('--world-unplug needs Championship rules on both sides and no other unplug')
     os.makedirs(args.out, exist_ok=True)
     force_ids = None
     if args.force_moves:
@@ -607,7 +634,8 @@ def main():
                                             else (0, 0, 0),
                                             (formats * 2)[slot], force_ids, args.party_size, bool(args.expect_rejection),
                                             args.noise_desk and slot == 1, args.day_b if slot else None,
-                                            args.trade, (last_rules * 2)[slot]))
+                                            args.trade, (last_rules * 2)[slot],
+                                            args.world_unplug if not slot else None))
         p.start()
         ctx_procs.append(p)
     res = {}
@@ -622,7 +650,9 @@ def main():
         print(f'{name}: {res[name][0]} after {len(res[name][1])} action exchanges, '
               f'{res[name][2]} bits flipped')
     if args.expect_rejection:
-        wanted = 'rejected: ' + {'mismatch': 'different rules', 'rising-party': 'illegal Rising Star party'}[args.expect_rejection]
+        reasons = {'mismatch': 'different rules', 'build': 'different build',
+                   'rising-party': 'illegal Rising Star party'}
+        wanted = 'rejected: ' + reasons[args.expect_rejection]
         if all(res[name][0].startswith(wanted) and not res[name][1] for name in 'AB'):
             return 0
         print(f'Expected both desks to report {wanted}.')
@@ -631,6 +661,11 @@ def main():
         if all(res[name][0].startswith('in the Trade Center') for name in 'AB'):
             return 0
         print('Expected both sides to reach the Trade Center.')
+        return 1
+    if args.world_unplug:
+        if all(res[name][0].startswith('desk: interrupted') and not res[name][1] for name in 'AB'):
+            return 0
+        print('Expected both desks to report an interruption before any battle.')
         return 1
     if all(res[name][0].startswith('desk:') for name in 'AB'):
         # a Championship session that ended at the desk: the caller checks it

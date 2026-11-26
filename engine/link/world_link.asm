@@ -10,8 +10,8 @@
 ;
 ; A session at the desk is two exchanges: what each side has (WorldLinkPut),
 ; then the plan each worked out from both, with the other's check echoed
-; back. Only when both agree does either change anything, so a session cut
-; short changes nothing, and running one twice changes nothing more.
+; back. Only a side that receives a valid matching plan commits it. If
+; only one finishes registration, its partner can join on the next link.
 
 ; message bytes (WORLD_LINK_MESSAGE_LENGTH, the last a check)
 	rsreset
@@ -223,8 +223,10 @@ WorldLinkSwap:
 	rst ByteFill
 	ld hl, wWorldLinkSend
 	ld de, wWorldLinkReceive
-	ld bc, WORLD_LINK_BUFFER_LENGTH
-	farcall Serial_ExchangeBytes
+	assert WORLD_LINK_BUFFER_LENGTH <= $ff
+	ld c, WORLD_LINK_BUFFER_LENGTH
+	farcall Serial_ExchangeBytesBounded
+	ret c
 	; skip the preamble
 	ld hl, wWorldLinkReceive
 	ld b, SERIAL_POLISHED_MAX_PREAMBLE_LENGTH + 1

@@ -68,14 +68,13 @@ Core systems exist. Release validation still includes natural progression, exist
 
 ## Memory baseline and accounting
 
-The current standard builds use 2 MiB MBC3 ROM and four SRAM banks (32 KiB).
-With RGBDS 1.0.4 at the takeover commit, default has **9,675 B** of free
-ROM and faithful has **9,736 B**. The largest ROMX gaps are **9,434 B** and
-**9,476 B** in bank `$7f`. Both have 923 B SRAM free across four banks
-(largest gap 393 B), 9 B WRAM0 free, 3,574 B WRAMX free and 5 B HRAM free.
-VRAM is fully assigned on the static map. Measure actual tile and OAM
-use in the screens a feature touches. See the
-[per-bank measurements and repair delta](memory-baseline.md).
+The standard builds target the owner's 4 MiB MBC5 cartridges with 32 KiB of
+SRAM. The current ROM images are 2 MiB and grow as higher banks are used.
+Both builds have 923 B SRAM free across four banks (largest gap 393 B), 9 B
+WRAM0 free, 3,561 B WRAMX free and 5 B HRAM free. VRAM is fully assigned on
+the static map. Measure actual tile and OAM use in the screens a feature
+touches. See the [per-bank measurements](memory-baseline.md) and the
+[cartridge decision and bank stress test](memory-requirements.md).
 
 The prior 7 KiB ROM reserve, 30–40 KiB stretch target and SRAM reserve targets
 were planning illustrations. Set a release budget with the owner if measured
@@ -106,10 +105,10 @@ Relevant files: `engine/link/friend_teams.asm`, `engine/events/cups.asm`, `engin
 Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `engine/link/link_rules.asm`, `engine/link/link.asm`, `maps/IndigoPlateauPokecenter1F.asm`, `maps/PokeCenter2F.asm`, `ram/sram.asm`, `ram/wram0.asm`, `utils/linktest/test_world_link.py`.
 
 - [x] Resolve completed-bracket reconciliation. A champion or runner-up clearing a record must not cause an old partner record to recreate the tournament. Retain a compact completion receipt/tombstone or equivalent until safe retirement. *(Finished brackets keep their record with a closed bit (`WORLDLINK_CLOSED_F`); a closed record syncs with the partner's open one instead of being rejoined, and is replaced only when both players register a new bracket. Tested: champion closed vs runner-up open, then a new bracket with a new ID.)*
-- [x] Resolve two reproduced prize recovery edge cases. *(Decided and done: a new adventure never inherits the previous trainer's prize (L1); the restored-backup case is an accepted limit.)* Normal Continue and backup checksum recovery preserve the saved prize and receipt. A restored older backup can disagree with the closed bracket record. New Game in the save-to-close window can inherit a bracket whose prize the previous adventure already saved. Preserve the cartridge-lifetime bracket and decide the intended recovery behavior before changing persistence. See L1 in the [issue ledger](issue-ledger.md).
+- [x] Resolve the linked prize recovery cases. A new adventure skips finished brackets from its previous trainer and closes them on its first save. Normal Continue and backup checksum recovery preserve the saved prize and receipt. The owner accepted that a separately restored pre-prize backup may lose the reward when paired with a later closed bracket (L1 in the [issue ledger](issue-ledger.md)).
 - [x] Define withdrawal semantics, partner notification, abandoned brackets and stale-session handling. An explicit withdrawal must not be mistaken for incomplete registration. *(Leaving, offered at the Indigo desk when declining a round or while waiting, closes the record at its current status; the partner hears it as a forfeit of the next match (quarterfinal → out in the quarterfinal; semifinal or final → out in the semifinal). Tested: withdrawal before the quarterfinal, then the survivor's NPC final.)*
 - [ ] Validate incoming state, status, ID, seed, bracket half, partner identity, rule and legal state transitions. Compare full shared tournament identity, including seed and opposite halves. Add checksum/version improvements if needed. *(Implemented: out-of-range state, half or status yields no plan, so neither side changes; brackets match only on ID, seed, opposite halves and each other's ID; the message grew to 24 bytes with separate new-bracket proposals. Tested: mismatched partners and a noisy session; and `test_world_plan.py` (in run_checks) gives the plan 27 crafted message pairs: each normal case, each injected out-of-range state, half and status (no plan, so neither side changes), and each way of not being the same bracket (a mismatch, never a sync). With the range check removed, five fail, three of them syncing a corrupt status.)*
-- [ ] Test one-sided registration, one-sided final result, interrupted exchanges on either side, retries, mismatched partners, draws, duplicate exchanges, stale/replayed results and disconnect at each commit boundary. A two-exchange protocol is not proof of atomic distributed commit.
+- [ ] Test interrupted exchanges, retries, mismatches, draws, duplicate exchanges and stale results. The virtual cable covers unplugging at the start of each desk exchange, control returning to both players, byte-for-byte bracket preservation and a successful retry (L25). Reconnecting with just one persisted registration or final result recovers the draw and both players' rounds from either side's save. Mid-packet cuts, interruption during individual SRAM writes, and physical cable tests remain open.
 - [x] Specify whether changing teams between rounds is allowed. If prohibited, store and validate a registration fingerprint; if allowed, document it explicitly. Preserve player-owned Pokémon. *(Allowed: each round takes whatever six the player brings, at level 50; documented in the README. Parties are restored by the cup runner.)*
 - [x] Verify Championship is gated or clearly directed to the appropriate post-Red progression point; avoid trapping early players in inaccessible brackets. *(The battle desk refuses Championship rules before `EVENT_GOT_MYSTICTICKET_FROM_RED`, matching the Indigo desk. Verified in the emulator by `test_link_rules.py` (in run_checks): before Red the desk explains it's for trainers who beat Red and asks for no link; after Red it goes on to ask for a Colosseum link.)*
 - [x] Verify trading immediately after Championship (and other formats) cannot accidentally invoke the championship session via stale `wLinkBattleRules`. Check room mode as well as rule ID where necessary. *(The desk runs the session only when `wChosenCableClubRoom` is the Colosseum, and the trade room skips the options and rules checks. Verified over the virtual cable: `linktest.py --trade --last-rules world,normal` (one side's last battle Championship, the other's Standard) and `--last-rules world` (both): both reach the Trade Center.)*
@@ -122,7 +121,7 @@ Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `en
 - [x] Audit the second pass with a depleted typed pool. It currently relaxes the type rule. Confirm what the player sees and report options if graceful refusal would change an advertised rule. *(No player can meet it with the current sets: every type has at least seven different species (Dragon has the fewest), and the largest typed team a cup asks for is four (Miki), so the first pass always fills a typed team with the type rule kept. `test_team_generation.py` counts each type's species from the game's own set table and base data and fails if any type falls below six, the point where the relaxed pass could appear.)*
 - [x] Audit event-flag exhaustion, reusable flags and persistent state migration. Do not reuse flags still needed by older saves. *([`event-flags.md`](event-flags.md): 2,304 flags, all taken but 16 retired slots. The rules for reusing one say an old save may still have it set. The family's three saves have none set.)*
 - [ ] Complete the CupBegin/CupEnd matrix for cancel, loss, reset, full bags and re-entry. Byte-for-byte party restoration apart from intended healing is exercised across all six cups plus Rudy, Luana and Friend Battles (L6).
-- [ ] Audit Orange Surf checkpoint bypasses, ice-puzzle exits, out-of-order badges, and legacy badge saves.
+- [ ] Audit Orange Surf checkpoint bypasses, ice-puzzle exits, out-of-order badges, and legacy badge saves. *(Automated coverage includes approaching the Surf finish from the east, revisiting the start buoy, and restarting after going ashore.)*
 - [ ] Validate graphics restoration and legacy trophies and customization. Album navigation and the Kimono mastery tally already exist.
 - [x] Fix the Quest Map pin list being overwritten by the linked Championship lookup when many leads coexist. The regression checks the displayed order, a single Indigo entry and read-only SRAM behavior.
 
@@ -175,7 +174,8 @@ or architectural options to the owner before committing to a trade-off.
 **Initial provisional ROM budget:** 1.5–3 KiB excluding substantial new graphics. Audit and reuse existing camera, movement, palette, sound, tile animation and battle-effect helpers before writing replacements.
 
 - [x] Shared begin/end scene API; safely lock input, restore camera, movement, palettes, sprites, audio and state on completion or interruption. *(`scene_begin` / `scene_end` ([`cinematics.md`](cinematics.md)). They restore the exact palettes, recompute sprite palettes, and restart the map's music only if the scene changed it. Lightning is held off. The script engine already locks input. Tested: `test_cinematic.py`.)*
-- [ ] Camera focus, pan, offscreen reveal and return; optional scene framing/title cards where affordable. *(Not done: Gen 2's overworld has no camera; see [`cinematics.md`](cinematics.md).)*
+- [x] Camera pans and return, offscreen entrances, individual shadows and title cards are implemented and exercised in `test_cinematic.py`. Screen framing remains open. See [`cinematics.md`](cinematics.md).
+- [x] Temporary scene weather uses the existing weather tiles and sprites, with restoration at scene end. `test_cinematic.py` exercises weather selection and palette restoration.
 - [x] Palette fade, tint, pulse, darkness and silhouette reveals. *(`scene_tint` (7 colors, compounding; two `TINT_DARK` for darkness), `scene_pulse`, `scene_silhouette`, faded with the engine's `FadePalettes`. Exact colors tested.)*
 - [x] Implement Flash & Shake. Turning it off suppresses scene flashes and pulses, weather lightning visuals and earthquake motion while retaining scene timing where applicable. `test_cinematic.py` exercises the option and lifecycle.
 - [x] Music fades, silence, Pokémon cries and environmental sounds. *(The engine's `musicfadeout`, `cry` and `playsound`; `scene_end` brings the map's music back.)*
@@ -207,7 +207,7 @@ Apply phase 4 to the existing campaigns first; do not duplicate captures or rewr
 - [ ] **The Power of One:** escalating storm, legendary-bird silhouettes/cries, animated elemental beacons, Melody's staging, Lawrence confrontation, Lugia emergence and restoration of daylight. Preserve alternate beacon order and original capture path. *(Done: each beacon pulses in its guardian's color; blue light for Melody's song and a flash as Lugia answers. Also a gathering storm (darkness, thunder, flash) while Lawrence speaks. Not yet: bird silhouettes, an escalating weather storm.)*
 - [ ] **Spell of the Unown:** establish Molly/Hale, spreading crystal motifs, dream palettes, floating Unown, illusion transitions, optional encounters, rescue and environmental cleanup. *(Done: the Entei illusion in purple dream light. Also the Unown's power gathering around Molly before her first battle (purple light and sparkle). Not yet: crystal motifs, floating Unown sprites.)*
 - [ ] **Voice of the Forest:** dark forest palette, corrupted Pokémon, Sammy, time distortion, shrine pulse, green particles, Marauder confrontation, forest healing, departure and Oak reveal. Preserve existing Celebi capture. *(Done: the forest darkens for the Marauder, then Celebi's dim glow, green shrine pulses until the daylight returns, flashes for its departure; `BlindingFlash` (the Flash field move) replaced by `scene_flash`. Green sparkle emotes are in. Broader particles and scene presentation remain open.)*
-- [ ] **Orange League:** water splashes and buoy feedback for Cissy; wind, ice and cold summit palette for Danny; typed battle introductions for Rudy; partnership staging for Luana; Dragonite reveal and trophy ceremony for Drake. *(Done: Cissy's surf pulse, Danny's cold haze, Drake's Dragonite roar and gold trophy light. Also each of Rudy's rounds opening in its type's color, hearts for Luana's partnership, and a sparkle for the trophy. Not yet: buoy feedback.)*
+- [ ] **Orange League:** water splashes and buoy feedback for Cissy; wind, ice and cold summit palette for Danny; typed battle introductions for Rudy; partnership staging for Luana; Dragonite reveal and trophy ceremony for Drake. *(Done: Cissy's Surf pulse and a splash and chime at each accepted buoy, Danny's cold haze and first-summit flurry, each of Rudy's type-color openers, Luana's partnership hearts, Drake's Dragonite roar and a gold trophy sparkle.)*
 - [ ] **Pallet Invitational:** distinctive introductions, Tracey's sketch and a satisfying conclusion. *(Done: Pikachu's spark before Ash, gold light while Tracey sketches the winners.)*
 - [ ] **Battle presentation:** selectively enhance legendary/champion/shadow entrances and victory moments; consider critical-hit feedback, hit-stop and final-Pokémon music only if timing and memory permit.
 - [ ] **Audio direction:** reuse suitable themes, offscreen cries, wind/thunder, discovery cues and fanfares; restore normal music correctly after each scene.
@@ -273,9 +273,9 @@ owner. Existing content and functionality remain in place.
 ## Phase 9 — Environmental presentation
 
 - [ ] Stylized lighting: windows, caves, torches, shrines and palette-based light shafts.
-- [ ] Extend environmental weather using the existing overworld rain, snow, lightning and other weather routines. Scope fog and intensity changes against readability and sprite use.
+- [ ] Extend environmental weather using the existing overworld rain, snow, lightning and other weather routines. Temporary scene overrides are implemented and used at Rocky Peak. Scope persistent map changes, fog and intensity against readability and sprite use.
 - [ ] Audit existing tile animation and scope extensions for water, flowers, machinery, flags and crystals.
-- [ ] Reusable location title cards.
+- [ ] Apply the existing reusable title card to selected location entrances.
 - [ ] Running dust, grass rustle, surf ripples, fishing splashes, item/shiny sparkles, honey cues and legendary cries.
 - [ ] Audit existing effects before duplicating them; allocate tiles per screen and share assets with phase 4.
 
@@ -363,7 +363,7 @@ The proposed records compete for fragmented SRAM. At 136 B each, four extra Frie
 
 ## Phase 15 — Competitive simulation and AI
 
-- [ ] Finish auditing `meta_sim` coverage before changes to balance. The stats, damage, pipeline, accuracy, status and speed oracles have a fresh baseline. The whole-turn Baton Pass harness gap is tracked as L12.
+- [x] Refresh the simulator oracles before balance changes. The stats, damage, pipeline, accuracy, status and speed oracles have a recorded baseline. The whole-turn harness correction brought the recorded run to 48/48 matchups (L12).
 - [ ] Support family, rental and legal competitive stat profiles; respect actual EV/DV and hyper-training rules.
 - [ ] Increase simulation samples where useful, measure uncertainty, evaluate type matchups, team roles/synergy and switching.
 - [ ] Calibrate tournament difficulty and deterministic NPC win probabilities using documented inputs.
@@ -388,7 +388,11 @@ Repeat the relevant 2.0 regression and physical tests, especially scene restorat
 
 ## Phase 16 — Expanded cartridge architecture
 
-| Resource | Current | Eventual MBC5 target ceiling |
+The original proposal started at 2 MiB. The active milestones now target the
+owner's 4 MiB cartridges with the existing 32 KiB of SRAM. See the
+[cartridge decision](memory-requirements.md).
+
+| Resource | Original baseline | Eventual MBC5 target ceiling |
 |---|---:|---:|
 | ROM | 2 MiB | 8 MiB |
 | SRAM | 32 KiB | 128 KiB |
@@ -473,18 +477,16 @@ Repeat the relevant 2.0 regression and physical tests, especially scene restorat
 
 ## Remaining work order
 
-1. Resolve the outstanding linked prize recovery cases (L1) after agreeing
-   how a restored adventure should interact with the cartridge record. Finish
-   targeted link and Friend Battle regression cases, including trade directly
-   after a Championship and deliberately refused moves.
+1. Finish targeted link and Friend Battle regressions, including disconnects
+   at Championship commit boundaries and deliberately refused moves.
 2. Run lossless memory measurements and scene-level VRAM/OAM checks alongside
    reliability work. Use the existing cinematic library to scope the most
    visible unfinished 2.0 scenes.
 3. Log natural progression, legacy save and original hardware validation while
    2.0 is stabilized.
-4. Estimate 2.1 in small prototypes against the measured cartridge budget.
-   Bring rules for new tournaments, persistence, legendary quest scope or a
-   hardware change to the owner when they need a decision.
+4. Prototype 2.1 improvements within the measured cartridge and runtime
+   budgets. Review new tournament rules, persistence and legendary quest
+   scope with the owner when they need a decision.
 
 ## Per-task completion report template
 

@@ -66,7 +66,7 @@ An example, the first scene to use it (the Mewtwo clones, `maps/CeruleanCaveB1F.
 | Spell of the Unown | Ruins of Alph Research Center | Before Molly's first battle, the Unown's power gathers around her: purple light, a purple sparkle, a rumble |
 | Spell of the Unown | Ruins of Alph inner chamber | The Entei illusion in a dream's purple light, a purple sparkle as it breaks into letters |
 | Voice of the Forest | Ilex Forest | The forest darkens around the Marauder. After he's beaten: a flash as he vanishes, the forest dim with Celebi's hurt glow, green pulses from the shrine until the daylight returns, a green sparkle as it heals, another and two flashes as it takes Sammy home |
-| Orange League | Warm Beach, Rocky Beach, Beautiful Beach, Valencia, Shamouti house | A blue surf pulse for Cissy; a cold white haze for Danny; each of Rudy's rounds opens in its type's color (green, red, blue); hearts over Luana and you, partners; Dragonite's roar, a rumble and a flash for Drake; gold light and a sparkle for the trophy |
+| Orange League | Warm Beach, Rocky Beach, Rocky Peak, Beautiful Beach, Valencia, Shamouti house | A blue Surf pulse for Cissy and a splash and chime at each accepted buoy; a cold white haze for Danny and a flurry with a gust of wind on the first summit visit; each of Rudy's rounds opens in its type's color (green, red, blue); hearts over Luana and you, partners; Dragonite's roar, a rumble and a flash for Drake; gold light and a sparkle for the trophy |
 | Pallet Invitational | Pallet Town | Pikachu's spark before Ash's battle; gold light and a sparkle while Tracey sketches the winners |
 
 The Voice of the Forest scenes used to call `BlindingFlash` for their flashes.

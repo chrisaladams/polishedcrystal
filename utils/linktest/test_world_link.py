@@ -15,6 +15,10 @@ starts from the cartridges the last one left. The scenarios:
   nothing more), and the finalist plays the other half's finalist at the
   Indigo Plateau, while the other is told to wait;
 - both out: they hear so, and both brackets close;
+- unplugging at either desk exchange returns both players to the desk,
+  preserves the bracket records, and lets the next connection succeed;
+- reconnecting cartridges with only one durable registration or final
+  result recovers the same draw and each player's round;
 - a session with heavy noise on the cable either changes nothing or leaves
   the two cartridges agreeing after a clean session, and a different clock
   on one Game Boy doesn't matter.
@@ -44,9 +48,21 @@ UNKNOWN = 0xff
 fails = []
 
 
+def record_bytes(sav):
+    with open(sav, 'rb') as src:
+        src.seek(RECORD)
+        return src.read(20)
+
+
 def record(sav):
-    r = open(sav, 'rb').read()[RECORD:RECORD + 20]
-    if r[:2] != b'WC':
+    r = record_bytes(sav)
+    if len(r) != 20 or r[:2] != b'WC':
+        return None
+    checksum = ord('C')
+    for byte in r[3:]:
+        checksum = (checksum + byte) & 0xff
+        checksum = (checksum << 1 | checksum >> 7) & 0xff
+    if r[2] != checksum:
         return None
     return {'id': r[3:5], 'seed': r[5] | r[6] << 8, 'half': r[7], 'partner': r[8:10],
             'name': r[10:18], 'status': r[18] & 0x7f, 'closed': bool(r[18] & 0x80), 'partner_status': r[19]}
@@ -68,10 +84,12 @@ def opponent(rec, round_):
     return finalist
 
 
-def link(a, b, out, *extra, seconds=900):
+def link(a, b, out, *extra, seconds=900, allow_failure=False):
     cmd = [sys.executable, os.path.join(ROOT, 'utils', 'linktest', 'linktest.py'), a, b,
            '--rules', 'world', '--turns', '400', '--seconds', str(seconds), '--out', out, *extra]
     res = subprocess.run(cmd, capture_output=True, text=True, timeout=1300)
+    if res.returncode and not allow_failure:
+        check(False, os.path.basename(out), res.stdout.strip() or res.stderr.strip())
     got = dict(re.findall(r'^([AB]): (.*?) \(', res.stdout, re.M))
     return got.get('A', '?'), got.get('B', '?'), os.path.join(out, 'A.sav'), os.path.join(out, 'B.sav')
 
@@ -243,19 +261,65 @@ def registered(a, b, where):
     return ra, rb
 
 
+def check_one_sided_commit(before, committed, outcome, step, stage):
+    expected = [record(sav) for sav in committed]
+    fields = ('id', 'seed', 'half', 'partner', 'status')
+    for i, name in enumerate('AB'):
+        where = f'{stage}_only_{name}'
+        inputs = list(before)
+        inputs[i] = committed[i]
+        ra, rb, a, b = link(*inputs, step(where))
+        check((ra, rb) == (outcome, outcome), where, f'after reconnect: {ra} / {rb}')
+        for side, got, want in zip('AB', registered(a, b, where), expected):
+            check(got and want and all(got[key] == want[key] for key in fields),
+                  where, f'side {side} did not recover the same draw and round')
+
+
+def check_interruptions(a, b, step):
+    for exchange, retry_want in ((1, 'desk: registered'), (2, 'desk: synced')):
+        where = f'unplug_exchange_{exchange}'
+        before = (record_bytes(a), record_bytes(b))
+        outcome_a, outcome_b, cut_a, cut_b = link(
+            a, b, step(where), '--world-unplug', str(exchange), seconds=60)
+        check((outcome_a, outcome_b) == ('desk: interrupted', 'desk: interrupted'), where,
+              f'after disconnect: {outcome_a} / {outcome_b}')
+        check((record_bytes(cut_a), record_bytes(cut_b)) == before, where,
+              'the interrupted exchange changed a bracket record')
+
+        outcome_a, outcome_b, a, b = link(cut_a, cut_b, step(f'{where}_retry'))
+        check((outcome_a, outcome_b) == (retry_want, retry_want), where,
+              f'after reconnect: {outcome_a} / {outcome_b}')
+        ra, rb = registered(a, b, where)
+        if exchange == 1 and ra and rb:
+            check_one_sided_commit((cut_a, cut_b), (a, b), 'desk: registered', step, 'registration')
+        elif exchange == 2 and ra and rb:
+            for rec, old in zip((ra, rb), before):
+                check(rec['status'] == rec['partner_status'] == QF
+                      and rec['id'] == old[3:5] and rec['seed'] == int.from_bytes(old[5:7], 'little')
+                      and rec['half'] == old[7], where, 'the retry changed the draw or lost a result')
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('save_a')
     ap.add_argument('save_b')
-    ap.add_argument('save_c', help='a third player, for a mismatched session')
+    ap.add_argument('save_c', nargs='?', help='a third player, for a mismatched session')
     ap.add_argument('--out', default='world_link_out')
+    ap.add_argument('--interruptions-only', action='store_true',
+                    help='run the desk disconnect and retry cases only')
     args = ap.parse_args()
+    if not args.interruptions_only and args.save_c is None:
+        ap.error('the full suite needs a third save')
     os.makedirs(args.out, exist_ok=True)
 
     def step(name):
         d = os.path.join(args.out, name)
         os.makedirs(d, exist_ok=True)
         return d
+
+    check_interruptions(args.save_a, args.save_b, step)
+    if args.interruptions_only:
+        return report()
 
     def keep(ind, name, save_game=False):
         if save_game:
@@ -277,12 +341,14 @@ def main():
     a = offline(a, [True, True], 'both_A')
     b = offline(b, [True, True], 'both_B')
     check(record(a)['status'] == FINAL and record(b)['status'] == FINAL, 'both', 'not both qualified')
+    finalists = (a, b)
     ra_, rb_, a, b = link(a, b, step('both_final'))
     check(ra_.startswith('battle over') and rb_.startswith('battle over'), 'both', f'final: {ra_} / {rb_}')
     sa, sb = record(a)['status'], record(b)['status']
     check({sa, sb} == {CHAMPION, RUNNER_UP}, 'both', f'after the final: {sa} {sb}')
     check(record(a)['partner_status'] == sb and record(b)['partner_status'] == sa, 'both',
           "each did not hear the other's result")
+    check_one_sided_commit(finalists, (a, b), 'desk: synced', step, 'final_result')
     champ, other = (a, b) if sa == CHAMPION else (b, a)
 
     # the prize, and a power cut before saving: still unclaimed, so given again
@@ -332,9 +398,9 @@ def main():
     check((ra_, rb_) == ('desk: synced', 'desk: synced'), 'one', f'sync: {ra_} / {rb_}')
     check(record(a)['partner_status'] == OUT_QF and record(b)['partner_status'] == FINAL, 'one',
           'not told how the other did')
-    before = (open(a, 'rb').read()[RECORD:RECORD + 20], open(b, 'rb').read()[RECORD:RECORD + 20])
+    before = (record_bytes(a), record_bytes(b))
     ra_, rb_, a, b = link(a, b, step('one_sync_again'))
-    after = (open(a, 'rb').read()[RECORD:RECORD + 20], open(b, 'rb').read()[RECORD:RECORD + 20])
+    after = (record_bytes(a), record_bytes(b))
     check(before == after, 'one', 'a second session changed the records')
     ind = Indigo(b)
     ind.visit('b')
@@ -395,13 +461,18 @@ def main():
     # 6. noise at the desk, then a clean session
     # (a noisy session may be cut off rather than finish: either is checked
     # below, so it needn't wait out the usual limit)
-    ra_, rb_, a, b = link(args.save_a, args.save_b, step('noisy'), '--noise-desk', '--corrupt', '4', seconds=240)
+    ra_, rb_, a, b = link(args.save_a, args.save_b, step('noisy'), '--noise-desk', '--corrupt', '4',
+                          seconds=240, allow_failure=True)
     na, nb = record(a), record(b)
     ra_, rb_, a, b = link(a, b, step('noisy_clean'))
     check(ra_.startswith('desk:') and rb_.startswith('desk:'), 'noise', f'clean session: {ra_} / {rb_}')
     registered(a, b, 'noise')
     check(not (na and nb) or na['id'] == nb['id'], 'noise', 'the noisy session left different brackets')
 
+    return report()
+
+
+def report():
     print(f'{len(fails)} problems')
     for f in fails:
         print('  FAIL', f[0], '-', f[1])

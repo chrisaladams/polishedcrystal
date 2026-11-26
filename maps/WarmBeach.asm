@@ -288,8 +288,7 @@ CissyStartBuoy:
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
 	iftruefwd CissyBuoyDone
 	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
-	playsound SFX_READ_TEXT
-	end
+	sjumpfwd CissyCheckpointCue
 
 CissyMiddleBuoy:
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
@@ -297,8 +296,7 @@ CissyMiddleBuoy:
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
 	iftruefwd CissyBuoyDone
 	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
-	playsound SFX_READ_TEXT
-	end
+	sjumpfwd CissyCheckpointCue
 
 CissyFinishBuoy:
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
@@ -307,6 +305,8 @@ CissyFinishBuoy:
 	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
 	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_2
 	clearevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	scall CissyCheckpointCue
+	deactivatefacing 16 ; let the splash play before opening the textbox
 	jumpthistext
 
 	text "Course clear!"
@@ -314,6 +314,9 @@ CissyFinishBuoy:
 	line "the beach."
 	done
 
+CissyCheckpointCue:
+	playsound SFX_READ_TEXT
+	callasm SpawnPlayerSplash
 CissyBuoyDone:
 	end
 

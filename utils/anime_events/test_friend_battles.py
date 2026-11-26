@@ -26,6 +26,8 @@ Usage (from the repository root, after make):
 import os
 import sys
 
+from test_orange_league import finish_challenge_battle
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'utils', 'wild_mons'))
 from test_wild_mons import Game, rgbasm_values  # noqa: E402
@@ -40,7 +42,7 @@ def main():
              'MON_SPECIES', 'MON_FORM', 'MON_ITEM', 'MON_MOVES', 'MON_PP', 'MON_DVS', 'MON_PERSONALITY',
              'MON_EVS', 'MON_HAPPINESS', 'MON_LEVEL', 'MON_HP', 'MON_MAXHP', 'MON_STATUS', 'MON_IS_EGG_F',
              'LINK_RULE_STANDARD', 'LINK_RULE_RISING_STAR', 'CAL', 'CARRIE', 'PLAYER_FEMALE',
-             'GROUP_POKECENTER_2F', 'MAP_POKECENTER_2F', 'NUM_MOVES']
+             'GROUP_POKECENTER_2F', 'MAP_POKECENTER_2F', 'NUM_MOVES', 'TACKLE']
     K = rgbasm_values(names, None)
     L = K['PARTYMON_STRUCT_LENGTH']
     g = Game(save)
@@ -92,23 +94,6 @@ def main():
                 return True
             g.tick(2)
         return False
-
-    def win():
-        g.tick(300)
-        for i in range(600):
-            if i < 20:
-                for k in range(g.rd('wOTPartyCount')):
-                    g.wr('wOTPartyMon1HP', 0, k * L)
-                    g.wr('wOTPartyMon1HP', 0, k * L + 1)
-                g.wr('wEnemyMonHP', 0)
-                g.wr('wEnemyMonHP', 1, 1)
-                g.wr('wBattleMonHP', 3)
-                g.wr('wBattleMonHP', 0xe7, 1)
-                g.wr('wEnemyMonSpeed', 0)
-                g.wr('wEnemyMonSpeed', 1, 1)
-            g.press('a', 20)
-            if not g.rd('wBattleMode'):
-                break
 
     def settle():
         for _ in range(120):
@@ -168,7 +153,7 @@ def main():
                 fails.append(('standard', f'#{i + 1} level {ot[K["MON_LEVEL"]]}, HP {hp.hex()}/{maxhp.hex()}'))
         if {g.rd('wPartyMon1Level', i * L) for i in range(g.rd('wPartyCount'))} != {50}:
             fails.append(('standard', 'your party is not at level 50'))
-        win()
+        finish_challenge_battle(g, K)
         settle()
         after = party_block()
         if after[0] != before[0]:
@@ -212,7 +197,7 @@ def main():
                                                                        for i in range(3)}
         if levels != {30}:
             fails.append(('rising star', f'levels {levels}'))
-        win()
+        finish_challenge_battle(g, K)
         settle()
     g.pb.hook_deregister(bank, addr)
 
@@ -302,7 +287,7 @@ def main():
     else:
         if g.rd('wOTPartyMon1Species') != odd[K['MON_SPECIES']]:
             fails.append(('odd form', f'battled species {g.rd("wOTPartyMon1Species")}'))
-        win()
+        finish_challenge_battle(g, K)
         settle()
         if g.rd("wBattleMode") or party_block() != before:
             fails.append(('odd form', 'the battle did not finish with your party back'))

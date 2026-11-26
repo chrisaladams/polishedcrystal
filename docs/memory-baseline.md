@@ -1,11 +1,129 @@
-# Takeover build and memory baseline
+# Build and memory baseline
+
+## Cissy’s Surf checkpoints (2026-11-26)
+
+An accepted buoy plays a chime and animates a splash at the player’s
+feet. At the last buoy, the splash plays before the course-clear text.
+The effect borrows the existing puddle graphics and a temporary object
+slot. The build uses 51 additional ROM bytes and one byte of alignment
+padding. Free ROM is 2,106,599 B in Default and 2,106,660 B in Faithful.
+The map comparison showed zero change in static RAM or VRAM usage.
+
+`make -j6 test` and the Orange League emulator suite passed. A separate
+sprite trace found both animation frames at each buoy. The course test
+also checked an approach from the east without passing the earlier
+buoys, staying on course after revisiting the first buoy, and restarting
+after returning to shore.
+
+## Championship desk timeout (2026-11-26)
+
+The Championship desk now limits how long it waits for the start of each
+packet. Pulling the virtual cable at the start of either exchange caused
+both peers to stay in the byte loop on the summit build. With the timeout,
+both show the interruption and return control. The interrupted bracket
+records match their inputs byte for byte. A clean retry registers a fresh
+pair or synchronizes the existing bracket, depending on the test case.
+
+The change costs 30 B of ROM per build and uses the existing save and
+wire formats. Free ROM after the fix is 2,106,651 B in Default and
+2,106,712 B in Faithful. Static RAM measurements are the same as in the
+table below. `make -j6 test` passed, including all 1,513 save-address
+guards. The Virtual Console patch built. The Championship plan and
+prize-persistence suites passed. Standard synchronized across all eight
+shared exchanges in a smoke test, and both peers reached the Trade Center
+after choosing Championship in the previous session.
+
+Both unplug phases passed on Default and the second phase also passed
+on Faithful. One-sided registration and final-result cases used the exact
+SRAM snapshots from before and after each successful virtual-cable
+session. Both choices of surviving record recovered the same draw and
+players' rounds. The older end-to-end scenarios passed in the broader run,
+including a clean reconnect after heavy noise. The two desk cleanup checks
+passed in separate reruns after the driver stopped pressing A once control
+returned. These tests used staged emulator save copies.
+
+## Current MBC5 build (2026-11-26)
+
+Built `fbbc450253b4a2ecb7cab622e9c9598ec9e48cc2` and the Rocky Peak
+scene change from isolated trees on `claude/sleepy-ramanujan-kc278b`.
+RGBDS 1.0.4, GNU Make 3.81, Apple Clang, Python 3.14.6 and PyBoy 2.9.0.
+The cartridge target is 4 MiB MBC5 with 32 KiB SRAM. Both ROM images are
+2 MiB on disk and leave banks `$80–$ff` available as the game grows.
+
+| Build | Free ROM at HEAD | With summit scene | Largest free gap below `$80` with scene |
+|---|---:|---:|---:|
+| Default | 2,106,704 B | 2,106,681 B | 9,309 B in `$7f` |
+| Faithful | 2,106,765 B | 2,106,742 B | 9,355 B in `$7f` |
+
+Both builds have 923 B of SRAM free (509/396/9/9 B by bank; largest
+gap 393 B), 9 B of WRAM0, 3,561 B of WRAMX (largest gap 1,809 B), 5 B
+of HRAM and 0 B of statically free VRAM. The summit scene adds 23 B of
+ROM in each build and uses the existing weather tiles, OAM allocator and
+scene state. Save layout and link protocol are unchanged by the scene.
+
+| Build | SHA-256 at HEAD | SHA-256 with summit scene |
+|---|---|---|
+| Default | `adfc5d9b6f7827fa79515e02d2b12e99c3237eeed39734316cf7d3c8fc97cd57` | `976f6d5b6dc2f6cb8b18eed721aaa812f70395137f97ab9699e500c1f83c6733` |
+| Faithful | `f9e8c059073a09d53d924bc29dd827064bd77aa7f7e6fc556b9c003a36add8f5` | `cc437e45f9795cf2df5a1bed29f81ef9a1a3da124344dfeec043b84388619f19` |
+
+### Current verification
+
+- `make -j6 test` and the Faithful build passed. The test target checked
+  1,513 save addresses, text width, overworld palette rows, bank calls and
+  battle AI scoring.
+- `test_orange_league.py` followed the ice climb, exercised the snowfall
+  renderer on the first visit, checked scene cleanup and confirmed that
+  the slide continues past the trigger on later visits. The ascent and
+  descent still lead to Danny's battle. A separate rendered sample showed
+  up to 15 visible snow sprites at the summit.
+- `test_software_clock.py` loaded a pre-MBC5 emulator save and exercised
+  legacy and backup recovery. It now compares the exact clock and elapsed
+  seconds at save and load, then checks that both counters advance
+  together. The former UI timing allowance failed when Continue reached
+  5,716 seconds, one second outside its range.
+- `test_cinematic.py` stages its own quiet room and shared-palette actors,
+  and `test_friend_battles.py` uses the same forced-faint driver as the
+  Orange League tests. Both passed on the staged Violet save, including
+  a finished battle and party restoration with the out-of-range form.
+- All 25 checks from `run_checks.py --full` passed across the initial set
+  and targeted reruns. The corrected encounter sweep checked 370 wild
+  Pokémon. It checks the actual habitat at a warped-in tile and, if the
+  initial placement attempts come up empty after Continue, verifies that
+  ordinary steps bring the encounters back. The full reachability audit
+  reported zero problems.
+- The virtual cable matched 5 shared action exchanges in Standard, Rising
+  Star, and Unrestricted and 7 in Random during four-turn smoke tests.
+  Standard stayed synchronized through 7 injected bit flips in one run
+  and a 120-frame disconnect in another. Both desks rejected a
+  Rising Star/Unrestricted mismatch. Both peers reached the Trade Center
+  with Championship as either one or both players' last battle rules.
+- In a mixed session with pre-MBC5 commit `0234c132c`, both desks rejected
+  a battle as a different build, with zero action exchanges. The new
+  `--expect-rejection build` case checks that result directly. Both builds
+  reached the Trade Center in the separate mixed trade session.
+- The two-console World Championship suite returned zero problems. It
+  finished the human final and NPC branches, checked withdrawal and
+  result reconciliation, then recovered in a clean session after the
+  deliberately noisy registration timed out. A separate final on the
+  summit build finished with both original parties restored and all 27
+  action exchanges synchronized. The patched PyBoy cable emitted its
+  extension layout warning during the virtual-cable tests.
+- The specific Togekiss Baton Pass failure from L12 completed on the
+  current ROM using the recorded RNG bytes. The whole-turn 48-matchup run
+  remains the previously recorded result in the issue ledger.
+
+All save-based verification above used copies of staged emulator fixtures.
+Flashing, save retention, frame pacing and physical link testing on the
+family's cartridges remain release checks.
+
+## Earlier 2 MiB MBC3 takeover baseline
 
 Measured from the linker map at `b959d22ae5162aafd6488b90d0504f0d45465707`
 on `claude/sleepy-ramanujan-kc278b`. The checkout was clean at takeover.
 Builds ran from isolated copies of tracked files. Earlier measurements are
 in the [C0 baseline](c0-baseline.md) and the history of this document.
 
-## Build
+### Build
 
 RGBDS 1.0.4, GNU Make 3.81, Apple Clang, Python 3.14.6, and PyBoy 2.9.0.
 The virtual cable extension was built with Cython 3.3.1. The ROM title contains
@@ -22,7 +140,7 @@ use the upstream version `3.2.3`. Run the same commands from separate clean
 trees to preserve each map, or copy the maps before cleaning. Compare with
 `python3 utils/memory_report.py NEW.map --compare OLD.map`.
 
-## Free space
+### Free space
 
 | Region | C0 default | Takeover default | Fixed default | Takeover faithful | Fixed faithful |
 |---|---:|---:|---:|---:|---:|
@@ -59,7 +177,7 @@ protocol and save schema are unchanged. Dynamic VRAM and OAM still need
 per-scene checks. See the [SRAM allocation plan](sram-allocation.md) for each
 gap and the lifetime of each record.
 
-## Historical feature costs
+### Historical feature costs
 
 The earlier per-commit linker comparison measured +815 B ROM for Bedroom
 achievements (`47a86b55f`), +1,544 B ROM / +272 B SRAM for Friend Battles
@@ -67,7 +185,7 @@ achievements (`47a86b55f`), +1,544 B ROM / +272 B SRAM for Friend Battles
 (`b47b74a31`). Those deltas predate later changes and remain useful for
 tracking how bank `$7f` filled.
 
-## Test evidence
+### Test evidence
 
 The fixtures started as new games. Healthy parties, Pokédex flags, and
 progression milestones were staged in the emulator, then saved through

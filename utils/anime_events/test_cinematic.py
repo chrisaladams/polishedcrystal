@@ -63,9 +63,11 @@ def blend(x, t):
 
 def main():
     K = rgbasm_values(['OW_WEATHER_LIGHTNING_DISABLED_F', 'OW_WEATHER_DO_FLY_F', 'CINEMATIC_ACTIVE_F',
-                       'CALM_SCREEN_F', *TINTS], None)
+                       'CALM_SCREEN_F', 'GROUP_POKECENTER_2F', 'MAP_POKECENTER_2F', *TINTS], None)
     g = Game(open(sys.argv[1], 'rb').read())
     g.boot()
+    # Use a quiet room with several actors sharing a palette.
+    g.warp(K['GROUP_POKECENTER_2F'], K['MAP_POKECENTER_2F'], 9, 3)
     caller = Caller(g)
     fails = []
     randoms = []

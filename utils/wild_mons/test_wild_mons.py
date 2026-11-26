@@ -313,8 +313,10 @@ def main():
                     if (g.rd('wMapGroup'), g.rd('wMapNumber')) != (K['GROUP_' + mp], K['MAP_' + mp]):
                         fails.append((mp, 'the warp there did not arrive'))
                         break
-                    # (a warp can leave the player standing on water: not a real case)
-                    if kind == 'grass' and g.rd('wPlayerTileCollision') == K['COLL_WATER']:
+                    # A synthetic warp can land the player in the wrong habitat,
+                    # even if their movement state is Surf.
+                    on_water = g.rd('wPlayerTileCollision') == K['COLL_WATER']
+                    if on_water != (kind == 'water'):
                         continue
                     found = wild()
                     if found:
@@ -622,11 +624,16 @@ def main():
         fails.append(('save', 'the game was not saved'))
     else:
         g2 = Game(saved)
+        prefills = []
+        g2.pb.hook_register(*g2.sym['SpawnWildMons'], prefills.append, True)
         g2.boot()
         g2.tick(120)
+        g2.pb.hook_deregister(*g2.sym['SpawnWildMons'])
         gsave, g = g, g2
         expected_map = (K['GROUP_ROUTE_29'], K['MAP_ROUTE_29'])
         assert (g.rd('wMapGroup'), g.rd('wMapNumber')) == expected_map, 'Continue did not restore Route 29'
+        if not prefills:
+            fails.append(('Continue', 'map setup skipped wild Pokémon prefill'))
         for i in range(K['NUM_OBJECT_STRUCTS']):
             sb = g.addr('wObjectStructs') + i * K['OBJECT_LENGTH']
             idx = g.m[1, sb + K['OBJECT_MAP_OBJECT_INDEX']]
@@ -634,6 +641,12 @@ def main():
                 slot = idx - K['FIRST_WILD_OBJECT']
                 if slot not in [o['slot'] for o in wild()]:
                     fails.append(('Continue', f'stale object struct {i} for wild Pokemon {slot}'))
+        # Prefill samples a bounded number of locations and can find none.
+        # In that case, take ordinary steps to check that spawns resume.
+        for i in range(80):
+            if wild():
+                break
+            g.press(('up', 'up', 'down', 'down')[i % 4], 6, 16)
         check_drawn('Route 29 after Continue')
         g.pb.stop(save=False)
         g = gsave

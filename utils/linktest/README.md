@@ -52,3 +52,10 @@ byte to it, and the two emulators run in lockstep (within 128 cycles).
 Run `python3 utils/linktest/test_link_card.py SAVE.sav` against a built ROM
 to check the Trainer Card, per-opponent records, older saves, the yearly reset
 and the full roster. The test uses an in-memory copy of the supplied save.
+
+Run `python3 utils/linktest/test_world_link.py A.sav B.sav --interruptions-only`
+with the same virtual cable setup and saves with no active bracket. The
+harness unplugs the cable at the start of each Championship desk exchange,
+checks that both players get control back and that neither bracket record
+changes, then retries from the two saved cartridges. Add a third player's
+save and omit `--interruptions-only` to run the full Championship suite.

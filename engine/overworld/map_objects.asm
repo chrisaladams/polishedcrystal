@@ -2232,6 +2232,32 @@ SplashPuddle:
 .PuddleObject
 	db $80, PAL_OW_BLUE, SPRITEMOVEDATA_PUDDLE
 
+SpawnPlayerSplash::
+; Script cue: use the puddle frames at the player's feet for a fixed time.
+; Ordinary puddles take their duration from the step that splashed them.
+	call FindFirstEmptyObjectStruct
+	ret nc
+	push hl
+	ld bc, wPlayerStruct
+	ld de, SplashPuddle.PuddleObject
+	call CopyTempObjectData
+	pop hl
+	push hl
+	call InitTempObject.AtAddress
+	pop bc
+	ld hl, OBJECT_1D
+	add hl, bc
+	ld [hl], LOW(wPlayerStruct)
+	inc hl
+	ld [hl], HIGH(wPlayerStruct)
+	ld hl, OBJECT_STEP_DURATION
+	add hl, bc
+	ld [hl], 16
+	ld hl, OBJECT_STEP_TYPE
+	add hl, bc
+	ld [hl], STEP_TYPE_TRACKING_OBJECT
+	ret
+
 ShakeScreen:
 	push bc
 	push af
@@ -2286,6 +2312,7 @@ DespawnEmote:
 InitTempObject:
 	call FindFirstEmptyObjectStruct
 	ret nc
+.AtAddress:
 	ld d, h
 	ld e, l
 	farjp CopyTempObjectToObjectStruct
