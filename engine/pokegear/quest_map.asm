@@ -115,9 +115,19 @@ BuildQuestMapLeads:
 	call nz, QuestMapKantoLeads
 	jr .errands
 .post_red
+	; The link record shares WRAM with the lead list beyond its first few
+	; entries. Read it before adding those leads, then keep the pin order.
+	farcall WorldLinkIndigoPending
+	push af
 	call QuestMapPostRedLeads
+	call QuestMapCupLeads
+	pop af
+	ld a, QMAP_WorldCup
+	call nz, AddQuestMapLead
+	jr .side_quests
 .errands
 	call QuestMapCupLeads
+.side_quests
 	; Each errand contributes its own current step.
 	eventflagcheck EVENT_GOT_HP_UP_FROM_RANDY
 	jr nz, .farm
@@ -377,11 +387,7 @@ QuestMapCupLeads:
 	eventflagcheck EVENT_GOT_MYSTICTICKET_FROM_RED
 	ret z
 	map_cup_lead CUPWON_WORLD_F, EVENT_WORLD_CUP_PRIZE_PENDING, WorldCup
-	; Link Edition: a linked bracket's match or prize waiting at the desk
-	farcall WorldLinkIndigoPending
-	ret z
-	ld a, QMAP_WorldCup
-	jmp AddQuestMapLead
+	ret
 
 ; Return HL at the caption and E at its landmark. Until the Valencia ferry
 ; opens, Luana's actionable first stop is Ivy at Shamouti's Pokémon Center.

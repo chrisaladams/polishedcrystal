@@ -274,7 +274,6 @@ def main(path):
         caller = Caller(g)
 
         def linked(status, partner=0xff, claimed=False, closed=False):
-            g.load(championship_won)
             for j in range(k['WORLD_LINK_LENGTH']):
                 g.wr('wWorldLinkRecord', 0, j)
             for field, value in (('WORLD_LINK_ID', 0x21), ('WORLD_LINK_SEED', 0x34),
@@ -287,19 +286,46 @@ def main(path):
                 g.wr('wWorldLinkReceipt', 0, j)
             if claimed:
                 caller.call('WorldLinkClaim')
-            return open_map()
 
         for case, want in ((('WORLDLINK_QUARTERFINAL',), ['WorldCup']),
                            (('WORLDLINK_SEMIFINAL',), ['WorldCup']),
                            (('WORLDLINK_FINAL',), []),  # (both in it: a link battle)
+                           (('WORLDLINK_FINAL', k['WORLDLINK_OUT_QF']), ['WorldCup']),
                            (('WORLDLINK_FINAL', k['WORLDLINK_OUT_SF']), ['WorldCup']),
                            (('WORLDLINK_OUT_QF',), []),
                            (('WORLDLINK_CHAMPION',), ['WorldCup']),
                            (('WORLDLINK_CHAMPION', 0xff, True), []),
                            (('WORLDLINK_QUARTERFINAL', 0xff, False, True), [])):
-            got = linked(*case)
+            g.load(championship_won)
+            linked(*case)
+            got = open_map()
             assert got == want, (case, got)
-        g.load(championship_won)
+
+        g.load(late)
+        event('HEARD_SHAMOUTI_BEACONS')
+        for city in ('GOLDENROD', 'ECRUTEAK'):
+            bit('wVisitedSpawns', k['SPAWN_' + city])
+        g.wr('wJohtoBadges', 0xff)
+        crowded = g.state()
+        expected = ['Alph', 'Mask', 'CloneReport', 'FireBeacon', 'IceBeacon', 'LightningBeacon',
+                    'Cup', 'Cissy', 'Danny', 'Rudy', 'Luana', 'RisingCup', 'RentalCup',
+                    'KimonoCup', 'DragonCup', 'WorldCup', 'Deliver', 'Berries', 'Copycat']
+        bank, record = g.sym['sWorldLink']
+        record_end = record + k['WORLD_LINK_LENGTH']
+        for status in (None, 'WORLDLINK_QUARTERFINAL', 'WORLDLINK_CHAMPION'):
+            g.load(crowded)
+            if status:
+                linked(status)
+            if status == 'WORLDLINK_CHAMPION':
+                for i, marker in enumerate(('CUP_RECORDS_MAGIC_1', 'CUP_RECORDS_MAGIC_2')):
+                    g.wr('wCupRecordsMagic', k[marker], i)
+                g.wr('wCupRecords', 1 << k['CUPWON_WORLD_F'])
+                event('WORLD_CUP_PRIZE_PENDING')
+            before = g.m[bank, record:record_end]
+            leads = open_map()
+            assert leads == expected, (status, leads)
+            assert g.m[bank, record:record_end] == before, 'opening the map changed the linked record'
+
         browse()
         g.press('b', 50)
         g.press('b', 60)

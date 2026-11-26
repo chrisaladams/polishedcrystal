@@ -1,25 +1,28 @@
 # Pokémon Polished Crystal: Link Edition — Master Development Roadmap
 
-**Status:** Core systems implemented; stabilization, optimization, presentation, and release validation remain.
+**Active milestones:** 2.0 Complete Edition and 2.1 Living World & Cinematic Update.
 
-**Review baseline:** [`b47b74a31590fbcee1576f80b66a949052b60d52`](https://github.com/chrisaladams/polishedcrystal/commit/b47b74a31590fbcee1576f80b66a949052b60d52)
+**Takeover baseline:** `b959d22ae5162aafd6488b90d0504f0d45465707` on
+`claude/sleepy-ramanujan-kc278b`. Build and test evidence is in the
+[memory and testing baseline](memory-baseline.md). The
+[original 2.0 roadmap](link-edition-2.0-roadmap.md) records the earlier phases.
 
-**Repository:** `chrisaladams/polishedcrystal`  
-**Branch at review:** `claude/sleepy-ramanujan-kc278b`  
-**Repository path:** `docs/link-edition-master-roadmap.md`
+## Owner requirements and engineering judgment
 
-This roadmap supersedes the original 11-phase roadmap as the forward development plan. Retain the original document for historical context. It also consolidates the earlier supplemental enhancement proposals. The release divisions, estimates, and future features below are proposals, not claims of completed implementation.
-
-## Instructions for Codex / Claude
-
-1. Inspect the current branch, `git status`, latest commits, `README.md`, the existing roadmap, build instructions, and repository agent instructions before changing anything. Reconcile this baseline with any work completed since the review.
-2. Work on one phase or independently testable task at a time. Do not implement the entire roadmap in one change. Preserve unrelated user changes; do not reset, rewrite history, or force-push.
-3. Before each task, identify affected modules, memory impact, save compatibility, test plan, and acceptance criteria. Prefer existing routines, data tables, assets, and shared engines over duplicate implementations.
-4. Preserve original Game Boy Color hardware support, existing gameplay, save integrity, and compatible trading. Do not change the mapper, save layout, storage capacity, or link wire protocol silently. Document and test migrations and increment protocol versions when appropriate.
-5. Measure actual ROM, SRAM, WRAM, HRAM, and VRAM implications where applicable. Use the repository's supported build targets, linker map and symbols; do not estimate compressed asset size from source-file length. Check bank-local capacity and fragmentation as well as totals.
-6. Run focused regression tests, then the relevant broader suite. Keep artificial battle-outcome tests separate from natural gameplay and physical hardware evidence. Never claim tests passed if they were not executed.
-7. At the end of each task, report changed files, actual memory deltas, tests and results, remaining risks, and the next recommended task. Update this roadmap's checkboxes only when acceptance criteria are met; distinguish implementation from verification.
-8. Treat the release scope and the deferred expansions below as separate milestones. Do not pull 2.1 or 3.0 features into 2.0 without explicit approval. Ask before destructive changes, asset removal affecting player data, or major scope changes.
+- Finish the planned work through 2.1. Preserve current content and
+  functionality while correcting demonstrated defects.
+- Use engineering judgment for implementation, testing and lossless
+  optimization. Consult the owner before significant product or architecture
+  decisions, including cuts, reduced features, changed gameplay rules, mapper
+  or save-layout changes, and incompatible link changes.
+- Treat the feature ideas and estimates in this document as proposals where
+  their approval is unrecorded. Keep existing player-facing rules and
+  previously approved decisions, including the fixed competitive battle
+  settings documented in [L20](issue-ledger.md).
+- Use the current cartridge and protocol as the starting point for
+  measurements. Record ROM bank fit and runtime scratch-space lifetimes.
+  Document save and trade compatibility, migration, failure recovery and
+  hardware evidence before calling a release ready.
 
 ## Design pillars
 
@@ -27,9 +30,9 @@ This roadmap supersedes the original 11-phase roadmap as the forward development
 - **Collection:** Pokémon ecology, followers, team building, rare sightings, trophies and achievements.
 - **Competition:** Accessible formats, repeatable cups, reliable physical multiplayer, Friend Battles and linked championships.
 
-Protect these pillars when making memory trade-offs. Favor meaningful gameplay over padding playtime. Preserve Pokémon animation, battle effects, story music, trainer diversity and player collections where practical.
+Use these pillars to assess additions and polish. Preserve the existing adventure, collection and competition features.
 
-## Current baseline (source review)
+## Current implementation
 
 | Original phase | Implementation status | Remaining work |
 |---|---|---|
@@ -45,7 +48,7 @@ Protect these pillars when making memory trade-offs. Favor meaningful gameplay o
 | 10. Presentation | Partial | Shared effects, artwork, story staging |
 | 11. Release testing | Partial | Full regression, natural play and physical hardware |
 
-Core systems exist, but this does **not** establish release readiness. The baseline was reviewed through repository source, commit diffs and documentation; no independent builds or test execution were performed during the review.
+Core systems exist. Release validation still includes natural progression, existing saves and original GBC hardware.
 
 ### Implemented player-facing systems
 
@@ -62,50 +65,24 @@ Core systems exist, but this does **not** establish release readiness. The basel
 
 ## Memory baseline and accounting
 
-Current target: **2 MiB ROM, MBC3, 32 KiB battery-backed SRAM, 32 KiB console WRAM, 16 KiB VRAM**.
+The current standard builds use 2 MiB MBC3 ROM and four SRAM banks (32 KiB).
+With RGBDS 1.0.4 at the takeover commit, default has **9,675 B** of free
+ROM and faithful has **9,736 B**. The largest ROMX gaps are **9,434 B** and
+**9,476 B** in bank `$7f`. Both have 923 B SRAM free across four banks
+(largest gap 393 B), 9 B WRAM0 free, 3,574 B WRAMX free and 5 B HRAM free.
+VRAM is fully assigned on the static map. Measure actual tile and OAM
+use in the screens a feature touches. See the
+[per-bank measurements and repair delta](memory-baseline.md).
 
-Measured from the linker map at `b47b74a31` (RGBDS 1.0.4, `make` from a tidy tree; details, faithful figures and per-feature costs in [`memory-baseline.md`](memory-baseline.md), regenerated with `utils/memory_report.py`):
-
-| Resource | Free | Largest gap | Qualification |
-|---|---:|---:|---|
-| ROM free | 12,993 B (12.69 KiB) | 12,741 B | Measured. 12,741 B in ROMX bank $7f; other ROMX banks 0-4 B; ROM0 199 B. Achievements, Friend Battles and the linked championship cost 4,497 B (measured) since the 17,489 B figure |
-| ROM reserve | 7 KiB | | Planning target, not an allocation: 5,825 B usable after it |
-| SRAM free | 152 B | 84 B | Measured (matches 444 - 2 × 136 - 20). **Now 937 B, largest gap 393 B**, after Phase 2 freed the save padding ([`sram-allocation.md`](sram-allocation.md)) |
-| Fixed WRAM free | 16 B | 16 B | Measured; the "Misc 404" union holding the championship buffers did not grow (404 B) |
-| WRAMX bank 1 free | 13 B | 13 B | Measured |
-| WRAMX bank 2 free | 1,643 B | 1,628 B | Measured |
-| WRAMX bank 5 free | 2,062 B | 1,950 B | Measured |
-| HRAM free | 5 B | 5 B | Measured |
-| VRAM | Existing allocations | | Static map shows both banks allocated; audit per screen; no assumed spare global pool |
-
-SRAM bank 0 at baseline:
-
-| Allocation / range | Bytes |
-|---|---:|
-| Friend Team 1 (`$b14d`) | 136 |
-| Linked World record (`$b1d5`) | 20 |
-| Remaining before backup save (`$b1e9–$b1ff`) | 23 |
-| Friend Team 2 (`$bf24`) | 136 |
-| Remaining after Friend Team 2 (`$bfac–$bfff`) | 84 |
-| Other original bank 0 gap (`$a5e9–$a5ff`) | 23 |
-| Other banks' original gaps | 22 |
-| Total calculated remaining | 152 |
-
-The checksum and save marker locations must remain compatible. SRAM is fragmented; a total of 152 free bytes does not mean there is a contiguous 152-byte region. The world link exchange buffers use an existing WRAM union; verify lifetime overlap and union size rather than assuming no cost.
-
-### Initial measurement task
-
-- [x] Record exact commit, toolchain and build targets; build the current ROM using the documented toolchain.
-- [x] Run `make freespace` if supported, inspect `bank_ends.txt` and linker `.map` / `.sym` files.
-- [x] Produce per-bank ROM/SRAM/WRAM/HRAM allocation and largest contiguous gaps (`utils/memory_report.py`, `docs/memory-baseline.md`).
-- [ ] Inspect screen-specific VRAM use.
-- [x] Update stale budget documentation, replacing estimates with measured values.
+The prior 7 KiB ROM reserve, 30–40 KiB stretch target and SRAM reserve targets
+were planning illustrations. Set a release budget with the owner if measured
+feature and compatibility requirements make it a product decision.
 
 ---
 
 # Version 2.0 — Complete Edition
 
-**Goal:** Finish the existing game, make core systems reliable, and add essential presentation without exceeding the 2 MiB cartridge target. Do not add new major gameplay systems to this release.
+**Goal:** Stabilize the current adventure and linked competition, finish the essential presentation work, and verify release readiness on the current GBC builds.
 
 ## Phase 1 — Engine stabilization (critical)
 
@@ -116,8 +93,8 @@ Relevant files: `engine/link/friend_teams.asm`, `engine/events/cups.asm`, `engin
 - [ ] Validate record markers, checksum, allowed format, count (1–6, exactly three for Rising Star), gender, legal species/forms, items, moves and relevant packed fields before preview or unpacking. Fail safely on invalid records. *(Implemented in `CheckFriendTeamFields`: marker, checksum, rules (not Random, in range), gender, count (three for Rising Star), and per Pokémon a real species (not $00/$ff, extended ones up to `NUM_SPECIES`), no egg, an item, a first move and a nature. An unusable record reads as an empty slot. Tested field by field in `test_friend_records.py`. Remaining: individual form numbers aren't checked against each species (an unknown form falls back like any other), and all move IDs are valid because `NUM_ATTACKS` is $ff.)*
 - [x] Test six-Pokémon records with sentinel bytes around both allocations. The header's `- 1` compensates for the `FRIEND_TEAM_MONS rb` placeholder; do not change the record length without proving an error. *(Writing a six-Pokémon record into either slot changes no byte of SRAM bank 0 outside it; the length is unchanged.)*
 - [x] Verify full snapshot round trips, PP Ups, EVs, DVs, nature, ability, happiness, hyper training, calculated stats, HP and PP. *(Unpacked at level 50, every field and stat matches the game's own level-50 version of the original (`BT_SetLevel`). This found and fixed a bug: the hyper-training byte's two other bits were taken as hyper training, raising a stat.)*
-- [x] Make writes interruption-safe (invalidate marker first, checksum and commit last; use a backup/journal if budget permits). Document what survives a partial write. *(Marker cleared first, checksum then marker written last; tested that the marker stays cleared throughout a write. A partial write leaves that slot empty, losing that friend's previous team; the other slot is untouched. No journal: SRAM has no room for one.)*
-- [ ] Test two occupied slots, third-friend behavior, rematch replacement, deletion, random exclusion, Unrestricted and Championship capture, corrupt records and power cycles. *(Tested: two slots, a third friend not kept, a rematch replacing that friend's record, Random excluded, Unrestricted and Championship kept, corrupt records (`test_friend_records.py`), deletion (`test_friend_battles.py`). Remaining: an actual reset mid-write; the marker test covers it only by inference.)*
+- [x] Make writes interruption-safe (invalidate marker first, checksum and commit last; use a backup/journal if budget permits). Document what survives a partial write. *(Marker cleared first, checksum then marker written last; tested that the marker stays cleared throughout a write. A partial write leaves that slot empty, losing that friend's previous team; the other slot is untouched. The proposed 143 B journal fits a current SRAM gap and is a separate recovery design decision.)*
+- [ ] Test two occupied slots, third-friend behavior, rematch replacement, deletion, random exclusion, Unrestricted and Championship capture, corrupt records and power cycles. *(Tested: two slots, a third friend not kept, a rematch replacing that friend's record, Random excluded, Unrestricted and Championship kept, corrupt records (`test_friend_records.py`), deletion (`test_friend_battles.py`). An emulated cartridge image captured mid-write verifies recovery for both slots. Physical power cycling remains open.)*
 - [ ] Verify that offline fights use the advertised eligibility and balance rules; phase 3 implements any necessary unification.
 - [ ] Confirm win/loss/draw/disconnect and cancellation behavior, party restoration and independence from lifetime opponent records.
 
@@ -126,7 +103,7 @@ Relevant files: `engine/link/friend_teams.asm`, `engine/events/cups.asm`, `engin
 Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `engine/link/link_rules.asm`, `engine/link/link.asm`, `maps/IndigoPlateauPokecenter1F.asm`, `maps/PokeCenter2F.asm`, `ram/sram.asm`, `ram/wram0.asm`, `utils/linktest/test_world_link.py`.
 
 - [x] Resolve completed-bracket reconciliation. A champion or runner-up clearing a record must not cause an old partner record to recreate the tournament. Retain a compact completion receipt/tombstone or equivalent until safe retirement. *(Finished brackets keep their record with a closed bit (`WORLDLINK_CLOSED_F`); a closed record syncs with the partner's open one instead of being rejoined, and is replaced only when both players register a new bracket. Tested: champion closed vs runner-up open, then a new bracket with a new ID.)*
-- [ ] Make rewards transactional across direct SRAM records and normal game saves. Prevent loss or duplication if power is interrupted before/after claiming, saving, or clearing. Test full bags and repeat prizes. *(Implemented: claiming only marks the session; `SaveGameData` closes the record after the save completes (`WorldLinkCommitClaim`). Tested: a second claim before saving is refused, a power cut before saving leaves the prize claimable, and saving closes it. Remaining: full bag and repeat-prize tests; a power cut in the few cycles between the save's checksum and the record update can still allow one duplicate.)*
+- [ ] Resolve two reproduced prize recovery edge cases. Normal Continue and backup checksum recovery preserve the saved prize and receipt. A restored older backup can disagree with the closed bracket record. New Game in the save-to-close window can inherit a bracket whose prize the previous adventure already saved. Preserve the cartridge-lifetime bracket and decide the intended recovery behavior before changing persistence. See L1 in the [issue ledger](issue-ledger.md).
 - [x] Define withdrawal semantics, partner notification, abandoned brackets and stale-session handling. An explicit withdrawal must not be mistaken for incomplete registration. *(Leaving, offered at the Indigo desk when declining a round or while waiting, closes the record at its current status; the partner hears it as a forfeit of the next match (quarterfinal → out in the quarterfinal; semifinal or final → out in the semifinal). Tested: withdrawal before the quarterfinal, then the survivor's NPC final.)*
 - [ ] Validate incoming state, status, ID, seed, bracket half, partner identity, rule and legal state transitions. Compare full shared tournament identity, including seed and opposite halves. Add checksum/version improvements if needed. *(Implemented: out-of-range state, half or status yields no plan, so neither side changes; brackets match only on ID, seed, opposite halves and each other's ID; the message grew to 24 bytes with separate new-bracket proposals. Tested: mismatched partners and a noisy session. Remaining: injected out-of-range values.)*
 - [ ] Test one-sided registration, one-sided final result, interrupted exchanges on either side, retries, mismatched partners, draws, duplicate exchanges, stale/replayed results and disconnect at each commit boundary. A two-exchange protocol is not proof of atomic distributed commit.
@@ -138,59 +115,37 @@ Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `en
 
 ### General stability
 
-- [ ] Bound generated-team retry loops in the cup and random-team generators; provide legal deterministic fallbacks or a graceful error for impossible constraints. *(Checked: with today's Random Battle sets, every type fills a team of four (the most a cup asks) and of six, as do the Rental and Random Battle teams. The new `test_team_generation.py` makes 111 teams within a time limit and checks size, no repeated species and type, so trimming the sets can't silently hang a cup. Not done: the loops themselves are still unbounded (they start over until a team fits), with no fallback.)*
+- [x] Bound team generation after eight restarts and test deterministic fallback under the current pools. See L2 and `test_team_generation.py`.
+- [ ] Audit the second pass with a depleted typed pool. It currently relaxes the type rule. Confirm what the player sees and report options if graceful refusal would change an advertised rule.
 - [x] Audit event-flag exhaustion, reusable flags and persistent state migration. Do not reuse flags still needed by older saves. *([`event-flags.md`](event-flags.md): 2,304 flags, all taken but 16 retired slots. The rules for reusing one say an old save may still have it set. The family's three saves have none set.)*
-- [ ] Verify all CupBegin/CupEnd paths restore party data, nicknames, OT, held items, stats, moves, PP and intended healing. Check cancel, loss, reset, full bag and repeated entry. *(Cancel, loss, backing out, a full Bag and repeated entry are tested in `test_cups.py` (the party compared byte for byte). A reset can't lose the party: each cup runs inside one script with no save, and autosave was removed. Not tested: every cup's own paths (the tests cover Rising Star and World).)*
+- [ ] Complete the CupBegin/CupEnd matrix for cancel, loss, reset, full bags and re-entry. Byte-for-byte party restoration apart from intended healing is exercised across all six cups plus Rudy, Luana and Friend Battles (L6).
 - [ ] Audit Orange Surf checkpoint bypasses, ice-puzzle exits, out-of-order badges, and legacy badge saves.
-- [ ] Verify achievement navigation, graphics restoration and legacy trophies/customization.
+- [ ] Validate graphics restoration and legacy trophies and customization. Album navigation and the Kimono mastery tally already exist.
+- [x] Fix the Quest Map pin list being overwritten by the linked Championship lookup when many leads coexist. The regression checks the displayed order, a single Indigo entry and read-only SRAM behavior.
 
 **Acceptance:** No reproducible save corruption, party loss, unintended duplicate/lost prizes or unrecoverable tournament sessions in the tested scenarios. All focused regression tests pass. Document residual hardware risks.
 
-## Phase 2 — ROM and SRAM reclamation (critical)
+## Phase 2 — Lossless memory optimization
 
-### ROM audit and reduction
+- [x] Measure current bank capacity and compare against the C0 build.
+- [x] Reclaim 785 B from unused save padding without moving the guarded
+  checksum addresses. Unrestricted Friend levels subsequently used 14 B.
+- [x] Share the byte-identical Nidorina walking sprite, preserving its
+  palette (249 B saved in the earlier build).
+- [ ] Measure lossless compression, deduplication, shared routines and
+  bank packing. Remove code only with a reachability and compatibility
+  check. Compare both cartridge builds, behavior and save guards.
+- [ ] Audit screen-specific VRAM/OAM and scratch lifetimes before allocating
+  effects. Fixed WRAM and HRAM are particularly tight.
+- [ ] For new persistence, audit the actual storage format, record lifetime,
+  checksum, recovery and migration. Use the
+  [current allocation plan](sram-allocation.md).
 
-Measure net savings individually; historic numbers are rough gross estimates, not current linker measurements. Prefer removing unreachable code and little-used cosmetic options over meaningful gameplay.
-
-| Candidate | Historical estimate | Action |
-|---|---:|---|
-| Remaining Game Boy Printer routines/music | ~2 KiB | Check reachability; upstream describes printer support as removed |
-| Music-player-exclusive tracks | ~5.1 KiB | Preserve any story/overworld/battle tracks and required song IDs |
-| Optional selectable fonts | ~3.9 KiB | Retain readable Normal/Narrow and story-required Unown; migrate old option values |
-| Cosmetic Pikachu graphics | ~2.4 KiB | Share assets; preserve mechanical forms and identity |
-| Alternate title music | ~1.1 KiB | Keep the selected opening and title identity |
-| Textbox frame options | TBD | Reduce 20 to a smaller set only after checking saved selections |
-| Unown graphics | TBD | Deduplicate/compress while preserving forms and Ruins of Alph |
-| Shared battle/cup routines | TBD | Unify redundant team generation, rounds, rewards and text |
-| Sprite/animation/music data | TBD | Hash identical assets; deduplicate frames/patterns; preserve animation |
-
-- [x] Audit current linker sections, references and compressed binary sizes. *([`rom-reclamation-audit.md`](rom-reclamation-audit.md): every candidate measured and its reachability traced; all of them are reachable, so each removal changes what players see or hear and needs approval.)*
-- [ ] Remove/alias one candidate at a time, rebuild and record measured net savings. *(Lossless so far: Nidorina's walking sprite was byte for byte Nidoran♀'s and is now shared, saving 249 B (measured). The rest wait on which candidates to drop.)*
-- [ ] Test menus, legacy saves, forms, trade data and visual/audio regressions after each change.
-- [ ] Preserve front-sprite animations, move animations, cries, environmental tile animation and story-specific music unless explicitly approved otherwise.
-- [x] Audit ROM bank packing; an empty bank may be more valuable than scattered bytes. *(All free ROM but ROM0's 199 B is one gap in bank $7f, 12,602 B; freed bytes elsewhere are repacked into it.)*
-
-### SRAM reclamation
-
-| Candidate | Estimated potential | Constraints |
-|---|---:|---|
-| Primary save padding | 392 B | Outside main checksum region; audit all writes, initialization and migration |
-| Backup save padding | 393 B | Same; preserve fixed marker/checksum locations |
-| Hall of Fame, 10 → 3 teams | ~686 B | Preserve most recent entries and lifetime count; verify layout/migrate safely |
-| PC mailbox capacity | TBD | Measure; preserve held mail, compatibility and existing messages or provide migration |
-| Obsolete legacy link rows | TBD | Confirm no remaining readers/writers; keep 65-opponent history |
-| Pokémon database record compression | 414 B per byte at current 414 records | Audit 49-byte format, extra/OT fields, checksum, migration and copy-on-write slack |
-| PC storage reduction | ~1,046 B per box (gross) | Last resort; do not discard existing Pokémon; preserve 400 slots if possible |
-
-- [ ] Inspect `ram/sram.asm`, `layout.link`, `macros/ram.asm`, `constants/pokemon_data_constants.asm`, `engine/menus/save.asm`, PC database routines and save upgrade code. Verify historic layout documentation against current constants (older newbox docs describe a smaller database). *(Done for the save padding: nothing in `save.asm`, `init.asm`, `home/sram.asm` or the save upgrader reads or writes it. The PC database, Hall of Fame and mailbox are not audited yet.)*
-- [x] Establish ownership of reserved bytes before reuse. Keep fixed addresses unchanged where possible; do not just delete `ds` padding and shift later fields. *(The two padding blocks (392 + 393 B) are now linker-visible free space: each save's checksum and check value moved to its own section at its old address. All 1,511 guarded SRAM labels are unchanged, checked by the new `utils/sram_layout/check_sram_layout.py` in `make test`. SRAM free went from 152 to 937 B, and the largest gap from 84 to 393.)*
-- [ ] Add a named, versioned allocation plan with integrity checks, reset/erase policy and migration tests. Distinguish cartridge-lifetime records from adventure-specific state. *(Plan and rules in [`sram-allocation.md`](sram-allocation.md), and the layout check guards addresses. Migration tests come with the first record placed in the reclaimed space.)*
-- [ ] Preserve primary and backup saves, existing box contents, original trainer data, nicknames, capture metadata and corruption safeguards.
-- [ ] Reassess cache expansion only after championship recovery and maintenance reserves are secured.
-
-**Planning targets:** 30–40 KiB total free ROM before presentation (stretch goal); 2–3 KiB free SRAM before expansion; 7 KiB final ROM reserve; 256–512 B final SRAM reserve. These targets may be unattainable without additional trade-offs. Reclaiming both padding regions and the estimated Hall of Fame reduction would yield ~1,623 B total free SRAM before other allocations. Do not treat theoretical totals as contiguous storage or guaranteed savings.
-
-**Acceptance:** Measured before/after memory report; safe migration and regression tests; agreed release budget. If targets cannot be met, reduce optional presentation scope before compromising save safety.
+The [historical ROM audit](rom-reclamation-audit.md) records reachable
+assets and their measured sizes. All existing assets, options, content and
+storage capacities are part of the preservation requirement. If the 2.1
+work exceeds measured capacity, quantify the constraint and bring lossless
+or architectural options to the owner before committing to a trade-off.
 
 ## Phase 3 — Competitive rules unification
 
@@ -199,7 +154,7 @@ Measure net savings individually; historic numbers are rough gross estimates, no
 | Standard | 50 | 1–6 |
 | Random | 50 | 6 generated |
 | Rising Star | 30 | 3 |
-| Unrestricted | 50 | 1–6 |
+| Unrestricted | Own levels | 1–6 |
 | Championship | 50 | 6, no eggs |
 
 - [x] Define one authoritative rules policy covering level, team size, eggs, species/form eligibility, duplicate species, held-item duplication, legendary/mythical restrictions, evasion and healing. *([`rules-matrix.md`](rules-matrix.md); one table, `LinkBattleRuleTable`, with a flags column. Decided: Standard is level 50 with one legendary at most, and Unrestricted keeps levels and allows anything. Link version 4.)*
@@ -219,7 +174,7 @@ Measure net savings individually; historic numbers are rough gross estimates, no
 - [x] Shared begin/end scene API; safely lock input, restore camera, movement, palettes, sprites, audio and state on completion or interruption. *(`scene_begin` / `scene_end` ([`cinematics.md`](cinematics.md)). They restore the exact palettes, recompute sprite palettes, and restart the map's music only if the scene changed it. Lightning is held off. The script engine already locks input. Tested: `test_cinematic.py`.)*
 - [ ] Camera focus, pan, offscreen reveal and return; optional scene framing/title cards where affordable. *(Not done: Gen 2's overworld has no camera; see [`cinematics.md`](cinematics.md).)*
 - [x] Palette fade, tint, pulse, darkness and silhouette reveals. *(`scene_tint` (7 colors, compounding; two `TINT_DARK` for darkness), `scene_pulse`, `scene_silhouette`, faded with the engine's `FadePalettes`. Exact colors tested.)*
-- [x] Configurable screen shake, flashes and dramatic pauses; optional reduced-flash/reduced-motion settings, budget permitting. *(`scene_flash` (1–3), with the engine's `earthquake` and `pause`. Not done: the optional reduced-flash or reduced-motion setting.)*
+- [x] Implement Flash & Shake. Turning it off suppresses scene flashes and pulses, weather lightning visuals and earthquake motion while retaining scene timing where applicable. `test_cinematic.py` exercises the option and lifecycle.
 - [x] Music fades, silence, Pokémon cries and environmental sounds. *(The engine's `musicfadeout`, `cry` and `playsound`; `scene_end` brings the map's music back.)*
 - [ ] Reusable `!`, `?`, sleep, heart and other emotes; basic sparkles, dust, magical particles and water effects. *(The emotes exist (`showemote`). Added: a sparkle emote in gold, green and purple, one shared 48-byte graphic, used for Celebi, the Unown illusion, Drake's trophy and the Pallet finals. Not yet: dust and water.)*
 - [ ] Use shared graphics, temporary tile allocations and sprite budgets; gracefully degrade crowded scenes.
@@ -248,7 +203,7 @@ Apply phase 4 to the existing campaigns first; do not duplicate captures or rewr
 - [ ] **Mewtwo Strikes Back:** Cinnabar research logs, flickering laboratory lights, cloning chamber reveals, individual clone appearances, psychic distortion, silence, Mewtwo silhouette/reveal, resolution and existing-capture echo. *(Done: the clones' opening (silence, psychic pulses, purple light, cry, flash). Also the Cinnabar log's flickering, dimming lights with a distant psychic answer, and the clones rising as black shadows at "Look." Not yet: individual clone sprites.)*
 - [ ] **The Power of One:** escalating storm, legendary-bird silhouettes/cries, animated elemental beacons, Melody's staging, Lawrence confrontation, Lugia emergence and restoration of daylight. Preserve alternate beacon order and original capture path. *(Done: each beacon pulses in its guardian's color; blue light for Melody's song and a flash as Lugia answers. Also a gathering storm (darkness, thunder, flash) while Lawrence speaks. Not yet: bird silhouettes, an escalating weather storm.)*
 - [ ] **Spell of the Unown:** establish Molly/Hale, spreading crystal motifs, dream palettes, floating Unown, illusion transitions, optional encounters, rescue and environmental cleanup. *(Done: the Entei illusion in purple dream light. Also the Unown's power gathering around Molly before her first battle (purple light and sparkle). Not yet: crystal motifs, floating Unown sprites.)*
-- [ ] **Voice of the Forest:** dark forest palette, corrupted Pokémon, Sammy, time distortion, shrine pulse, green particles, Marauder confrontation, forest healing, departure and Oak reveal. Preserve existing Celebi capture. *(Done: the forest darkens for the Marauder, then Celebi's dim glow, green shrine pulses until the daylight returns, flashes for its departure; `BlindingFlash` (the Flash field move) replaced by `scene_flash`. Not yet: green particles.)*
+- [ ] **Voice of the Forest:** dark forest palette, corrupted Pokémon, Sammy, time distortion, shrine pulse, green particles, Marauder confrontation, forest healing, departure and Oak reveal. Preserve existing Celebi capture. *(Done: the forest darkens for the Marauder, then Celebi's dim glow, green shrine pulses until the daylight returns, flashes for its departure; `BlindingFlash` (the Flash field move) replaced by `scene_flash`. Green sparkle emotes are in. Broader particles and scene presentation remain open.)*
 - [ ] **Orange League:** water splashes and buoy feedback for Cissy; wind, ice and cold summit palette for Danny; typed battle introductions for Rudy; partnership staging for Luana; Dragonite reveal and trophy ceremony for Drake. *(Done: Cissy's surf pulse, Danny's cold haze, Drake's Dragonite roar and gold trophy light. Also each of Rudy's rounds opening in its type's color, hearts for Luana's partnership, and a sparkle for the trophy. Not yet: buoy feedback.)*
 - [ ] **Pallet Invitational:** distinctive introductions, Tracey's sketch and a satisfying conclusion. *(Done: Pikachu's spark before Ash, gold light while Tracey sketches the winners.)*
 - [ ] **Battle presentation:** selectively enhance legendary/champion/shadow entrances and victory moments; consider critical-hit feedback, hit-stop and final-Pokémon music only if timing and memory permit.
@@ -271,7 +226,7 @@ Prioritize recognizable characters and consistent Generation II visual style ove
 - [ ] Add selective cinematic tiles for lab, crystals, forest, tournament scenes and bedroom.
 - [ ] Improve tournament introductions, trophies and results using shared layouts and existing assets.
 - [ ] Verify palette readability and animations at 160×144 on the GBC screen.
-- [ ] Optional: custom introduction/title screen after mandatory features fit. Retain a single coherent opening and title track.
+- [ ] Optional: custom introduction/title screen after mandatory features fit. Any change to the existing title or music is an owner decision.
 
 **Acceptance:** Every imported asset has documented provenance and appropriate permission; artwork fits the measured budget and original hardware constraints.
 
@@ -289,20 +244,24 @@ Prioritize recognizable characters and consistent Generation II visual style ove
 - [ ] Test on actual supported GBC cartridges and physical link cables (not just emulator serial). Check normal/double-speed behavior, frame pacing, OAM limits and graphics restoration.
 - [ ] Publish release notes, supported hardware/builds, save backup/migration instructions, known limitations, credits and patch distribution instructions. Avoid distributing copyrighted base ROMs.
 
-**Release gate:** Feature implementation alone is insufficient. Ship only after required regressions and physical hardware validation are documented, critical issues are resolved, the ROM fits 2 MiB, and memory reserves or any approved deviations are recorded.
+**Release gate:** Document emulator regressions, natural play, original hardware validation, save and trade compatibility, critical issue resolution, and fit on the agreed cartridge target.
 
 ---
 
 # Version 2.1 — Living World & Cinematic Update
 
-**Goal:** Deepen exploration, atmosphere and repeatable competition without abandoning the original hardware target. Start after 2.0 is stable. Scope each feature against measured memory; not all proposals need to ship in one update.
+**Goal:** Deepen exploration, atmosphere and repeatable competition through
+the final planned milestone. Use the following checklist to track inherited
+proposals and implementation evidence. Before settling scope, measure
+candidate features on the current build and bring significant choices to the
+owner. Existing content and functionality remain in place.
 
 ## Phase 8 — Advanced Pokémon ecology
 
-- [ ] Expand the eight existing behavior profiles across the roster using compact defaults, overrides and form-specific rules where justified.
-- [ ] Improve schooling and aquatic movement, nocturnal activity/sleep, curiosity, territorial warnings/pursuit, aggressive and elusive reactions, stationary species and movement speeds.
-- [ ] Expand Sweet Honey compatibility and reactions to player noise (standing, walking, running, cycling, surfing).
-- [ ] Add reusable behavioral emotes: `!`, `?`, sleep, heart, ellipsis and musical note where sprite capacity permits.
+- [ ] Broaden ecology coverage. Eight profiles and 43 explicit species assignments ship today. Form-specific assignments and further coverage remain to be scoped.
+- [ ] Refine the existing schooling, nocturnal, curiosity, territorial, aggressive, elusive and stationary behaviors. Measure timing, crowding and encounter pacing.
+- [ ] Extend existing Sweet Honey and noise reactions where observation shows a useful difference. Check standing, walking, running, cycling and surfing.
+- [ ] Reuse existing `!`, `?`, sleep and heart emotes. Scope ellipsis, musical note and broader use after checking sprite headroom.
 - [ ] Preserve encounter tables, time/swarm/roamer rules, shiny odds, repel behavior and nonblocking movement.
 - [ ] Test reachable tiles, boundaries, directional walls, ledges, ice, water, warps and NPC interactions; degrade gracefully with followers and crowded routes.
 
@@ -311,8 +270,8 @@ Prioritize recognizable characters and consistent Generation II visual style ove
 ## Phase 9 — Environmental presentation
 
 - [ ] Stylized lighting: windows, caves, torches, shrines and palette-based light shafts.
-- [ ] Weather: rain, fog, lightning, snow and storm intensity, reusing existing weather systems where available.
-- [ ] Tile animation: water, flowers, machinery, flags and crystals.
+- [ ] Extend environmental weather using the existing overworld rain, snow, lightning and other weather routines. Scope fog and intensity changes against readability and sprite use.
+- [ ] Audit existing tile animation and scope extensions for water, flowers, machinery, flags and crystals.
 - [ ] Reusable location title cards.
 - [ ] Running dust, grass rustle, surf ripples, fishing splashes, item/shiny sparkles, honey cues and legendary cries.
 - [ ] Audit existing effects before duplicating them; allocate tiles per screen and share assets with phase 4.
@@ -323,36 +282,39 @@ Prioritize recognizable characters and consistent Generation II visual style ove
 
 ## Phase 10 — Recurring living world
 
-- [ ] Daily/weekly rotating specialty merchants and stock.
+- [ ] Add rotating stock if selected. The town-by-town specialty shops already exist with fixed stock.
 - [ ] Traveling trainers and rotating opponents.
-- [ ] Expanded rare sightings and time-dependent NPC appearances.
+- [ ] Extend the current 14-sighting TV rotation and other time-dependent appearances where approved.
 - [ ] Regional weekly events and optional daily/weekly challenges.
-- [ ] Radio/TV reports and Field Book activity directory: today's events, upcoming cups, incomplete quests, pending rewards and legendary leads.
+- [ ] Extend the current TV/radio sightings and cup spotlights, Field Book and Quest Map into a broader activity directory. Today’s Kimono type and multiple pending rewards already have guides.
 - [ ] Derive schedules and stock from the software clock and deterministic seeds when possible; avoid unnecessary saved state.
 - [ ] Preserve clock migration and wrap consistency with all 18 Kimono types and seven weekdays.
-- [ ] Defer full seasons until the clock, art and map budget is approved.
+- [ ] Treat full seasons as an unapproved proposal. Establish a clock, art and map cost before any decision.
 
 **Acceptance:** Recurring activities remain deterministic where required, work after save/reload, and provide useful reasons to revisit locations without forcing excessive waiting or grinding.
 
 ## Phase 11 — Tournament evolution
 
 - [ ] **Rising Star:** rotating opponents, suitable early difficulty and explicitly documented eligibility.
-- [ ] **Whirl:** Water-type opponent pool, rain strategies and diverse competitive teams.
-- [ ] **Kimono:** upcoming type, all 18 completion view, distinct celebration of full mastery.
+- [ ] **Whirl:** Three fixed Water rosters ship today. Scope roster rotation and rain strategies.
+- [x] **Kimono:** The desk names the next unmastered type, and the Album and trophy show mastery progress.
+- [ ] **Kimono:** Scope a dedicated 18-type view and full-mastery celebration.
 - [ ] **Dragon Masters:** varied Dragon teams with complementary support Pokémon.
-- [ ] **Rental:** preview moves, held items, abilities and stats; improve legal generated-team variety.
-- [ ] **World Championship:** visual bracket, deterministic weighted NPC upsets, opponent introductions, results and standings even after elimination; reuse the shared seed and match outcomes.
+- [x] **Rental:** The Look screen previews moves, held items, abilities and stats.
+- [ ] **Rental:** Measure legal generated-team diversity and scope improvements.
+- [x] **World Championship:** The solo bracket shows rounds, results and standings after elimination. Both brackets use deterministic weighted NPC outcomes.
+- [ ] **World Championship:** Scope enhanced introductions and any linked visual bracket presentation.
 - [ ] Generalize round, reward, selection and result helpers across cups. Preserve party restoration and bounded generation.
 - [ ] Add opening ceremonies, versus cards, crowd/fanfare and trophy scenes using the cinematic library.
-- [ ] Add optional repeatable Cissy/Danny challenges and rotating Rudy opponents; preserve Luana singles until doubles exist.
-- [ ] Extend linked championships to Rising Star, Random and Unrestricted after the standard Championship is stable. Define team locks, shared rules and generated-team persistence as needed.
+- [ ] Evaluate repeatable Cissy/Danny challenges and rotating Rudy opponents. Luana’s current singles rules remain the baseline.
+- [ ] Evaluate linked Rising Star, Random and Unrestricted brackets after the current Championship is stable. Team rules, protocol compatibility and persistent generation are decisions to review with the owner.
 - [ ] Add compact entries/wins/streaks and championship statistics, with per-type Kimono records only as budget permits.
 
 **Acceptance:** Distinct tournament identities, legal and balanced teams, stable deterministic linked brackets, no duplicated rewards, measured runtime and storage costs.
 
 ## Phase 12 — Persistent multiplayer expansion
 
-Prioritize only after SRAM reclamation, recovery metadata and save safety are proven. Example allocations, not commitments:
+The proposed records compete for fragmented SRAM. At 136 B each, four extra Friend slots alone use 544 B before level metadata or recovery. The two largest gaps are 393 B and 392 B. Measure combinations and recovery before choosing any new save design.
 
 | Feature | Provisional SRAM budget |
 |---|---:|
@@ -363,7 +325,8 @@ Prioritize only after SRAM reclamation, recovery metadata and save safety are pr
 | Regional cup statistics | 50–100 B |
 
 - [ ] Expand Friend Battle cache, add favorites/protection and clear replacement/update notifications.
-- [ ] Improve preview with moves, abilities, items and stats; add configurable AI difficulty if meaningful.
+- [x] Friend Look shows moves, abilities, items and stats.
+- [ ] Evaluate configurable difficulty separately from the existing preview.
 - [ ] Extend Trainer Card aggregate stats and personal records without deleting the existing 65-opponent history.
 - [ ] Preserve the distinction between real link results, offline practice and generated rentals.
 - [ ] Add season archive and personal bests using the existing manually reset yearly records, if capacity permits.
@@ -374,9 +337,10 @@ Prioritize only after SRAM reclamation, recovery metadata and save safety are pr
 ## Phase 13 — Advanced Adventure Album and Pokémon achievements
 
 - [ ] Extend the current Leagues, Stories and Cups pages with Pallet Invitational, Legends, Link, Records and Exploration as appropriate.
-- [ ] Improve navigation (left/right page selection; B exits), layout, trophy tiers and descriptions.
+- [x] The existing three Album pages support left/right and B exit. The trophy description includes the Kimono mastery count.
+- [ ] Scope layout and tier refinements with the additional pages.
 - [ ] Use existing flags/records and derived counters before allocating new saved bits.
-- [ ] Distinguish one Kimono victory from mastery of all 18 types.
+- [x] The Cup Trophy counts a Kimono win as one cup, while the Album awards the Kimono star at 18/18.
 - [ ] Investigate individual Pokémon ribbons (Indigo, Orange, Kimono Master, World Champion) and compact achievement bitfields. Audit existing extra fields and link/save formats first; do not assume bytes marked extra are unused.
 - [ ] Optional lifetime Pokémon statistics only if storage and identity semantics permit; four extra bytes across 414 records would cost 1,656 B before other overhead.
 - [ ] Preserve earned trophies, bedroom customization and Pokédex diploma on legacy saves.
@@ -396,7 +360,7 @@ Prioritize only after SRAM reclamation, recovery metadata and save safety are pr
 
 ## Phase 15 — Competitive simulation and AI
 
-- [ ] Audit existing `meta_sim` tools, assumptions, coverage and ROM-oracle tests before extending them.
+- [ ] Finish auditing `meta_sim` coverage before changes to balance. The stats, damage, pipeline, accuracy, status and speed oracles have a fresh baseline. The whole-turn Baton Pass harness gap is tracked as L12.
 - [ ] Support family, rental and legal competitive stat profiles; respect actual EV/DV and hyper-training rules.
 - [ ] Increase simulation samples where useful, measure uncertainty, evaluate type matchups, team roles/synergy and switching.
 - [ ] Calibrate tournament difficulty and deterministic NPC win probabilities using documented inputs.
@@ -408,11 +372,14 @@ Prioritize only after SRAM reclamation, recovery metadata and save safety are pr
 
 ### 2.1 release gate
 
-Repeat the relevant 2.0 regression and physical tests, especially scene restoration, ecology/clock interactions, all tournament formats, legacy saves and memory usage. Do not ship optional systems that exceed hardware limits or compromise compatibility.
+Repeat the relevant 2.0 regression and physical tests, especially scene restoration, ecology and clock interactions, all tournament formats, legacy saves and memory usage. Resolve any capacity or compatibility decision with the owner before changing the feature set or hardware target.
 
 ---
 
-# Version 3.0 — Expanded Link Edition (experimental)
+<details>
+<summary>Historical 3.0 proposals, outside the active milestones</summary>
+
+# Historical expanded Link Edition proposals
 
 **Goal:** Investigate larger architectural changes in separate branches. These are optional future projects, not prerequisites for 2.0 or 2.1. Prove each subsystem before committing to a combined release.
 
@@ -476,6 +443,8 @@ Repeat the relevant 2.0 regression and physical tests, especially scene restorat
 
 ---
 
+</details>
+
 ## Master phase tracker
 
 ### 2.0 — Complete Edition
@@ -499,22 +468,20 @@ Repeat the relevant 2.0 regression and physical tests, especially scene restorat
 - [ ] 14. Short legendary investigations
 - [ ] 15. Competitive simulation and AI
 
-### 3.0 — Expanded Link Edition (experimental)
+## Remaining work order
 
-- [ ] 16. Expanded cartridge architecture
-- [ ] 17. Link Adventure Mode
-- [ ] 18. Double battles
-- [ ] 19. Hoenn expansion (optional)
-
-## Immediate next work order
-
-1. Establish a fresh build and exact memory baseline.
-2. Fix/verify championship completion, reward persistence, withdrawal and stale-session reconciliation; add targeted regression tests.
-3. Harden Friend Battle record validation and safe updates.
-4. Audit and reclaim SRAM padding, followed by approved storage reductions if necessary; audit ROM savings one feature at a time.
-5. Unify competitive rules and add deterministic weighted bracket outcomes.
-6. Implement a minimal reusable cinematic engine, then apply it to existing campaigns and artwork within measured limits.
-7. Complete release validation on actual hardware before expanding the scope.
+1. Resolve the outstanding linked prize recovery cases (L1) after agreeing
+   how a restored adventure should interact with the cartridge record. Finish
+   targeted link and Friend Battle regression cases, including trade directly
+   after a Championship and deliberately refused moves.
+2. Run lossless memory measurements and scene-level VRAM/OAM checks alongside
+   reliability work. Use the existing cinematic library to scope the most
+   visible unfinished 2.0 scenes.
+3. Log natural progression, legacy save and original hardware validation while
+   2.0 is stabilized.
+4. Estimate 2.1 in small prototypes against the measured cartridge budget.
+   Bring rules for new tournaments, persistence, legendary quest scope or a
+   hardware change to the owner when they need a decision.
 
 ## Per-task completion report template
 

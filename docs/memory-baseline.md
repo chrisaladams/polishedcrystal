@@ -1,139 +1,93 @@
-# Memory baseline
+# Takeover build and memory baseline
 
-Measured from the linker map, not estimated. Regenerate with
-`python3 utils/memory_report.py polishedcrystal-3.2.3.map` (add
-`--compare OLD.map` for a before/after report, `--markdown` for tables), and
-`make freespace` for `bank_ends.txt`.
+Measured from the linker map at `b959d22ae5162aafd6488b90d0504f0d45465707`
+on `claude/sleepy-ramanujan-kc278b`. The checkout was clean at takeover.
+Builds ran from isolated copies of tracked files. Earlier measurements are
+in the [C0 baseline](c0-baseline.md) and the history of this document.
 
 ## Build
 
-| | |
+RGBDS 1.0.4, GNU Make 3.81, Apple Clang, Python 3.14.6, and PyBoy 2.9.0.
+The virtual cable extension was built with Cython 3.3.1. The ROM title contains
+the build year. These SHA-256 hashes are for 2026 builds.
+
+| Target | Takeover SHA-256 | SHA-256 with Quest Map fix |
+|---|---|---|
+| Default | `787bbf71fae4699053581372a5e54c5db5f888472e0fdae23290a6b4d9d2680f` | `27ad4a5747e39b83e9be8ce41faf49719d365cf5b90563b4db4bd527e059167f` |
+| Faithful | `103dc764651c3d6c970e277af7f1e26fd0e51bf5992e56de7cb776120844b191` | `5acc23576c5ab7277cdd1f2fe3c960eca673d1bef9ba1b0405fcc28bfd0faa35` |
+
+Default was built by `make test` and measured with `make freespace`.
+Faithful was built separately with `make faithful freespace`. The ROM names
+use the upstream version `3.2.3`. Run the same commands from separate clean
+trees to preserve each map, or copy the maps before cleaning. Compare with
+`python3 utils/memory_report.py NEW.map --compare OLD.map`.
+
+## Free space
+
+| Region | C0 default | Takeover default | Fixed default | Takeover faithful | Fixed faithful |
+|---|---:|---:|---:|---:|---:|
+| Total ROM | 11,020 B | 9,675 B | 9,668 B | 9,736 B | 9,729 B |
+| ROM0 | 200 B | 200 B | 200 B | 214 B | 214 B |
+| Largest ROM0 gap | 199 B | 199 B | 199 B | 213 B | 213 B |
+| ROMX | 10,820 B | 9,475 B | 9,468 B | 9,522 B | 9,515 B |
+| Largest ROMX gap (bank `$7f`) | 10,783 B | 9,434 B | 9,431 B | 9,476 B | 9,470 B |
+| SRAM | 923 B | 923 B | 923 B | 923 B | 923 B |
+| WRAM0 | 11 B | 9 B | 9 B | 9 B | 9 B |
+| WRAMX | 3,590 B | 3,574 B | 3,574 B | 3,574 B | 3,574 B |
+| HRAM | 5 B | 5 B | 5 B | 5 B | 5 B |
+| VRAM (static map) | 0 B | 0 B | 0 B | 0 B | 0 B |
+
+The build's free-space line is one byte below the linker totals
+(9,674/9,735 B at takeover, 9,667/9,728 B with the fix). Of default ROMX
+space at takeover, 41 B lay outside the largest gap. The historical 7 KiB
+reserve was a planning illustration.
+
+| Bank | SRAM free | Largest SRAM gap | WRAMX free | Largest WRAMX gap |
+|---:|---:|---:|---:|---:|
+| 0 | 509 B | 393 B at `$bd84` | | |
+| 1 | 396 B | 392 B at `$ab84` | 13 B | 13 B at `$dff3` |
+| 2 | 9 B | 9 B at `$bff7` | 1,627 B | 1,612 B at `$d9b4` |
+| 3 | 9 B | 9 B at `$bff7` | 0 B | |
+| 4 | | | 0 B | |
+| 5 | | | 1,934 B | 1,822 B at `$d5e2` |
+| 6 | | | 0 B | |
+| 7 | | | 0 B | |
+
+The 7-byte Quest Map fix uses the stack to carry the linked bracket result.
+It adds no static allocations, saved bytes, tiles, or sprites. The link
+protocol and save schema are unchanged. Dynamic VRAM and OAM still need
+per-scene checks. See the [SRAM allocation plan](sram-allocation.md) for each
+gap and the lifetime of each record.
+
+## Historical feature costs
+
+The earlier per-commit linker comparison measured +815 B ROM for Bedroom
+achievements (`47a86b55f`), +1,544 B ROM / +272 B SRAM for Friend Battles
+(`d9466245e`), and +2,138 B ROM / +20 B SRAM for the linked Championship
+(`b47b74a31`). Those deltas predate later changes and remain useful for
+tracking how bank `$7f` filled.
+
+## Test evidence
+
+The fixtures started as new games. Healthy parties, Pokédex flags, and
+progression milestones were staged in the emulator, then saved through
+the Start menu and reloaded through Continue. Cable players used distinct
+trainer names and IDs. An initial Pokédex failure passed when the fixture
+was regenerated to retain its seen and caught flags.
+
+| Check | Result |
 |---|---|
-| Commit | `b47b74a31` (Phase 8: the linked World Championship) |
-| Toolchain | RGBDS 1.0.4 (rgbasm, rgblink, rgbgfx), Python 3.13.18 |
-| Cartridge | MBC3, 2 MiB ROM, 32 KiB SRAM (4 banks) |
-| `make` (crystal) | `polishedcrystal-3.2.3.gbc`, SHA-1 `3591eceeb49141c84dbcd3f6062fc218ad4c69dc`, 12,992 bytes free |
-| `make faithful` | `polishedcrystal-faithful-3.2.3.gbc`, SHA-1 `631750aadf5f0591517655e55167df29e3f30cbb`, 13,053 bytes free |
+| `make test` | Passed before and after the fix, including all 1,513 guarded save addresses, no text over 18 columns, and all AI scoring cases. |
+| Additional builds at takeover | Monochrome, noir, HGSS, Pocket, and both VC targets built. |
+| `utils/anime_events/test_quest_map.py` | The original build replaced three of 19 leads with Starter. The fix passed the expanded suite, including simultaneous solo and linked prizes, one Indigo entry, and byte-for-byte linked record preservation. |
+| `utils/linktest/test_link_card.py` and `utils/linktest/test_random_teams.py` | Passed Trainer Card tests and 300 generated teams. |
+| `utils/anime_events/test_cups.py` | Passed after correcting the test driver. An A press could enter the move picker while it was trying to forfeit. The driver now backs out and waits for the actual No/Yes prompt. |
+| `utils/wild_mons/test_wild_mons.py` | Full wild Pokémon sweep passed. It checked 405 encounters across all encounter maps. |
+| `utils/linktest/test_world_prize.py` | Passed full-Bag handling, saved and unsaved interruption cases, and primary checksum fallback to the completed backup. L1 records two other reproduced edge cases. |
+| `utils/audit/audit_reachability.py --wild` | Story reachability and the full wild-map audit completed with zero problems. |
+| Virtual cable battle formats | Standard, Rising Star, and Unrestricted completed in 3, 13, and 3 synchronized exchanges, respectively. Random synchronized through 17 exchanges before the test limit. Both sides rejected a Rising Star/Unrestricted rules mismatch. |
+| `utils/linktest/test_world_link.py` | Full two-console Championship suite completed with zero problems, including registration, finals, result synchronization, withdrawal, mismatched partners, and cable noise recovery. |
+| Battle oracles | Matched 333 species, 30,276 damage pairs, 3,000 pipeline scenarios, 2,000 damage rolls, 2,000 accuracy cases, 4,000 status cases, and 3,000 speed cases. The interrupted whole-turn run logged 45 matching cases and reproduced one known Baton Pass stall (L12). |
 
-Each was built from a `make tidy` tree. The other targets (monochrome, noir,
-hgss, debug, pocket, vc) weren't measured here; `make test` builds debug.
-
-## Summary
-
-| Resource | Free | Largest contiguous gap | Notes |
-|---|---:|---:|---|
-| ROM, total | 12,993 B | 12,741 B | 12,741 of it in ROMX bank $7f; every other ROMX bank has 0-4 B; ROM0 has 199 B at $3f39 |
-| ROM, after the 7 KiB reserve | 5,825 B | | |
-| SRAM | 152 B | 84 B | bank 0: 23 B at $a5e9, 23 B at $b1e9, 84 B at $bfac; bank 1: 4 B; banks 2-3: 9 B each |
-| WRAM0 | 16 B | 16 B | at $cfe0; the "Misc 404" union is still 404 B (the Championship's buffers are inside it) |
-| WRAMX | 3,718 B | 1,950 B | bank 1: 13 B; bank 2: 1,643 B (1,628 contiguous at $d9a4); bank 5: 2,062 B (1,950 at $d562); banks 3, 4, 6, 7 full |
-| HRAM | 5 B | 5 B | at $ffef |
-| VRAM | (static map: both banks allocated) | | the map shows the fixed vTiles/vBGMap layout; free tiles depend on the screen, so a per-screen audit is still to do |
-
-## What the newest features cost
-
-Measured by building each commit and comparing maps (`--compare`):
-
-| Change | Commit | ROM | SRAM | WRAM0 |
-|---|---|---:|---:|---:|
-| Before them | `70ca5f0c5` | 17,489 B free | 444 B free | 18 B free |
-| Bedroom achievements | `47a86b55f` | +815 B | 0 | 0 |
-| Friend Battles | `d9466245e` | +1,544 B | +272 B | +2 B |
-| Linked World Championship | `b47b74a31` | +2,138 B | +20 B | 0 |
-| Total | | +4,497 B | +292 B | +2 B |
-
-Before these, ROMX bank $7f was entirely empty; the achievements fit in
-scattered space, and Friend Battles and the Championship took 3,643 B of it.
-
-## crystal, in detail
-
-### Totals
-
-| Region | Banks | Used | Free | Largest gap | Empty banks |
-|---|---:|---:|---:|---:|---:|
-| ROM0 | 1 | 16184 | 200 | 199 | 0 |
-| ROMX | 127 | 2067975 | 12793 | 12741 | 0 |
-| VRAM | 2 | 16384 | 0 | 0 | 0 |
-| SRAM | 4 | 32616 | 152 | 84 | 0 |
-| WRAM0 | 1 | 4080 | 16 | 16 | 0 |
-| WRAMX | 7 | 24954 | 3718 | 1950 | 0 |
-| HRAM | 1 | 122 | 5 | 5 | 0 |
-
-### SRAM by bank
-
-| Bank | Used | Free | Gaps (start: bytes) |
-|---:|---:|---:|---|
-| 0 | 8062 | 130 | $a5e9: 23, $b1e9: 23, $bfac: 84 |
-| 1 | 8188 | 4 | $bffc: 4 |
-| 2 | 8183 | 9 | $bff7: 9 |
-| 3 | 8183 | 9 | $bff7: 9 |
-
-### WRAM0 by bank
-
-| Bank | Used | Free | Gaps (start: bytes) |
-|---:|---:|---:|---|
-| 0 | 4080 | 16 | $cfe0: 16 |
-
-### WRAMX by bank
-
-| Bank | Used | Free | Gaps (start: bytes) |
-|---:|---:|---:|---|
-| 1 | 4083 | 13 | $dff3: 13 |
-| 2 | 2453 | 1643 | $d4f1: 15, $d9a4: 1628 |
-| 3 | 4096 | 0 | none |
-| 4 | 4096 | 0 | none |
-| 5 | 2034 | 2062 | $d562: 1950, $df90: 112 |
-| 6 | 4096 | 0 | none |
-| 7 | 4096 | 0 | none |
-
-### HRAM by bank
-
-| Bank | Used | Free | Gaps (start: bytes) |
-|---:|---:|---:|---|
-| 0 | 122 | 5 | $ffef: 5 |
-
-### ROM0 by bank
-
-| Bank | Used | Free | Gaps (start: bytes) |
-|---:|---:|---:|---|
-| 0 | 16184 | 200 | $00ff: 1, $3f39: 199 |
-
-### VRAM by bank
-
-| Bank | Used | Free | Gaps (start: bytes) |
-|---:|---:|---:|---|
-| 0 | 8192 | 0 | none |
-| 1 | 8192 | 0 | none |
-
-### The 12 ROMX banks with the most free space
-
-| Bank | Free | Largest gap |
-|---:|---:|---:|
-| 127 | 12741 | 12741 |
-| 99 | 4 | 4 |
-| 85 | 4 | 4 |
-| 60 | 4 | 4 |
-| 122 | 3 | 3 |
-| 83 | 3 | 3 |
-| 80 | 3 | 3 |
-| 75 | 3 | 3 |
-| 62 | 3 | 3 |
-| 97 | 2 | 2 |
-| 92 | 2 | 2 |
-| 90 | 2 | 2 |
-
-
-## faithful, totals
-
-### Totals
-
-| Region | Banks | Used | Free | Largest gap | Empty banks |
-|---|---:|---:|---:|---:|---:|
-| ROM0 | 1 | 16170 | 214 | 213 | 0 |
-| ROMX | 127 | 2067928 | 12840 | 12787 | 0 |
-| VRAM | 2 | 16384 | 0 | 0 | 0 |
-| SRAM | 4 | 32616 | 152 | 84 | 0 |
-| WRAM0 | 1 | 4080 | 16 | 16 | 0 |
-| WRAMX | 7 | 24954 | 3718 | 1950 | 0 |
-| HRAM | 1 | 122 | 5 | 5 | 0 |
-
+Original hardware and natural playthrough evidence remain open. See the
+[issue ledger](issue-ledger.md) for investigation details.

@@ -166,7 +166,9 @@ def main():
             g.press('a', 45)
         g.pb.hook_deregister(*g.sym['LoadBattleMenu'])
         assert menu, 'the battle did not show its command menu'
-        g.tick(45)
+        # The last A press can carry into Fight. B backs out of the move
+        # picker, and has no quick action in the trainer command menu.
+        g.press('b', 45)
         if win or faint_party:
             def force_faints(_):
                 party, active = ('wOTParty', 'wEnemyMonHP') if win else ('wParty', 'wBattleMonHP')
@@ -183,8 +185,19 @@ def main():
             g.wr('wBattleMonPP', 35)
             g.pb.hook_register(*g.sym['ResolveFaints'], force_faints, None)
         else:
-            for button in ('down', 'right', 'a', 'down'):
+            for button in ('down', 'right', 'a'):
                 g.press(button, 40)
+            _, no_yes = g.sym['NoYesMenuDataHeader.MenuData2']
+            for _ in range(120):
+                data = g.rd('wMenuDataPointer') | (g.rd('wMenuDataPointer', 1) << 8)
+                if data == no_yes and g.rd('wMenuCursorY') == 1:
+                    break
+                g.tick(5)
+            else:
+                raise AssertionError('the battle did not show the forfeit confirmation')
+            g.tick(15)
+            g.press('down', 40)
+            assert g.rd('wMenuCursorY') == 2, 'the forfeit confirmation did not select Yes'
         for _ in range(260):
             if not g.rd('wBattleMode'):
                 break
