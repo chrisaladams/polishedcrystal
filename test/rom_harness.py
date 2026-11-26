@@ -30,9 +30,13 @@ IF = 0xff0f
 
 def find_build(root='.'):
     """Locate the built ROM and its symbol file."""
+    # (by file name: a checkout's own path may say "faithful"; LE_FAITHFUL=1
+    # picks the faithful build)
+    want_faithful = bool(os.environ.get('LE_FAITHFUL'))
     roms = sorted(
         r for r in glob.glob(os.path.join(root, '*.gbc'))
-        if 'faithful' not in r and '_vc' not in r and 'debug' not in r)
+        if ('faithful' in os.path.basename(r)) == want_faithful
+        and '_vc' not in os.path.basename(r) and 'debug' not in os.path.basename(r))
     if not roms:
         raise SystemExit(
             'No ROM found. Build one first (make), then re-run the tests.')

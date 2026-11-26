@@ -78,7 +78,9 @@ def rgbasm_values(names, files):
             f.write(f'IF DEF({n})\nPRINTLN "{n}={{d:{n}}}"\nENDC\n')
         path = f.name
     try:
-        out = subprocess.run(['rgbasm', '-P', 'includes.asm', '-o', os.devnull, path],
+        # (LE_FAITHFUL=1: the faithful build's values, for testing that ROM)
+        flags = ['-DFAITHFUL'] if os.environ.get('LE_FAITHFUL') else []
+        out = subprocess.run(['rgbasm', *flags, '-P', 'includes.asm', '-o', os.devnull, path],
                              cwd=ROOT, capture_output=True, text=True).stdout
     finally:
         os.unlink(path)

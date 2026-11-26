@@ -131,31 +131,51 @@ GenericTrainerSightseerfPilar:
 GenericTrainerSightseersCyandvi1:
 	generictrainer SIGHTSEERS, CYANDVI1, EVENT_BEAT_SIGHTSEERS_CY_AND_VI, .SeenText, .BeatenText
 
-; text > text
-	text "Cy: TODO"
+	text "Cy: We came to"
+	line "see the islands'"
+	cont "legend for real."
+
+	para "Instead we found"
+	line "a better show--"
+	cont "you!"
 	done
 
-.SeenText: ; text > text
-	text "Cy: TODO"
+.SeenText:
+	text "Cy: My Mr. Mime"
+	line "and Vi's Jynx"
+	cont "rehearsed a whole"
+	cont "routine for this"
+	cont "beach!"
+
+	para "Want to see it?"
 	done
 
-.BeatenText: ; text > text
-	text "Cy: TODO"
+.BeatenText:
+	text "Cy: Our big"
+	line "finale…"
 	done
 
 GenericTrainerSightseersCyandvi2:
 	generictrainer SIGHTSEERS, CYANDVI2, EVENT_BEAT_SIGHTSEERS_CY_AND_VI, .SeenText, .BeatenText
 
-; text > text
-	text "Vi: TODO"
+	text "Vi: The sea here"
+	line "really is as blue"
+	cont "as the postcards."
+
+	para "Next year we're"
+	line "bringing a whole"
+	cont "new act!"
 	done
 
-.SeenText: ; text > text
-	text "Vi: TODO"
+.SeenText:
+	text "Vi: Cy and I do"
+	line "everything as a"
+	cont "pair. Battles too!"
 	done
 
-.BeatenText: ; text > text
-	text "Vi: TODO"
+.BeatenText:
+	text "Vi: We missed our"
+	line "cue!"
 	done
 
 TrainerSwimmermAshe:

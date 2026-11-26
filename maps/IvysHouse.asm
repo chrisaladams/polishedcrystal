@@ -16,9 +16,31 @@ IvysHouse_MapScriptHeader:
 	object_event  6,  4, SPRITE_BATTLE_GIRL, SPRITEMOVEDATA_WALK_UP_DOWN, 1, 0, -1, PAL_NPC_PURPLE, OBJECTTYPE_COMMAND, jumptextfaceplayer, IvysHouseCharityText, -1
 
 IvysHouseFaithText:
-	text "Faith: TODO"
+	text "Faith: I'm one of"
+	line "Prof. Ivy's"
+	cont "assistants."
+
+	para "She studies how"
+	line "#mon here can"
+	cont "differ from the"
+	cont "ones on the main-"
+	cont "land."
+
+	para "Even the same"
+	line "species can look"
+	cont "different!"
 	done
 
 IvysHouseCharityText:
-	text "Charity: TODO"
+	text "Charity: The"
+	line "professor is out"
+	cont "on the beach"
+	cont "again, taking"
+	cont "notes."
+
+	para "We take turns"
+	line "cooking, cleaning"
+	cont "and feeding the"
+	cont "#mon. It's busy,"
+	cont "but I love it."
 	done

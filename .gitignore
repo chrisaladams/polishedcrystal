@@ -71,3 +71,6 @@ deploy.sh
 
 # compiler caches
 *.pch
+
+# Link Edition release files (utils/release/build_release.py)
+/build/

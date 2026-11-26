@@ -19,23 +19,58 @@ BeautifulBeachVilla_MapScriptHeader:
 	object_event 11,  4, SPRITE_BOOK_PAPER_POKEDEX, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, (1 << NITE), 0, OBJECTTYPE_COMMAND, jumptext, DarachsBookText, -1
 
 DarachMornDayText::
-	text "TODO"
+	text "Darach: Welcome"
+	line "to the villa."
+
+	para "My lady Caitlin"
+	line "is resting here"
+	cont "away from the"
+	cont "Battle Castle."
+
+	para "I would ask you"
+	line "not to disturb"
+	cont "her."
 	done
 
 DarachNiteText:
-	text_far DarachMornDayText
-	text_end
+	text "Darach: My lady"
+	line "has retired for"
+	cont "the night."
+
+	para "Forgive me, but"
+	line "callers must wait"
+	cont "until morning."
+	done
 
 CaitlinMornDayText:
-	text_far DarachMornDayText
-	text_end
+	text "Caitlin: The sea"
+	line "breeze here is so"
+	cont "gentle…"
+
+	para "At the Castle,"
+	line "every battle must"
+	cont "be elegant. Here,"
+	cont "I can simply"
+	cont "rest."
+	done
 
 CaitlinNiteScript:
 	jumpthistext
 
-	text "TODO"
+	text "A potted tree by"
+	line "the window."
+
+	para "Its leaves sway"
+	line "a little, though"
+	cont "there's no wind…"
 	done
 
 DarachsBookText:
-	text_far DarachMornDayText
-	text_end
+	text "It's a book of"
+	line "battle records,"
+	cont "kept in very neat"
+	cont "handwriting."
+
+	para "Every page ends:"
+	line "“For my lady.”"
+	done
