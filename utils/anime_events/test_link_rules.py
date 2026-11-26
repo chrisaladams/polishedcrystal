@@ -12,7 +12,10 @@ in the running game (PyBoy), calling the checks directly with made-up teams:
   team's rules, as CupSelectTeam calls it;
 - the evasion cap (BattleCommand_checkhit): a +6 evasion counts as +2 in
   every link format, Unrestricted too, and in a Friend Battle, and in full
-  in single player.
+  in single player;
+- at the battle desk itself, Championship rules before beating Red are
+  refused ("...beaten Red at Mt.Silver"), with no link asked for; after Red,
+  the desk goes on to ask for a Colosseum link.
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_link_rules.py SAVE.sav
@@ -175,6 +178,62 @@ def main():
         got = g.rd('wLinkBattleLevel')
         if got != level:
             fails.append(f'{fmt} battles at level {got}, not {level or "their own"}')
+
+    # the battle desk: Championship rules only after Red
+    K.update(rgbasm_values(['EVENT_GOT_MYSTICTICKET_FROM_RED', 'GROUP_POKECENTER_2F', 'MAP_POKECENTER_2F',
+                            'LINK_COLOSSEUM', 'NAME_LENGTH', 'MON_NAME_LENGTH'], None))
+
+    def tiles(s):
+        return bytes(0x7f if c == ' ' else 0x9c if c == '.' else 0x80 + ord(c) - 65 if c.isupper()
+                     else 0xa0 + ord(c) - 97 for c in s)
+
+    def choose_championship(after_red):
+        g.load(base)
+        n = K['EVENT_GOT_MYSTICTICKET_FROM_RED']
+        v = g.rd('wEventFlags', n // 8)
+        g.wr('wEventFlags', v | 1 << (n % 8) if after_red else v & ~(1 << (n % 8)), n // 8)
+        g.wr('wPlayerLinkAction', 0)
+        # (Championship takes six: copies of the first to fill the party)
+        count = g.rd('wPartyCount')
+        for i in range(count, 6):
+            for field, length in (('wPartyMon1', L), ('wPartyMonOTs', K['NAME_LENGTH']),
+                                  ('wPartyMonNicknames', K['MON_NAME_LENGTH'])):
+                for j in range(length):
+                    g.wr(field, g.rd(field, j), i * length + j)
+        g.wr('wPartyCount', 6)
+        g.warp(K['GROUP_POKECENTER_2F'], K['MAP_POKECENTER_2F'], 9, 3)
+        g.face('up')
+        g.press('a', 60)   # the receptionist
+        g.press('a', 60)   # (her greeting)
+        for _ in range(10):  # yes, then on to the rules menu
+            if g.rd('wMenuCursorY') and tiles('Random') in bytes(g.rd('wTilemap', i) for i in range(360)):
+                break
+            g.press('a', 40)
+        for _ in range(8):
+            if g.rd('wMenuCursorY') == 5:
+                break
+            g.press('down', 15)
+        g.press('a', 60)
+        seen = b''
+        for _ in range(40):  # (through the rules' explanation)
+            seen += bytes(g.rd('wTilemap', i) for i in range(360))
+            if g.rd('wPlayerLinkAction'):
+                break
+            if tiles('Mt.Silver') in seen:
+                # refused: close the text, and don't talk to her again
+                for _ in range(4):
+                    g.press('b', 30)
+                g.tick(120)
+                break
+            g.press('a', 40)
+        return tiles('Mt.Silver') in seen, g.rd('wPlayerLinkAction')
+
+    refused, action = choose_championship(after_red=False)
+    if not refused or action:
+        fails.append(f'Championship before Red: refused {refused}, link asked {action}')
+    refused, action = choose_championship(after_red=True)
+    if refused or action != K['LINK_COLOSSEUM'] - 1:
+        fails.append(f'Championship after Red: refused {refused}, link asked {action}')
 
     g.pb.stop(save=False)
     print(f'{len(fails)} problems')
