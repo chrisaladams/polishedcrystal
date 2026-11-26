@@ -26,11 +26,14 @@ PalletTown_MapScriptHeader:
 	object_event  9, 12, SPRITE_RED, SPRITEMOVEDATA_STANDING_RIGHT, 0, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, CameoAshScript, EVENT_ANIME_CAMEOS_HIDDEN
 	; Link Edition: Ash's Pikachu, out for the Invitational's final
 	object_event  9, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, PIKACHU, -1, PAL_MON_YELLOW, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	; Link Edition: Tracey, who comes to sketch the winners
+	object_event  9, 12, SPRITE_ARTIST, SPRITEMOVEDATA_STANDING_DOWN, 0, 0, -1, PAL_NPC_GREEN, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const_skip 4 ; (the townspeople and the berry tree)
 	const PALLETTOWN_ASH
 	const PALLETTOWN_PIKACHU
+	const PALLETTOWN_TRACEY
 
 PalletTownFlyPoint:
 	setflag ENGINE_FLYPOINT_PALLET
@@ -159,6 +162,13 @@ CameoAshScript:
 	iffalse_jumpopenedtext .NoText
 	closetext
 	scene_title .Title
+	; (an establishing shot: the camera looks out across Pallet Town)
+	scene_begin
+	musicfadeout MUSIC_PALLET_TOWN, 8
+	scene_pan RIGHT, 4
+	pause 30
+	scene_pan_back RIGHT, 4
+	scene_end_keep_music
 	special HealParty
 	winlosstext .DrakeBeaten, .Loss
 	loadtrainer DRAKE_T, 1
@@ -183,13 +193,17 @@ CameoAshScript:
 	iftruefwd .Retry
 	special HealParty
 	setevent EVENT_WON_PALLET_INVITATIONAL
-	scene_begin ; (the winners in gold light while Tracey sketches)
+	scene_begin ; (Tracey runs in, and sketches the winners in gold light)
+	musicfadeout MUSIC_POST_CREDITS, 8
+	scene_enter PALLETTOWN_TRACEY, RIGHT ; (Ash stands on your left)
+	showemote EMOTE_HAPPY, PALLETTOWN_TRACEY, 15
 	scene_tint TINT_GOLD
 	showemote EMOTE_SPARKLE, PLAYER, 20
 	showemote EMOTE_SPARKLE, PALLETTOWN_ASH, 15
 	showemote EMOTE_HAPPY, PALLETTOWN_PIKACHU, 15
 	showtext .Finish
-	scene_end
+	scene_end ; (Pallet's own music back)
+	disappear PALLETTOWN_TRACEY
 	disappear PALLETTOWN_PIKACHU
 	scene_title .Ending
 	end

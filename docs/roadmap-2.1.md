@@ -178,6 +178,13 @@ palettes, music, movement and map state.
   ceremony plays the Hall of Fame theme. Evidence: `test_orange_league.py`;
   [`phase5-screens/orange-league-cards.png`](phase5-screens/orange-league-cards.png),
   [`phase5-screens/orange-league-final.png`](phase5-screens/orange-league-final.png).
+  Pallet second pass: after the Invitational's card the camera pans across
+  Pallet Town and back (Pallet's theme); at the end Tracey (the artist
+  sprite of his Oak's Lab cameo) runs in from offscreen to sketch the
+  winners under the post-credits theme. Evidence: `test_story.py`,
+  `test_cameos.py`;
+  [`phase5-screens/pallet-establishing-pan.png`](phase5-screens/pallet-establishing-pan.png),
+  [`phase5-screens/pallet-ending.png`](phase5-screens/pallet-ending.png).
 
 ## Phase 6 — Character artwork and visual identity (substantial work remaining)
 
