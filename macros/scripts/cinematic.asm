@@ -50,6 +50,27 @@ MACRO scene_silhouette
 	callasm SetBlackObjectPals
 ENDM
 
+MACRO scene_shadow
+; Object \1 (PLAYER or a map object) as a black shadow, the others as they
+; are; scene_unshadow or scene_end gives its colors back.
+	setval \1
+	callasm CinematicShadow
+ENDM
+
+MACRO scene_unshadow
+; Object \1's own colors back: a reveal.
+	setval \1
+	callasm CinematicUnshadow
+ENDM
+
+MACRO scene_enter
+; Object \1 comes on from past the screen's edge toward \2 (DOWN, UP, LEFT,
+; RIGHT), in line with the player, and walks up beside them (appear, too).
+	assert (\1) < 32 && (\2) < 4, "scene_enter OBJECT, DIRECTION"
+	setval (\2) << 5 | (\1)
+	callasm CinematicEnter
+ENDM
+
 MACRO scene_restore
 ; The map's own palettes back at once, the scene still on.
 	callasm CinematicRestoreNow

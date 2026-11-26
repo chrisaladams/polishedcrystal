@@ -16,6 +16,9 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_pulse TINT_*` | Tints and comes back, three times |
 | `scene_flash n` | `n` white flashes (1–3), each back to the scene's palettes |
 | `scene_silhouette` | Every sprite black (`SetBlackObjectPals`) |
+| `scene_shadow OBJ` | One character (`PLAYER` or a map object) a black shadow, everyone else as they are. Only inside a scene; tints, pulses, flashes and `scene_restore` keep it |
+| `scene_unshadow OBJ` | That character's own colors back: the reveal (`scene_end` gives every shadow its colors back too) |
+| `scene_enter OBJ, DIR` | A character comes on: it appears just past the screen's edge toward `DIR` (`DOWN`, `UP`, `LEFT`, `RIGHT`), in line with the player, and walks up to stand beside them (4 steps, 5 from the right); the script waits. It also does what `appear` does |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
 | `scene_pan DIR, n` | The camera moves `n` steps (1–15) toward `DOWN`, `UP`, `LEFT` or `RIGHT`: the player is hidden and walked there (the view follows the player), through walls and people, the follower put away; the script waits until it's there |
 | `scene_pan_back DIR, n` | Back the same way (give it the same `DIR` and `n`): the player shown again on their tile, walls and people solid again, the follower back under them |
@@ -102,6 +105,32 @@ and after a scene, and that no random number is drawn.
 
 Each use costs about 4 to 6 bytes of script.
 
+## Shadows
+
+`scene_silhouette` blacks out every sprite at once (it overwrites the shown
+sprite palettes). `scene_shadow` is for one figure: it marks the object's
+palette index `OBJECT_PAL_SHADOW` (`$ff`, never a real index or Pokémon
+nybble pair, which use nybbles 0–13), and the dynamic sprite palettes give any
+object so marked the black `PAL_OW_SILHOUETTE`, in a slot of its own, so
+people who shared its palette keep their colors. Its own index is kept in
+`wCinematicShadowPals` (13 bytes, WRAM bank 5, by object struct), and
+`scene_unshadow` and `scene_end` put it back. A shadow is in the object's
+palette index, so it lasts through tints, pulses and flashes; an object that
+leaves the screen and comes back loses it. About 120 bytes and one palette.
+
+## Entrances
+
+The player is drawn 4 tiles from the screen's left, top and bottom edges and
+5 from its right, and the engine keeps objects one step past the screen, so a
+character placed one tile past an edge is drawn from its first step in.
+`scene_enter` places the object there with the player's coordinates (scenes
+often start from a coordinate event, wherever the player crossed it), resets
+its event flag as `appear` does, and walks it in with `applymovement`'s own
+routine. The side it comes from has to be inside the map: in a room smaller
+than the screen, bring it from a side with space, or place it with
+`moveobject`, `appear` and `applymovement` as the original scenes do. About
+110 bytes.
+
 ## The camera
 
 Gen 2's overworld always scrolls with the player, so `scene_pan` moves the
@@ -119,5 +148,3 @@ Fifteen steps each way at most (`CinematicPanSteps`). About 140 bytes.
 - **More particles** (dust, water). The sparkle emote is in. Each new shape
   would cost about 50 to 64 bytes of graphics. A sparkle needs a character to
   appear over, so the beacons and Lugia keep their color pulses.
-- **Individual reveals** (one sprite in silhouette, L15): ready to build with
-  the first scene that stages separate figures.

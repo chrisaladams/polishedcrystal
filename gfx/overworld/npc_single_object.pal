@@ -23,6 +23,7 @@ if !DEF(MONOCHROME)
 	RGB 31,31,31, 31,16,01, 31,01,00, 31,31,07 ; campfire
 	RGB 31,31,31, 17,22,22, 12,17,17, 07,07,07 ; cable car
 	RGB 30,30,11, 30,30,11, 16,14,10, 00,00,00 ; tiny window
+	RGB 31,31,31, 00,00,00, 00,00,00, 00,00,00 ; silhouette
 else
 	MONOCHROME_RGB_FOUR_EMOTE ; emote gray
 	MONOCHROME_RGB_FOUR_EMOTE ; emote black
@@ -48,4 +49,5 @@ else
 	MONOCHROME_RGB_FOUR_OW ; campfire
 	MONOCHROME_RGB_FOUR_EMOTE ; cable car
 	MONOCHROME_RGB_FOUR_OW ; tiny window
+	RGB_MONOCHROME WHITE, BLACK, BLACK, BLACK ; silhouette
 endc

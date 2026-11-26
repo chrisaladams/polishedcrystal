@@ -1986,3 +1986,5 @@ SECTION "Cinematic Pals", WRAMX, BANK[5]
 
 ; the palettes a story scene began with (engine/events/cinematic.asm)
 wCinematicSavedPals:: ds 16 palettes
+; the palette indexes of objects shown as shadows (scene_shadow), by object struct
+wCinematicShadowPals:: ds NUM_OBJECT_STRUCTS

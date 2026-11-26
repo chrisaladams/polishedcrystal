@@ -185,6 +185,15 @@ ScanObjectStructPals:
 	ld hl, wNeededMonPalLight
 	ld [hl], NO_PAL_LOADED
 
+	; Link Edition: a story scene's shadow is black, whatever the sprite
+	ld h, a
+	ld a, c
+	cp OBJECT_PAL_SHADOW
+	ld a, PAL_OW_SILHOUETTE
+	jr z, .store_pal_index
+	ld a, h
+	ld hl, wNeededMonPalLight
+
 	; Resolve variable sprites to their current sprite IDs first.
 .resolve_variable_sprite
 	cp SPRITE_VARS

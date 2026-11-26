@@ -19,6 +19,14 @@ game (PyBoy), calling them as the scene macros do:
   is hidden, the given steps away (the camera follows them), the follower put
   away; afterwards the player is back on the same tile, visible, the follower
   under them again;
+- scene_shadow / scene_unshadow: only a scene can shadow; the player goes
+  black on screen and nobody else does, one of the link room's people goes
+  black and another with the same palette doesn't, a Pokémon sprite (its
+  palette read as two nybbles) goes black too and gets its palette back, a tint and scene_restore keep the shadow, unshadowing
+  one reveals only that one, and scene_end gives every shadow its colors back;
+- scene_enter, run as a real script: someone comes on just past the screen's
+  left edge (then the right), in line with the player, and walks up beside
+  them; the player doesn't move;
 - the Options row "Flash & Shake": left/right turns it Off and On (only
   CALM_SCREEN_F changes), shown as it is. (What Off does to a real scene is
   in test_movie_events.py, the clone scene.)
@@ -234,6 +242,111 @@ def main():
     flags = g.m[1, g.sym['wPlayerStruct'][1] + K['OBJECT_FLAGS1']]
     check(not flags & (1 << K['NOCLIP_TILES_F'] | 1 << K['NOCLIP_OBJS_F']), 'scene_pan_back: the player left able to walk through walls')
     check(follower_shown() == had_follower, f'scene_pan_back: follower {follower_shown()}, before {had_follower}')
+
+    # scene_shadow and scene_unshadow: one character black, the others as they were
+    K.update(rgbasm_values(['OBJECT_PAL_INDEX', 'OBJECT_PALETTE', 'OBJECT_PAL_SHADOW', 'PLAYER',
+                            'OBJECT_MAP_OBJECT_INDEX', 'OAM_PALETTE', 'SPRITE_POKEMON'], None))
+    structs = [g.sym['wObjectStructs'][1] + i * K['OBJECT_LENGTH'] for i in range(K['NUM_OBJECT_STRUCTS'])]
+    shown = [b for b in structs[1:] if g.m[1, b + K['OBJECT_SPRITE']]
+             and not g.m[1, b + K['OBJECT_FLAGS1']] >> K['INVISIBLE_F'] & 1]
+    player = structs[0]
+    pal_of = lambda b: g.m[1, b + K['OBJECT_PAL_INDEX']]  # noqa: E731
+
+    def shown_black(b):
+        slot = g.m[1, b + K['OBJECT_PALETTE']] & K['OAM_PALETTE']
+        return pals('wBGPals2')[(8 + slot) * 4 + 1:(8 + slot) * 4 + 4] == [0, 0, 0]
+
+    # (the link room's three people share one palette: one shadow must not darken the others)
+    sharing = [b for b in shown if pal_of(b) == pal_of(shown[0])] if shown else []
+    check(len(sharing) >= 2, f'the test wants two people with one palette on screen, not {len(sharing)}')
+    own = pal_of(player)
+    call('CinematicShadow', K['PLAYER'])
+    check(pal_of(player) == own, 'scene_shadow outside a scene changed the player')
+    call('CinematicBegin')
+    call('CinematicShadow', K['PLAYER'])
+    g.tick(2)
+    check(pal_of(player) == K['OBJECT_PAL_SHADOW'], 'scene_shadow: the player not marked')
+    check(shown_black(player), 'scene_shadow: the player not black on screen')
+    check(not any(shown_black(b) for b in shown), 'scene_shadow: someone else went black too')
+    if len(sharing) >= 2:
+        one, other = sharing[:2]
+        own_one = pal_of(one)
+        call('CinematicShadow', g.m[1, one + K['OBJECT_MAP_OBJECT_INDEX']])
+        g.tick(2)
+        check(shown_black(one), 'scene_shadow: a person not black')
+        check(not shown_black(other), 'scene_shadow: a person with the same palette went black too')
+        # a Pokémon sprite reads its palette as two nybbles: the shadow is black all the same
+        sprite = g.m[1, other + K['OBJECT_SPRITE']]
+        own_other = pal_of(other)
+        g.m[1, other + K['OBJECT_SPRITE']] = K['SPRITE_POKEMON']
+        g.m[1, other + K['OBJECT_PAL_INDEX']] = 0x94
+        call('CinematicShadow', g.m[1, other + K['OBJECT_MAP_OBJECT_INDEX']])
+        g.tick(2)
+        check(shown_black(other), 'scene_shadow: a Pokémon sprite not black')
+        call('CinematicUnshadow', g.m[1, other + K['OBJECT_MAP_OBJECT_INDEX']])
+        check(pal_of(other) == 0x94, f'scene_unshadow: a Pokémon sprite\'s palette {pal_of(other):#x}, not $94')
+        g.m[1, other + K['OBJECT_SPRITE']] = sprite
+        g.m[1, other + K['OBJECT_PAL_INDEX']] = own_other
+    call('CinematicShadow', K['PLAYER'])  # (twice: its own palette still kept)
+    call('CinematicTint', K['TINT_PURPLE'])
+    call('CinematicRestoreNow')
+    g.tick(2)
+    check(shown_black(player), 'scene_shadow: a tint and scene_restore undid the shadow')
+    call('CinematicUnshadow', K['PLAYER'])
+    g.tick(2)
+    check(pal_of(player) == own, f'scene_unshadow: palette {pal_of(player):#x}, not {own:#x}')
+    check(not shown_black(player), 'scene_unshadow: the player still black')
+    if len(sharing) >= 2:
+        check(shown_black(one), 'scene_unshadow of the player revealed someone else too')
+    call('CinematicShadow', K['PLAYER'])
+    call('CinematicEnd')
+    g.tick(20)
+    check(pal_of(player) == own, 'scene_end: the player\'s palette not back')
+    check(not shown_black(player), 'scene_end: the player still black')
+    if len(sharing) >= 2:
+        check(pal_of(one) == own_one, 'scene_end: a person\'s palette not back')
+        check(not shown_black(one), 'scene_end: a person still black')
+
+    # scene_enter: someone comes on from past the screen's edge and walks up
+    # beside the player (the room is 8 tiles tall: from the left and the right)
+    K.update(rgbasm_values(['OBJECT_MAP_X', 'OBJECT_MAP_Y', 'LEFT', 'RIGHT', 'MAPOBJECT_OBJECT_STRUCT_ID',
+                            'MAPOBJECT_LENGTH', 'UNASSOCIATED_MAPOBJECT'], None))
+    enter_bank, enter_addr = g.sym['CinematicEnter']
+    if shown:
+        who = g.m[1, shown[0] + K['OBJECT_MAP_OBJECT_INDEX']]
+        px, py = g.rd('wXCoord'), g.rd('wYCoord')
+
+        def where():
+            mo = g.sym['wMapObjects'][1] + who * K['MAPOBJECT_LENGTH']
+            sid = g.m[1, mo + K['MAPOBJECT_OBJECT_STRUCT_ID']]
+            if sid == K['UNASSOCIATED_MAPOBJECT']:
+                return None
+            b = structs[sid]
+            return g.m[1, b + K['OBJECT_MAP_X']] - 4, g.m[1, b + K['OBJECT_MAP_Y']] - 4
+
+        for side, start_x, end_x in (('LEFT', px - 5, px - 1), ('RIGHT', px + 6, px + 1)):
+            script = [K['setval_command'], K[side] << 5 | who,
+                      K['callasm_command'], enter_bank, enter_addr & 0xff, enter_addr >> 8, K['end_command']]
+            for k, v in enumerate(script):
+                g.m[1, buf + k] = v
+            g.wr('wMapReentryScriptBank', 0)
+            g.wr('wMapReentryScriptAddress', buf & 0xff)
+            g.wr('wMapReentryScriptAddress', buf >> 8, 1)
+            g.wr('wMapReentryScriptQueueFlag', 1)
+            first = None
+            for _ in range(200):
+                g.tick(1)
+                if g.rd('wScriptRunning') and where() is not None:
+                    first = where()
+                    break
+            check(first == (start_x, py), f'scene_enter {side}: came on at {first}, not {(start_x, py)}')
+            for _ in range(300):
+                g.tick(2)
+                if not g.rd('wScriptRunning'):
+                    break
+            g.tick(10)
+            check(where() == (end_x, py), f'scene_enter {side}: ended at {where()}, not beside the player {(end_x, py)}')
+            check((g.rd('wXCoord'), g.rd('wYCoord')) == (px, py), f'scene_enter {side}: the player moved')
 
     # the Options row
     def plain(label):

@@ -82,6 +82,7 @@ DEF NUM_OW_TIME_OF_DAY_PALS EQU const_value
 	ow_npc_pal_const CAMPFIRE          ; 31
 	ow_npc_pal_const CABLE_CAR         ; 32
 	ow_npc_pal_const TINY_WINDOW       ; 33
+	ow_npc_pal_const SILHOUETTE        ; 34 (Link Edition: scene_shadow)
 DEF NUM_OW_INDIVIDUAL_PALS EQU const_value - NUM_OW_TIME_OF_DAY_PALS
 DEF FIRST_COPY_BG_PAL EQU const_value
 	ow_npc_pal_const COPY_BG_GRAY      ; 34
@@ -97,6 +98,10 @@ DEF FIRST_COPY_SPECIAL_BG_PAL EQU const_value
 	ow_npc_pal_const COPY_BG_GRASS     ; 3d
 DEF NUM_OW_BG_COPY_PALS EQU const_value - NUM_OW_INDIVIDUAL_PALS
 DEF NUM_OW_PALS EQU const_value
+
+; OBJECT_PAL_INDEX of an object a story scene shows as a shadow (scene_shadow):
+; never a real index or Pokémon nybble pair (those use nybbles 0-13)
+DEF OBJECT_PAL_SHADOW EQU $ff
 
 ; used by wLoadedObjPal0-7 to mark that no palette is loaded
 DEF NO_PAL_LOADED EQU -1

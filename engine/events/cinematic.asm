@@ -26,6 +26,7 @@ CinematicEndKeepMusic::
 	bit CINEMATIC_ACTIVE_F, [hl]
 	ret z
 	ld [hl], 0
+	call CinematicUnshadowAll
 	jr CinematicEnd.palettes
 
 CinematicEnd::
@@ -35,6 +36,7 @@ CinematicEnd::
 	bit CINEMATIC_ACTIVE_F, [hl]
 	ret z ; (no scene)
 	ld [hl], 0
+	call CinematicUnshadowAll
 	ld a, [wMusicIDHi]
 	and a
 	jr nz, .music
@@ -88,6 +90,94 @@ CinematicPulse::
 	pop bc
 	dec b
 	jr nz, .pulse
+	ret
+
+CinematicShadow::
+; Object hScriptVar (PLAYER, or a map object) as a black shadow, for a
+; reveal; scene_unshadow or scene_end gives its colors back. Only in a scene,
+; so a shadow can't outlast one. (Flashes, pulses and tints keep it.)
+	ld a, [wCinematicFlags]
+	bit CINEMATIC_ACTIVE_F, a
+	ret z
+	call CinematicObjectPal
+	ret c
+	ld a, [hl]
+	cp OBJECT_PAL_SHADOW
+	ret z ; (already)
+	ld [hl], OBJECT_PAL_SHADOW
+	ld b, a
+	call CinematicShadowSlot
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wCinematicShadowPals)
+	ldh [rWBK], a
+	ld a, b
+	ld [de], a
+	pop af
+	ldh [rWBK], a
+	farjp EnableDynPalUpdates
+
+CinematicUnshadow::
+; Object hScriptVar's own colors back.
+	call CinematicObjectPal
+	ret c
+	ld a, [hl]
+	cp OBJECT_PAL_SHADOW
+	ret nz
+	call CinematicShadowSlot
+	call CinematicUnshadowAll.restore
+	farjp EnableDynPalUpdates
+
+CinematicObjectPal:
+; hl = OBJECT_PAL_INDEX of object hScriptVar's struct; carry if it isn't out.
+	ldh a, [hScriptVar]
+	call CheckObjectVisibility
+	ret c
+	ld hl, OBJECT_PAL_INDEX
+	add hl, bc
+	and a
+	ret
+
+CinematicShadowSlot:
+; de = its kept palette index (wCinematicShadowPals, by object struct).
+	ldh a, [hObjectStructIndexBuffer]
+	add LOW(wCinematicShadowPals)
+	ld e, a
+	adc HIGH(wCinematicShadowPals)
+	sub e
+	ld d, a
+	ret
+
+CinematicUnshadowAll:
+; Every shadow's own palette index back (the scene's end recomputes sprite
+; palettes after).
+	ld hl, wObjectStructs + OBJECT_PAL_INDEX
+	ld de, wCinematicShadowPals
+	ld c, NUM_OBJECT_STRUCTS
+.loop
+	ld a, [hl]
+	cp OBJECT_PAL_SHADOW
+	call z, .restore
+	push bc
+	ld bc, OBJECT_LENGTH
+	add hl, bc
+	pop bc
+	inc de
+	dec c
+	jr nz, .loop
+	ret
+
+.restore
+; [hl] = [de], de in the shadow table's WRAM bank
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wCinematicShadowPals)
+	ldh [rWBK], a
+	ld a, [de]
+	ld b, a
+	pop af
+	ldh [rWBK], a
+	ld [hl], b
 	ret
 
 CinematicPan::
@@ -160,6 +250,109 @@ endr
 for _, 15
 	slow_step_right
 endr
+	step_end
+
+CinematicEnter::
+; A character comes on: object hScriptVar & %11111 appears just past the
+; screen's edge toward hScriptVar >> 5 (DOWN, UP, LEFT, RIGHT), in line with
+; the player, and walks up to stand next to them; the script waits. (The
+; engine keeps objects a step past the screen, so it's drawn from its first
+; step.)
+	ldh a, [hScriptVar]
+	and %11111
+	ld b, a
+	ldh a, [hScriptVar]
+	swap a
+	rrca
+	and %11
+	ld c, a
+	push bc
+	ld e, a
+	ld d, 0
+	ld hl, .offsets
+	add hl, de
+	add hl, de
+	ld a, [wXCoord]
+	add [hl]
+	ld d, a
+	inc hl
+	ld a, [wYCoord]
+	add [hl]
+	ld e, a
+	farcall CopyDECoordsToMapObject ; (b = the object)
+	pop bc
+	push bc
+	ld a, b
+	call _CopyObjectStruct
+	ldh a, [hMapObjectIndexBuffer] ; its event flag reset, as appear does
+	call GetMapObject
+	ld hl, MAPOBJECT_EVENT_FLAG
+	add hl, bc
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
+	and d
+	inc a
+	ld b, RESET_FLAG
+	call nz, EventFlagAction
+	pop bc
+	ld e, c
+	ld d, 0
+	ld hl, .walks
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	push hl
+	ld c, b
+	push bc
+	farcall FreezeAllOtherObjects ; (c = the object)
+	pop bc
+	pop hl
+	ld b, BANK(@)
+	call GetMovementData
+	ret c
+	ld a, SCRIPT_WAIT_MOVEMENT
+	ld [wScriptMode], a
+	ld hl, wScriptFlags
+	res SCRIPT_RUNNING, [hl]
+	ret
+
+.offsets
+; x, y from the player's tile (map object coordinates are 4 more): the
+; player is drawn 4 tiles from the left, top and bottom, 5 from the right
+	db 4,      4 + 5 ; below
+	db 4,      4 - 5 ; above
+	db 4 - 5,  4     ; left
+	db 4 + 6,  4     ; right
+
+.walks
+	dw .up4, .down4, .right4, .left5
+.up4
+	step_up
+	step_up
+	step_up
+	step_up
+	step_end
+.down4
+	step_down
+	step_down
+	step_down
+	step_down
+	step_end
+.right4
+	step_right
+	step_right
+	step_right
+	step_right
+	step_end
+.left5
+	step_left
+	step_left
+	step_left
+	step_left
+	step_left
 	step_end
 
 CinematicFlash::

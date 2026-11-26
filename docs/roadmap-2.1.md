@@ -95,13 +95,20 @@ the game is now built for 4 MiB MBC5; see
 
 Implemented: scene begin/end lifecycle, palette tinting and fading, darkness
 and color pulses, screen flashes and shake, global silhouettes, sparkle emotes,
-music restoration, the Flash & Shake accessibility option.
+music restoration, the Flash & Shake accessibility option. Then:
 
-Pending: individual character reveals, offscreen character entrances,
-reusable particle effects, environmental transformations, scene framing and
-title cards. *(Camera focus and panning: done as `scene_pan` / `scene_pan_back`,
-the original endings' technique (the camera follows a hidden player), with the
-follower put away during the pan; see [`cinematics.md`](cinematics.md).)*
+- camera focus and panning: `scene_pan` / `scene_pan_back`, the original
+  endings' technique (the camera follows a hidden player), the follower put
+  away during the pan;
+- individual character reveals: `scene_shadow` / `scene_unshadow`, one figure
+  black in a palette slot of its own while the rest keep their colors;
+- offscreen character entrances: `scene_enter`, from past any edge of the
+  screen, wherever the player stands.
+
+See [`cinematics.md`](cinematics.md).
+
+Pending: reusable particle effects, environmental transformations, scene
+framing and title cards.
 
 Investigate the existing overworld movement and scrolling systems before
 designing camera functionality. Effects share graphics and cleanly restore
