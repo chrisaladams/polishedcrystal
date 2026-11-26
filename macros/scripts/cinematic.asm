@@ -86,6 +86,14 @@ MACRO scene_weather
 	callasm CinematicWeather
 ENDM
 
+MACRO scene_place
+; Object \1 placed \2 tiles right and \3 down from the player (negative:
+; left, up), ready for appear: a scene's cast around the player wherever
+; they stand (on screen: -4 to 5 across, -4 to 4 down).
+	callasm CinematicPlace
+	db \1, LOW(\2), LOW(\3)
+ENDM
+
 MACRO scene_restore
 ; The map's own palettes back at once, the scene still on.
 	callasm CinematicRestoreNow

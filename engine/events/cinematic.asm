@@ -480,6 +480,27 @@ endc
 .done
 	jmp ExitAllMenus
 
+CinematicPlace::
+; Put an object (the script's next byte) at the player's x + the next byte,
+; y + the one after (signed), for an appear: story scenes stage their cast
+; around the player wherever they stand. (It takes effect when the object
+; next appears.)
+	call GetScriptByte
+	ld b, a
+	call GetScriptByte
+	ld c, a
+	call GetScriptByte
+	ld e, a
+	ld a, [wYCoord]
+	add 4
+	add e
+	ld e, a
+	ld a, [wXCoord]
+	add 4
+	add c
+	ld d, a
+	farjp CopyDECoordsToMapObject
+
 CinematicFlash::
 ; hScriptVar white flashes (1 to 3), not with Flash & Shake off.
 	call CinematicCalm

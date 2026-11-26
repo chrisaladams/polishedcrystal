@@ -128,9 +128,9 @@ palettes, music, movement and map state.
   individual clone appearances, laboratory and cloning chamber staging, a
   distinctive Mewtwo reveal, expanded psychic distortion.
 - **The Power of One** — done: elemental beacon palette effects, Melody's song
-  and Lawrence's confrontation. To do: escalating storm, legendary bird
-  silhouettes and appearances, cinematic Lugia emergence, restoration of
-  normal weather and daylight.
+  and Lawrence's confrontation; a title card; the escalating storm, the three
+  legendary birds as silhouettes in the lightning, Lugia's emergence (a
+  shadow, then revealed) and the storm clearing to daylight.
 - **Spell of the Unown** — done: purple dream lighting, illusion encounters.
   To do: spreading crystal formations, floating Unown, more elaborate Entei
   illusion transitions, environmental restoration after the rescue.

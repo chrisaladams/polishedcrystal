@@ -18,11 +18,24 @@ ShamoutiShrineRuins_MapScriptHeader:
 	object_event 10, 17, SPRITE_GRAMPS, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, 0, OBJECTTYPE_SCRIPT, 0, ShamoutiShrineKeeper, -1
 	object_event 14, 13, SPRITE_LADY, SPRITEMOVEDATA_WALK_UP_DOWN, 2, 0, -1, PAL_NPC_BLUE, OBJECTTYPE_SCRIPT, 0, ShamoutiShrineMelody, -1
 	itemball_event  4, 27, RARE_CANDY, 1, EVENT_SHAMOUTI_SHRINE_RUINS_RARE_CANDY
+	; Link Edition: the guardians and Lugia, seen only in the restoration scene
+	object_event  7, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, ARTICUNO, -1, PAL_MON_BLUE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event 10, 12, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, ZAPDOS, -1, PAL_MON_YELLOW, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event 13, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, MOLTRES, -1, PAL_MON_RED, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event 10, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, LUGIA, -1, PAL_MON_AZURE, OBJECTTYPE_SCRIPT, PLAIN_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const SHAMOUTISHRINERUINS_LAWRENCE
+	const SHAMOUTISHRINERUINS_KEEPER
+	const SHAMOUTISHRINERUINS_MELODY
+	const SHAMOUTISHRINERUINS_RARE_CANDY
+	const SHAMOUTISHRINERUINS_ARTICUNO
+	const SHAMOUTISHRINERUINS_ZAPDOS
+	const SHAMOUTISHRINERUINS_MOLTRES
+	const SHAMOUTISHRINERUINS_LUGIA
 
 ShamoutiShrineLawrenceCallback:
+	setevent EVENT_POST_RED_PERSON_HIDDEN ; (the scene's guardians and Lugia)
 	checkevent EVENT_BEAT_LAWRENCE
 	iftruefwd .Hide
 	checkevent EVENT_GOT_MYSTICTICKET_FROM_RED
@@ -175,8 +188,12 @@ ShamoutiShrineKeeper:
 	checkevent EVENT_HEARD_SHAMOUTI_BEACONS
 	iftruefwd .Check
 	setevent EVENT_HEARD_SHAMOUTI_BEACONS
+	scene_title .Title
 	callasm SetCurrentWeather
 	jumptext .Start
+
+.Title:
+	db "THE POWER OF ONE@"
 .Check:
 	scall ShamoutiCheckBeacons
 	iffalse_jumptext .Pending
@@ -279,22 +296,78 @@ ShamoutiTunedBeaconText:
 
 ShamoutiRestoreBeacons:
 	setevent EVENT_RESTORED_SHAMOUTI_BEACONS
-	callasm SetCurrentWeather
-	; (a story scene: the sea's blue light while the song carries, and a
-	; flash as Lugia answers)
+	; (a story scene: the storm at its height, the three guardians in the
+	; lightning, Melody's song, Lugia rising from the dark, and the sky
+	; clearing as the storm ends)
 	scene_begin
+	scene_weather OW_WEATHER_THUNDERSTORM
+	scene_tint TINT_DARK
+	playsound SFX_THUNDER_OW
+	earthquake 30
+	scene_place SHAMOUTISHRINERUINS_ARTICUNO, -3, -3
+	scene_place SHAMOUTISHRINERUINS_ZAPDOS, 0, -4
+	scene_place SHAMOUTISHRINERUINS_MOLTRES, 3, -3
+	appear SHAMOUTISHRINERUINS_ARTICUNO
+	scene_shadow SHAMOUTISHRINERUINS_ARTICUNO
+	appear SHAMOUTISHRINERUINS_ZAPDOS
+	scene_shadow SHAMOUTISHRINERUINS_ZAPDOS
+	appear SHAMOUTISHRINERUINS_MOLTRES
+	scene_shadow SHAMOUTISHRINERUINS_MOLTRES
+	scene_flash 2
+	scene_tint TINT_DARK ; (a flash comes back to the scene's own light)
+	cry ARTICUNO
+	waitsfx
+	cry ZAPDOS
+	waitsfx
+	cry MOLTRES
+	waitsfx
+	showtext .Guardians
+	playsound SFX_THUNDER_OW
+	scene_flash 1
+	disappear SHAMOUTISHRINERUINS_ARTICUNO
+	disappear SHAMOUTISHRINERUINS_ZAPDOS
+	disappear SHAMOUTISHRINERUINS_MOLTRES
 	playmusic MUSIC_LUGIAS_SONG_2000
+	scene_restore
 	scene_tint TINT_BLUE
 	showtext .Song
+	scene_place SHAMOUTISHRINERUINS_LUGIA, 0, -3
+	appear SHAMOUTISHRINERUINS_LUGIA
+	scene_shadow SHAMOUTISHRINERUINS_LUGIA
+	earthquake 20
 	cry LUGIA
 	scene_flash 1
+	scene_unshadow SHAMOUTISHRINERUINS_LUGIA
 	waitsfx
+	showtext .Lugia
+	scene_weather OW_WEATHER_NONE
+	scene_restore
+	pause 30
+	disappear SHAMOUTISHRINERUINS_LUGIA
 	showtext .Calm
 	opentext
 	scall ShamoutiGiveSilverWing
 	closetext
-	scene_end ; (the map's music back)
+	scene_end ; (the map's music back, and its own weather: the storm is over)
 	end
+
+.Guardians:
+	text "Three shapes wheel"
+	line "through the storm,"
+	cont "fire, ice and"
+	cont "lightning."
+	para "The sea itself"
+	line "seems to answer."
+	done
+
+.Lugia:
+	text "Lugia! The guard-"
+	line "ian of the sea"
+	cont "rises between the"
+	cont "lights."
+	para "The three calm as"
+	line "it sings."
+	done
 
 .Song:
 	text "Melody's song"
