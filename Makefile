@@ -144,6 +144,7 @@ test:
 	$(MAKE) crystal
 	python3 utils/sram_layout/check_sram_layout.py $(NAME)-$(VERSION).sym
 	python3 utils/check_text_width.py
+	python3 utils/check_palette_tables.py
 	python3 test/test_ai_scoring.py
 
 freespace: crystal tools/bankends
