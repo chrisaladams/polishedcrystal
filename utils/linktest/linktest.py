@@ -32,6 +32,7 @@ import time
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 POKECENTER_2F = (20, 1)
+TRADE_CENTER = (20, 2)
 COLOSSEUM = (20, 3)
 
 
@@ -190,9 +191,15 @@ class Side:
             # a different clock on this Game Boy
             self.mem[1, self.sym['wRTCDayLo'][1]] = self.boot_day
             self.say(f'    (test) clock set to day {self.boot_day}')
-        if self.where() != POKECENTER_2F:
-            # warp to the link room, in front of the battle desk
-            for n, v in (('wMapGroup', 20), ('wMapNumber', 1), ('wXCoord', 9), ('wYCoord', 3),
+        if getattr(self, 'last_rules', None) is not None:
+            # (test) the rules this cartridge's last link battle used
+            self.mem[self.sym['wLinkBattleRules'][1]] = RULES.index(self.last_rules)
+            self.say(f'    (test) last battle rules: {self.last_rules}')
+        if self.where() != POKECENTER_2F or getattr(self, 'trade', False):
+            # warp to the link room, in front of the battle desk (the trade
+            # desk with --trade)
+            desk_x = 5 if getattr(self, 'trade', False) else 9
+            for n, v in (('wMapGroup', 20), ('wMapNumber', 1), ('wXCoord', desk_x), ('wYCoord', 3),
                          ('wDefaultSpawnpoint', 255), ('wMapStatus', 1)):
                 a = self.sym[n][1]
                 if 0xd000 <= a < 0xe000:
@@ -201,6 +208,13 @@ class Side:
                     self.mem[a] = v
             self.mem[0xff92] = 0xf1        # hMapEntryMethod = MAPSETUP_WARP
             self.tick(600)
+        if getattr(self, 'trade', False):
+            # (test) the trade desk turns away Pokemon carrying mail: no held
+            # items, in memory only
+            stride = self.sym['wPartyMon2'][1] - self.sym['wPartyMon1'][1]
+            item = self.sym['wPartyMon1Item'][1]
+            for i in range(self.rd('wPartyCount')):
+                self.mem[1, item + i * stride] = 0
         if self.party_size is not None:
             assert self.party_size <= self.rd('wPartyCount'), 'save has too few Pokémon for the fixture'
             self.mem[1, self.sym['wPartyCount'][1]] = self.party_size
@@ -350,7 +364,7 @@ class Side:
                 # the linked World Championship's sessions that end at the desk
                 for words, outcome in (('are in a World', 'registered'), ('You heard how', 'synced'),
                                        ('someone else', 'other brackets'), ('interrupted', 'interrupted')):
-                    if self.rules == 'world' and words in joined:
+                    if (self.rules == 'world' or getattr(self, 'trade', False)) and words in joined:
                         if 'wWorldLinkReceive' in self.sym:
                             n = 2 + 2 * 20 + 4
                             self.say('    received ' + bytes(self.rd('wWorldLinkReceive', k)
@@ -363,6 +377,10 @@ class Side:
                         return 'desk: ' + outcome
             in_battle = self.rd('wBattleMode') != 0
             here = self.where()
+            if getattr(self, 'trade', False) and here == TRADE_CENTER:
+                self.tick(200)
+                self.shot('trade_center')
+                return 'in the Trade Center'
             if in_battle:
                 state = 'battle'
                 if 'Fight' in joined and 'Run' in joined:
@@ -469,9 +487,11 @@ class Side:
 
 def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed, q, noise_setup,
            desync_at=0, shot_every=5, unplug=(0, 0, 0), rules='normal', force_moves=None,
-           party_size=None, expect_rejection=False, noise_desk=False, day=None):
+           party_size=None, expect_rejection=False, noise_desk=False, day=None, trade=False, last_rules=None):
     try:
         s = Side(name, rom, sav, load_sym(symp), cable, slot, out, corrupt, seed, noise_setup)
+        s.trade = trade
+        s.last_rules = last_rules
         s.noise_desk = noise_desk
         if day is not None:
             s.boot_day = day
@@ -484,7 +504,8 @@ def worker(name, rom, sav, symp, cable, slot, out, turns, seconds, corrupt, seed
             s.force_moves = force_moves
         result = s.run(turns, time.time() + seconds)
         # (a session that ends at the desk doesn't stop the other side early)
-        if not (expect_rejection and result.startswith('rejected:')) and not result.startswith('desk:'):
+        if not (expect_rejection and result.startswith('rejected:')) and not result.startswith('desk:') \
+                and not result.startswith('in the Trade Center'):
             cable.mm[127] = 1
         s.tick(120)
         s.dump_sram(sav)
@@ -550,12 +571,19 @@ def main():
     ap.add_argument('--noise-desk', action='store_true',
                     help="start side B's noise at the battle desk (the Championship's exchange)")
     ap.add_argument('--day-b', type=int, default=None, help="set side B's clock to this day")
+    ap.add_argument('--trade', action='store_true',
+                    help='go to the trade desk instead: both should reach the Trade Center')
+    ap.add_argument('--last-rules', default=None,
+                    help="each cartridge's last battle rules (as --rules: one, or A,B), set at boot")
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--out', default='linktest_out')
     args = ap.parse_args()
     formats = args.rules.split(',')
     if len(formats) not in (1, 2) or any(rule not in RULES for rule in formats):
         ap.error('invalid battle format')
+    last_rules = args.last_rules.split(',') if args.last_rules else [None]
+    if len(last_rules) not in (1, 2) or any(r is not None and r not in RULES for r in last_rules):
+        ap.error('invalid --last-rules')
     os.makedirs(args.out, exist_ok=True)
     force_ids = None
     if args.force_moves:
@@ -578,7 +606,8 @@ def main():
                                             tuple(map(int, args.unplug.split(','))) if args.unplug and not slot
                                             else (0, 0, 0),
                                             (formats * 2)[slot], force_ids, args.party_size, bool(args.expect_rejection),
-                                            args.noise_desk and slot == 1, args.day_b if slot else None))
+                                            args.noise_desk and slot == 1, args.day_b if slot else None,
+                                            args.trade, (last_rules * 2)[slot]))
         p.start()
         ctx_procs.append(p)
     res = {}
@@ -597,6 +626,11 @@ def main():
         if all(res[name][0].startswith(wanted) and not res[name][1] for name in 'AB'):
             return 0
         print(f'Expected both desks to report {wanted}.')
+        return 1
+    if args.trade:
+        if all(res[name][0].startswith('in the Trade Center') for name in 'AB'):
+            return 0
+        print('Expected both sides to reach the Trade Center.')
         return 1
     if all(res[name][0].startswith('desk:') for name in 'AB'):
         # a Championship session that ended at the desk: the caller checks it

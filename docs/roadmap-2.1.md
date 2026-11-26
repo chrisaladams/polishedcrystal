@@ -50,7 +50,7 @@ Objective: finish, polish and stabilize the existing adventure.
 - [ ] Resolve linked championship prize recovery edge cases (L1).
 - [ ] Complete Friend Battle record validation.
 - [ ] Evaluate stronger interrupted-write recovery (L3).
-- [ ] Test trading immediately after championship sessions.
+- [x] Test trading immediately after championship sessions. *(`linktest.py --trade --last-rules world,normal` and `--last-rules world`: both cartridges reach the Trade Center, with no Championship session and no rules refusal.)*
 - [ ] Expand link interruption and recovery tests.
 - [ ] Correct the simulator Baton Pass test harness.
 - [ ] Audit remaining battle, save and progression defects.

@@ -21,6 +21,14 @@ for Random and Rising Star. Use `--rules rising --party-size 3` to test with
 three Pokémon from each save. Use `--rules rising,unrestricted --party-size 3
 --expect-rejection mismatch` to exercise the desk's format mismatch check.
 
+`--trade` sends both sides to the trade desk instead, and passes when both
+reach the Trade Center (held items are taken off in memory first: the desk
+turns away Pokémon carrying mail). `--last-rules A,B` sets each cartridge's
+last battle rules at boot, as a Championship session leaves them:
+`--trade --last-rules world,normal` and `--trade --last-rules world` check
+that a trade straight after the Championship neither starts a Championship
+session nor is refused for different rules (the trade room checks neither).
+
 ## The cable
 
 PyBoy's own shared-memory link swaps bytes whenever both sides finish a
