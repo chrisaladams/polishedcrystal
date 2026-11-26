@@ -119,7 +119,7 @@ Relevant files: `engine/link/world_link.asm`, `engine/events/world_cup.asm`, `en
 ### General stability
 
 - [x] Bound team generation after eight restarts and test deterministic fallback under the current pools. See L2 and `test_team_generation.py`.
-- [ ] Audit the second pass with a depleted typed pool. It currently relaxes the type rule. Confirm what the player sees and report options if graceful refusal would change an advertised rule.
+- [x] Audit the second pass with a depleted typed pool. It currently relaxes the type rule. Confirm what the player sees and report options if graceful refusal would change an advertised rule. *(No player can meet it with the current sets: every type has at least seven different species (Dragon has the fewest), and the largest typed team a cup asks for is four (Miki), so the first pass always fills a typed team with the type rule kept. `test_team_generation.py` counts each type's species from the game's own set table and base data and fails if any type falls below six, the point where the relaxed pass could appear.)*
 - [x] Audit event-flag exhaustion, reusable flags and persistent state migration. Do not reuse flags still needed by older saves. *([`event-flags.md`](event-flags.md): 2,304 flags, all taken but 16 retired slots. The rules for reusing one say an old save may still have it set. The family's three saves have none set.)*
 - [ ] Complete the CupBegin/CupEnd matrix for cancel, loss, reset, full bags and re-entry. Byte-for-byte party restoration apart from intended healing is exercised across all six cups plus Rudy, Luana and Friend Battles (L6).
 - [ ] Audit Orange Surf checkpoint bypasses, ice-puzzle exits, out-of-order badges, and legacy badge saves.

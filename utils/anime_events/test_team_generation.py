@@ -23,6 +23,11 @@ starting each generator past the limit:
   and still ends with a full team of different species;
 - out of sets (both passes done), it returns with what it has: it ends.
 
+And the relaxed pass is never what a player meets in a typed cup: every type
+has at least six different species in the sets (counted from the game's own
+set table and base data), so a typed team of up to six (Miki's four is the
+largest any cup asks for) is always filled with the type rule kept.
+
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_team_generation.py SAVE.sav
 """
@@ -83,6 +88,23 @@ def main():
                 off = [s for s, f in got if of_type not in types_of(s, f)]
                 if off:
                     fails.append(f'{what}: species {off} are not of the type')
+
+    # every type's different species in the sets (the table in the ROM:
+    # dp species/form, four moves, item, ability, its set number)
+    sets_total = int(re.search(r'DEF NUM_RANDOM_BATTLE_SETS EQU (\d+)', open(os.path.join(
+        os.path.dirname(os.path.dirname(HERE)), 'data', 'link', 'random_battle_sets.asm')).read()).group(1))
+    bank, addr = g.sym['RandomBattleSets']
+    rom = open(os.path.join(os.path.dirname(os.path.dirname(HERE)), 'polishedcrystal-3.2.3.gbc'), 'rb').read()
+    at = bank * 0x4000 + addr - 0x4000
+    per_type = {K[t]: set() for t in TYPES}
+    for n in range(sets_total):
+        sp, form = rom[at + 9 * n], rom[at + 9 * n + 1]
+        for ty in set(types_of(sp, form)):
+            per_type.setdefault(ty, set()).add((sp, form & K['EXTSPECIES_MASK']))
+    thin = {t: len(per_type[K[t]]) for t in TYPES if len(per_type[K[t]]) < 6}
+    if thin:
+        fails.append(f'types with fewer than six species in the sets (the relaxed pass could be met): {thin}')
+    print('fewest species of a type:', min((len(per_type[K[t]]), t) for t in TYPES))
 
     for t in TYPES:
         for size in (4, 6):
