@@ -30,6 +30,7 @@ def main():
                            'cup_spotlight', 'achievements', 'friend_battles', 'friend_records',
                            'link_rules', 'bracket', 'cinematic', 'team_generation', 'link_options')]
     checks.append(['utils/linktest/test_world_prize.py', str(save)])
+    checks.append(['utils/linktest/test_world_plan.py', str(save)])
     checks.append(['utils/wild_mons/test_wild_mons.py', str(save)]
                   + ([] if args.full else ['--quick']))
     audit = ['utils/audit/audit_reachability.py', str(save)]
