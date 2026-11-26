@@ -85,8 +85,8 @@ recent features do.
 
 The owner has 4 MiB cartridges, so Link Edition moves to MBC5 at 4 MiB (option
 3). That gives about 2 MiB more ROM, room for the whole remaining roadmap
-(34–66 KB) many times over. SRAM stays 32 KiB with the same layout, so saves
-carry over unchanged.
+(34–66 KB) many times over. SRAM stays 32 KiB with the same layout (the carts
+have exactly 32 KiB), so saves carry over unchanged.
 
 What changed and how it was checked:
 
@@ -103,5 +103,11 @@ What changed and how it was checked:
 - The ROM stays 2 MiB until its first 128 banks fill; the free-space report
   then counts the rest.
 
-Still to check on the family's own carts: that each is 4 MiB with at least
-32 KiB of save RAM, and a save copied onto one loads (owner, with hardware).
+The family's carts (owner's listing): "NO RTC flash cart", ROM flash 32M
+(4 MiB), SRAM 256K (32 KiB), battery-backed. That matches this build. The
+listing doesn't name the mapper; these boards are MBC5 or MBC3-compatible,
+and the ROM switches banks the same way on both. Their save RAM is exactly
+32 KiB, so SRAM is **not** growing: it stays at 923 B free (largest gap 393 B),
+and new saved data still has to fit there (phase 12's Friend slots and
+statistics, phase 13's records). Still to check on hardware: flashing the 4 MiB
+ROM, and a save copied onto a cart loads (owner).
