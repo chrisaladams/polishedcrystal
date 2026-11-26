@@ -331,11 +331,15 @@ _CGB_FinishBattleScreenLayout:
 .apply_attr_map
 	jmp ApplyAttrMap
 
-HPBarInteriorPals:
-INCLUDE "gfx/battle/hp_bar.pal"
-
 GenderAndExpBarPals:
 INCLUDE "gfx/battle/exp_bar.pal"
+; fallthrough
+HPBarInteriorPals:
+INCLUDE "gfx/battle/hp_bar.pal"
+; fallthrough
+StatusIconPals:
+INCLUDE "gfx/battle/status.pal"
+EndPartyMenuPals:
 
 _CGB_FlyMap:
 	ld hl, PokegearOBPals
@@ -665,38 +669,15 @@ MailPals:
 INCLUDE "gfx/mail/mail.pal"
 
 _CGB_MapPals:
-	call LoadMapPals
+	farcall LoadMapPals
 	ld a, CGB_MAPPALS
 	ld [wMemCGBLayout], a
 	ret
 
 _CGB_PartyMenu:
-	ld de, wBGPals1
-	ld hl, PartyMenuBGPals ; and HPBarPals
-	ld c, 4 palettes
-	call LoadPalettes
-
-	ld hl, GenderAndExpBarPals
-	call LoadPalette_White_Col1_Col2_Black
-
-	ld de, wBGPals1 palette 7
-	ld hl, PartyMenuBGPals
-	call LoadOnePalette
-
-	call InitPartyMenuOBPals
-	farcall SetPartyWalkingMiniPals
-
-	hlcoord 10, 2, wAttrmap
-	lb bc, 11, 1
-	ld a, $4
-	call FillBoxWithByte
+	call LoadPartyMenuPalettes
+	farcall SetPartyWalkingMiniPals ; (Link Edition: the party's walking sprites)
 	jmp ApplyAttrMap
-
-PartyMenuBGPals:
-INCLUDE "gfx/stats/party_menu_bg.pal"
-; fallthrough
-HPBarPals:
-INCLUDE "gfx/stats/hp_bars.pal"
 
 _CGB_Evolution:
 	ld de, wBGPals1

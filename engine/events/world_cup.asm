@@ -621,7 +621,7 @@ WorldCupShowBracket::
 	ld b, 0
 	add hl, bc
 	ld bc, SCREEN_WIDTH
-	call AddNTimes
+	rst AddNTimes
 	pop bc
 	ret
 

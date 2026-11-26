@@ -100,7 +100,7 @@ SECTION "Cherrygrove Bay Scripts", ROMX
 INCLUDE "maps/CherrygroveBay.asm"
 INCLUDE "maps/Route32Coast.asm"
 INCLUDE "maps/Route32CoastHouse.asm"
-INCLUDE "maps/CherrygroveTrainTrackDual.asm"
+INCLUDE "maps/CherrygroveTrainTrack.asm"
 
 
 SECTION "Dark Cave Scripts", ROMX
@@ -272,7 +272,7 @@ INCLUDE "maps/MagnetTunnelInside.asm"
 SECTION "National Park Scripts", ROMX
 
 INCLUDE "maps/NationalPark.asm"
-INCLUDE "maps/NationalParkBugContest.asm"
+INCLUDE "maps/NationalParkBugContest.asm" ; shares text with NationalPark.asm
 
 
 SECTION "Ecruteak Scripts", ROMX
@@ -764,6 +764,7 @@ INCLUDE "maps/FuchsiaCity.asm"
 INCLUDE "maps/FuchsiaMart.asm"
 INCLUDE "maps/FuchsiaGym.asm"
 INCLUDE "maps/FuchsiaBillSpeechHouse.asm"
+INCLUDE "maps/FuchsiaFishingSpeechHouse.asm"
 INCLUDE "maps/FuchsiaSafariBallHouse.asm"
 INCLUDE "maps/SafariZoneWardensHome.asm"
 INCLUDE "maps/FuchsiaAquarium1F.asm"

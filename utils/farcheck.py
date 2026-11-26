@@ -82,8 +82,19 @@ for filename in iglob('**/*.asm', recursive=True):
 	cur_label = None
 	cur_bank = None
 	suppressing = False
+	skip_depth = 0  # inside `if 0 ... endc`: never assembled (e.g. code kept for map tools)
 	with open(filename, 'r') as f:
 		for i, line in enumerate(f, 1):
+			code_part = line.split(';', 1)[0]
+			if skip_depth:
+				if re.match(r'\s*if\b', code_part, re.I):
+					skip_depth += 1
+				elif re.match(r'\s*endc\b', code_part, re.I):
+					skip_depth -= 1
+				continue
+			if re.match(r'\s*if\s+0\s*$', code_part, re.I):
+				skip_depth = 1
+				continue
 			if (m := re.match(def_rx, line)):
 				label, bank = get_label_bank(m)
 				cur_label = label

@@ -254,9 +254,9 @@ SECTION "CherrygroveBay_BlockData", ROMX
 CherrygroveBay_BlockData:
 	INCBIN "maps/CherrygroveBay.ablk.lzp"
 
-SECTION "CherrygroveTrainTrackDual_BlockData", ROMX
-CherrygroveTrainTrackDual_BlockData:
-	INCBIN "maps/CherrygroveTrainTrackDual.ablk.lzp"
+SECTION "CherrygroveTrainTrack_BlockData", ROMX
+CherrygroveTrainTrack_BlockData:
+	INCBIN "maps/CherrygroveTrainTrack.ablk.lzp"
 
 SECTION "Route32Coast_BlockData", ROMX
 Route32Coast_BlockData:
@@ -1457,6 +1457,10 @@ LuckyIsland_BlockData:
 SECTION "LuckyIslandHidden_BlockData", ROMX
 LuckyIslandHidden_BlockData:
 	INCBIN "maps/LuckyIslandHidden.ablk.lzp"
+
+SECTION "FuchsiaFishingSpeechHouse_BlockData", ROMX
+FuchsiaFishingSpeechHouse_BlockData:
+	INCBIN "maps/FuchsiaFishingSpeechHouse.ablk.lzp"
 
 SECTION "SafariZoneWardensHome_BlockData", ROMX
 SafariZoneWardensHome_BlockData:

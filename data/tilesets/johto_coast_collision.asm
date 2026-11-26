@@ -51,7 +51,7 @@
 	tilecoll BUOY, BUOY, WATER, BUOY ; 32
 	tilecoll WALL, WALL, WALL, WALL ; 33
 	tilecoll BUOY, WATER, BUOY, WATER ; 34
-	tilecoll WALL, WALL, WALL, WALL ; 35
+	tilecoll FLOOR, FLOOR, WALL, WALL ; 35
 	tilecoll WATER, BUOY, WATER, BUOY ; 36
 	tilecoll HEADBUTT_TREE, FLOOR, FLOOR, FLOOR ; 37
 	tilecoll BUOY, WATER, BUOY, BUOY ; 38
@@ -160,12 +160,12 @@
 	tilecoll WALL, WALL, WALL, WALL ; 9f
 	tilecoll WALL, WALL, WALL, WALL ; a0
 	tilecoll WALL, WALL, WALL, WALL ; a1
-	tilecoll WALL, WALL, FLOOR, FLOOR ; a2
-	tilecoll WALL, WALL, FLOOR, FLOOR ; a3
-	tilecoll WALL, WALL, FLOOR, WALL ; a4
-	tilecoll WALL, WALL, FLOOR, FLOOR ; a5
-	tilecoll WALL, WALL, FLOOR, WALL ; a6
-	tilecoll WALL, WALL, WALL, FLOOR ; a7
+	tilecoll WALL, WALL, LANTERN_GLOW, LANTERN_GLOW ; a2
+	tilecoll WALL, WALL, LANTERN_GLOW, LANTERN_GLOW ; a3
+	tilecoll WALL, WALL, LANTERN_GLOW, WALL ; a4
+	tilecoll WALL, WALL, LANTERN_GLOW, LANTERN_GLOW ; a5
+	tilecoll WALL, WALL, LANTERN_GLOW, LANTERN_GLOW ; a6
+	tilecoll WALL, WALL, WALL, LANTERN_GLOW ; a7
 	tilecoll WATER, BUOY, WATER, BUOY ; a8
 	tilecoll WATER, BUOY, BUOY, BUOY ; a9
 	tilecoll FLOOR, FLOOR, WALL, FLOOR ; aa
@@ -237,3 +237,10 @@
 	tilecoll WALL, WALL, WALL, WALL ; ec
 	tilecoll WALL, WALL, WALL, WALL ; ed
 	tilecoll WALL, WALL, WALL, WALL ; ee
+	tilecoll WALL, WALL, WALL, WALL ; ef
+	tilecoll WATER, WALL, WATER, WALL ; f0
+	tilecoll WATER, WALL, WATER, WALL ; f1
+	tilecoll WALL, WALL, WALL, WALL ; f2
+	tilecoll WALL, WALL, DOOR, WALL ; f3
+	tilecoll WALL, FLOOR, WALL, FLOOR ; f4
+	tilecoll WALL, WALL, WALL, WALL ; f5

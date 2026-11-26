@@ -19,11 +19,14 @@ FuchsiaCity_MapScriptHeader:
 	warp_event 15, 27, FUCHSIA_SAFARI_BALL_HOUSE, 1
 	warp_event 22, 13, FUCHSIA_AQUARIUM_1F, 1
 	warp_event 23, 13, FUCHSIA_AQUARIUM_1F, 2
+	warp_event 31, 27, FUCHSIA_FISHING_SPEECH_HOUSE, 1
+	warp_event 31, 24, FUCHSIA_FISHING_SPEECH_HOUSE, 3
+	warp_event 32, 24, FUCHSIA_FISHING_SPEECH_HOUSE, 3
 
 	def_coord_events
 
 	def_bg_events
-	bg_event 25, 19, BGEVENT_JUMPTEXT, FuchsiaCitySignText
+	bg_event 35, 16, BGEVENT_JUMPTEXT, FuchsiaCitySignText
 	bg_event  7, 27, BGEVENT_JUMPTEXT, FuchsiaGymSignText
 	bg_event 21, 16, BGEVENT_JUMPTEXT, FuchsiaZooSignText
 	bg_event 27, 29, BGEVENT_JUMPTEXT, WardensHomeSignText
@@ -37,7 +40,6 @@ FuchsiaCity_MapScriptHeader:
 	bg_event  9, 15, BGEVENT_READ, FuchsiaCityZooLaprasSign
 	bg_event 11, 35, BGEVENT_JUMPTEXT, FuchsiaCityCarefulSwimmingSignText
 	bg_event 26, 13, BGEVENT_JUMPTEXT, FuchsiaAquariumSignText
-	bg_event 31, 27, BGEVENT_JUMPTEXT, HouseForSaleSignText
 	bg_event 26, 12, BGEVENT_ITEM + NUGGET, EVENT_FUCHSIA_CITY_HIDDEN_NUGGET
 
 	def_object_events
@@ -66,7 +68,7 @@ FuchsiaCitySetUpPaletteSwap:
 	endcallback
 
 .PaletteSwap:
-	paletteswap 9, 31, 0, 19, PAL_BG_ROOF, FuchsiaCityRoofPalettes, SafariZoneRoofPalettes
+	paletteswap 9, 31, 0, 19, PAL_BG_ROOF, GROUP_FUCHSIA_CITY, GROUP_SAFARI_ZONE_HUB
 	db -1 ; end
 
 FuchsiaCityYoungsterText:
@@ -332,14 +334,7 @@ FuchsiaCityZooLaprasSign:
 	cont "intelligent."
 	done
 
-HouseForSaleSignText:
-	text "What's this?"
-
-	para "House for Sale…"
-	line "Nobody lives here."
-	done
-
-FuchsiaCityCarefulSwimmingSignText::
+FuchsiaCityCarefulSwimmingSignText:: ; (Link Edition: Route 19's sign shares it)
 	text "Please be careful"
 	line "if you are swim-"
 	cont "ming to Seafoam"

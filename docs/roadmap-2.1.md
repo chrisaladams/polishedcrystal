@@ -63,9 +63,9 @@ duplication or unrecoverable tournament state in supported scenarios.
 - [x] ROM, SRAM, WRAM and HRAM reporting.
 - [x] Reclaim unused save padding.
 - [x] Deduplicate identical Nidorina walking graphics.
-- [ ] Evaluate Rangi's latest compression improvements.
-- [ ] Evaluate upstream graphics recompression.
-- [ ] Integrate relevant upstream engine optimizations.
+- [x] Evaluate Rangi's latest compression improvements. *(Merged with upstream through `6aac915e3` (51 commits, November 2026): the simpler LZP copy-offset encoding, the >255-byte `LZ_ALTERNATE` fix, and every LZP file recompressed by the build.)*
+- [x] Evaluate upstream graphics recompression. *(Included in the same merge; the default build went from 8,988 B to 8,313 B free with all 51 commits, their new features included.)*
+- [ ] Integrate relevant upstream engine optimizations. *(Upstream merged through `6aac915e3`: palette glow from streetlights, lanterns, neon and lit doors, the lit Olivine Lighthouse, colored status icons in the party menu, map refinements and map-stitch annotations. Keep merging as upstream moves.)*
 - [ ] Audit duplicated tournament and link routines.
 - [ ] Investigate more efficient text and graphics encoding.
 - [ ] Improve ROM bank packing.
@@ -166,7 +166,9 @@ roaming legendaries and existing encounter methods.
 Window lighting (palettes), streetlights (evaluate upstream), lanterns and
 torches, cave lighting, shrine illumination, fog, storms, snow and wind, grass
 rustling, running dust, surf ripples, fishing splashes, item sparkles (existing
-sparkle system), location title cards, animated crystals. Evaluate Rangi's
+sparkle system), location title cards, animated crystals. (Upstream's palette
+glow for streetlights, lanterns, neon signs and lit doors, and the evening
+Olivine Lighthouse, are merged; build on them.) Evaluate Rangi's
 recent lighting and palette improvements before building equivalents.
 
 ## Phase 10 — Living world and recurring activities (partially implemented)
