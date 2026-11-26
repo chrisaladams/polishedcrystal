@@ -355,6 +355,102 @@ CinematicEnter::
 	step_left
 	step_end
 
+CinematicTitle::
+; A title card. The script's next word points to one line of text in the
+; script's bank (up to SCREEN_WIDTH - 2 characters, "@"-terminated): the map
+; fades to black, the line shows centered in white on black for about two
+; seconds (A or B sooner), and the map comes back as it was.
+	call GetScriptWord ; (hl, and the script goes on after the word)
+	push hl
+	; (FadeToMenu, but to black: a white flash would come first)
+	xor a
+	assert NO_BG_MAP_TRANSFER == 0
+	ldh [hBGMapMode], a
+	call LoadStandardMenuHeader
+	ld c, 10
+	call FadeToBlack
+	call ClearSprites
+	call DisableSpriteUpdates
+	call BackupSprites
+	call LoadStandardFont
+	call ClearTileMap
+	pop de
+	; centered: (SCREEN_WIDTH - length) / 2
+	push de
+	ld h, d
+	ld l, e
+	ld c, 0
+.length
+	ldh a, [hScriptBank]
+	call GetFarByte
+	cp '@'
+	jr z, .measured
+	inc hl
+	inc c
+	jr .length
+.measured
+	ld a, SCREEN_WIDTH
+	sub c
+	jr nc, .fits
+	xor a
+.fits
+	srl a
+	ld e, a
+	ld d, 0
+	hlcoord 0, SCREEN_HEIGHT / 2 - 1
+	add hl, de
+	pop de
+	ldh a, [hScriptBank]
+	call FarString
+	hlcoord 0, 0, wAttrmap
+	xor a
+	ld bc, SCREEN_AREA
+	rst ByteFill
+	call ApplyAttrAndTilemapInVBlank
+	; BG palette 0 (every tile's): black ground, white letters
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+	ld hl, wBGPals1
+if !DEF(MONOCHROME)
+	ld de, palred 0 + palgreen 0 + palblue 0
+	ld bc, palred 31 + palgreen 31 + palblue 31
+else
+	ld de, PAL_MONOCHROME_BLACK
+	ld bc, PAL_MONOCHROME_WHITE
+endc
+	ld a, e
+	ld [hli], a
+	ld a, d
+	ld [hli], a
+	ld a, e
+	ld [hli], a
+	ld a, d
+	ld [hli], a
+	ld a, e
+	ld [hli], a
+	ld a, d
+	ld [hli], a
+	ld a, c
+	ld [hli], a
+	ld [hl], b
+	pop af
+	ldh [rWBK], a
+	ld c, 12
+	call FadePalettes
+	ld c, 120
+.hold
+	call DelayFrame
+	call GetJoypad
+	ldh a, [hJoyPressed]
+	and PAD_A | PAD_B
+	jr nz, .done
+	dec c
+	jr nz, .hold
+.done
+	jmp ExitAllMenus
+
 CinematicFlash::
 ; hScriptVar white flashes (1 to 3), not with Flash & Shake off.
 	call CinematicCalm

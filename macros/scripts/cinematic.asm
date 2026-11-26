@@ -71,6 +71,14 @@ MACRO scene_enter
 	callasm CinematicEnter
 ENDM
 
+MACRO scene_title
+; A title card: the screen fades to black, the line at \1 (in this bank, up
+; to 18 characters) shows centered in white for about two seconds (A or B
+; sooner), and the map comes back.
+	callasm CinematicTitle
+	dw \1
+ENDM
+
 MACRO scene_restore
 ; The map's own palettes back at once, the scene still on.
 	callasm CinematicRestoreNow

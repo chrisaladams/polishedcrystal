@@ -103,12 +103,13 @@ music restoration, the Flash & Shake accessibility option. Then:
 - individual character reveals: `scene_shadow` / `scene_unshadow`, one figure
   black in a palette slot of its own while the rest keep their colors;
 - offscreen character entrances: `scene_enter`, from past any edge of the
-  screen, wherever the player stands.
+  screen, wherever the player stands;
+- title cards: `scene_title`, a centered line, white on black, between fades.
 
 See [`cinematics.md`](cinematics.md).
 
 Pending: reusable particle effects, environmental transformations, scene
-framing and title cards.
+framing (letterbox bars).
 
 Investigate the existing overworld movement and scrolling systems before
 designing camera functionality. Effects share graphics and cleanly restore

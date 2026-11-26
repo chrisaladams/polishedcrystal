@@ -27,6 +27,9 @@ game (PyBoy), calling them as the scene macros do:
 - scene_enter, run as a real script: someone comes on just past the screen's
   left edge (then the right), in line with the player, and walks up beside
   them; the player doesn't move;
+- scene_title, run as a real script: the line centered on a blank card, white
+  on black, for about two seconds; the script goes on past its pointer; the
+  map and its palettes come back exactly; A skips it;
 - the Options row "Flash & Shake": left/right turns it Off and On (only
   CALM_SCREEN_F changes), shown as it is. (What Off does to a real scene is
   in test_movie_events.py, the clone scene.)
@@ -347,6 +350,76 @@ def main():
             g.tick(10)
             check(where() == (end_x, py), f'scene_enter {side}: ended at {where()}, not beside the player {(end_x, py)}')
             check((g.rd('wXCoord'), g.rd('wYCoord')) == (px, py), f'scene_enter {side}: the player moved')
+
+    # scene_title, as a real script: callasm CinematicTitle, dw text, end
+    # (the text after the script; the word after callasm is the script's own)
+    title = 'THE POWER OF ONE'
+    text = [0x7f if ch == ' ' else 0x80 + ord(ch) - ord('A') for ch in title] + [0x53]
+    title_bank, title_addr = g.sym['CinematicTitle']
+    text_at = buf + 7
+    script = [K['callasm_command'], title_bank, title_addr & 0xff, title_addr >> 8,
+              text_at & 0xff, text_at >> 8, K['end_command']] + text
+    for k, v in enumerate(script):
+        g.m[1, buf + k] = v
+    tilemap = g.sym['wTilemap'][1]
+    screen_before = [g.m[tilemap + k] for k in range(20 * 18)]
+    pals_before = pals('wBGPals2')
+    g.wr('wMapReentryScriptBank', 0)
+    g.wr('wMapReentryScriptAddress', buf & 0xff)
+    g.wr('wMapReentryScriptAddress', buf >> 8, 1)
+    g.wr('wMapReentryScriptQueueFlag', 1)
+    col = (20 - len(title)) // 2
+    card = None
+    for frame in range(400):
+        g.tick(1)
+        row = [g.m[tilemap + 8 * 20 + k] for k in range(20)]
+        if row[col:col + len(title)] == text[:-1]:
+            card = frame
+            break
+    check(card is not None, 'scene_title: the line never showed, centered on row 8')
+    if card is not None:
+        g.tick(20)
+        bg = pals('wBGPals2')
+        check(bg[0] == 0 and bg[3] == 0x7fff, f'scene_title: palette 0 shows {bg[0]:#x} ground, {bg[3]:#x} letters')
+        check(all(g.m[tilemap + k] == 0x7f for k in range(20 * 18) if not 160 + col <= k < 160 + col + len(title)),
+              'scene_title: something else on the card')
+        held = 20
+        while g.rd('wScriptRunning') and held < 400:
+            g.tick(1)
+            held += 1
+        check(100 <= held - 20 <= 220, f'scene_title: shown {held} frames after appearing, not about two seconds')
+    for _ in range(200):
+        g.tick(1)
+        if not g.rd('wScriptRunning'):
+            break
+    g.tick(40)
+    check(not g.rd('wScriptRunning'), 'scene_title: the script did not go on to its end')
+    check([g.m[tilemap + k] for k in range(20 * 18)] == screen_before, 'scene_title: the map not drawn back as it was')
+    # (the map's palettes, and those of the people on screen: ExitAllMenus
+    # reloads only the sprite palettes in use, and the text box palette fresh)
+    used = sorted({8 + (g.m[1, b + K['OBJECT_PALETTE']] & K['OAM_PALETTE']) for b in [player] + shown})
+    after = pals('wBGPals2')
+    check(after[:7 * 4] == pals_before[:7 * 4], 'scene_title: the map\'s palettes not back as they were')
+    check(all(after[s * 4:s * 4 + 4] == pals_before[s * 4:s * 4 + 4] for s in used),
+          'scene_title: the sprites\' palettes not back as they were')
+    # A skips it
+    g.wr('wMapReentryScriptBank', 0)
+    g.wr('wMapReentryScriptAddress', buf & 0xff)
+    g.wr('wMapReentryScriptAddress', buf >> 8, 1)
+    g.wr('wMapReentryScriptQueueFlag', 1)
+    for _ in range(400):
+        g.tick(1)
+        if [g.m[tilemap + 8 * 20 + k] for k in range(20)][col:col + len(title)] == text[:-1]:
+            break
+    g.tick(20)
+    g.pb.button('a')
+    for waited in range(200):
+        g.tick(1)
+        if not g.rd('wScriptRunning'):
+            break
+    check(waited < 60, f'scene_title: A did not skip it ({waited} frames more)')
+    g.tick(40)
+    check(not g.rd('wScriptRunning'), 'scene_title: after skipping, a script still running')
 
     # the Options row
     def plain(label):

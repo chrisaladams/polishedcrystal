@@ -19,6 +19,7 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_shadow OBJ` | One character (`PLAYER` or a map object) a black shadow, everyone else as they are. Only inside a scene; tints, pulses, flashes and `scene_restore` keep it |
 | `scene_unshadow OBJ` | That character's own colors back: the reveal (`scene_end` gives every shadow its colors back too) |
 | `scene_enter OBJ, DIR` | A character comes on: it appears just past the screen's edge toward `DIR` (`DOWN`, `UP`, `LEFT`, `RIGHT`), in line with the player, and walks up to stand beside them (4 steps, 5 from the right); the script waits. It also does what `appear` does |
+| `scene_title .Line` | A title card: the screen fades to black, the line (one line in the script's bank, up to 18 characters, `@`-terminated) shows centered in white for about two seconds (A or B sooner), and the map comes back |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
 | `scene_pan DIR, n` | The camera moves `n` steps (1–15) toward `DOWN`, `UP`, `LEFT` or `RIGHT`: the player is hidden and walked there (the view follows the player), through walls and people, the follower put away; the script waits until it's there |
 | `scene_pan_back DIR, n` | Back the same way (give it the same `DIR` and `n`): the player shown again on their tile, walls and people solid again, the follower back under them |
@@ -130,6 +131,24 @@ routine. The side it comes from has to be inside the map: in a room smaller
 than the screen, bring it from a side with space, or place it with
 `moveobject`, `appear` and `applymovement` as the original scenes do. About
 110 bytes.
+
+## Title cards
+
+`scene_title` leaves the map the way menus do (the tilemap and sprites kept,
+`ExitAllMenus` to come back), but fades to black instead of white. The card
+is the standard font on a blank screen, every tile in BG palette 0, set to a
+black ground and white letters, and faded in. The pointer is the word after
+the `callasm`; `GetScriptWord` reads it, so the script goes on after it. The
+map's palettes are rebuilt on the way back, so put a card before a scene's
+tints, or `scene_begin` after it. About 150 bytes.
+
+```
+	scene_title .Title
+	scene_begin
+	...
+.Title:
+	db "THE POWER OF ONE@"
+```
 
 ## The camera
 
