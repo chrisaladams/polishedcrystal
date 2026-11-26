@@ -2,6 +2,9 @@
 
 **Active milestones:** 2.0 Complete Edition and 2.1 Living World & Cinematic Update.
 
+**Current plan:** the owner's [updated roadmap for 2.1](roadmap-2.1.md) sets the
+phases and work order. This document keeps the per-item implementation evidence.
+
 **Takeover baseline:** `b959d22ae5162aafd6488b90d0504f0d45465707` on
 `claude/sleepy-ramanujan-kc278b`. Build and test evidence is in the
 [memory and testing baseline](memory-baseline.md). The
