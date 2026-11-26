@@ -54,3 +54,21 @@ MACRO scene_restore
 ; The map's own palettes back at once, the scene still on.
 	callasm CinematicRestoreNow
 ENDM
+
+MACRO scene_pan
+; The camera moves \2 steps (1-15) toward \1 (DOWN, UP, LEFT, RIGHT), the
+; player hidden, the follower put away; the script waits until it's there.
+; End with scene_pan_back, given the same \1 and \2.
+	assert 1 <= (\2) && (\2) <= 15, "scene_pan takes 1-15 steps"
+	setval (\1) << 4 | (\2)
+	callasm CinematicPan
+ENDM
+
+MACRO scene_pan_back
+; The camera back to the player (\1 and \2 as scene_pan had them), who is
+; shown again, the follower under them.
+	assert 1 <= (\2) && (\2) <= 15, "scene_pan_back takes 1-15 steps"
+	setval ((\1) ^ 1) << 4 | (\2) | $80
+	callasm CinematicPan
+	callasm CinematicPanEnd
+ENDM

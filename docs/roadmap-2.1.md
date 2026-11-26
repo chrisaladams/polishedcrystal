@@ -97,9 +97,11 @@ Implemented: scene begin/end lifecycle, palette tinting and fading, darkness
 and color pulses, screen flashes and shake, global silhouettes, sparkle emotes,
 music restoration, the Flash & Shake accessibility option.
 
-Pending: individual character reveals, camera focus and panning, offscreen
-character entrances, reusable particle effects, environmental transformations,
-scene framing and title cards.
+Pending: individual character reveals, offscreen character entrances,
+reusable particle effects, environmental transformations, scene framing and
+title cards. *(Camera focus and panning: done as `scene_pan` / `scene_pan_back`,
+the original endings' technique (the camera follows a hidden player), with the
+follower put away during the pan; see [`cinematics.md`](cinematics.md).)*
 
 Investigate the existing overworld movement and scrolling systems before
 designing camera functionality. Effects share graphics and cleanly restore

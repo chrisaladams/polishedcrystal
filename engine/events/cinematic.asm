@@ -90,6 +90,78 @@ CinematicPulse::
 	jr nz, .pulse
 	ret
 
+CinematicPan::
+; The camera, which follows the player: hScriptVar = direction (DOWN, UP,
+; LEFT, RIGHT) << 4 | steps (1-15), bit 7 for the way back. Going out, the
+; player is hidden and the follower put away (it would follow the steps);
+; the script waits while the view moves (scene_pan_back ends with
+; CinematicPanEnd).
+	ldh a, [hScriptVar]
+	bit 7, a
+	jr nz, .move
+	push af
+	ld hl, wPlayerStruct + OBJECT_FLAGS1
+	set INVISIBLE_F, [hl]
+	set NOCLIP_TILES_F, [hl] ; (the view goes over walls and people)
+	set NOCLIP_OBJS_F, [hl]
+	farcall RemoveFollower
+	pop af
+.move
+	ld b, a
+	and $0f
+	ld c, a ; steps
+	ld a, b
+	swap a
+	and %11 ; direction
+	swap a ; * 16, a table each
+	add 15
+	sub c ; the last c steps of its table
+	ld e, a
+	ld d, 0
+	ld hl, CinematicPanSteps
+	add hl, de
+	push hl
+	ld c, PLAYER ; (FreezeAllOtherObjects keeps object c moving)
+	farcall FreezeAllOtherObjects
+	pop hl
+	ld c, PLAYER
+	ld b, BANK(CinematicPanSteps)
+	call GetMovementData
+	ret c
+	ld a, SCRIPT_WAIT_MOVEMENT
+	ld [wScriptMode], a
+	ld hl, wScriptFlags
+	res SCRIPT_RUNNING, [hl]
+	ret
+
+CinematicPanEnd::
+; After the way back: the player seen again, the follower under them.
+	ld hl, wPlayerStruct + OBJECT_FLAGS1
+	res INVISIBLE_F, [hl]
+	res NOCLIP_TILES_F, [hl]
+	res NOCLIP_OBJS_F, [hl]
+	farjp SpawnFollower
+
+CinematicPanSteps:
+; fifteen slow steps each way, in direction order (a pan takes the last n)
+	assert DOWN == 0 && UP == 1 && LEFT == 2 && RIGHT == 3
+for _, 15
+	slow_step_down
+endr
+	step_end
+for _, 15
+	slow_step_up
+endr
+	step_end
+for _, 15
+	slow_step_left
+endr
+	step_end
+for _, 15
+	slow_step_right
+endr
+	step_end
+
 CinematicFlash::
 ; hScriptVar white flashes (1 to 3), not with Flash & Shake off.
 	call CinematicCalm

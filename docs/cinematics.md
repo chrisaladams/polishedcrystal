@@ -17,6 +17,8 @@ shake), `showemote` (`!`, `?`, happy, sad, heart, bolt, sleep), `cry`,
 | `scene_flash n` | `n` white flashes (1–3), each back to the scene's palettes |
 | `scene_silhouette` | Every sprite black (`SetBlackObjectPals`) |
 | `scene_restore` | Back to the scene's starting palettes quickly, the scene still on |
+| `scene_pan DIR, n` | The camera moves `n` steps (1–15) toward `DOWN`, `UP`, `LEFT` or `RIGHT`: the player is hidden and walked there (the view follows the player), through walls and people, the follower put away; the script waits until it's there |
+| `scene_pan_back DIR, n` | Back the same way (give it the same `DIR` and `n`): the player shown again on their tile, walls and people solid again, the follower back under them |
 | `scene_end` | Fades back to the starting palettes and restarts the map's music if the scene changed it |
 | `scene_end_keep_music` | The same, but leaves the music as the scene left it, for a scene that leads straight into a battle |
 
@@ -100,14 +102,22 @@ and after a scene, and that no random number is drawn.
 
 Each use costs about 4 to 6 bytes of script.
 
+## The camera
+
+Gen 2's overworld always scrolls with the player, so `scene_pan` moves the
+camera the way the original game's endings do (Navel Rock's pan up): the
+player is hidden and walked along, through walls and people (the no-clip
+flags), and the view follows. `scene_pan_back` walks back and shows the player
+on their own tile. The follower would replay those steps, so it's put away for
+the pan and put back under the player after. Keep a pan inside the map: the
+view can show the border blocks, but a walk off the map's edge is not tested.
+Fifteen steps each way at most (`CinematicPanSteps`). About 140 bytes.
+`test_cinematic.py` runs one as a real script.
+
 ## Not yet
 
-- **Camera.** Gen 2's overworld scrolls with the player and has no camera to
-  pan. Panning would need changes to the overworld's scrolling, which has a
-  larger budget and more risk. Scenes move the player or other objects with
-  `applymovement`, as the original game does.
 - **More particles** (dust, water). The sparkle emote is in. Each new shape
   would cost about 50 to 64 bytes of graphics. A sparkle needs a character to
   appear over, so the beacons and Lugia keep their color pulses.
-- **Reduced-flash or reduced-motion settings.** Flashes are capped at three
-  short ones per command; a setting would need an options bit.
+- **Individual reveals** (one sprite in silhouette, L15): ready to build with
+  the first scene that stages separate figures.

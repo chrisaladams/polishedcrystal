@@ -15,6 +15,10 @@ game (PyBoy), calling them as the scene macros do:
 - the lifecycle guards: a scene_begin inside a scene keeps the first one's
   palettes; a script ending with a scene still on ends it (Script_endall,
   Script_end); a new map drops it (RunMapSetupScript);
+- scene_pan / scene_pan_back, run as a real script: while panned the player
+  is hidden, the given steps away (the camera follows them), the follower put
+  away; afterwards the player is back on the same tile, visible, the follower
+  under them again;
 - the Options row "Flash & Shake": left/right turns it Off and On (only
   CALM_SCREEN_F changes), shown as it is. (What Off does to a real scene is
   in test_movie_events.py, the clone scene.)
@@ -173,6 +177,63 @@ def main():
          & ~(1 << K['OW_WEATHER_DO_FLY_F']))
     caller.call('Lightning')
     check(whites, 'lightning no longer strikes outside a scene')
+
+    # scene_pan and scene_pan_back, as a script in RAM: pan 4 down, wait, back
+    # (through the room's furniture and people: the view isn't stopped)
+    K.update(rgbasm_values(['setval_command', 'callasm_command', 'pause_command', 'end_command',
+                            'DOWN', 'NOCLIP_TILES_F', 'NOCLIP_OBJS_F', 'OBJECT_FLAGS1', 'OBJECT_SPRITE', 'NUM_OBJECT_STRUCTS',
+                            'OBJECT_LENGTH', 'SPRITE_FOLLOWER_MON', 'INVISIBLE_F'], None))
+    g.tick(120)
+    pan_bank, pan_addr = g.sym['CinematicPan']
+    end_bank, end_addr = g.sym['CinematicPanEnd']
+    steps = 4
+    script = [K['setval_command'], K['DOWN'] << 4 | steps, K['callasm_command'], pan_bank, pan_addr & 0xff, pan_addr >> 8,
+              K['pause_command'], 60,
+              K['setval_command'], (K['DOWN'] ^ 1) << 4 | steps | 0x80,
+              K['callasm_command'], pan_bank, pan_addr & 0xff, pan_addr >> 8,
+              K['callasm_command'], end_bank, end_addr & 0xff, end_addr >> 8, K['end_command']]
+    buf = g.sym['wStringBuffer5'][1]
+    for k, v in enumerate(script):
+        g.m[1, buf + k] = v
+
+    def follower_shown():
+        for i in range(K['NUM_OBJECT_STRUCTS']):
+            b = g.sym['wObjectStructs'][1] + i * K['OBJECT_LENGTH']
+            if g.m[1, b + K['OBJECT_SPRITE']] == K['SPRITE_FOLLOWER_MON']:
+                return True
+        return False
+
+    def player_hidden():
+        return bool(g.m[1, g.sym['wPlayerStruct'][1] + K['OBJECT_FLAGS1']] >> K['INVISIBLE_F'] & 1)
+
+    start = (g.rd('wXCoord'), g.rd('wYCoord'))
+    had_follower = follower_shown()
+    # (queued as the game queues a script: RunMemScript starts it)
+    g.wr('wMapReentryScriptBank', 0)
+    g.wr('wMapReentryScriptAddress', buf & 0xff)
+    g.wr('wMapReentryScriptAddress', buf >> 8, 1)
+    g.wr('wMapReentryScriptQueueFlag', 1)
+    panned = None
+    for _ in range(400):
+        g.tick(2)
+        if (g.rd('wXCoord'), g.rd('wYCoord')) == (start[0], start[1] + steps):
+            panned = (player_hidden(), follower_shown())
+            break
+    check(panned is not None, f'scene_pan: the camera did not get {steps} steps down')
+    if panned:
+        check(panned[0], 'scene_pan: the player was not hidden')
+        check(not panned[1], 'scene_pan: the follower was still out')
+    for _ in range(300):
+        g.tick(2)
+        if not g.rd('wScriptRunning'):
+            break
+    g.tick(30)
+    check((g.rd('wXCoord'), g.rd('wYCoord')) == start,
+          f'scene_pan_back: the player at {(g.rd("wXCoord"), g.rd("wYCoord"))}, not {start}')
+    check(not player_hidden(), 'scene_pan_back: the player still hidden')
+    flags = g.m[1, g.sym['wPlayerStruct'][1] + K['OBJECT_FLAGS1']]
+    check(not flags & (1 << K['NOCLIP_TILES_F'] | 1 << K['NOCLIP_OBJS_F']), 'scene_pan_back: the player left able to walk through walls')
+    check(follower_shown() == had_follower, f'scene_pan_back: follower {follower_shown()}, before {had_follower}')
 
     # the Options row
     def plain(label):
