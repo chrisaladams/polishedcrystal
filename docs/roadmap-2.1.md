@@ -141,8 +141,12 @@ palettes, music, movement and map state.
 - **Spell of the Unown** — done: purple dream lighting, illusion encounters;
   a title card; floating Unown and the Entei illusion's transitions (a
   dream's shadow, its colors as it roars, breaking into letters around you).
-  To do: spreading crystal formations, environmental restoration after the
-  rescue.
+  Second pass: the Unown's radio signal as the scene's music; crystal
+  formations spreading out from the statue one by one (each with a glass
+  chime and a sparkle), staying through the illusion and shattering in a
+  flash when Hale is free, the chamber itself again and its own music back.
+  Evidence: `test_campaigns.py` (Alph staging);
+  [`phase5-screens/unown-statue.png`](phase5-screens/unown-statue.png).
 - **Celebi: Voice of the Forest** — done: dark forest atmosphere, corrupted
   encounters, shrine pulses and green sparkles; a title card; corruption and
   healing (Celebi a shadow until the shrine heals it, the forest blooming),

@@ -63,6 +63,11 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_O_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_L_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 	object_event  4, 13, SPRITE_MON_ICON, SPRITEMOVEDATA_POKEMON, 0, UNOWN, -1, PAL_MON_PURPLE, OBJECTTYPE_SCRIPT, UNOWN_Y_FORM, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	; Link Edition: the Unown's crystals, spreading from the statue (the scene)
+	object_event  4, 13, SPRITE_SNES, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_ROCK_CRYSTAL, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  4, 13, SPRITE_SNES, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_ROCK_CRYSTAL, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  4, 13, SPRITE_SNES, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_ROCK_CRYSTAL, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
+	object_event  4, 13, SPRITE_SNES, SPRITEMOVEDATA_STANDING_UP, 0, 0, -1, PAL_NPC_ROCK_CRYSTAL, OBJECTTYPE_SCRIPT, 0, ObjectEvent, EVENT_POST_RED_PERSON_HIDDEN
 
 	object_const_def
 	const_skip 4
@@ -73,6 +78,10 @@ RuinsOfAlphInnerChamber_MapScriptHeader:
 	const ALPH_UNOWN_2
 	const ALPH_UNOWN_3
 	const ALPH_UNOWN_4
+	const ALPH_CRYSTAL_1
+	const ALPH_CRYSTAL_2
+	const ALPH_CRYSTAL_3
+	const ALPH_CRYSTAL_4
 
 HideAlphRescueActors:
 	setevent EVENT_POST_RED_PERSON_HIDDEN ; (the statue scene's letters)
@@ -193,7 +202,28 @@ HaleStatueScript:
 	checkevent EVENT_RESCUED_PROF_HALE
 	iftrue_jumptext .Empty
 	scene_begin ; (the illusion in a dream's purple light)
+	musicfadeout MUSIC_RUINS_OF_ALPH_RADIO, 8 ; (the Unown's own signal)
 	showtext .Knocks
+	; the Unown's crystals spread out from the statue, one by one
+	scene_tint TINT_PURPLE
+	scene_place ALPH_CRYSTAL_1, -1, -1
+	appear ALPH_CRYSTAL_1
+	playsound SFX_GLASS_TING
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_CRYSTAL_1, 10
+	scene_place ALPH_CRYSTAL_2, 1, -1
+	appear ALPH_CRYSTAL_2
+	playsound SFX_GLASS_TING_2
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_CRYSTAL_2, 10
+	scene_place ALPH_CRYSTAL_3, -3, 0
+	appear ALPH_CRYSTAL_3
+	playsound SFX_GLASS_TING
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_CRYSTAL_3, 10
+	scene_place ALPH_CRYSTAL_4, 3, 0
+	appear ALPH_CRYSTAL_4
+	playsound SFX_GLASS_TING_2
+	showemote EMOTE_SPARKLE_PURPLE, ALPH_CRYSTAL_4, 10
+	waitsfx
+	scene_restore
 	playsound SFX_PROTECT
 	special Special_FadeBlackQuickly
 	; The alternate statue and floor blocks have identical collisions.
@@ -240,7 +270,16 @@ HaleStatueScript:
 	appear ALPH_PROF_HALE
 	special Special_ReloadSpritesNoPalettes
 	special Special_FadeInQuickly
-	scene_end
+	; with him free, the crystals shatter and the chamber is itself again
+	playsound SFX_GLASS_TING
+	scene_flash 1
+	disappear ALPH_CRYSTAL_1
+	disappear ALPH_CRYSTAL_2
+	playsound SFX_GLASS_TING_2
+	disappear ALPH_CRYSTAL_3
+	disappear ALPH_CRYSTAL_4
+	waitsfx
+	scene_end ; (the chamber's own music back)
 	showtext .Rescue
 	disappear ALPH_PROF_HALE
 	setevent EVENT_RESCUED_PROF_HALE
