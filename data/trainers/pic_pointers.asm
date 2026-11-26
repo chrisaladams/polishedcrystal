@@ -150,10 +150,10 @@ TrainerPicPointers::
 	dba LawrencePic
 	dba ReiPic
 	dba FirebreatherAshesPic
-	dba CooltrainerfPic ; Cissy
-	dba SailorPic       ; Danny
-	dba CooltrainermPic ; Rudy
-	dba LadyPic         ; Luana
+	dba CissyPic ; (Link Edition: the Orange Crew's own portraits)
+	dba DannyPic
+	dba RudyPic
+	dba LuanaPic
 	dba VeteranmPic     ; Drake
 	dba CalPic ; Ash
 	dba YoungsterPic ; Ritchie

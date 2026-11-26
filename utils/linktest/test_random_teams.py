@@ -24,7 +24,7 @@ sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, 'meta_sim'))
 
 import linktest as L                                        # noqa: E402
-from oracle_pipeline import rgbasm_values                   # noqa: E402
+from oracle_pipeline import asm_for_build, rgbasm_values    # noqa: E402
 
 TYPES = ['NORMAL', 'FIGHTING', 'FLYING', 'POISON', 'GROUND', 'ROCK', 'BUG', 'GHOST',
          'STEEL', 'FIRE', 'WATER', 'GRASS', 'ELECTRIC', 'PSYCHIC', 'ICE', 'DRAGON',
@@ -34,7 +34,7 @@ TRAP, STACK = 0xff90, 0xdff0
 
 def load_sets():
     """(species byte, form byte, moves) -> (name, types, weaknesses) from the table."""
-    lines = open(os.path.join(ROOT, 'data/link/random_battle_sets.asm')).read().splitlines()
+    lines = asm_for_build(open(os.path.join(ROOT, 'data/link/random_battle_sets.asm')).read()).splitlines()
     profiles = []
     for i, line in enumerate(lines):
         if re.match(r'\s*db \d+, \d+ ; \d+:', line):
@@ -64,7 +64,7 @@ def table_problems():
     (no status moves while holding it) with a status move."""
     import json
     cats = {k: v['cat'] for k, v in json.load(open(os.path.join(ROOT, 'meta_sim', 'data', 'moves.json'))).items()}
-    lines = open(os.path.join(ROOT, 'data/link/random_battle_sets.asm')).read().splitlines()
+    lines = asm_for_build(open(os.path.join(ROOT, 'data/link/random_battle_sets.asm')).read()).splitlines()
     out = []
     for i, line in enumerate(lines):
         m = re.match(r'\s*dp (\w+), (\w+)', line)

@@ -8,6 +8,23 @@
 
 ***Note: The following changelog may contain spoilers.***
 
+## Link Edition 2.0
+
+The Complete Edition of Polished Crystal: Link Edition, built on Polished
+Crystal 3.2.3. See [the release notes](docs/release-2.0/release-notes.md)
+for everything it adds (five Cable Club formats, the linked World
+Championship, Friend Battles, followers, visible wild Pokémon, the software
+clock, the Field Book, four movie stories, the Orange League, six regional
+cups and more), compatibility and installation, and
+[the release checklist](docs/release-2.0/checklist.md) for the evidence.
+
+### Release-hardening fixes
+- Faithful build: generated typed teams (Kimono Cup, Dragon Masters, Rental)
+  followed the Default build's types
+- Placeholder "TODO" dialogue on the Orange Islands replaced (Prof. Ivy's
+  assistants, Darach and Caitlin, the Sightseers Cy & Vi)
+- Dedicated trainer portraits for the Orange Crew
+
 ## v3.2.3
 
 Critical hotfix release.

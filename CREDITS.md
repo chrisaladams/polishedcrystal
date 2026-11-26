@@ -147,3 +147,5 @@ Pokémon Polished Crystal would never have been finished without the help of man
 * Molly Hale, the Iron-Masked Marauder, Melody and Drake overworld sprites: edited from Pokémon Crystal's lass, burglar, beauty and veteran sprites.
 * Cissy, Danny, Rudy, Luana and Sammy overworld sprites: Polished Crystal's own sprites combined (heads from the beach girl, skier, Falkner, Lorelei and Bill; bodies from the cooltrainers, sailor, lady and schoolboy).
 * The cloning tank, Unown crystal and bramble scene sprites: drawn for Link Edition.
+* Cissy, Danny, Rudy and Luana trainer portraits: Polished Crystal's own portraits combined (heads from the battle girl, Jacky, Falkner and Flannery; bodies from the cooltrainers, camper and lady), with new palettes.
+* The emulator test suites run on [PyBoy](https://github.com/Baekalfen/PyBoy) (LGPL-3.0); `utils/linktest/pyboy_cable/` modifies its serial link to follow the hardware's clocking.

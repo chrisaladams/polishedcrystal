@@ -589,9 +589,9 @@ SrandjrIvyandamy1SeenText:
 	done
 
 SrandjrIvyandamy1BeatenText:
-	text "Ivy: You embarass-"
-	line "ed me in front of"
-	cont "my junior…"
+	text "Ivy: You embar-"
+	line "rassed me in front"
+	cont "of my junior…"
 	done
 
 SrandjrIvyandamy2SeenText:

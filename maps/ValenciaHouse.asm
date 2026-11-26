@@ -35,7 +35,11 @@ OrangeCrewLuanaScript:
 	checkevent EVENT_BEAT_ORANGE_CREW_LUANA
 	iftruefwd .Rematch
 	closetext
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8 ; (the card once a visit)
+	iftruefwd .Titled
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8
 	scene_title .CrewTitle
+.Titled:
 	opentext
 	writetext .IntroText
 	sjumpfwd .Confirm

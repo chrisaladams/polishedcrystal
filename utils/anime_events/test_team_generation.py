@@ -13,8 +13,10 @@ times over, each within a time limit (Caller's 600 frames):
 - three of any type (the Rental Cup) and the Random Battle format's six;
 - every typed team really is of its type and has no species twice.
 
-If someone trims the Random Battle sets so a type has too few species, this
-fails, instead of a Kimono Cup hanging on that type's day.
+A type with fewer different species in the sets than a team asks for (the
+faithful build has three Dragons) gets every one of them, all of its type,
+straight away: not a hunt for them that takes seconds, and no filler of
+another type.
 
 And the bound itself (RANDOM_MAX_START_OVERS, RandomNextInOrder), forced by
 starting each generator past the limit:
@@ -23,10 +25,9 @@ starting each generator past the limit:
   and still ends with a full team of different species;
 - out of sets (both passes done), it returns with what it has: it ends.
 
-And the relaxed pass is never what a player meets in a typed cup: every type
-has at least six different species in the sets (counted from the game's own
-set table and base data), so a typed team of up to six (Miki's four is the
-largest any cup asks for) is always filled with the type rule kept.
+And the relaxed pass is never what a player meets in a typed cup: the
+species of each type are counted from the game's own set table and base
+data, and a typed team is always that many at most, with the type rule kept.
 
 Usage (from the repository root, after make):
   python3 utils/anime_events/test_team_generation.py SAVE.sav
@@ -103,12 +104,15 @@ def main():
             per_type.setdefault(ty, set()).add((sp, form & K['EXTSPECIES_MASK']))
     thin = {t: len(per_type[K[t]]) for t in TYPES if len(per_type[K[t]]) < 6}
     if thin:
-        fails.append(f'types with fewer than six species in the sets (the relaxed pass could be met): {thin}')
+        print('types with fewer than six species (their teams are all of them):', thin)
+    if any(not per_type[K[t]] for t in TYPES):
+        fails.append('a type with no species in the sets')
     print('fewest species of a type:', min((len(per_type[K[t]]), t) for t in TYPES))
 
     for t in TYPES:
         for size in (4, 6):
-            make('CupMakeTeam', {'B': size, 'C': K[t]}, 'wOTParty', size, f'{size} {t} type', K[t])
+            make('CupMakeTeam', {'B': size, 'C': K[t]}, 'wOTParty', min(size, len(per_type[K[t]])),
+                 f'{size} {t} type', K[t])
     make('CupMakeTeam', {'B': K['RENTAL_CUP_TEAM_SIZE'], 'C': K['CUPTYPE_ANY']}, 'wOTParty',
          K['RENTAL_CUP_TEAM_SIZE'], 'the Rental Cup team')
     make('LinkRandomBattle_MakeTeam', {}, 'wParty', 6, 'the Random Battle team')
@@ -154,7 +158,8 @@ def main():
     if first is not None and first != again:
         fails.append('Random Battle, in order: not the same team twice')
     for t in ('FIRE', 'DRAGON', 'FAIRY'):
-        got = forced('CupMakeTeam', {'B': 4, 'C': K[t]}, 'wOTParty', 4, f'4 {t} type, in order')
+        got = forced('CupMakeTeam', {'B': 4, 'C': K[t]}, 'wOTParty', min(4, len(per_type[K[t]])),
+                     f'4 {t} type, in order')
         if got:
             off = [s for s, f in got if K[t] not in types_of(s, f)]
             if off:

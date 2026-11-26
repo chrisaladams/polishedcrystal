@@ -2570,7 +2570,7 @@ SECTION "BonslyPokedexEntry", ROMX
 BonslyPokedexEntry::
 	db "Bonsai@"
 	text "It prefers an arid"
-	next "atmposhere. It"
+	next "atmosphere. It"
 	next "leaks water that"
 	page "looks like tears"
 	next "when adjusting its"

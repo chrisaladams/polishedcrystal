@@ -15,6 +15,22 @@ CupMakeTeam::
 	ld [wRandomStartOvers], a
 	ld [wRandomSeqIndex], a
 	ld [wRandomSeqIndex + 1], a
+	; a type with fewer species in the sets than asked for (Dragon in the
+	; faithful build has three): the team is every one of them, taken in
+	; order at once (random picks would hunt for them for seconds, and the
+	; relaxed pass would add one that isn't of the type)
+	ld a, [wCupFoeType]
+	cp CUPTYPE_ANY
+	jr z, .start_over
+	call .CountOfType
+	and a
+	jr z, .start_over ; (none at all: as before)
+	ld hl, wCupMakeCount
+	cp [hl]
+	jr nc, .start_over
+	ld [hl], a
+	ld a, RANDOM_MAX_START_OVERS
+	ld [wRandomStartOvers], a
 .start_over
 	xor a
 	ld [wOTPartyCount], a
@@ -217,6 +233,52 @@ CupMakeTeam::
 	ld hl, wRandomStartOvers
 	inc [hl]
 	jmp .start_over
+
+.CountOfType:
+; a = how many different species (and forms) in the sets have type
+; [wCupFoeType]. A species' sets are next to each other, and its sets all
+; have its types, so a set counts when it isn't the species before.
+	ld hl, RandomBattleSets
+	ld bc, NUM_RANDOM_BATTLE_SETS
+	xor a
+	ld [wRandomTries], a ; (the count, here: .start_over clears it)
+	ld de, $ffff ; the set before: species, form
+.count_loop
+	push bc
+	ld a, [hli]
+	cp d
+	ld d, a
+	ld a, [hld]
+	jr nz, .new_species
+	cp e
+	jr z, .count_next ; (another set of the same one)
+.new_species
+	ld e, a
+	push hl
+	push de
+	call LinkRandomBattle_MakeTeam.GetProfile
+	ld a, [wCupFoeType]
+	cp [hl]
+	inc hl
+	jr z, .is_type
+	cp [hl]
+.is_type
+	pop de
+	pop hl
+	jr nz, .count_next
+	ld a, [wRandomTries]
+	inc a
+	ld [wRandomTries], a
+.count_next
+	ld bc, RANDOM_SET_LENGTH
+	add hl, bc
+	pop bc
+	dec bc
+	ld a, b
+	or c
+	jr nz, .count_loop
+	ld a, [wRandomTries]
+	ret
 
 .HaveSpecies:
 ; Return z if wOTParty already has species c (extspecies flag in b).

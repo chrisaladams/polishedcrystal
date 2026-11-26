@@ -452,6 +452,18 @@ MewtwoTrainerPic: INCBIN "gfx/trainers/mewtwo.2bpp.lzp"
 SECTION "OmastarFossilPic", ROMX
 OmastarFossilPic: INCBIN "gfx/trainers/omastar_fossil.2bpp.lzp"
 
+SECTION "CissyPic", ROMX ; (Link Edition: the Orange Crew)
+CissyPic: INCBIN "gfx/trainers/cissy.2bpp.lzp"
+
+SECTION "DannyPic", ROMX
+DannyPic: INCBIN "gfx/trainers/danny.2bpp.lzp"
+
+SECTION "RudyPic", ROMX
+RudyPic: INCBIN "gfx/trainers/rudy.2bpp.lzp"
+
+SECTION "LuanaPic", ROMX
+LuanaPic: INCBIN "gfx/trainers/luana.2bpp.lzp"
+
 SECTION "KabutopsFossilPic", ROMX
 KabutopsFossilPic: INCBIN "gfx/trainers/kabutops_fossil.2bpp.lzp"
 

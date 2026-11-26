@@ -216,7 +216,11 @@ OrangeCrewDannyScript:
 	checkevent EVENT_REACHED_DANNYS_SUMMIT
 	iffalse_jumpopenedtext .PeakText
 	closetext
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8 ; (the card once a visit)
+	iftruefwd .Titled
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8
 	scene_title .CrewTitle
+.Titled:
 	opentext
 	scene_begin ; (a cold wind across the summit while he speaks)
 	playsound SFX_WHIRLWIND

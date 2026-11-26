@@ -71,6 +71,25 @@ STATUS_BITS = {None: 0, 'psn': 1 << 3, 'brn': 1 << 4, 'frz': 1 << 5, 'par': 1 <<
 WEATHER_IDS = {None: 0, 'rain': 1, 'sun': 2, 'sand': 3, 'hail': 4}
 
 
+def asm_for_build(text):
+    """The source as this build assembles it: only the taken side of each
+    `if DEF(FAITHFUL)` / `if !DEF(FAITHFUL)` block (LE_FAITHFUL=1: the
+    faithful build), for tests that read generated data tables."""
+    faithful = bool(os.environ.get('LE_FAITHFUL'))
+    out, stack = [], []
+    for line in text.split('\n'):
+        code = line.split(';')[0].strip()
+        if code in ('if DEF(FAITHFUL)', 'if !DEF(FAITHFUL)'):
+            stack.append(faithful == (code == 'if DEF(FAITHFUL)'))
+        elif code == 'else' and stack:
+            stack[-1] = not stack[-1]
+        elif code == 'endc' and stack:
+            stack.pop()
+        elif all(stack):
+            out.append(line)
+    return '\n'.join(out)
+
+
 def rgbasm_values(names, files):
     """Evaluate constant names with rgbasm, as the build does."""
     with tempfile.NamedTemporaryFile('w', suffix='.asm', delete=False) as f:

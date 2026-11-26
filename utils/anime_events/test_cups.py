@@ -61,6 +61,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'utils', 'wild_mons'))
 from test_wild_mons import Game, rgbasm_values  # noqa: E402
+from oracle_pipeline import asm_for_build  # noqa: E402
 sys.path.insert(0, os.path.join(ROOT, 'utils', 'world_cup'))
 from bracket import winner  # noqa: E402
 
@@ -75,7 +76,7 @@ def kimono_data():
     src = open(os.path.join(ROOT, 'engine', 'events', 'cups.asm')).read()
     table = src[src.index('KimonoCupTypes:'):src.index('assert_table_length NUM_KIMONO_TYPES')]
     rotation = re.findall(r'\b(' + '|'.join(TYPES) + r')\b', table)
-    sets = open(os.path.join(ROOT, 'data', 'link', 'random_battle_sets.asm')).read()
+    sets = asm_for_build(open(os.path.join(ROOT, 'data', 'link', 'random_battle_sets.asm')).read())
     setpart, prof = sets.split('RandomBattleProfiles:')
     profiles = [tuple(map(int, m)) for m in re.findall(r'db (\d+), (\d+) ; \d+', prof)]
     types = {}
@@ -391,6 +392,9 @@ def main():
 
     def kimono_round(k, kind):
         name, size = KIMONO_ROUNDS[k]
+        # (a type with fewer species in the sets brings all of them: Dragon
+        # in the faithful build has three)
+        size = min(size, len({sp for sp, types in set_types.items() if kind in types}))
         where = f'kimono {kind} round {k + 1}'
         if (g.rd('wOtherTrainerClass'), g.rd('wOtherTrainerID')) != (K['KIMONO_GIRL'], K[name]):
             fails.append((where, f'battled class {g.rd("wOtherTrainerClass")} #{g.rd("wOtherTrainerID")}'))

@@ -151,10 +151,10 @@ INCLUDE "gfx/trainers/imakuni.pal"
 INCLUDE "gfx/trainers/lawrence.pal"
 INCLUDE "gfx/trainers/rei.pal"
 INCLUDE "gfx/trainers/firebreather_ashes.pal"
-INCLUDE "gfx/trainers/cooltrainer_f.pal" ; Cissy
-INCLUDE "gfx/trainers/dark_sailor.pal"   ; Danny
-INCLUDE "gfx/trainers/cooltrainer_m.pal" ; Rudy
-INCLUDE "gfx/trainers/lady.pal"          ; Luana
+INCLUDE "gfx/trainers/cissy.pal"
+INCLUDE "gfx/trainers/danny.pal"
+INCLUDE "gfx/trainers/rudy.pal"
+INCLUDE "gfx/trainers/luana.pal"
 INCLUDE "gfx/trainers/veteran_m.pal"     ; Drake
 INCLUDE "gfx/trainers/cal.pal" ; Ash
 INCLUDE "gfx/trainers/youngster.pal" ; Ritchie

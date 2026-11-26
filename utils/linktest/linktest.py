@@ -503,7 +503,14 @@ class Side:
             self.press('a', 20)
         self.shot('timeout')
         rf = self.pb.register_file
-        self.say(f'    (timeout) PC {rf.PC:04x} ROM bank {self.mem[0x2000] if False else "?"} SP {rf.SP:04x}')
+        # where it was: the ROM bank (hROMBank) and the return addresses on
+        # the stack, for finding which routine it was stuck in
+        bank = self.mem[self.sym['hROMBank'][1]] if 'hROMBank' in self.sym else '?'
+        stack = ' '.join(f'{self.mem[rf.SP + 2 * k] | self.mem[rf.SP + 2 * k + 1] << 8:04x}' for k in range(12))
+        self.say(f'    (timeout) PC {rf.PC:04x} ROM bank {bank} SP {rf.SP:04x} stack {stack}'
+                 f' serial status {self.mem[self.sym["hSerialConnectionStatus"][1]]:02x}'
+                 f' IE {self.mem[0xffff]:02x} timeout frames {self.mem[self.sym["wLinkTimeoutFrames"][1]]:02x}'
+                 f'{self.mem[self.sym["wLinkTimeoutFrames"][1] + 1]:02x}')
         return 'timeout'
 
     def seat(self):

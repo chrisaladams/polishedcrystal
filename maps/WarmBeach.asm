@@ -209,7 +209,11 @@ OrangeCrewCissyScript:
 	writetext .IntroText
 	waitbutton
 	closetext
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8 ; (the card once a visit)
+	iftruefwd .Titled
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_8
 	scene_title .CrewTitle
+.Titled:
 	scene_begin ; (the surf breaks around her)
 	playsound SFX_SURF
 	scene_pulse TINT_BLUE
