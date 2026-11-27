@@ -108,8 +108,10 @@ def objects(g):
         sprite = g.read(a + C['OBJECT_SPRITE'])
         if not sprite:
             continue
+        # where InitSprite draws it: the cell's pixel position plus the step offset and the BG scroll offset
         out.append(dict(index=i, sprite=sprite, tile=g.read(a + C['OBJECT_SPRITE_TILE']),
-                        x=g.read(a + C['OBJECT_SPRITE_X']), y=g.read(a + C['OBJECT_SPRITE_Y']),
+                        x=(g.read(a + C['OBJECT_SPRITE_X']) + g.read(a + C['OBJECT_SPRITE_X_OFFSET']) + g.rd('wPlayerBGMapOffsetX')) & 0xff,
+                        y=(g.read(a + C['OBJECT_SPRITE_Y']) + g.read(a + C['OBJECT_SPRITE_Y_OFFSET']) + g.rd('wPlayerBGMapOffsetY')) & 0xff,
                         pal=g.read(a + C['OBJECT_PALETTE']) & 7, facing=g.read(a + C['OBJECT_FACING']),
                         invisible=bool(g.read(a + C['OBJECT_FLAGS1']) >> C['INVISIBLE_F'] & 1),
                         off_screen=bool(g.read(a + C['OBJECT_FLAGS2']) >> C['OFF_SCREEN_F'] & 1)))
@@ -176,6 +178,8 @@ def sprite_findings(g):
         if o is None:
             continue
         drawn.add(o['index'])
+        if bank == 0 and t >= 0x80:
+            continue        # absolute tile ids in the region shared with BG tiles (walking frames): no slot to compare
         path = files.get(o['sprite'])
         if not path:
             continue

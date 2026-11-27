@@ -116,6 +116,7 @@ def run_shard(ctx, shard, shards):
                     break
             if ok:
                 crossed += 1
+                ctx.cover('connection', f'{src}->{dst}')
                 if guard.violations:
                     broken.append(label + ': ' + '; '.join(guard.violations[:2]))
                     guard.player.violations.clear()

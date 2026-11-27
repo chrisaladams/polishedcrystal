@@ -52,6 +52,8 @@ def _make_music(i, n):
                 ctx.expect(False, f'{name}: {e}')
                 continue
             kinds.setdefault(r['kind'], []).append(name)
+            if r['kind'] in ('ended', 'loops', 'independent'):
+                ctx.cover('music', name)
             fp.append((name, sid, r['kind'], r.get('period_frames'), r.get('channel_frames')))
             if r['kind'] == 'independent':
                 ctx.av.append(dict(kind='MUSIC_INDEPENDENT_LOOPS', detail=f'{name}: channel loop lengths {r.get("channel_frames")} frames', where=name,
@@ -96,6 +98,7 @@ def _make_sfx(i, n):
             base = g.frame
             g.audio_pcm(reset=True)
             g.call('PlaySFX', de=sid)
+            ctx.cover('sfx', name)
             # compare at the same number of frames since the snapshot: the call itself takes a few
             k = max(1, g.frame - base)
             g.tick(600 - k if k < 600 else 0)
@@ -165,6 +168,55 @@ def _make_apu(i, n):
 
 for _i in range(4):
     _make_apu(_i, 4)
+
+
+def _make_cries(i, n):
+    @qa_test(suites=('av', 'full'), covers=('av.cries',), backends=('sameboy',), models=('CGB-E', 'AGB'), provenance=PROVENANCE,
+             timeout=7200, name=f'test_av_audio.cries_{i}of{n}')
+    def shard(ctx):
+        """Every Pokemon cry played on its own in a quiet room: it must make sound (not silent), for a plausible
+        time, without clipping or a DC offset, and the sound hardware must have been driven (a channel with output)."""
+        import json
+        from qa.av import audio
+        from qa.gb.consts import C
+        g = _quiet_room_game(ctx)
+        g.enable_av(40, guard=False)
+        inv = json.load(open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'qa/reports/inventory.json')))
+        names = _shard([(s, s) for s in inv['cry']], i, n)
+        g.call('PlayMusic', de=0)
+        g.tick(30)
+        bad, heard = {}, 0
+        for name, _ in names:
+            if name not in C:
+                continue
+            g.audio_pcm(reset=True)
+            g.call('PlayCry', de=C[name])
+            g.tick(90)
+            pcm = audio.mono(g.audio_pcm(reset=True))
+            st = audio.stats(pcm)
+            active = int((np.abs(pcm) > 0.02).sum() / 48000 * 60) if len(pcm) else 0     # frames with output
+            ctx.cover('cry', name)
+            problems = []
+            if st['rms'] < 0.005 or active < 6:
+                problems.append(f'silent or nearly silent (rms {st["rms"]:.4f}, {active} active frames)')
+            elif active > 150:
+                problems.append(f'sounds for {active} frames (more than 2.5 s)')
+            if len(pcm) and st['clip'] > 0.001 * len(pcm):
+                problems.append(f'clips ({st["clip"]} samples)')
+            if problems:
+                bad[name] = problems
+                ctx.av.append(dict(kind='CRY_ANOMALY', detail=f'{name}: ' + '; '.join(problems), where=name, sig=f'cry-{name}', count=1, artifacts={}, context=st, frame=0))
+            else:
+                heard += 1
+        ctx.note(f'{heard} of {len(names)} cries audible and plausible')
+        for name, p_ in bad.items():
+            ctx.expect(False, f'{name}: ' + '; '.join(p_))
+        ctx.expect(heard > 0, 'no cry was heard at all (vacuous run)')
+    return shard
+
+
+for _i in range(4):
+    _make_cries(_i, 4)
 
 
 @qa_test(suites=('av', 'hardware', 'full'), covers=('av.audio_cross', 'av.models'), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),

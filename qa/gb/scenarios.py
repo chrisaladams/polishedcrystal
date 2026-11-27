@@ -260,16 +260,19 @@ def build_stage_safely(stage, rom, backend, model, tries=4, timeout=420):
     raise SystemExit('cannot build stage %s' % stage)
 
 
-def _serve(conn):
-    """Worker process: run scenarios sent over the pipe until told to stop."""
+def _serve(conn, target='qa.gb.scenarios:_worker'):
+    """Worker process: run jobs sent over the pipe until told to stop. `target` is 'module:function'."""
+    import importlib
+    mod, fn = target.split(':')
+    fn = getattr(importlib.import_module(mod), fn)
     while True:
         job = conn.recv()
         if job is None:
             return
-        conn.send(_worker(job))
+        conn.send(fn(job))
 
 
-def run_isolated(jobs, nworkers, timeout):
+def run_isolated(jobs, nworkers, timeout, target='qa.gb.scenarios:_worker'):
     """Yield one result per job. Each worker is a separate process that is killed if a scenario does not
     finish within `timeout` seconds (an emulator or game hang must not stall the campaign); the job is retried
     once on a fresh worker and, if it hangs again, recorded as outcome 'hang' (a finding, never a pass)."""
@@ -280,7 +283,7 @@ def run_isolated(jobs, nworkers, timeout):
 
     def start():
         parent, child = ctx.Pipe()
-        proc = ctx.Process(target=_serve, args=(child,), daemon=True)
+        proc = ctx.Process(target=_serve, args=(child, target), daemon=True)
         proc.start()
         return dict(proc=proc, conn=parent, job=None, t0=0)
     while pending or any(w and w['job'] for w in workers):
@@ -314,7 +317,7 @@ def run_isolated(jobs, nworkers, timeout):
                         p = job[0]
                         detail = 'no progress for %ds (%s)' % (timeout, 'hung' if hung else 'worker died')
                         yield dict(params=p, outcome='hang', battles=0, frames=0,
-                                   failures=[dict(kind='hang', detail=detail, sig=signature('hang', p['stage'], p['backend'] + p['kind']))])
+                                   failures=[dict(kind='hang', detail=detail, sig=signature('hang', p.get('map', p.get('stage', '?')), str(p.get('backend', '')) + str(p.get('kind', p.get('action', '')))))])
         time.sleep(0.01)
     for w in workers:
         if w:

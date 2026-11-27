@@ -48,6 +48,7 @@ class Ctx:
         self.provenance = test['provenance']
         self.uncovered = {}
         self.av = []            # audiovisual anomaly records (see qa/av/review.py)
+        self.covered = {}       # content coverage: kind -> set of ids (see qa/inventory.py)
         os.makedirs(out, exist_ok=True)
 
     # ---- games and fixtures
@@ -89,6 +90,11 @@ class Ctx:
         """Withdraw a declared coverage tag because this run only partly exercised it."""
         self.uncovered[tag] = why
         self.notes.append('coverage withdrawn for %s: %s' % (tag, why))
+
+    def cover(self, kind, ids):
+        """Record inventory elements this run exercised (kind as in qa/inventory.py). Only call it for things the
+        run actually did, not for things it merely loaded."""
+        self.covered.setdefault(kind, set()).update([ids] if isinstance(ids, str) else ids)
 
     def json(self, name, obj):
         """Write a JSON artifact (kept in the report directory); returns its path."""
@@ -139,6 +145,10 @@ def run_one(test, backend, model, seed, out, rom):
                 ctx.snapshot(g, 'failure_%d' % ctx.games.index(g))
             except Exception:
                 pass
+    if ctx.covered:
+        import json
+        with open(os.path.join(ctx.out, 'coverage.json'), 'w') as f:
+            json.dump({k: sorted(v) for k, v in ctx.covered.items()}, f)
     for g in ctx.games:
         try:
             g.close()

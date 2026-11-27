@@ -92,6 +92,7 @@ def run_shard(ctx, shard, shards):
             F.teleport(g, sg, sn, tile[0], tile[1], settle=90)
             g.tick(90)
             tested += 1
+            ctx.cover('map', const)
             if hard_locked(g):
                 if const in STATE_DEPENDENT:
                     known.append(f'{const}: {STATE_DEPENDENT[const]}')
@@ -169,6 +170,7 @@ def run_shard_sameboy(ctx, shard, shards):
             F.teleport(g, sg, sn, tile[0], tile[1], settle=90)
             g.tick(90)
             tested += 1
+            ctx.cover('map-hw', f'{const}@{ctx.model}')
             ev = g.exec_events()
             if ev:
                 msg = f'{const}: ' + '; '.join(f'{k} at {pc:04x} (from {pv:04x}, opcode {op:02x}, in {g.where(pv)})' for k, pc, pv, op in ev[:3])
