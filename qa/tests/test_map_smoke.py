@@ -129,7 +129,7 @@ def run_shard(ctx, shard, shards):
 
 
 def _make(i, n):
-    @qa_test(suites=('map', 'full'), covers=('map.smoke', 'map.collision', 'sprites.oam_budget',
+    @qa_test(suites=('map', 'full'), covers=('map.smoke', 'sprites.oam_budget',
                                             'hw.oam_lines', 'follower', 'hw.memory_guard'),
              backends=('pyboy',), provenance=PROVENANCE, timeout=3000, name=f'test_map_smoke.enter_maps_{i}of{n}')
     def shard(ctx):

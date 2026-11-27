@@ -106,6 +106,19 @@ Trainer Card must count the battle.
 | 7.4 | All six cups; one Kimono win on a few different days |
 | 7.5 | The Pallet Invitational and its ending |
 
+## 8. Defects found by the QA suite (verify each on a real console)
+
+Emulation reproduced and fixed these ([`docs/qa-report.md`](../qa-report.md)); only a console can
+close them. Test on a Game Boy Color and, where it says so, a Game Boy Advance.
+
+| # | Check | How | Expect |
+|---|---|---|---|
+| 8.1 | Lake of Rage by foot | With a Pokemon in the party and Follower on, walk from Route 43 north into Lake of Rage and up to the old man | You stay visible and keep moving; the old man stops you; your Pokemon follows you |
+| 8.2 | Cerulean Cape by foot | Walk in over its map connection with a follower | The same: no vanishing, no freeze |
+| 8.3 | Rising Star Cup swap | Enter the cup, let your lead faint, send in the next Pokemon | The enemy's sprite is intact; no status icons over it (also check an ordinary trainer battle) |
+| 8.4 | Battle Factory Hallway (GBA) | On a Game Boy Advance, start a Battle Factory challenge and walk between the lobby and the hallway several times | Never freezes or glitches; the receptionist is where the map expects |
+| 8.5 | Power cut during a save | Choose Save; switch off at several moments before "saved the game" | Continue loads the old save or the new one, never a damaged one (emulated: 44 cut points all passed) |
+
 ## Results
 
 | Row | Date | Console and cartridge | Tester | Result | Notes |

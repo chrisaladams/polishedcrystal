@@ -142,7 +142,7 @@ def run_shard(ctx, shard, shards):
 
 
 def _make(i, n):
-    @qa_test(suites=('map', 'full'), covers=('map.connections', 'map.collision', 'follower', 'sprites.player',
+    @qa_test(suites=('map', 'full'), covers=('map.connections', 'follower', 'sprites.player',
                                             'hw.memory_guard'),
              backends=('pyboy',), provenance=PROVENANCE, timeout=3000, name=f'test_connections.cross_connections_{i}of{n}')
     def shard(ctx):

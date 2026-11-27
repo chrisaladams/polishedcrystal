@@ -41,10 +41,12 @@ def table(results):
     for r in results:
         for tag, why in (r.get('partial') or {}).items():
             partial[tag] = why
+    for r in results:
         for tag in r['covers']:
             attempted.add(tag)
             if r['status'] == 'pass':
                 passed.add(tag)
+    passed -= set(partial)          # a test that withdrew a tag outranks another test that merely names it
     lines = ['## Coverage (this run)', '',
              'TESTED = every listed aspect has a passing test; PARTIAL = some; UNTESTED = none. '
              'Emulated runs only: nothing here is physical-hardware evidence.', '',
