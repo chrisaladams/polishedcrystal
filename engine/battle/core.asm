@@ -1036,6 +1036,10 @@ GetPlayerSwitchTarget:
 
 	call ClearPalettes
 	call _LoadBattleFontsHPBar
+	; The party menu loads its status icons over vTiles2 tile $00-$0f, where the
+	; enemy's pic is. Every other way out of it reloads the pic; this one didn't,
+	; so after a faint the icons stayed drawn over the enemy's sprite.
+	call GetMonFrontpic
 	call CloseWindow
 	call ClearSprites
 	ld a, CGB_BATTLE_COLORS

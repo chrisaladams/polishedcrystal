@@ -60,8 +60,8 @@ def run(g, out=None):
         ok = False
         notes.append('player was not stopped by the old man (walked through or past him)')
     # the player's tiles must be on screen: OAM sprites around screen centre using the player's tile base
-    sprite = g.mem[1, guard.base]
-    tile = g.mem[1, guard.base + 2]
+    sprite = g.read(guard.base, 1)
+    tile = g.read(guard.base + 2, 1)
     notes.append(f'player struct sprite={sprite} tile={tile}')
     if out:
         g.screenshot(os.path.join(out, 'lake_old_man.png') if False else 'lake_old_man')

@@ -207,6 +207,8 @@ class SBGame:
         self._wcb = WRITE_CB(cb)
         self.lib.GB_set_write_memory_callback(self.gb, self._wcb)
 
+    hook = exec_hook   # same name as the PyBoy backend; fn receives the game
+
     def screenshot(self, name):
         from PIL import Image
         path = os.path.join(self.workdir, name if name.endswith('.png') else name + '.png')

@@ -17,7 +17,7 @@ class PlayerStructGuard:
         self.violations = []
 
     def read(self):
-        return tuple(self.g.mem[1, self.base + i] for i in range(3))
+        return tuple(self.g.read(self.base + i, 1) for i in range(3))
 
     def check(self, tag=''):
         cur = self.read()
