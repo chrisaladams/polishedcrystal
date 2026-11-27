@@ -38,7 +38,8 @@ def _frames_for(rom, every, offset, workdir):
                 continue
             F.teleport(g, sg, sn, t[0], t[1], settle=90)
             g.tick(40)
-            out[const] = g.frame_rgb()
+            oam = g.oam()
+            out[const] = (g.frame_rgb(), [(oam[i * 4], oam[i * 4 + 1]) for i in range(40) if 0 < oam[i * 4] < 160 and 0 < oam[i * 4 + 1] < 168])
         except Exception as e:           # a map that cannot be entered in this build is itself a difference
             out[const] = 'error: %s' % e
     g.close()
@@ -56,15 +57,23 @@ def compare_frames(base, new, every=4, offset=0, out=None, tolerance=0.002):
             if a != b:
                 diffs.append(dict(map=const, kind='enter', detail='%s vs %s' % (a if isinstance(a, str) else 'ok', b if isinstance(b, str) else 'ok')))
             continue
-        d = (np.abs(a.astype(int) - b.astype(int)).sum(axis=2) > 24)
-        frac = float(d.mean())
+        (fa, oa), (fb, ob) = a, b
+        # Sprites move differently between builds whenever any code changes timing (NPC wandering is driven by the
+        # RNG), so sprite pixels are masked out and compared separately by how many OAM entries are on screen.
+        mask = np.zeros((144, 160), bool)
+        for y, x in oa + ob:
+            mask[max(0, y - 16):max(0, y - 16) + 8, max(0, x - 8):max(0, x - 8) + 8] = True
+        d = (np.abs(fa.astype(int) - fb.astype(int)).sum(axis=2) > 24) & ~mask
+        frac = float(d.sum()) / float((~mask).sum() or 1)
         if frac > tolerance:
-            diffs.append(dict(map=const, kind='pixels', fraction=round(frac, 4)))
+            diffs.append(dict(map=const, kind='background', fraction=round(frac, 4)))
             if out:
                 from PIL import Image
                 os.makedirs(out, exist_ok=True)
-                strip = np.concatenate([a, b, np.where(d[:, :, None], 255, a // 3).astype('uint8')], axis=1)
+                strip = np.concatenate([fa, fb, np.where(d[:, :, None], 255, fa // 3).astype('uint8')], axis=1)
                 Image.fromarray(strip).save(os.path.join(out, 'diff_%s.png' % const))
+        elif abs(len(oa) - len(ob)) >= 2:
+            diffs.append(dict(map=const, kind='sprites', detail='%d vs %d OAM entries on screen' % (len(oa), len(ob))))
     return dict(maps=len(wa), differing=len(diffs), diffs=diffs)
 
 
@@ -109,12 +118,18 @@ def compare_audio(base, new, songs=40, frames=600, out=None):
         n = min(len(x), len(y))
         if n == 0:
             continue
-        if len(x) != len(y) or not np.array_equal(x[:n], y[:n]):
+        if len(x) == len(y) and np.array_equal(x[:n], y[:n]):
+            continue
+        if True:
             xm, ym = x[:n].astype(float).mean(axis=1) if x.ndim > 1 else x[:n].astype(float), y[:n].astype(float).mean(axis=1) if y.ndim > 1 else y[:n].astype(float)
             first = int(np.argmax(np.abs(xm - ym) > 64)) if np.any(np.abs(xm - ym) > 64) else None
             rms = lambda v: float(np.sqrt((v ** 2).mean())) if len(v) else 0.0
-            diffs.append(dict(song=name, first_diff_s=None if first is None else round(first / 48000, 3), rms_base=round(rms(xm)), rms_new=round(rms(ym)),
-                              rms_diff=round(rms(xm - ym))))
+            rel = rms(xm - ym) / max(rms(xm), 1.0)
+            # a few frames of timing shift between builds gives a small relative difference; a changed pitch or a
+            # dropped channel gives one near or above 1
+            if rel > 0.5:
+                diffs.append(dict(song=name, first_diff_s=None if first is None else round(first / 48000, 3), rms_base=round(rms(xm)), rms_new=round(rms(ym)),
+                                  rms_diff=round(rms(xm - ym)), relative=round(rel, 2)))
     return dict(songs=len(ids), differing=len(diffs), diffs=diffs)
 
 

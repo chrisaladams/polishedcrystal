@@ -33,7 +33,7 @@ STAGES = [
     ('olivine',   6, 38, 6, 'OLIVINE_CITY'),
     ('mahogany',  7, 42, 6, 'MAHOGANY_TOWN'),
     ('blackthorn', 8, 50, 6, 'BLACKTHORN_CITY'),
-    ('vermilion', 11, 56, 6, 'VERMILION_CITY'),
+    ('celadon',   11, 56, 6, 'CELADON_CITY'),     # was Vermilion: PyBoy wedges inside a frame there with this injected state (SameBoy does not)
     ('fuchsia',   14, 62, 6, 'FUCHSIA_CITY'),
     ('indigo',    16, 75, 6, 'INDIGO_PLATEAU'),
     ('postgame',  16, 95, 6, 'PALLET_TOWN'),
