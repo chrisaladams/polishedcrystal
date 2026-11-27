@@ -171,12 +171,20 @@ class Navigator:
         return c in collision.PASSABLE
 
     def bfs(self, goals, extra_blocked=()):
-        """Shortest list of directions from the player to any tile in goals, or None."""
+        """Shortest list of directions from the player to any tile in goals, or None.
+        Objects are walls at first; if that leaves no path they are treated as passable
+        (they move: wandering NPCs and visible wild Pokemon) and the walk waits for them."""
+        path = self._bfs(goals, extra_blocked, True)
+        if path is None:
+            path = self._bfs(goals, extra_blocked, False)
+        return path
+
+    def _bfs(self, goals, extra_blocked, objects_block):
         g = self.g
         _, (sx, sy) = self.here()
         const = self.here()[0]
         warp_tiles = {(w[0], w[1]) for w in world.warps(const)} if const else set()
-        blocked = set(self.objects()) | set(extra_blocked)
+        blocked = (set(self.objects()) if objects_block else set()) | set(extra_blocked)
         goals = set(goals)
         prev, q = {(sx, sy): None}, deque([(sx, sy)])
         while q:
@@ -210,7 +218,7 @@ class Navigator:
                 return None
         return True
 
-    def goto_tile(self, goals, max_replans=6):
+    def goto_tile(self, goals, max_replans=40):
         """Walk to the nearest of the goal tiles (in the current map)."""
         start_map = self.here()[0]
         for _ in range(max_replans):
