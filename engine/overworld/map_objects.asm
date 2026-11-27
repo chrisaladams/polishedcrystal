@@ -2085,6 +2085,15 @@ ApplyMovementToFollower:
 .queue_movement
 	push af
 	ld hl, wFollowerMovementQueueLength
+	; wFollowMovementQueue is 5 bytes and wObjectStructs follows it: a follower
+	; that isn't consuming steps must not be queued past the end (the length
+	; is -1 until the first step)
+	ld a, [hl]
+	cp 4
+	jr c, .room
+	inc a
+	jr nz, .full
+.room
 	inc [hl]
 	ld e, [hl]
 	ld d, 0
@@ -2097,6 +2106,10 @@ ApplyMovementToFollower:
 .no_sync
 	pop af
 	ld [hl], a
+	ret
+
+.full
+	pop af
 	ret
 
 ; Jessie is "followed" by James on Route 48 when they

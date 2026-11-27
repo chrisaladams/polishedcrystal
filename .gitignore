@@ -74,3 +74,9 @@ deploy.sh
 
 # Link Edition release files (utils/release/build_release.py)
 /build/
+
+# QA framework caches and run artifacts
+qa/.cache/
+qa/reports/runs/
+qa/__pycache__/
+**/__pycache__/

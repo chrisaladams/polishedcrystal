@@ -21,7 +21,12 @@ SpawnFollower::
 	ld [wFollowerPending], a
 	call RemoveFollower
 	call CanHaveFollower
-	ret c
+	jr nc, .spawn
+	; No follower here. A follow link left from the previous map must not
+	; outlive its follower, or every step would be queued for nobody.
+	jr DropStaleFollowLink
+
+.spawn
 	ld a, [wPlayerMapX]
 	ld d, a
 	ld a, [wPlayerMapY]
@@ -85,6 +90,30 @@ SpawnFollowerAtDE:
 	lb bc, PLAYER, FOLLOWER_OBJECT
 	farjp StartFollow
 
+DropStaleFollowLink:
+; A map connection reloads the map's objects without ending a follow, so the
+; link can point at a follower that no longer exists (Lake of Rage, which has
+; no follower slot, was reached from Route 43 this way). ApplyMovementToFollower
+; would then keep queueing the leader's steps with nobody to consume them and
+; run off the end of wFollowMovementQueue, into wPlayerStruct. Drop the link
+; unless its follower is still a live follower (a cutscene's follow is).
+	ld a, [wObjectFollow_Follower]
+	inc a ; -1?
+	ret z
+	dec a
+	call GetObjectStruct
+	ld hl, OBJECT_MOVEMENT_TYPE
+	add hl, bc
+	ld a, [hl]
+	cp SPRITEMOVEDATA_FOLLOWING
+	ret z
+	ld a, -1
+	ld [wObjectFollow_Leader], a
+	ld [wObjectFollow_Follower], a
+	ld hl, wPlayerFlags + 1
+	res HIGH_PRIORITY_F, [hl]
+	ret
+
 RemoveFollower::
 ; Delete the follower, if there is one.
 	ld a, FOLLOWER_OBJECT
@@ -143,8 +172,8 @@ CanHaveFollower:
 	bit FOLLOWER_OFF_F, a
 	jr nz, .no
 	ld a, [wCurMapObjectEventCount]
-	cp FOLLOWER_OBJECT - 1
-	jr nc, .no ; the map uses every slot (none do)
+	cp FOLLOWER_OBJECT
+	jr nc, .no ; the map's own objects fill every slot before the follower's (Ilex Forest)
 	ld a, [wMapGroup]
 	assert GROUP_TRADE_CENTER == GROUP_COLOSSEUM
 	cp GROUP_COLOSSEUM
