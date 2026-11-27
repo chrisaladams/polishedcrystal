@@ -453,6 +453,15 @@ class SBGame:
         self.lib.GB_save_state_to_buffer(self.gb, buf)
         self._point = buf
 
+    def snap(self):
+        self.save_point()
+        return bytes(self._point)
+
+    def unsnap(self, data):
+        self.lib.GB_load_state_from_buffer.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
+        if self.lib.GB_load_state_from_buffer(self.gb, data, len(data)):
+            raise RuntimeError('SameBoy refused the snapshot')
+
     def dump_state(self, path):
         self.save_point()
         open(path, 'wb').write(bytes(self._point))

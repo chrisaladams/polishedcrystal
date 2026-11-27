@@ -312,6 +312,17 @@ class Game:
                 return self._result
         raise AssertionError(f'{label} did not return (PC={self.reg.PC:04x}, {self.where()})')
 
+    def snap(self):
+        """The whole machine as bytes (restore with unsnap)."""
+        import io
+        b = io.BytesIO()
+        self.pb.save_state(b)
+        return b.getvalue()
+
+    def unsnap(self, data):
+        import io
+        self.pb.load_state(io.BytesIO(data))
+
     def dump_state(self, path):
         with open(path, 'wb') as f:
             self.pb.save_state(f)
