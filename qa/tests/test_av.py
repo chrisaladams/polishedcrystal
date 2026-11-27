@@ -32,7 +32,7 @@ def _boot_monitored(ctx, seconds_audio=90):
     return g, mon
 
 
-@qa_test(suites=('av', 'hardware', 'full'), covers=('hw.oam_lines', 'hw.vram_access', 'sprites.oam_budget'),
+@qa_test(suites=('av', 'hardware', 'full'), covers=('hw.oam_lines', 'hw.vram_access', 'sprites.oam_budget', 'av.frames', 'av.flicker', 'av.ppu_timing', 'av.models'),
          backends=('pyboy', 'sameboy'), models=('CGB-0', 'CGB-E', 'AGB'), provenance=PROVENANCE_BOOT, timeout=900)
 def boot_to_bedroom_monitored(ctx):
     """Frame monitor over the whole boot, intro and New Game: blank runs, flicker, sprite
@@ -76,7 +76,7 @@ def _capture_checkpoints(g):
     return out
 
 
-@qa_test(suites=('av', 'hardware', 'full'), covers=('hw.oam_lines',), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),
+@qa_test(suites=('av', 'hardware', 'full'), covers=('av.cross_emulator', 'av.frames', 'av.models'), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),
          provenance=PROVENANCE_BOOT, timeout=900)
 def cross_emulator_frames(ctx):
     """Differential rendering: the same input sequence on PyBoy and on this SameBoy model must give
@@ -101,7 +101,7 @@ def cross_emulator_frames(ctx):
             monitor_anomalies=[]))
 
 
-@qa_test(suites=('av', 'full'), covers=('hw.oam_lines',), backends=('sameboy',), models=('CGB-E',), provenance=PROVENANCE_BOOT)
+@qa_test(suites=('av', 'full'), covers=('av.references',), backends=('sameboy',), models=('CGB-E',), provenance=PROVENANCE_BOOT)
 def reference_frames(ctx):
     """Compare checkpoints with APPROVED references. Without an approved reference this skips
     (it is not a pass): see `python3 -m qa.av.refs list`."""
@@ -120,7 +120,7 @@ def reference_frames(ctx):
         ctx.skip('no approved reference for: ' + ', '.join(missing))
 
 
-@qa_test(suites=('av', 'hardware', 'full'), covers=('hw.oam_lines',), backends=('pyboy',), provenance='injected warp into each map; the player stands still',
+@qa_test(suites=('av', 'hardware', 'full'), covers=('av.oam', 'av.vram'), backends=('pyboy',), provenance='injected warp into each map; the player stands still',
          timeout=1800, name='test_av.oam_vram_integrity_maps')
 def oam_vram_integrity_maps(ctx):
     """On every map: OAM entries are sane (no visible sprite using a blank tile, no duplicate entries),
@@ -158,7 +158,7 @@ def oam_vram_integrity_maps(ctx):
                            count=len(maps), artifacts={}, context={'maps': maps[:20]}, frame=0))
 
 
-@qa_test(suites=('av', 'hardware', 'full'), covers=('hw.vram_access',), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),
+@qa_test(suites=('av', 'hardware', 'full'), covers=('hw.vram_access', 'av.ppu_timing', 'av.models'), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),
          provenance='stage checkpoint is injected (qa/gb/ladder.py); the walk, menus and battle are input', timeout=1800)
 def ppu_timing_in_gameplay(ctx):
     """Illegal VRAM/OAM access and VBlank handler length while playing: the New Game opening and the
@@ -182,7 +182,7 @@ def ppu_timing_in_gameplay(ctx):
     ctx.expect(vb == 0 and ob == 0, f'illegal PPU access: {ev[:2]}')
 
 
-@qa_test(suites=('av', 'hardware', 'full'), covers=('cinematic',), backends=('sameboy',), models=('CGB-E',),
+@qa_test(suites=('av', 'hardware', 'full'), covers=('av.audio_pcm',), backends=('sameboy',), models=('CGB-E',),
          provenance=PROVENANCE_BOOT)
 def audio_boot_scan(ctx):
     """PCM analysis of the whole boot/intro/New Game: clipping, DC offset, whine/glitch frequencies,
@@ -203,3 +203,25 @@ def audio_boot_scan(ctx):
         ctx.av.append(dict(kind='FREQ_ANOMALY', detail=f'{kind} at {t:.1f}s ({hz:.0f} Hz)', where='boot', sig=f'fa-{kind[:4]}', count=1, artifacts={'wav': os.path.join(ctx.out, 'boot.wav')}, context={}, frame=int(t * 60)))
     sil = audio.silence_runs(x, min_seconds=2.0)
     ctx.note('silent stretches over 2 s: %s' % [(round(a, 1), round(b, 1)) for a, b in sil[:8]])
+
+
+@qa_test(suites=('av', 'full'), covers=('av.silence', 'av.flicker'), backends=('pyboy',), provenance='New Game by input, then the explorer plays on its own (gameplay)',
+         timeout=1500)
+def monitored_play_session(ctx):
+    """The autonomous explorer plays from New Game for a fixed number of seconds with the picture
+    and sound monitors attached; anything suspicious is recorded and classified in the review."""
+    from qa.gb.emu import Game
+    from qa.gb.explorer import Explorer
+    g = Game(rom=ctx.rom, workdir=ctx.out, seed=ctx.seed, audio=True)
+    F.new_game_to_bedroom(g)
+    ex = Explorer(g, ctx.out, seed=ctx.seed, label='av', av=True)
+    s = ex.run(budget_seconds=int(os.environ.get('QA_AV_PLAY_SECONDS', '150')))
+    av, au = s['av'], s['av_audio']
+    ctx.note('%d frames, %d maps, %d battles; blank runs %d (longest %d), flicker %d' % (
+        s['frames'], s['maps_visited'], s['battles'], av['stats']['blank_runs'], av['stats']['max_blank_run'], av['stats']['flicker_events']))
+    ctx.note('audio: %d seconds recorded, %d quiet' % (au['seconds'], au['quiet']) if au else 'audio not recorded')
+    for a in av['anomalies']:
+        ctx.av.append(a)
+    for a in (au['anomalies'] if au else []):
+        ctx.av.append(a)
+    ctx.expect(not s['failures'], 'gameplay failures: %r' % (s['failures'][:2],))

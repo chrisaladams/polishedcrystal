@@ -26,7 +26,7 @@ def _quiet_room(g):
 
 
 def _make_menu(backend_models):
-    @qa_test(suites=('av', 'battle', 'full'), covers=('battle.hud',), backends=('pyboy', 'sameboy'), models=backend_models,
+    @qa_test(suites=('av', 'battle', 'full'), covers=('battle.hud', 'av.menus'), backends=('pyboy', 'sameboy'), models=backend_models,
              provenance=PROV_MENU, timeout=1800, name='test_av_graphics.menus_restore_the_screen')
     def menus(ctx):
         """Start menu entries: opening and closing each must restore the overworld picture."""
@@ -94,7 +94,7 @@ def _hashes(g):
     return h(0, 0x31), h(0x55, 0x60)
 
 
-@qa_test(suites=('av', 'battle', 'full'), covers=('battle.hud', 'battle.switching', 'cups.rising_star'), backends=('pyboy', 'sameboy'),
+@qa_test(suites=('av', 'battle', 'full'), covers=('battle.hud', 'battle.switching', 'cups.rising_star', 'av.battle_gfx', 'av.vram', 'av.models'), backends=('pyboy', 'sameboy'),
          models=('CGB-E', 'AGB'), provenance='cup entry and every menu action are button input; party/position are an injected fixture',
          timeout=1800)
 def battle_menus_keep_enemy_sprite(ctx):
@@ -146,3 +146,45 @@ def battle_menus_keep_enemy_sprite(ctx):
             ctx.av.append(dict(kind='VRAM_CLOBBER', detail=f'{name} menu left enemy pic tiles {vram.ranges(changed)} changed', where='battle', sig=f'vc-{name}',
                                count=1, artifacts={}, context=dict(tiles=changed), frame=g.frame))
     ctx.expect(not bad, 'enemy sprite tiles changed after: ' + ', '.join(bad))
+
+
+@qa_test(suites=('av', 'map', 'full'), covers=('map.warps', 'av.transitions'), backends=('pyboy',),
+         provenance='the walk through each door is gameplay input; the clean comparison view is an injected warp to the same tile',
+         timeout=1200)
+def transitions_leave_no_residue(ctx):
+    """After walking through a door, the picture must equal a clean warp to the same tile: leftover
+    sprites, stale tiles or a wrong palette after a transition show up as a difference. The player's
+    own sprite area is masked (facing differs)."""
+    from qa.gb import fixtures as F2
+    from qa.gb.emu import Game
+    from qa.gb.nav import Navigator
+    g = Game(rom=ctx.rom, workdir=ctx.out, seed=ctx.seed)
+    F2.new_game_to_bedroom(g)
+    nav = Navigator(g, seed=ctx.seed)
+    legs = ['PLAYERS_HOUSE_1F', 'NEW_BARK_TOWN', 'ELMS_LAB']
+    bad = []
+    for dst in legs:
+        nav.goto_map(dst)
+        g.tick(90)
+        walked = g.frame_rgb()
+        pos = F2.where(g)
+        # a clean view of the same map and tile: save, warp elsewhere and back
+        g.save_point()
+        gr, nr, x, y = pos
+        other = map_ids('VIOLET_POKECENTER_1F')
+        F2.teleport(g, other[0], other[1], 4, 4, settle=60)
+        F2.teleport(g, gr, nr, x, y, settle=90)
+        g.tick(90)
+        clean = g.frame_rgb()
+        g.restore_point()
+        m = np.ones(walked.shape[:2], bool)
+        m[56:96, 56:100] = False                      # the player/follower area
+        d = np.abs(walked.astype(np.int16) - clean.astype(np.int16)).max(axis=2) > 40
+        frac = float((d & m).mean())
+        ctx.note(f'{dst}: {frac * 100:.2f}% of pixels differ between the walked-in view and a clean warp')
+        if frac > 0.03:
+            bad.append(dst)
+            frames.save(frames.diff_image(walked, clean, 40), os.path.join(ctx.out, f'transition_{dst}.png'), 2)
+            ctx.av.append(dict(kind='TRANSITION_RESIDUE', detail=f'{dst}: walked-in picture differs from a clean warp ({frac * 100:.1f}%)', where=dst,
+                               sig=f'tr-{dst}', count=1, artifacts={'diff': os.path.join(ctx.out, f'transition_{dst}.png')}, context={}, frame=g.frame))
+    ctx.expect(not bad, 'transition left residue: ' + ', '.join(bad))

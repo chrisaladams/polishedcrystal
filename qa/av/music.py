@@ -50,7 +50,14 @@ def engine_state(g):
 
 
 def play(g, song):
+    """Start `song` from silence and check the engine actually loaded it."""
+    g.call('PlayMusic', de=0)           # stop whatever is playing (MUSIC_NONE)
+    g.tick(12)
     g.call('PlayMusic', de=song)
+    g.tick(2)
+    loaded = g.rd('wChannel1MusicID') | g.rd('wChannel1MusicID', 1) << 8
+    if loaded != song:
+        raise RuntimeError(f'asked for song {song}, the engine loaded {loaded}')
 
 
 def trace(g, frames):
@@ -109,11 +116,22 @@ def analyse(states, min_cycles=2):
     k = _period(ev, min_cycles=min_cycles)
     if k:
         return dict(kind='loops', period_frames=sum(h for _, h in ev[len(ev) - k:]), frames=n, events=k)
-    per = [_period(_events(states, ch)) for ch in range(4)]
-    live = [p for p in per if p]
-    if len(live) >= 2:
-        return dict(kind='desync', period_frames=None, frames=n, channel_events=per)
-    return dict(kind='unbounded', period_frames=None, frames=n, channel_events=per)
+    # each channel on its own: its loop length in FRAMES (event counts differ between channels)
+    frames_per = []
+    for ch in range(4):
+        evc = _events(states, ch)
+        k = _period(evc)
+        frames_per.append(sum(h for _, h in evc[len(evc) - k:]) if k else None)
+    live = [f for f in frames_per if f]
+    if len(live) == 4:
+        lo, hi = min(live), max(live)
+        ratio = hi / lo
+        compatible = ratio < 1.02 or all(abs(round(f / lo) * lo - f) <= 0.02 * f for f in live)
+        if not compatible:
+            return dict(kind='desync', period_frames=None, frames=n, channel_frames=frames_per)
+        return dict(kind='loops', period_frames=hi, frames=n, channel_frames=frames_per,
+                    note='channels loop individually with compatible lengths')
+    return dict(kind='unbounded', period_frames=None, frames=n, channel_frames=frames_per)
 
 
 def validate_song(g, song, chunk=1800, max_frames=21600):

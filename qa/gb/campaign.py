@@ -22,12 +22,14 @@ def main(argv=None):
     ap.add_argument('--resume', default=None, help='a checkpoint .state to continue from')
     ap.add_argument('--label', default='run')
     ap.add_argument('--rom', default=None)
+    ap.add_argument('--av', action='store_true', help='attach the audiovisual monitors (slower)')
+    ap.add_argument('--audio', action='store_true', help='capture audio too (PyBoy APU emulation: slower)')
     a = ap.parse_args(argv)
     from qa.gb import fixtures as F
     from qa.gb.emu import Game
     from qa.gb.explorer import Explorer
     os.makedirs(a.out, exist_ok=True)
-    g = Game(rom=a.rom, workdir=a.out, seed=a.seed)
+    g = Game(rom=a.rom, workdir=a.out, seed=a.seed, audio=a.audio)
     if a.resume:
         g.tick(30)
         g.load_state_file(a.resume)
@@ -35,7 +37,7 @@ def main(argv=None):
     else:
         F.new_game_to_bedroom(g)
         provenance = 'gameplay'
-    ex = Explorer(g, a.out, seed=a.seed, label=a.label, provenance=provenance)
+    ex = Explorer(g, a.out, seed=a.seed, label=a.label, provenance=provenance, av=a.av)
     s = ex.run(budget_seconds=a.seconds)
     s['seed'] = a.seed
     s['gated'] = ex.gated

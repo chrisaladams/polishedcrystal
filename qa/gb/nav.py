@@ -146,8 +146,8 @@ class Navigator:
         before = self.pos()
         after = before
         for attempt in range(2):        # the first press toward a new direction only turns the player
-            self.hold(direction, 16)
-            self.g.tick(2)
+            self.hold(direction, 14)
+            self.g.tick(4)
             if not self.ready():
                 self.settle()
             after = self.pos()
@@ -209,9 +209,14 @@ class Navigator:
         """Follow a list of directions, re-checking each step. Returns False if it was
         interrupted by a map change (the caller decides what that means)."""
         for d in path:
+            before = self.pos()
             r = self.step(d)
             if r == 'map':
                 return False
+            if r == 'moved':
+                dx, dy = DIRS[d]
+                if self.pos()[2:] != (before[2] + dx, before[3] + dy):
+                    return None         # overshot or was pushed: plan again from where we are
             if r == 'blocked':
                 # an NPC moved into the way, or the tile was not what we thought: let the caller replan
                 self.g.tick(20)

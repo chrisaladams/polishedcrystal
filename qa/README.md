@@ -22,6 +22,7 @@ make qa-full                 # everything
 | `make qa-battle` | battle HUD / switching tests |
 | `make qa-hardware` | header, mapper, power-on RAM, power-cut saves, SameBoy execution guard on every map (CGB-E and AGB), Gearboy cross-check |
 | `make qa-regression` | one test per fixed defect, on every backend |
+| `make qa-av` | audiovisual checks (pictures, sound, music loops, sound effects) on PyBoy and SameBoy CGB-0/CGB-E/AGB, then the review report |
 | `make qa-full` | all of the above |
 | `make qa-list` | list tests, their suites and backends |
 
@@ -37,6 +38,13 @@ as passed.
 `QA_ROM` (ROM to test), `QA_CACHE` (fixture cache), `QA_CONNECTION_LIMIT`, `QA_MAP_LIMIT`,
 `QA_FUZZ_FRAMES`, `QA_FUZZ_STARTS` (shrink the long tests while developing), `GBDEV`,
 `SAMEBOY_DIR`, `GEARBOY_BIN`, `SDL3_LIB` (tool locations).
+
+## Audiovisual validation
+
+Pictures and sound are checked on their own, never inferred from gameplay succeeding. See
+[`docs/qa-av.md`](../docs/qa-av.md): frame monitors, VRAM/OAM integrity, PPU access timing, PCM analysis,
+music-loop and sound-effect tests, cross-emulator comparison, and **references that only a person can
+approve** (`python3 -m qa.av.refs`).
 
 ## Layout
 
@@ -59,6 +67,7 @@ qa/gb/            the library
     mapdata.py      maps, connections, object counts parsed from the repository
     scriptlint.py   static control-flow lint of map callbacks
     hw.py           OAM / sprites-per-scanline rules
+qa/av/            audiovisual library: frames, refs, vram, monitor, audio, music, review
 qa/native/        execguard.c: C execution callback (NOP slides, illegal opcodes, code in VRAM/IO)
 ```
 

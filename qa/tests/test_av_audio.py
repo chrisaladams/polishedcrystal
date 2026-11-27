@@ -14,6 +14,21 @@ from qa.framework import qa_test
 PROVENANCE = 'boot to the title screen; songs and effects are started by calling the ROM routines (injected), then observed'
 
 
+def _quiet_room_game(ctx):
+    """Continue from the smoke save and stand in a static indoor map. NOT the title screen: its attract
+    timer restarts the title sequence (and music) every ~126 s and would override the song under test."""
+    from qa.gb import fixtures as F
+    from qa.gb.consts import map_ids
+    from qa.tests.test_map_smoke import build, pick_tile
+    g = ctx.boot('smoke_base', build)
+    gr, nr = map_ids('VIOLET_POKECENTER_1F')
+    F.teleport(g, gr, nr, 2, 2, settle=60)
+    t = pick_tile(g) or (2, 2)
+    F.teleport(g, gr, nr, t[0], t[1], settle=60)
+    g.tick(120)
+    return g
+
+
 def _shard(items, i, n):
     items = sorted(items)
     lim = int(os.environ.get('QA_AUDIO_LIMIT', '0')) or None
@@ -22,18 +37,17 @@ def _shard(items, i, n):
 
 
 def _make_music(i, n):
-    @qa_test(suites=('av', 'full'), covers=('cinematic',), backends=('sameboy',), models=('CGB-E',), provenance=PROVENANCE,
+    @qa_test(suites=('av', 'full'), covers=('av.music_loops',), backends=('sameboy',), models=('CGB-E',), provenance=PROVENANCE,
              timeout=7200, name=f'test_av_audio.music_loops_{i}of{n}')
     def shard(ctx):
-        g = ctx.game()
-        g.tick(700)
+        g = _quiet_room_game(ctx)
         songs = _shard(music.song_ids().items(), i, n)
         kinds = {}
         for name, sid in songs:
             r = music.validate_song(g, sid, max_frames=int(os.environ.get('QA_MUSIC_MAX_FRAMES', '10800')))
             kinds.setdefault(r['kind'], []).append(name)
             if r['kind'] == 'desync':
-                ctx.expect(False, f'{name}: channels loop but not together: {r.get("channel_events")}')
+                ctx.expect(False, f'{name}: channels loop but not together: {r.get("channel_frames")}')
                 ctx.av.append(dict(kind='MUSIC_DESYNC', detail=f'{name}: channels repeat with different periods', where=name,
                                    sig=f'md-{name}', count=1, artifacts={}, context=r, frame=0))
             elif r['kind'] == 'unbounded':
@@ -42,16 +56,15 @@ def _make_music(i, n):
         ctx.note(f'{len(songs)} songs: ' + ', '.join(f'{k} {len(v)}' for k, v in kinds.items()))
         if kinds.get('unbounded'):
             ctx.note('undecided within the trace (longer than the limit or never loops): ' + ', '.join(kinds['unbounded'][:12]))
-            ctx.uncover('cinematic', f'{len(kinds["unbounded"])} songs not decided')
+            ctx.uncover('av.music_loops', f'{len(kinds["unbounded"])} songs not decided')
     return shard
 
 
 def _make_sfx(i, n):
-    @qa_test(suites=('av', 'full'), covers=('cinematic',), backends=('sameboy',), models=('CGB-E',), provenance=PROVENANCE,
+    @qa_test(suites=('av', 'full'), covers=('av.sfx', 'av.silence'), backends=('sameboy',), models=('CGB-E',), provenance=PROVENANCE,
              timeout=7200, name=f'test_av_audio.sfx_keeps_music_{i}of{n}')
     def shard(ctx):
-        g = ctx.game()
-        g.tick(700)
+        g = _quiet_room_game(ctx)
         ids = music.song_ids()
         song = ids.get('MUSIC_ROUTE_29') or next(iter(ids.values()))
         music.play(g, song)
@@ -106,7 +119,7 @@ for _i in range(4):
     _make_music(_i, 4)
 
 
-@qa_test(suites=('av', 'hardware', 'full'), covers=('cinematic',), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),
+@qa_test(suites=('av', 'hardware', 'full'), covers=('av.audio_cross', 'av.models'), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),
          provenance='Continue from one save on both emulators (input); the warp into each town is injected; the music is the '
                     'game\'s own map music', timeout=1800)
 def audio_cross_emulator(ctx):

@@ -153,3 +153,65 @@ class FrameMonitor:
     def summary(self):
         return dict(stats=self.stats, anomalies=[a.as_dict() for a in self.anomalies.values()],
                    occurrences=self.counts, vblank=self.vblank_report())
+
+
+class AudioMonitor:
+    """Watches the sound while a game is played (PyBoy with audio=True, or SameBoy with enable_av).
+
+    Per second it records the loudness and whether the sound engine says music should be playing.
+    A second of near-silence while the engine reports music playing is suspicious (the engine can
+    legitimately be silent in a rest, between songs and during fades, so single windows are not
+    reported: only `min_silent` consecutive seconds)."""
+
+    def __init__(self, g, out, thresh=0.003, min_silent=4, label=''):
+        self.g, self.out, self.label = g, out, label
+        os.makedirs(out, exist_ok=True)
+        self.thresh, self.min_silent = thresh, min_silent
+        self.windows = []               # (frame, rms, music_playing, music_id, map)
+        self._buf = []
+        self._last = 0
+        self.anomalies = []
+        self._run = 0
+        g.frame_hooks.append(self._on_frame)
+
+    def _pcm(self):
+        if hasattr(self.g, 'audio_pcm') and not getattr(self.g, 'audio', False):
+            return None
+        return self.g.frame_pcm()
+
+    def _on_frame(self, g):
+        if hasattr(g, 'frame_pcm') and getattr(g, 'audio', False):
+            self._buf.append(g.frame_pcm())
+        if g.frame - self._last >= 60:
+            self._last = g.frame
+            if hasattr(g, 'audio_pcm') and not getattr(g, 'audio', False):
+                pcm = g.audio_pcm(reset=True)
+            else:
+                import numpy as np
+                pcm = np.concatenate(self._buf) if self._buf else None
+                self._buf = []
+            if pcm is None or len(pcm) == 0:
+                return
+            from . import audio
+            x = audio.mono(pcm)
+            rms = float(np_sqrt_mean(x))
+            playing = g.rd('wMusicPlaying')
+            self.windows.append((g.frame, rms, playing, g.rd('wMusicID') if 'wMusicID' in g.sym else None,
+                                 (g.rd('wMapGroup'), g.rd('wMapNumber'))))
+            if rms < self.thresh and playing:
+                self._run += 1
+                if self._run == self.min_silent:
+                    self.anomalies.append(dict(kind='SILENCE', detail=f'{self.min_silent}+ seconds of silence while the sound engine reports music playing',
+                                               where=str(self.windows[-1][4]), frame=g.frame, sig=f'sil-{self.windows[-1][4][0]}-{self.windows[-1][4][1]}',
+                                               count=1, artifacts={}, context=dict(music_id=self.windows[-1][3])))
+            else:
+                self._run = 0
+
+    def summary(self):
+        w = self.windows
+        return dict(seconds=len(w), quiet=sum(1 for x in w if x[1] < self.thresh), anomalies=self.anomalies)
+
+
+def np_sqrt_mean(x):
+    import numpy as np
+    return np.sqrt((np.asarray(x, dtype=np.float64) ** 2).mean()) if len(x) else 0.0

@@ -56,8 +56,13 @@ class Failure:
 
 
 class Explorer:
-    def __init__(self, g, out, seed=1, label='run', provenance='gameplay'):
+    def __init__(self, g, out, seed=1, label='run', provenance='gameplay', av=False):
         self.g, self.out, self.label = g, out, label
+        self.av = None
+        if av:
+            from qa.av import monitor
+            self.av = monitor.FrameMonitor(g, os.path.join(out, 'av'), label=label + '_')
+            self.av_audio = monitor.AudioMonitor(g, os.path.join(out, 'av')) if (getattr(g, 'audio', False) or hasattr(g, 'audio_pcm')) else None
         os.makedirs(out, exist_ok=True)
         self.nav = Navigator(g, seed=seed)
         self.guard = OverworldGuard(g)
@@ -269,4 +274,6 @@ class Explorer:
                     badges=badges(g), levels=party_levels(g), battles=self.nav.stats['battles'],
                     inputs=len(self.nav.log), failures=[dict(sig=s, kind=f.kind, where=f.where, count=n, detail=f.detail[:300])
                                                          for s, (f, n) in self.failures.items()],
-                    provenance=self.provenance, checkpoints=len(self.checkpoints), epoch=self.epoch, gated=len(self.gated))
+                    provenance=self.provenance, checkpoints=len(self.checkpoints), epoch=self.epoch, gated=len(self.gated),
+                    av=(self.av.summary() if self.av else None),
+                    av_audio=(self.av_audio.summary() if getattr(self, 'av_audio', None) else None))

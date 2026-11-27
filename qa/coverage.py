@@ -31,6 +31,15 @@ AREAS = [
     ('Hardware rules: OAM, VRAM access, power-on RAM',
      ['hw.oam_lines', 'hw.vram_access', 'hw.memory_guard', 'hw.startup_ram']),
     ('Static data validation', ['data.maps', 'data.tables', 'data.layout']),
+    ('Graphics: frames, VRAM, OAM, flicker, PPU timing',
+     ['av.frames', 'av.vram', 'av.oam', 'av.flicker', 'av.ppu_timing']),
+    ('Graphics before/after: menus, battles, map transitions, cinematics',
+     ['av.menus', 'av.battle_gfx', 'av.transitions', 'av.cinematics']),
+    ('Audio: PCM scan, silence, music loops, sound effects',
+     ['av.audio_pcm', 'av.silence', 'av.music_loops', 'av.sfx']),
+    ('Audiovisual cross-emulator comparison and approved references',
+     ['av.cross_emulator', 'av.audio_cross', 'av.references']),
+    ('Hardware models CGB-0 / CGB-E / AGB for audiovisual checks', ['av.models']),
 ]
 
 
