@@ -84,3 +84,4 @@ qa/reports/campaigns/
 .claude/
 qa/av/reference/pending/
 qa/reports/av/
+qa/reports/validation/

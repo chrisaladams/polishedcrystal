@@ -189,8 +189,10 @@ def sprite_findings(g):
                             msg='OAM[%d] tile %d (bank %d) of object %d sprite %d differs from its graphic %s tile %d%s' % (
                                 i, t, bank, o['index'], o['sprite'], os_basename(path), k, ' (blank in VRAM)' if not any(have) else '')))
     blank_ok = blank_standing_sprites()
+    from qa.gb.consts import C
+    nfacings = C['NUM_FACINGS']
     for o in objs:
-        if o['facing'] == 0xff or o['invisible'] or o['off_screen'] or o['sprite'] in blank_ok:
+        if o['facing'] >= nfacings or o['invisible'] or o['off_screen'] or o['sprite'] in blank_ok:   # InitSprite draws only facings below NUM_FACINGS
             continue
         if 16 <= o['x'] <= 128 and 16 <= o['y'] <= 112 and o['index'] not in drawn:
             out.append(dict(kind='object-not-drawn', expected=False, why='',

@@ -122,7 +122,7 @@ def _first_action(nav, policy, rng):
     return False
 
 
-def play(nav, max_frames=36000, policy='fight', rng=None, check=None):
+def play(nav, max_frames=36000, policy='fight', rng=None, check=None, on_first_menu=None):
     """Play the current battle to its end. `check` is called every 30 frames of battle."""
     import random
     from .nav import Softlock
@@ -171,6 +171,8 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None):
             used = False
             if first:
                 first = False
+                if on_first_menu:
+                    on_first_menu(g)
                 used = _first_action(nav, policy, rng)
             if not used:
                 _home(nav)

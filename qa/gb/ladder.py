@@ -103,6 +103,36 @@ def build(stage_name, rom=None, rebuild=False):
     return path
 
 
+def build_sb(stage_name, rom=None, model='CGB-E', rebuild=False):
+    """The stage checkpoint for SameBoy (a SameBoy state file for `model`): the same injection as `build`,
+    after a New Game played by button input on SameBoy itself."""
+    from .sameboy import SBGame
+    stage = BY_NAME[stage_name]
+    d = cache_dir(rom)
+    path = os.path.join(d, f'{stage_name}.{model}.sb')
+    meta = path + '.json'
+    if os.path.exists(path) and os.path.exists(meta) and not rebuild:
+        return path
+    with saves.build_lock(path):
+        if os.path.exists(path) and os.path.exists(meta) and not rebuild:
+            return path
+        g = SBGame(rom=rom, workdir=os.path.join(d, f'build-{stage_name}-{model}'), model=model, seed=1)
+        F.new_game_to_bedroom(g)
+        done = apply_stage(g, stage)
+        gr, nr = map_ids(stage[4])
+        from qa.tests.test_map_smoke import pick_tile
+        F.teleport(g, gr, nr, 2, 2, settle=60)
+        tile = pick_tile(g) or (2, 2)
+        F.teleport(g, gr, nr, tile[0], tile[1], settle=90)
+        g.tick(60)
+        g.dump_state(path)
+        json.dump({'stage': stage_name, 'model': model, 'where': F.where(g), 'provenance': 'assisted',
+                   'real': 'New Game to the bedroom by button input on SameBoy', 'injected': done + [f'warp to {stage[4]}'],
+                   'rom_sha1': sha1(rom or default_rom())}, open(meta, 'w'), indent=1)
+        g.close()
+    return path
+
+
 def load(g, stage_name, rom=None):
     """Load checkpoint `stage_name` into game g (a PyBoy Game of the same ROM)."""
     g.tick(30)
