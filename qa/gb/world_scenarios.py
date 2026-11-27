@@ -192,6 +192,8 @@ def run_one(params, out, rom=None):
                 guard.crash.hits.clear()
             if const in STATE_DEPENDENT:
                 return
+            if 'menu' in tag and 'open' in tag:
+                return                     # an open menu hides the field objects on purpose
             first = {f['msg'] for f in vram.sprite_findings(g) if not f['expected'] and (const, f['kind']) not in STATE_QUIRKS}
             if first:
                 g.tick(2)                      # a finding must persist: a struct caught mid-update is not a defect
