@@ -239,6 +239,85 @@ def _worker(args):
     return run_one(params, os.path.join(out, 'scn_%d' % params['index']), rom, model)
 
 
+def build_stage_safely(stage, rom, backend, model, tries=4, timeout=420):
+    """Build a stage checkpoint in a child process; PyBoy occasionally wedges inside a frame, which would hang
+    the campaign before it starts. Retries (the wedge is timing dependent) and fails loudly after `tries`."""
+    import subprocess
+    code = ('import sys; sys.path.insert(0, %r); from qa.gb import ladder; '
+            'ladder.%s(%r, %r%s)' % (ROOT, 'build_sb' if backend == 'sameboy' else 'build', stage, rom, ', %r' % model if backend == 'sameboy' else ''))
+    for n in range(tries):
+        try:
+            r = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, timeout=timeout)
+            if r.returncode == 0:
+                return
+            err = r.stderr[-300:]
+        except subprocess.TimeoutExpired:
+            err = 'timeout after %ds' % timeout
+        print('stage %s build attempt %d failed: %s' % (stage, n + 1, err), flush=True)
+    raise SystemExit('cannot build stage %s' % stage)
+
+
+def _serve(conn):
+    """Worker process: run scenarios sent over the pipe until told to stop."""
+    while True:
+        job = conn.recv()
+        if job is None:
+            return
+        conn.send(_worker(job))
+
+
+def run_isolated(jobs, nworkers, timeout):
+    """Yield one result per job. Each worker is a separate process that is killed if a scenario does not
+    finish within `timeout` seconds (an emulator or game hang must not stall the campaign); the job is retried
+    once on a fresh worker and, if it hangs again, recorded as outcome 'hang' (a finding, never a pass)."""
+    import collections
+    ctx = mp.get_context('spawn')
+    pending = collections.deque((j, 0) for j in jobs)
+    workers = [None] * nworkers
+
+    def start():
+        parent, child = ctx.Pipe()
+        proc = ctx.Process(target=_serve, args=(child,), daemon=True)
+        proc.start()
+        return dict(proc=proc, conn=parent, job=None, t0=0)
+    while pending or any(w and w['job'] for w in workers):
+        for i in range(nworkers):
+            w = workers[i]
+            if w is None:
+                w = workers[i] = start()
+            if w['job'] is None and pending:
+                job, tries = pending.popleft()
+                w['job'], w['tries'], w['t0'] = job, tries, time.time()
+                w['conn'].send(job)
+            elif w['job'] is not None:
+                if w['conn'].poll(0.05):
+                    try:
+                        yield w['conn'].recv()
+                    except EOFError:
+                        yield dict(params=w['job'][0], outcome='fail', battles=0, frames=0,
+                                   failures=[dict(kind='error', detail='worker died', sig=signature('error', 'worker', 'worker died'))])
+                        w['proc'].kill()
+                        workers[i] = None
+                        continue
+                    w['job'] = None
+                elif not w['proc'].is_alive() or time.time() - w['t0'] > timeout:
+                    hung = w['proc'].is_alive()
+                    w['proc'].kill()
+                    job, tries = w['job'], w['tries']
+                    workers[i] = None
+                    if tries < 1:
+                        pending.appendleft((job, tries + 1))
+                    else:
+                        p = job[0]
+                        detail = 'no progress for %ds (%s)' % (timeout, 'hung' if hung else 'worker died')
+                        yield dict(params=p, outcome='hang', battles=0, frames=0,
+                                   failures=[dict(kind='hang', detail=detail, sig=signature('hang', p['stage'], p['backend'] + p['kind']))])
+        time.sleep(0.01)
+    for w in workers:
+        if w:
+            w['proc'].kill()
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--count', type=int, default=100)
@@ -251,16 +330,14 @@ def main(argv=None):
     ap.add_argument('--backend', default='pyboy', choices=['pyboy', 'sameboy'])
     ap.add_argument('--model', default='CGB-E', help='SameBoy model')
     ap.add_argument('--rom', default=None)
+    ap.add_argument('--timeout', type=int, default=300, help='seconds before a scenario is declared hung and its worker killed')
     a = ap.parse_args(argv)
     os.makedirs(a.out, exist_ok=True)
     from qa.gb import ladder
     stages = a.stages.split(',') if a.stages else None
     kinds = a.kinds.split(',') if a.kinds else (['inject'] if a.backend == 'sameboy' else None)
     for st in (stages or [x[0] for x in ladder.STAGES]):                      # build checkpoints once, before forking
-        if a.backend == 'sameboy':
-            ladder.build_sb(st, a.rom, a.model)
-        else:
-            ladder.build(st, a.rom)
+        build_stage_safely(st, a.rom, a.backend, a.model)
     log_path = os.path.join(a.out, 'results.jsonl')
     done = set()
     if os.path.exists(log_path):                                              # resume: skip indices already run
@@ -272,10 +349,9 @@ def main(argv=None):
     jobs = [(make_params(a.seed, i, stages, kinds, a.backend), a.out, a.rom, a.model) for i in range(a.start, a.start + a.count) if i not in done]
     print('%d scenarios to run (%d already in the log)' % (len(jobs), len(done)), flush=True)
     t0 = time.time()
-    ctx = mp.get_context('spawn')
     n = 0
-    with ctx.Pool(a.jobs) as pool, open(log_path, 'a') as log:
-        for r in pool.imap_unordered(_worker, jobs):
+    with open(log_path, 'a') as log:
+        for r in run_isolated(jobs, a.jobs, a.timeout):
             log.write(json.dumps(r, default=str) + '\n')
             log.flush()
             n += 1

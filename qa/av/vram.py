@@ -191,10 +191,19 @@ def sprite_findings(g):
     blank_ok = blank_standing_sprites()
     from qa.gb.consts import C
     nfacings = C['NUM_FACINGS']
+    fbank, faddr = g.sym['Facings']
+
+    def facing_tiles(f):
+        # Facings: one pointer per facing to a list that starts with its OAM entry count (0 = nothing drawn)
+        ptr = g.read_rom(fbank, faddr + 2 * f) | g.read_rom(fbank, faddr + 2 * f + 1) << 8
+        return g.read_rom(fbank, ptr)
     for o in objs:
-        if o['facing'] >= nfacings or o['invisible'] or o['off_screen'] or o['sprite'] in blank_ok:   # InitSprite draws only facings below NUM_FACINGS
+        if o['facing'] >= nfacings or not facing_tiles(o['facing']) or o['invisible'] or o['off_screen'] or o['sprite'] in blank_ok:   # InitSprite draws only facings below NUM_FACINGS
             continue
-        if 16 <= o['x'] <= 128 and 16 <= o['y'] <= 112 and o['index'] not in drawn:
+        # sprites that use absolute tile ids (scene props, special graphics) do not sit in the object's tile slot:
+        # accept an OAM entry near the object's cell as well
+        near = any(o['x'] - 4 <= e[2] - 8 <= o['x'] + 20 and o['y'] - 8 <= e[1] - 16 <= o['y'] + 20 for e in entries)
+        if 16 <= o['x'] <= 128 and 16 <= o['y'] <= 112 and o['index'] not in drawn and not near:
             out.append(dict(kind='object-not-drawn', expected=False, why='',
                             msg='object %d (sprite %d) at (%d,%d) has no OAM entry' % (o['index'], o['sprite'], o['x'], o['y'])))
     return out

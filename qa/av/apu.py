@@ -90,9 +90,9 @@ class ApuMonitor:
             freq = g.rd(p + 'Frequency') | g.rd(p + 'Frequency', 1) << 8
             if g.rd(p + 'Flags2') >> self.slide_bit & 1 or g.rd('wPitchTransposition'):
                 continue
-            # the channel's period register against the engine's frequency (vibrato and pitch slides move the
+            # the channel's period register against the engine's frequency (vibrato, pitch slides and detune (PitchOffset) move the
             # register away from the base frequency on purpose, so only steady notes are compared)
-            if not g.rd(p + 'VibratoExtent') and not g.rd(p + 'PitchWheelAmount'):
+            if not g.rd(p + 'VibratoExtent') and not g.rd(p + 'PitchWheelAmount') and not g.rd(p + 'PitchOffset'):
                 period = lib.GB_get_channel_period(g.gb, i)
                 self.period_checked[i] += 1
                 if period != freq:
