@@ -12,11 +12,9 @@ Provenance: party, position and the faint (HP set to 0 at the first battle menu)
 are INJECTED; the cup dialogue, team selection, battle, and replacement are real
 button input through the game's own routines.
 """
-import sys
-
 from qa.gb import battle as B, fixtures as F, saves
 from qa.gb.consts import C, map_ids
-from qa.gb.emu import Game
+from qa.framework import qa_test
 
 PROVENANCE = 'cup entry/battle/replacement: gameplay input; party+position+faint: injected'
 PIC_TILES = 0x31          # a 7x7 front pic
@@ -81,15 +79,12 @@ def check(before, after):
     return ok, notes
 
 
-def main():
-    p = saves.fixture('rising_cup_start', build)
-    g = Game(sav=p, workdir='/tmp/qa_cup')
-    saves.boot_continue(g, saves.fixture_meta(p)['where'])
+@qa_test(suites=('regression', 'battle', 'full'), covers=('battle.hud', 'battle.switching', 'cups.rising_star'),
+         backends=('pyboy', 'sameboy'), provenance=PROVENANCE)
+def rising_cup_replacement_hud(ctx):
+    g = ctx.boot('rising_cup_start', build)
     before, after = run(g, shots=True)
     ok, notes = check(before, after)
-    print('PASS' if ok else 'FAIL', *notes, sep='\n  ')
-    return 0 if ok else 1
-
-
-if __name__ == '__main__':
-    sys.exit(main())
+    for n in notes:
+        ctx.note(n)
+    ctx.expect(ok, '; '.join(notes))

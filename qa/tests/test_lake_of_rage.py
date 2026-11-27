@@ -17,6 +17,7 @@ import sys
 from qa.gb import fixtures as F, saves
 from qa.gb.consts import C, map_ids
 from qa.gb.emu import Game
+from qa.framework import qa_test
 from qa.gb.guards import PlayerStructGuard
 
 PROVENANCE = 'walk: gameplay input; party/position/save: injected fixture'
@@ -28,27 +29,27 @@ def build(g):
     F.teleport(g, *map_ids('ROUTE_43'), 10, 8)
 
 
-def run(g, out=None):
+def run(g):
     """Walk north from Route 43 into Lake of Rage up to the old man.
     Returns (ok, notes)."""
     guard = PlayerStructGuard(g)
     notes = []
-    old_man = (20, 26)
     positions = []
     blocked = 0
     last = None
+    lake = map_ids('LAKE_OF_RAGE')
     for step in range(60):
         g.hold('up', 16)
         g.tick(6)
         guard.check(f'step {step} at {F.where(g)}')
         w = F.where(g)
         positions.append(w)
-        if w[:2] == map_ids('LAKE_OF_RAGE') and w[2:] == (20, 27):
+        if w[:2] == lake and w[2:] == (20, 27):
             blocked += 1 if last == w else 0
             if blocked >= 3:
                 break
         last = w
-    reached = [p for p in positions if p[:2] == map_ids('LAKE_OF_RAGE') and p[2:] == (20, 27)]
+    reached = [p for p in positions if p[:2] == lake and p[2:] == (20, 27)]
     ok = True
     if guard.violations:
         ok = False
@@ -59,24 +60,16 @@ def run(g, out=None):
     if reached and blocked < 3:
         ok = False
         notes.append('player was not stopped by the old man (walked through or past him)')
-    # the player's tiles must be on screen: OAM sprites around screen centre using the player's tile base
-    sprite = g.read(guard.base, 1)
-    tile = g.read(guard.base + 2, 1)
-    notes.append(f'player struct sprite={sprite} tile={tile}')
-    if out:
-        g.screenshot(os.path.join(out, 'lake_old_man.png') if False else 'lake_old_man')
+    notes.append('player struct sprite=%d tile=%d' % (g.read(guard.base, 1), g.read(guard.base + 2, 1)))
     return ok, notes
 
 
-def main():
-    out = '/tmp/qa_lake'
-    p = saves.fixture('route43_basic', build)
-    g = Game(sav=p, workdir=out)
-    saves.boot_continue(g, saves.fixture_meta(p)['where'])
-    ok, notes = run(g, out)
-    print('PASS' if ok else 'FAIL', *notes, sep='\n  ')
-    return 0 if ok else 1
-
-
-if __name__ == '__main__':
-    sys.exit(main())
+@qa_test(suites=('regression', 'map', 'full'), covers=('map.connections', 'follower', 'sprites.player'),
+         backends=('pyboy', 'sameboy'), provenance=PROVENANCE)
+def lake_of_rage_approach(ctx):
+    g = ctx.boot('route43_basic', build)
+    ok, notes = run(g)
+    for n in notes:
+        ctx.note(n)
+    ctx.expect(ok, '; '.join(notes))
+    ctx.screenshot(g, 'lake_old_man')
