@@ -36,6 +36,13 @@ def classify(rec, seen_on):
         if ctx.get('in_battle'):
             return 'expected', 'battle animation flash'
         return 'suspect', 'the picture alternates between two frames'
+    if kind == 'SPRITE_INTEGRITY':
+        d = rec.get('detail', '')
+        if 'SPRITE_BLANK_FRUIT' in d:
+            return 'expected', 'intentionally blank door-trigger objects (their standing frame is blank in the ROM graphic); they do occupy OAM slots'
+        if 'unused on the CGB' in d:
+            return 'expected', 'attribute bit 4 is unused on the CGB and ignored by the hardware'
+        return 'suspect', d
     if kind == 'SPRITE_FLICKER':
         return 'suspect', 'visible sprite count alternates every frame'
     if kind in ('SILENCE', 'AUDIO_GLITCH', 'FREQ_ANOMALY'):

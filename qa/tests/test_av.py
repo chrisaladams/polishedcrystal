@@ -5,6 +5,7 @@ Every test that finds something suspicious adds a record to ctx.av; `python3 -m 
 turns those into a classified review report. References are never approved by tests."""
 import json
 import os
+import zlib
 
 import numpy as np
 
@@ -120,6 +121,15 @@ def reference_frames(ctx):
         ctx.skip('no approved reference for: ' + ', '.join(missing))
 
 
+def _blank_by_design(const):
+    """True if the map places SPRITE_BLANK_FRUIT objects: their standing frame is four blank tiles in the
+    ROM graphic (gfx/sprites/blank_fruit.2bpp tiles 0-3), used as invisible door triggers, so a blank
+    visible OAM entry on such a map is not a defect."""
+    from qa.gb import mapdata
+    path = mapdata.parse_map(mapdata.attributes()[const]['label'])['path']
+    return bool(path) and 'SPRITE_BLANK_FRUIT' in open(path, encoding='utf-8').read()
+
+
 @qa_test(suites=('av', 'hardware', 'full'), covers=('av.oam', 'av.vram'), backends=('pyboy',), provenance='injected warp into each map; the player stands still',
          timeout=1800, name='test_av.oam_vram_integrity_maps')
 def oam_vram_integrity_maps(ctx):
@@ -148,13 +158,17 @@ def oam_vram_integrity_maps(ctx):
             n += 1
             for msg in vram.oam_problems(g) + vram.tilemap_problems(g):
                 key = msg.split(' visible')[0].split(':')[0] if 'blank' not in msg else 'visible sprite using a blank tile'
+                if 'blank' in msg and _blank_by_design(const):
+                    key = 'visible sprite using a blank tile (SPRITE_BLANK_FRUIT: intentionally blank door-trigger object)'
+                if 'unused bit 4' in msg:
+                    key = 'BG attribute bit 4 set (unused on the CGB, ignored by the hardware)'
                 problems.setdefault(key, []).append(const)
         except Exception as e:
             problems.setdefault('harness error', []).append(f'{const}: {e}')
     ctx.note(f'{n} maps checked')
     for k, maps in problems.items():
         ctx.note(f'{k}: {len(maps)} maps, first {maps[:5]}')
-        ctx.av.append(dict(kind='SPRITE_INTEGRITY', detail=f'{k} on {len(maps)} maps', where=','.join(maps[:3]), sig=f'oamv-{abs(hash(k)) % 10**6}',
+        ctx.av.append(dict(kind='SPRITE_INTEGRITY', detail=f'{k} on {len(maps)} maps', where=','.join(maps[:3]), sig='oamv-%08x' % zlib.crc32(k.encode()),
                            count=len(maps), artifacts={}, context={'maps': maps[:20]}, frame=0))
 
 
@@ -225,3 +239,50 @@ def monitored_play_session(ctx):
     for a in (au['anomalies'] if au else []):
         ctx.av.append(a)
     ctx.expect(not s['failures'], 'gameplay failures: %r' % (s['failures'][:2],))
+
+
+def _make_pal(i, n):
+    @qa_test(suites=('av', 'hardware', 'full'), covers=('av.oam', 'av.vram', 'av.models'), backends=('sameboy',), models=('CGB-E', 'AGB'),
+             provenance='injected warp into each map; the player stands still', timeout=3000,
+             name=f'test_av.sprite_palettes_maps_{i}of{n}')
+    def shard(ctx):
+        """On every map, on this hardware model: sprites on screen use palettes with distinct visible
+        colours (palette RAM read directly), plus the OAM/tilemap structure checks."""
+        from qa.gb import mapdata
+        from qa.gb.consts import map_ids
+        from qa.tests.test_map_smoke import build, pick_tile
+        g = ctx.boot('smoke_base', build)
+        g.save_point()
+        consts = sorted(mapdata.attributes())[i::n]
+        if os.environ.get('QA_MAP_LIMIT'):
+            consts = consts[:int(os.environ['QA_MAP_LIMIT'])]
+        problems, checked = {}, 0
+        for const in consts:
+            g.restore_point()
+            try:
+                sg, sn = map_ids(const)
+                F.teleport(g, sg, sn, 2, 2, settle=60)
+                t = pick_tile(g)
+                if t is None:
+                    continue
+                F.teleport(g, sg, sn, t[0], t[1], settle=90)
+                g.tick(40)
+                checked += 1
+                for msg in vram.palette_problems(g) + vram.oam_problems(g) + vram.tilemap_problems(g):
+                    key = 'palette: ' + msg.split(' uses ')[1].split(' with')[0] if 'palette' in msg and 'uses' in msg else msg.split(' (')[0].split(':')[-1].strip()
+                    kind = 'SPRITE_PALETTE' if 'palette' in msg and 'uses' in msg else 'SPRITE_INTEGRITY'
+                    problems.setdefault((kind, re.sub(r'\d+', 'N', msg)[:70]), []).append(const)
+            except Exception as e:
+                problems.setdefault(('HARNESS', str(e)[:60]), []).append(const)
+        ctx.note(f'{checked} maps checked on {ctx.model}')
+        for (kind, msg), maps in problems.items():
+            ctx.note(f'{kind} "{msg}": {len(maps)} maps, first {maps[:4]}')
+            ctx.av.append(dict(kind=kind, detail=f'{msg} on {len(maps)} maps', where=','.join(maps[:3]), sig=kind[:4] + '-%08x' % zlib.crc32(msg.encode()),
+                               count=len(maps), artifacts={}, context={'maps': maps[:20]}, frame=0))
+    return shard
+
+
+import re   # noqa: E402
+
+for _i in range(4):
+    _make_pal(_i, 4)

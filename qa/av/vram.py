@@ -37,8 +37,6 @@ def oam_problems(g):
     for i, y, x, t, a in hw.oam_entries(g):
         if not (0 < y < 160 and 0 < x < 168):
             continue
-        if a & 0x07 > 7:
-            out.append(f'OAM[{i}] palette {a & 7}')
         bank = (a >> 3) & 1
         base = ((t & 0xfe) if tall else t) * TILE
         data = (v1 if bank else v0)[base:base + (32 if tall else 16)]
@@ -72,3 +70,28 @@ def lcd_state(g):
     names = {'LCDC': 0xff40, 'STAT': 0xff41, 'SCY': 0xff42, 'SCX': 0xff43, 'LY': 0xff44, 'LYC': 0xff45,
              'BGP': 0xff47, 'OBP0': 0xff48, 'OBP1': 0xff49, 'WY': 0xff4a, 'WX': 0xff4b, 'VBK': 0xff4f}
     return {k: g.read(a) for k, a in names.items()}
+
+
+def palette_problems(g):
+    """CGB palette checks (SameBoy backend: direct access to palette RAM).
+
+    * a sprite that is on screen uses an OBJ palette whose three visible colours are all identical
+      (it would draw as a flat blob, or vanish against a matching background);
+    * a sprite's visible colours all equal the background colour at its position's palette 0 colour
+      (invisible against the backdrop)."""
+    if not hasattr(g, '_bytes'):
+        return []
+    import struct
+    obp = g._bytes('OBP', 0, 64)
+    bgp = g._bytes('BGP', 0, 64)
+    pal = lambda raw, i: [struct.unpack_from('<H', raw, i * 8 + c * 2)[0] & 0x7fff for c in range(4)]
+    out = []
+    for i, y, x, t, a in hw.oam_entries(g):
+        if not (0 < y < 160 and 0 < x < 168):
+            continue
+        p = pal(obp, a & 7)
+        if len(set(p[1:])) == 1:
+            out.append(f'OAM[{i}] uses OBJ palette {a & 7} with identical visible colours {p[1]:04x}')
+        elif all(c == pal(bgp, 0)[0] for c in p[1:]):
+            out.append(f'OAM[{i}] uses OBJ palette {a & 7} whose colours all equal the background colour')
+    return out
