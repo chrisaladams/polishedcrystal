@@ -1278,13 +1278,13 @@ GetMovementPermissions::
 
 	push de
 	inc e
-	call GetCoordTileCollision
+	call GetNeighbourTileCollision
 	ld [wTileDown], a
 	call .Down
 
 	pop de
 	dec e
-	call GetCoordTileCollision
+	call GetNeighbourTileCollision
 	ld [wTileUp], a
 	jr .Up
 
@@ -1296,13 +1296,13 @@ GetMovementPermissions::
 
 	push de
 	dec d
-	call GetCoordTileCollision
+	call GetNeighbourTileCollision
 	ld [wTileLeft], a
 	call .Left
 
 	pop de
 	inc d
-	call GetCoordTileCollision
+	call GetNeighbourTileCollision
 	ld [wTileRight], a
 	jr .Right
 
@@ -1450,6 +1450,47 @@ GetCoordTileCollision::
 .nocarry2
 	ld a, BANK(wDecompressedCollisions)
 	jmp GetFarWRAMByte
+
+GetNeighbourTileCollision::
+; Like GetCoordTileCollision (tile d, e), for the tiles the player may step onto.
+; A tile beyond a map edge that has no connection is a wall: a passable border
+; block would otherwise let the player walk off the map, and the edge-crossing
+; code would then load a map that does not exist.
+	ld a, e
+	sub 4
+	jr c, .north
+	ld c, a
+	ld a, [wMapHeight]
+	add a
+	dec a
+	cp c
+	jr c, .south
+	ld a, d
+	sub 4
+	jr c, .west
+	ld c, a
+	ld a, [wMapWidth]
+	add a
+	dec a
+	cp c
+	jr c, .east
+	jr GetCoordTileCollision
+.north
+	ld a, [wNorthConnectedMapGroup]
+	jr .check
+.south
+	ld a, [wSouthConnectedMapGroup]
+	jr .check
+.west
+	ld a, [wWestConnectedMapGroup]
+	jr .check
+.east
+	ld a, [wEastConnectedMapGroup]
+.check
+	inc a
+	jr nz, GetCoordTileCollision ; connected: tiles beyond the edge are the neighbouring map's
+	ld a, COLL_WALL
+	ret
 
 GetBlockLocation::
 	ld a, [wMapWidth]
