@@ -71,6 +71,10 @@ class Ctx:
         saves.boot_continue(g, meta['where'])
         return g
 
+    def sym_banks(self):
+        from qa.gb.emu import load_sym
+        return load_sym(self.rom[:-4] + '.sym').values()
+
     # ---- reporting
     def expect(self, cond, msg):
         if not cond:

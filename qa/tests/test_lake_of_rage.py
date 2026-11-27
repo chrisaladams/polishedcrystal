@@ -65,7 +65,7 @@ def run(g):
 
 
 @qa_test(suites=('regression', 'map', 'full'), covers=('map.connections', 'follower', 'sprites.player'),
-         backends=('pyboy', 'sameboy'), provenance=PROVENANCE)
+         backends=('pyboy', 'sameboy'), models=('CGB-0', 'CGB-E', 'AGB'), provenance=PROVENANCE)
 def lake_of_rage_approach(ctx):
     g = ctx.boot('route43_basic', build)
     ok, notes = run(g)

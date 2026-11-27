@@ -101,7 +101,8 @@ crystal_obj    := $(rom_obj:.o=.o)
 crystal_vc_obj := $(rom_obj:.o=_vc.o)
 
 .SUFFIXES:
-.PHONY: clean tidy crystal faithful pocket debug monochrome freespace tools bsp huffman vc test
+.PHONY: clean tidy crystal faithful pocket debug monochrome freespace tools bsp huffman vc test \
+	qa qa-setup qa-general qa-map qa-battle qa-hardware qa-regression qa-full qa-list
 .PRECIOUS: %.2bpp %.1bpp
 .SECONDARY:
 .DEFAULT_GOAL: crystal
@@ -146,6 +147,38 @@ test:
 	python3 utils/check_text_width.py
 	python3 utils/check_palette_tables.py
 	python3 test/test_ai_scoring.py
+
+# QA framework (qa/README.md): automated emulator tests of the built ROM. Each target builds the
+# ROM first. Options go in QA_ARGS, e.g. `make qa-map QA_ARGS="--seed 7 --jobs 2"`.
+QA_RUN = python3 qa/run.py
+QA_ARGS ?=
+
+qa-setup:
+	sh qa/setup.sh
+
+qa-list:
+	$(QA_RUN) --list
+
+qa-general: crystal
+	$(QA_RUN) general $(QA_ARGS)
+
+qa-map: crystal
+	$(QA_RUN) map $(QA_ARGS)
+
+qa-battle: crystal
+	$(QA_RUN) battle $(QA_ARGS)
+
+qa-hardware: crystal
+	$(QA_RUN) hardware $(QA_ARGS)
+
+qa-regression: crystal
+	$(QA_RUN) regression $(QA_ARGS)
+
+qa-full: crystal
+	$(QA_RUN) full $(QA_ARGS)
+
+# the quick gate for every change: the regression tests plus the general checks
+qa: qa-regression qa-general
 
 freespace: crystal tools/bankends
 	tools/bankends $(ROM_NAME).map > bank_ends.txt

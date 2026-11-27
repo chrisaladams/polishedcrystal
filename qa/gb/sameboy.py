@@ -62,6 +62,32 @@ def _lib():
     return lib
 
 
+_GUARD = None
+
+
+def exec_guard_lib():
+    """Compile (once) and load qa/native/execguard.c."""
+    global _GUARD
+    if _GUARD is None:
+        import subprocess
+        src = os.path.join(ROOT, 'qa', 'native', 'execguard.c')
+        so = os.path.join(ROOT, 'qa', '.cache', 'execguard.so')
+        os.makedirs(os.path.dirname(so), exist_ok=True)
+        if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(src):
+            subprocess.check_call(['cc', '-O2', '-shared', '-fPIC', '-o', so, src])
+        lib = C.CDLL(so)
+        lib.execguard_fn.restype = C.c_void_p
+        lib.execguard_count.restype = C.c_int
+        lib.execguard_instructions.restype = C.c_uint64
+        lib.execguard_get.argtypes = [C.c_int, C.POINTER(C.c_uint16), C.POINTER(C.c_uint16),
+                                      C.POINTER(C.c_uint8), C.POINTER(C.c_uint8)]
+        _GUARD = lib
+    return _GUARD
+
+
+KIND = {1: 'NOP slide (running zeroed RAM)', 2: 'illegal opcode', 3: 'code fetched from VRAM/OAM/IO'}
+
+
 class SBGame:
     """One SameBoy instance. model: 'CGB-0'...'CGB-E' or 'AGB'."""
 
@@ -163,6 +189,14 @@ class SBGame:
         return self._bytes('OAM', 0, 160)
 
     @property
+    def pc(self):
+        return self._regs[5]
+
+    @property
+    def sp(self):
+        return self._regs[4]
+
+    @property
     def regs(self):
         r = self._regs
         return {'af': r[0], 'bc': r[1], 'de': r[2], 'hl': r[3], 'sp': r[4], 'pc': r[5]}
@@ -177,10 +211,34 @@ class SBGame:
                     best = (n, a)
         return f'{best[0]}+{pc - best[1]}' if best else f'{bank:02x}:{pc:04x}'
 
+    # ---- native execution guard (fast: C callback on every instruction)
+    def enable_exec_guard(self):
+        lib = exec_guard_lib()
+        lib.execguard_reset()
+        self._guard_cb = C.cast(lib.execguard_fn(), EXEC_CB)
+        self.lib.GB_set_execution_callback(self.gb, self._guard_cb)
+        self._exec_keep = 'native'
+
+    def exec_events(self):
+        """Suspicious executions recorded so far: [(kind, pc, previous pc, opcode)]."""
+        lib = exec_guard_lib()
+        out = []
+        for i in range(min(lib.execguard_count(), 32)):
+            pc, prev, op, kind = C.c_uint16(), C.c_uint16(), C.c_uint8(), C.c_uint8()
+            lib.execguard_get(i, C.byref(pc), C.byref(prev), C.byref(op), C.byref(kind))
+            out.append((KIND.get(kind.value, '?'), pc.value, prev.value, op.value))
+        return out
+
     # ---- instruction / memory hooks (slow in Python: use sparingly)
-    def exec_hook(self, label, fn):
+    def exec_hook(self, label, fn, replace=True):
+        """Run fn(game) each time the instruction at `label` is about to execute. With
+        replace=False the hook is added to any existing ones at that address."""
         bank, a = self.sym[label]
-        self._exec_hooks[a] = (bank, fn)
+        if replace or a not in self._exec_hooks:
+            self._exec_hooks[a] = (bank, fn)
+        else:
+            old = self._exec_hooks[a][1]
+            self._exec_hooks[a] = (bank, lambda game, o=old, n=fn: (o(game), n(game)))
         if self._exec_keep is None:
             def cb(gb, addr, opcode):
                 h = self._exec_hooks.get(addr)
@@ -207,6 +265,55 @@ class SBGame:
         self._wcb = WRITE_CB(cb)
         self.lib.GB_set_write_memory_callback(self.gb, self._wcb)
 
+    # ---- calling a ROM routine from the main thread (injection; see emu.Game.call)
+    def call(self, label, a=0, bc=0, de=0, hl=0, max_frames=600, mash=None):
+        bank, entry = self.sym[label]
+        halt = self.sym['DelayFrameHalt'][1]
+        r = self._regs
+        state = {'job': (entry, bank, a, bc, de, hl), 'saved': None, 'result': None, 'running': False}
+
+        def on_halt(game):
+            if state['running']:
+                if r[4] != state['saved'][4]:
+                    return                       # a nested DelayFrameHalt inside the routine
+                state['result'] = (r[0] >> 8) & 0xff
+                for i in range(6):
+                    r[i] = state['saved'][i]
+                self.lib.GB_write_memory(self.gb, 0x2000, state['rb'])
+                self.lib.GB_write_memory(self.gb, 0xff87, state['rb'])
+                state['running'] = False
+            elif state['job']:
+                e, bk, aa, bcc, dee, hll = state['job']
+                state['job'] = None
+                state['saved'] = [r[i] for i in range(6)]
+                state['rb'] = self.read(0xff87)
+                if 0x4000 <= e < 0x8000:
+                    self.lib.GB_write_memory(self.gb, 0x2000, bk)
+                    self.lib.GB_write_memory(self.gb, 0xff87, bk)
+                sp = (r[4] - 2) & 0xffff
+                self.lib.GB_write_memory(self.gb, sp, halt & 0xff)
+                self.lib.GB_write_memory(self.gb, sp + 1, halt >> 8)
+                r[4] = sp
+                r[0] = aa << 8 | (r[0] & 0xff)
+                r[1], r[2], r[3] = bcc, dee, hll
+                r[5] = e
+                state['running'] = True
+        self.exec_hook('DelayFrameHalt', on_halt, replace=False)
+        self._call_handlers = getattr(self, '_call_handlers', [])
+        self._call_handlers.append(on_halt)
+        try:
+            for i in range(max_frames):
+                if mash and i % 12 == 0:
+                    self.lib.GB_set_key_state(self.gb, KEYS[mash], True)
+                elif mash and i % 12 == 4:
+                    self.lib.GB_set_key_state(self.gb, KEYS[mash], False)
+                self.tick(1)
+                if state['result'] is not None:
+                    return state['result']
+            raise AssertionError(f'{label} did not return (pc={r[5]:04x}, {self.where()})')
+        finally:
+            self._call_handlers.remove(on_halt)
+
     hook = exec_hook   # same name as the PyBoy backend; fn receives the game
 
     def screenshot(self, name):
@@ -215,6 +322,25 @@ class SBGame:
         im = Image.frombuffer('RGBA', (160, 144), bytes(self.pixels), 'raw', 'RGBA', 0, 1)
         im.convert('RGB').save(path)
         return path
+
+    def in_battle(self):
+        return self.rd('wBattleMode') != 0
+
+    def save_point(self):
+        """Snapshot the machine; restore_point() returns to it."""
+        self.lib.GB_get_save_state_size = getattr(self.lib, 'GB_get_save_state_size')
+        self.lib.GB_get_save_state_size.argtypes = [C.c_void_p]
+        self.lib.GB_get_save_state_size.restype = C.c_size_t
+        self.lib.GB_save_state_to_buffer.argtypes = [C.c_void_p, C.c_char_p]
+        n = self.lib.GB_get_save_state_size(self.gb)
+        buf = C.create_string_buffer(n)
+        self.lib.GB_save_state_to_buffer(self.gb, buf)
+        self._point = buf
+
+    def restore_point(self):
+        self.lib.GB_load_state_from_buffer.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
+        if self.lib.GB_load_state_from_buffer(self.gb, self._point, len(self._point)):
+            raise RuntimeError('SameBoy refused its own save state')
 
     def save_sram(self):
         n = self.lib.GB_save_battery_size(self.gb)

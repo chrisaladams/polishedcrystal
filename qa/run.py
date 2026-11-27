@@ -58,7 +58,7 @@ def plan(args):
             ['pyboy', 'sameboy'] if args.backend == 'all' else [args.backend])
         backends = [b for b in backends if b in t['backends'] or args.backend != 'default']
         for b in backends:
-            for model in (args.models.split(',') if b == 'sameboy' else [None]):
+            for model in ((args.models.split(',') if args.models else list(t['models'] or ('CGB-E',))) if b == 'sameboy' else [None]):
                 jobs.append((t, b, model))
     return jobs
 
@@ -69,7 +69,7 @@ def main(argv=None):
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--jobs', type=int, default=os.cpu_count() or 1)
     ap.add_argument('--backend', default='default', choices=('default', 'pyboy', 'sameboy', 'all'))
-    ap.add_argument('--models', default='CGB-E')
+    ap.add_argument('--models', default=None, help='SameBoy models (default: each test\'s own list, else CGB-E)')
     ap.add_argument('--rom', default=None)
     ap.add_argument('--only', default=None)
     ap.add_argument('--out', default=None)
@@ -86,7 +86,7 @@ def main(argv=None):
     out_root = args.out or os.path.join(ROOT, 'qa', 'reports', 'runs', time.strftime('%Y%m%d-%H%M%S'))
     os.makedirs(out_root, exist_ok=True)
     jobs = plan(args)
-    info = meta.collect(rom, args.seed, {'suite': args.suite, 'backend_option': args.backend, 'models': args.models})
+    info = meta.collect(rom, args.seed, {'suite': args.suite, 'backend_option': args.backend, 'models': args.models or 'per-test default'})
     print('ROM %s sha1 %s  commit %s%s  seed %d' % (info['rom']['path'], info['rom']['sha1'][:12],
           info['git']['commit'][:10], '+dirty' if info['git']['dirty'] else '', args.seed))
     print('%d test runs, %d workers, report in %s' % (len(jobs), args.jobs, os.path.relpath(out_root, ROOT)))

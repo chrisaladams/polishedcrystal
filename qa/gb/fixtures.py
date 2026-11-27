@@ -44,7 +44,7 @@ def teleport(g, group, number, x, y, settle=600):
     for n, v in (('wMapGroup', group), ('wMapNumber', number), ('wXCoord', x), ('wYCoord', y),
                  ('wDefaultSpawnpoint', 255), ('wMapStatus', 1)):
         g.wr(n, v)
-    g.mem[0xff92] = 0xf1        # hMapEntryMethod = MAPSETUP_WARP
+    g.write(0xff92, 0xf1)        # hMapEntryMethod = MAPSETUP_WARP
     g.tick(settle)
 
 

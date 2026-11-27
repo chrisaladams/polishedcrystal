@@ -24,15 +24,17 @@ BattleFactoryHallway_MapScriptHeader:
 	const BATTLEFACTORYHALLWAY_LOBBY_RECEPTIONIST
 
 .SetScientistPosition:
+; A map callback must finish with endcallback: `end` would resume the stale
+; script position that CallCallback saved (it ran data as code on a GBA).
 	disappear BATTLEFACTORYHALLWAY_RECEPTIONIST
 	disappear BATTLEFACTORYHALLWAY_LOBBY_RECEPTIONIST
 	readvar VAR_YCOORD
 	ifequalfwd 13, .lobby_arrival
 	appear BATTLEFACTORYHALLWAY_RECEPTIONIST
-	end
+	endcallback
 .lobby_arrival
 	appear BATTLEFACTORYHALLWAY_LOBBY_RECEPTIONIST
-	end
+	endcallback
 
 BattleFactoryHallwayEnterScene:
 	readvar VAR_YCOORD

@@ -80,7 +80,7 @@ def check(before, after):
 
 
 @qa_test(suites=('regression', 'battle', 'full'), covers=('battle.hud', 'battle.switching', 'cups.rising_star'),
-         backends=('pyboy', 'sameboy'), provenance=PROVENANCE)
+         backends=('pyboy', 'sameboy'), models=('CGB-0', 'CGB-E', 'AGB'), provenance=PROVENANCE)
 def rising_cup_replacement_hud(ctx):
     g = ctx.boot('rising_cup_start', build)
     before, after = run(g, shots=True)

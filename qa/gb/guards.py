@@ -1,6 +1,9 @@
 """Memory-integrity guards usable from any test (PyBoy backend: polled per frame)."""
 
 PLAYER_FIELDS = ('Sprite', 'MapObjectIndex', 'SpriteTile', 'MovementType')
+PLAYER_SPRITES = ('SPRITE_CHRIS', 'SPRITE_CHRIS_BIKE', 'SPRITE_CHRIS_SURF', 'SPRITE_KRIS', 'SPRITE_KRIS_BIKE',
+                  'SPRITE_KRIS_SURF', 'SPRITE_CHRIS_RUN', 'SPRITE_KRIS_RUN', 'SPRITE_CRYS_BIKE', 'SPRITE_CRYS_SURF',
+                  'SPRITE_SURFING_PIKACHU')
 
 
 class PlayerStructGuard:
@@ -15,6 +18,8 @@ class PlayerStructGuard:
         self.qlen_sym = 'wFollowerMovementQueueLength'
         self.ref = self.read()
         self.violations = []
+        from .consts import C
+        self.sprites = {C.get(n) for n in PLAYER_SPRITES} - {None}
 
     def read(self):
         return tuple(self.g.read(self.base + i, 1) for i in range(3))
@@ -22,9 +27,11 @@ class PlayerStructGuard:
     def check(self, tag=''):
         cur = self.read()
         qlen = self.g.rd(self.qlen_sym)
-        if cur != self.ref:
+        # The sprite legitimately changes with the player's state (walking, biking, surfing);
+        # the object index (always 0) and tile base must never change.
+        if cur[1:] != self.ref[1:] or (cur[0] != self.ref[0] and cur[0] not in self.sprites):
             self.violations.append(f'{tag}: player struct [Sprite,MapObjectIndex,SpriteTile] {self.ref} -> {cur}')
-            self.ref = cur
+        self.ref = cur
         if 4 < qlen < 255:
             self.violations.append(f'{tag}: follower queue length {qlen} overruns its 5 bytes')
         return not self.violations
@@ -63,7 +70,7 @@ class OverworldGuard:
         self.player.check(tag)
         if self.crash.crashed:
             bad.append(f'{tag}: ROM crash handler ran: {self.crash.hits[-1]}')
-        sp = g.regs['sp'] if hasattr(g, 'regs') and isinstance(getattr(type(g), 'regs', None), property) else g.reg.SP
+        sp = g.sp
         if sp < 0xc000 and sp != 0:
             bad.append(f'{tag}: stack pointer {sp:04x} outside RAM')
         self.player.violations.extend(bad)

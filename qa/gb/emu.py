@@ -121,6 +121,14 @@ class Game:
             return max_frames
         raise TimeoutError('condition not met in %d frames' % max_frames)
 
+    @property
+    def pc(self):
+        return self.reg.PC
+
+    @property
+    def sp(self):
+        return self.reg.SP
+
     def read(self, addr, bank=None):
         return self.mem[bank, addr] if bank is not None and 0xd000 <= addr < 0xe000 else self.mem[addr]
 
@@ -283,6 +291,19 @@ class Game:
             if self._result is not None:
                 return self._result
         raise AssertionError(f'{label} did not return (PC={self.reg.PC:04x}, {self.where()})')
+
+    def save_point(self):
+        """Snapshot the whole machine (PyBoy only); restore_point() returns to it."""
+        import io
+        self._point = io.BytesIO()
+        self.pb.save_state(self._point)
+
+    def restore_point(self):
+        self._point.seek(0)
+        self.pb.load_state(self._point)
+
+    def in_battle(self):
+        return self.rd('wBattleMode') != 0
 
     def close(self):
         self.pb.stop(save=False)

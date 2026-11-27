@@ -45,6 +45,12 @@ class Consts(dict):
         self[key] = v
         return v
 
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def preload(self, names):
         self.update(values(names))
 
