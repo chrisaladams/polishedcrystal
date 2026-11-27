@@ -79,6 +79,13 @@ def exec_guard_lib():
         lib.execguard_fn.restype = C.c_void_p
         lib.execguard_count.restype = C.c_int
         lib.execguard_instructions.restype = C.c_uint64
+        lib.execguard_watch.argtypes = [C.c_uint16, C.c_int]
+        lib.execguard_watch_hits.argtypes = [C.c_int]
+        lib.execguard_watch_hits.restype = C.c_uint64
+        lib.execguard_set_hram.argtypes = [C.c_void_p]
+        lib.execguard_coverage.argtypes = [C.c_int]
+        lib.execguard_cover.restype = C.c_void_p
+        lib.execguard_cover_size.restype = C.c_int
         lib.execguard_get.argtypes = [C.c_int, C.POINTER(C.c_uint16), C.POINTER(C.c_uint16),
                                       C.POINTER(C.c_uint8), C.POINTER(C.c_uint8)]
         _GUARD = lib
@@ -156,6 +163,10 @@ class SBGame:
             return self._bytes('RAM', bank * 0x1000 + (addr - 0xd000), 1)[0]
         return self.lib.GB_read_memory(self.gb, addr)
 
+    def read_rom(self, bank, addr):
+        off = addr if addr < 0x4000 else bank * 0x4000 + (addr & 0x3fff)
+        return self._bytes('ROM', off, 1)[0]
+
     def write(self, addr, value, bank=None):
         if bank is not None and 0xd000 <= addr < 0xe000:
             ptr, _ = self._direct('RAM')
@@ -215,9 +226,29 @@ class SBGame:
     def enable_exec_guard(self):
         lib = exec_guard_lib()
         lib.execguard_reset()
+        hram, _ = self._direct('HRAM')
+        lib.execguard_set_hram(hram)
         self._guard_cb = C.cast(lib.execguard_fn(), EXEC_CB)
         self.lib.GB_set_execution_callback(self.gb, self._guard_cb)
         self._exec_keep = 'native'
+
+    def counter(self, label):
+        """A callable returning how many times the ROM executed `label` (native guard on)."""
+        lib = exec_guard_lib()
+        bank, addr = self.sym[label]
+        idx = lib.execguard_watch(addr, bank if 0x4000 <= addr < 0x8000 else -1)
+        if idx < 0:
+            raise RuntimeError('too many watched addresses')
+        return lambda: lib.execguard_watch_hits(idx)
+
+    def enable_coverage(self):
+        lib = exec_guard_lib()
+        lib.execguard_coverage(1)
+
+    def coverage_bitmap(self):
+        """Executed ROM addresses as bytes (bit per (bank, offset); see execguard.c)."""
+        lib = exec_guard_lib()
+        return C.string_at(lib.execguard_cover(), lib.execguard_cover_size())
 
     def exec_events(self):
         """Suspicious executions recorded so far: [(kind, pc, previous pc, opcode)]."""
@@ -336,6 +367,16 @@ class SBGame:
         buf = C.create_string_buffer(n)
         self.lib.GB_save_state_to_buffer(self.gb, buf)
         self._point = buf
+
+    def dump_state(self, path):
+        self.save_point()
+        open(path, 'wb').write(bytes(self._point))
+
+    def load_state_file(self, path):
+        data = open(path, 'rb').read()
+        self.lib.GB_load_state_from_buffer.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]
+        if self.lib.GB_load_state_from_buffer(self.gb, data, len(data)):
+            raise RuntimeError('SameBoy refused the state file')
 
     def restore_point(self):
         self.lib.GB_load_state_from_buffer.argtypes = [C.c_void_p, C.c_char_p, C.c_size_t]

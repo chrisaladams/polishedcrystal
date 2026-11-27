@@ -5,6 +5,7 @@
  *   BAD_REGION  - code fetched from VRAM, OAM, the unusable area, or I/O registers
  * Build: cc -O2 -shared -fPIC -o execguard.so execguard.c
  */
+#include <stddef.h>
 #include <stdint.h>
 
 #define MAX_EVENTS 32
@@ -35,9 +36,40 @@ static void record(uint16_t pc, uint8_t op, int kind) {
     count++;
 }
 
+/* Address watch: count executions of up to 32 chosen ROM addresses (bank -1 = any / bank 0 area).
+ * Polled from Python instead of calling back per hit. hROMBank is read from HRAM ($ff87). */
+#define MAX_WATCH 32
+static struct { uint16_t pc; int bank; uint64_t hits; } watch[MAX_WATCH];
+static int nwatch;
+static const uint8_t *hram;          /* points at $ff80 */
+/* ROM coverage bitmap: bit per (bank, offset) for bank 0..255 */
+static uint8_t cover[256 * 0x4000 / 8];
+static int cover_on;
+
+void execguard_set_hram(const uint8_t *p) { hram = p; }
+int execguard_watch(uint16_t pc, int bank) {
+    if (nwatch >= MAX_WATCH) return -1;
+    watch[nwatch].pc = pc; watch[nwatch].bank = bank; watch[nwatch].hits = 0;
+    return nwatch++;
+}
+uint64_t execguard_watch_hits(int i) { return (i >= 0 && i < nwatch) ? watch[i].hits : 0; }
+void execguard_coverage(int on) { cover_on = on; }
+const uint8_t *execguard_cover(void) { return cover; }
+int execguard_cover_size(void) { return (int)sizeof(cover); }
+void execguard_cover_clear(void) { for (size_t i = 0; i < sizeof(cover); i++) cover[i] = 0; }
+
 void execguard_cb(void *gb, uint16_t pc, uint8_t op) {
     (void)gb;
     instructions++;
+    if (pc < 0x8000) {
+        int bank = pc < 0x4000 ? 0 : (hram ? hram[0x07] : 1);   /* $ff87 - $ff80 */
+        if (cover_on) {
+            uint32_t bit = (uint32_t)bank * 0x4000u + (pc & 0x3fff);
+            cover[bit >> 3] |= (uint8_t)(1u << (bit & 7));
+        }
+        for (int i = 0; i < nwatch; i++)
+            if (watch[i].pc == pc && (watch[i].bank < 0 || watch[i].bank == bank)) watch[i].hits++;
+    }
     if (illegal(op)) record(pc, op, ILLEGAL);
     if ((pc >= 0x8000 && pc < 0xa000) || (pc >= 0xfe00 && pc < 0xff80)) record(pc, op, BAD_REGION);
     if (op == 0x00 && pc >= 0x8000) {

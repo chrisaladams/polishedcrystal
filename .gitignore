@@ -80,3 +80,4 @@ qa/.cache/
 qa/reports/runs/
 qa/__pycache__/
 **/__pycache__/
+qa/reports/campaigns/

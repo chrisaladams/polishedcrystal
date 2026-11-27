@@ -132,6 +132,10 @@ class Game:
     def read(self, addr, bank=None):
         return self.mem[bank, addr] if bank is not None and 0xd000 <= addr < 0xe000 else self.mem[addr]
 
+    def read_rom(self, bank, addr):
+        """A byte of ROM bank `bank` (addr in $4000-$7fff, or $0000-$3fff for bank 0)."""
+        return self.mem[bank, addr] if addr >= 0x4000 else self.mem[addr]
+
     def write(self, addr, value, bank=None):
         if bank is not None and 0xd000 <= addr < 0xe000:
             self.mem[bank, addr] = value
@@ -291,6 +295,20 @@ class Game:
             if self._result is not None:
                 return self._result
         raise AssertionError(f'{label} did not return (PC={self.reg.PC:04x}, {self.where()})')
+
+    def dump_state(self, path):
+        with open(path, 'wb') as f:
+            self.pb.save_state(f)
+
+    def load_state_file(self, path):
+        with open(path, 'rb') as f:
+            self.pb.load_state(f)
+
+    def counter(self, label):
+        """A callable returning how many times the ROM executed `label` (via a PyBoy hook)."""
+        box = [0]
+        self.hook(label, lambda *_a: box.__setitem__(0, box[0] + 1))
+        return lambda: box[0]
 
     def save_point(self):
         """Snapshot the whole machine (PyBoy only); restore_point() returns to it."""

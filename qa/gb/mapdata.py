@@ -46,7 +46,7 @@ OBJ_EVENT = re.compile(r'^\s+(object_event|itemball_event|tmhmball_event|cuttree
 def parse_map(label):
     """Warp and object-event info from maps/<label>.asm."""
     path = map_file(label)
-    out = dict(warps=[], objects=0, path=path)
+    out = dict(warps=[], objects=0, bg=[], path=path)
     if not path:
         return out
     section = None
@@ -66,4 +66,8 @@ def parse_map(label):
                 out['warps'].append((int(m.group(1)), int(m.group(2)), m.group(3), int(m.group(4))))
         elif section == 'obj' and OBJ_EVENT.match(line):
             out['objects'] += 1
+        elif section == 'other':
+            m = re.match(r'\s*bg_event\s+(-?\d+),\s*(-?\d+),\s*(\w+)', line)
+            if m:
+                out['bg'].append((int(m.group(1)), int(m.group(2)), m.group(3)))
     return out
