@@ -79,6 +79,22 @@ def exec_guard_lib():
         lib.execguard_fn.restype = C.c_void_p
         lib.execguard_count.restype = C.c_int
         lib.execguard_instructions.restype = C.c_uint64
+        lib.av_vblank_ly.argtypes = [C.c_int]
+        lib.av_vblank_ly.restype = C.c_uint64
+        lib.av_vblank_count.restype = C.c_uint64
+        lib.execguard_set_io.argtypes = [C.c_void_p]
+        lib.av_write_fn.restype = C.c_void_p
+        lib.av_audio_fn.restype = C.c_void_p
+        lib.av_audio_init.argtypes = [C.c_size_t]
+        lib.av_audio_count.restype = C.c_size_t
+        lib.av_audio_data.restype = C.c_void_p
+        lib.av_vram_writes.restype = C.c_uint64
+        lib.av_vram_bad.restype = C.c_uint64
+        lib.av_oam_writes.restype = C.c_uint64
+        lib.av_oam_bad.restype = C.c_uint64
+        lib.av_access_count.restype = C.c_int
+        lib.av_access_get.argtypes = [C.c_int, C.POINTER(C.c_uint16), C.POINTER(C.c_uint16), C.POINTER(C.c_uint8),
+                                      C.POINTER(C.c_uint8), C.POINTER(C.c_uint8), C.POINTER(C.c_uint8)]
         lib.execguard_watch.argtypes = [C.c_uint16, C.c_int]
         lib.execguard_watch_hits.argtypes = [C.c_int]
         lib.execguard_watch_hits.restype = C.c_uint64
@@ -122,9 +138,11 @@ class SBGame:
         self.lib.GB_set_rgb_encode_callback(self.gb, self._enc)
         self.lib.GB_set_vblank_callback(self.gb, self._vb)
         self.lib.GB_set_pixels_output(self.gb, C.addressof(self.pixels))
+        self.lib.GB_set_color_correction_mode(self.gb, 0)  # GB_COLOR_CORRECTION_DISABLED: raw 5-bit colours
         self.lib.GB_set_turbo_mode(self.gb, True, True)   # no real-time pacing
         self._regs = self.lib.GB_get_registers(self.gb)
         self._access = {}
+        self.frame_hooks = []
         self._exec_hooks = {}
         self._exec_keep = None
 
@@ -133,6 +151,8 @@ class SBGame:
         for _ in range(n):
             self.lib.GB_run_frame(self.gb)
             self.frame += 1
+            for h in self.frame_hooks:
+                h(self)
 
     def press(self, button, hold=4, wait=6):
         self.lib.GB_set_key_state(self.gb, KEYS[button], True)
@@ -221,6 +241,61 @@ class SBGame:
                 if best is None or a > best[1]:
                     best = (n, a)
         return f'{best[0]}+{pc - best[1]}' if best else f'{bank:02x}:{pc:04x}'
+
+    def frame_rgb(self):
+        import numpy as np
+        a = np.frombuffer(bytes(self.pixels), dtype=np.uint8).reshape(144, 160, 4)
+        return a[:, :, :3].copy()
+
+    # ---- audiovisual monitors (native)
+    def enable_av(self, audio_seconds=30, guard=True):
+        """Start PCM capture, PPU access-timing monitoring and VBlank-end-line sampling.
+        Replaces any Python write watch. Also turns on the execution guard."""
+        if guard and self._exec_keep is None:
+            self.enable_exec_guard()
+        lib = exec_guard_lib()
+        io, _ = self._direct('IO')
+        lib.execguard_set_io(io)
+        lib.av_vblank_reset()
+        lib.av_access_reset()
+        if guard:
+            self._av_write = C.cast(lib.av_write_fn(), WRITE_CB)
+            self.lib.GB_set_write_memory_callback(self.gb, self._av_write)
+        lib.av_audio_init(48000 * audio_seconds)
+        self.lib.GB_set_sample_rate.argtypes = [C.c_void_p, C.c_uint]
+        self.lib.GB_set_sample_rate(self.gb, 48000)
+        SAMPLE_CB = C.CFUNCTYPE(None, C.c_void_p, C.c_void_p)
+        self._av_audio = C.cast(lib.av_audio_fn(), SAMPLE_CB)
+        self.lib.GB_apu_set_sample_callback.argtypes = [C.c_void_p, SAMPLE_CB]
+        self.lib.GB_apu_set_sample_callback(self.gb, self._av_audio)
+        self.lib.GB_set_highpass_filter_mode.argtypes = [C.c_void_p, C.c_int]
+        self.lib.GB_set_highpass_filter_mode(self.gb, 1)      # GB_HIGHPASS_ACCURATE: like the hardware's output capacitor
+
+    def vblank_lines(self):
+        """{LY: count} of the PPU line when the VBlank handler returned."""
+        lib = exec_guard_lib()
+        return {i: lib.av_vblank_ly(i) for i in range(154) if lib.av_vblank_ly(i)}
+
+    def access_report(self):
+        """(vram_writes, vram_bad, oam_writes, oam_bad, [first illegal accesses])."""
+        lib = exec_guard_lib()
+        ev = []
+        for i in range(min(lib.av_access_count(), 64)):
+            a, pc, v, m, ly, k = (C.c_uint16(), C.c_uint16(), C.c_uint8(), C.c_uint8(), C.c_uint8(), C.c_uint8())
+            lib.av_access_get(i, C.byref(a), C.byref(pc), C.byref(v), C.byref(m), C.byref(ly), C.byref(k))
+            ev.append(dict(addr=a.value, pc=pc.value, value=v.value, mode=m.value, ly=ly.value,
+                           kind='VRAM' if k.value == 1 else 'OAM'))
+        return lib.av_vram_writes(), lib.av_vram_bad(), lib.av_oam_writes(), lib.av_oam_bad(), ev
+
+    def audio_pcm(self, reset=False):
+        """Captured audio so far as an int16 (n, 2) array at 48 kHz."""
+        import numpy as np
+        lib = exec_guard_lib()
+        n = lib.av_audio_count()
+        arr = np.frombuffer(C.string_at(lib.av_audio_data(), n * 4), dtype=np.int16).reshape(n, 2).copy() if n else np.zeros((0, 2), np.int16)
+        if reset:
+            lib.av_audio_reset()
+        return arr
 
     # ---- native execution guard (fast: C callback on every instruction)
     def enable_exec_guard(self):

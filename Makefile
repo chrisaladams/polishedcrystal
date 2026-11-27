@@ -102,7 +102,7 @@ crystal_vc_obj := $(rom_obj:.o=_vc.o)
 
 .SUFFIXES:
 .PHONY: clean tidy crystal faithful pocket debug monochrome freespace tools bsp huffman vc test \
-	qa qa-setup qa-general qa-map qa-battle qa-hardware qa-regression qa-full qa-list
+	qa qa-setup qa-general qa-map qa-battle qa-hardware qa-regression qa-av qa-full qa-list
 .PRECIOUS: %.2bpp %.1bpp
 .SECONDARY:
 .DEFAULT_GOAL: crystal
@@ -173,6 +173,10 @@ qa-hardware: crystal
 
 qa-regression: crystal
 	$(QA_RUN) regression $(QA_ARGS)
+
+qa-av: crystal
+	$(QA_RUN) av $(QA_ARGS)
+	python3 -m qa.av.review qa/reports/runs/latest
 
 qa-full: crystal
 	$(QA_RUN) full $(QA_ARGS)

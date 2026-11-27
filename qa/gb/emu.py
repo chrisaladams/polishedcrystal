@@ -53,7 +53,7 @@ def sha1(path):
 class Game:
     """One emulated console running the ROM."""
 
-    def __init__(self, rom=None, sav=None, sym=None, workdir='.', seed=1, speed=0, power_on_noise=None):
+    def __init__(self, rom=None, sav=None, sym=None, workdir='.', seed=1, speed=0, power_on_noise=None, audio=False):
         from pyboy import PyBoy
         self.rom = rom or default_rom()
         self.sym = load_sym(sym or self.rom[:-4] + '.sym')
@@ -64,6 +64,7 @@ class Game:
         kw = {}
         if sav:
             kw['ram_file'] = open(sav, 'rb')
+        kw['sound_emulated'] = audio      # APU emulation is slow with music playing: opt in for audio tests
         self.pb = PyBoy(self.rom, window='null', **kw)
         self.pb.set_emulation_speed(speed)
         self.mem = self.pb.memory
@@ -72,6 +73,9 @@ class Game:
         if power_on_noise is not None:
             self.randomize_ram(power_on_noise)
         self.events = []          # (frame, label) from hooks, kept for artifacts
+        self.frame_hooks = []     # callables run after every frame (audiovisual monitors)
+        self.sound = audio        # sample audio each frame (only meaningful with audio=True)
+        self.audio = audio
 
     def randomize_ram(self, seed):
         """Fill WRAM (all 8 banks), HRAM, VRAM (both banks) and OAM with seeded
@@ -97,9 +101,12 @@ class Game:
     # ---- time and input
     def tick(self, n=1, render=True):
         """Run n frames; only the last is rendered (screenshots need one)."""
+        hooks = self.frame_hooks
         for i in range(n):
-            self.pb.tick(1, render and i == n - 1)
+            self.pb.tick(1, True if hooks else (render and i == n - 1), self.sound)
             self.frame += 1
+            for h in hooks:
+                h(self)
 
     def press(self, button, hold=4, wait=6):
         """Press and release one button, then let the game react."""
@@ -120,6 +127,15 @@ class Game:
         if cond():
             return max_frames
         raise TimeoutError('condition not met in %d frames' % max_frames)
+
+    def frame_rgb(self):
+        """The last rendered frame as a (144, 160, 3) uint8 array."""
+        return self.pb.screen.ndarray[:, :, :3].copy()
+
+    def frame_pcm(self):
+        """This frame's audio as an int16 (n, 2) array at 48 kHz (PyBoy's int8 samples scaled up)."""
+        import numpy as np
+        return self.pb.sound.ndarray.astype(np.int16) * 256
 
     @property
     def pc(self):
@@ -290,7 +306,7 @@ class Game:
         for i in range(max_frames):
             if mash and i % 12 == 0:
                 self.pb.button(mash, 4)
-            self.pb.tick(1, False)
+            self.pb.tick(1, False, False)
             self.frame += 1
             if self._result is not None:
                 return self._result

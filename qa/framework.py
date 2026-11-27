@@ -19,7 +19,7 @@ from qa.gb import saves
 from qa.gb.emu import ROOT, default_rom
 
 REGISTRY = []
-SUITES = ('general', 'map', 'battle', 'hardware', 'regression', 'full')
+SUITES = ('general', 'map', 'battle', 'hardware', 'regression', 'av', 'full')
 
 
 class Skip(Exception):
@@ -47,16 +47,17 @@ class Ctx:
         self.games = []
         self.provenance = test['provenance']
         self.uncovered = {}
+        self.av = []            # audiovisual anomaly records (see qa/av/review.py)
         os.makedirs(out, exist_ok=True)
 
     # ---- games and fixtures
-    def game(self, sav=None):
+    def game(self, sav=None, audio=False):
         if self.backend == 'sameboy':
             from qa.gb.sameboy import SBGame
             g = SBGame(rom=self.rom, sav=sav, workdir=self.out, model=self.model or 'CGB-E', seed=self.seed)
         else:
             from qa.gb.emu import Game
-            g = Game(rom=self.rom, sav=sav, workdir=self.out, seed=self.seed)
+            g = Game(rom=self.rom, sav=sav, workdir=self.out, seed=self.seed, audio=audio)
         self.games.append(g)
         return g
 
@@ -137,4 +138,4 @@ def run_one(test, backend, model, seed, out, rom):
     return dict(name=test['name'], backend=backend, model=model, status=status, seconds=round(time.time() - t0, 1),
                 failures=ctx.failures, error=err, notes=ctx.notes, artifacts=ctx.artifacts,
                 provenance=ctx.provenance, covers=[c for c in test['covers'] if c not in ctx.uncovered],
-                partial=ctx.uncovered, seed=seed)
+                partial=ctx.uncovered, av=ctx.av, seed=seed)

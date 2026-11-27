@@ -82,3 +82,5 @@ qa/__pycache__/
 **/__pycache__/
 qa/reports/campaigns/
 .claude/
+qa/av/reference/pending/
+qa/reports/av/
