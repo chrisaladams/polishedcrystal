@@ -404,6 +404,7 @@ class SBGame:
                 r[1], r[2], r[3] = bcc, dee, hll
                 r[5] = e
                 state['running'] = True
+        prev_hook = self._exec_hooks.get(halt)
         self.exec_hook('DelayFrameHalt', on_halt, replace=False)
         self._call_handlers = getattr(self, '_call_handlers', [])
         self._call_handlers.append(on_halt)
@@ -419,6 +420,15 @@ class SBGame:
             raise AssertionError(f'{label} did not return (pc={r[5]:04x}, {self.where()})')
         finally:
             self._call_handlers.remove(on_halt)
+            # drop our hook again: a Python callback on every instruction costs ~2/3 of the run time
+            if self._exec_keep not in (None, 'native') and not state['running']:
+                if prev_hook is None:
+                    self._exec_hooks.pop(halt, None)
+                else:
+                    self._exec_hooks[halt] = prev_hook
+                if not self._exec_hooks:
+                    self.lib.GB_set_execution_callback(self.gb, EXEC_CB(0))
+                    self._exec_keep = None
 
     hook = exec_hook   # same name as the PyBoy backend; fn receives the game
 

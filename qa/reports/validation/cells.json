@@ -1,0 +1,10 @@
+{
+ "control/conn": {
+  "mutant": "control",
+  "detector": "conn",
+  "detected": false,
+  "rc": 0,
+  "seconds": 122,
+  "evidence": []
+ }
+}

@@ -90,6 +90,15 @@ class Ctx:
         self.uncovered[tag] = why
         self.notes.append('coverage withdrawn for %s: %s' % (tag, why))
 
+    def json(self, name, obj):
+        """Write a JSON artifact (kept in the report directory); returns its path."""
+        import json
+        path = os.path.join(self.out, name)
+        with open(path, 'w') as f:
+            json.dump(obj, f, indent=1, default=str)
+        self.artifacts.append(path)
+        return path
+
     def skip(self, why):
         raise Skip(why)
 

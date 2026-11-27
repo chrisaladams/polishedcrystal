@@ -95,3 +95,109 @@ def palette_problems(g):
         elif all(c == pal(bgp, 0)[0] for c in p[1:]):
             out.append(f'OAM[{i}] uses OBJ palette {a & 7} whose colours all equal the background colour')
     return out
+
+
+def objects(g):
+    """Live object structs: dicts with index, sprite, tile, palette, screen x/y (pixels, top-left of the 16x16)."""
+    from qa.gb.consts import C
+    base = g.sym['wPlayerStruct'][1]
+    stride = C['OBJECT_LENGTH']
+    out = []
+    for i in range(C['NUM_OBJECT_STRUCTS']):
+        a = base + i * stride
+        sprite = g.read(a + C['OBJECT_SPRITE'])
+        if not sprite:
+            continue
+        out.append(dict(index=i, sprite=sprite, tile=g.read(a + C['OBJECT_SPRITE_TILE']),
+                        x=g.read(a + C['OBJECT_SPRITE_X']), y=g.read(a + C['OBJECT_SPRITE_Y']),
+                        pal=g.read(a + C['OBJECT_PALETTE']) & 7, facing=g.read(a + C['OBJECT_FACING']),
+                        invisible=bool(g.read(a + C['OBJECT_FLAGS1']) >> C['INVISIBLE_F'] & 1),
+                        off_screen=bool(g.read(a + C['OBJECT_FLAGS2']) >> C['OFF_SCREEN_F'] & 1)))
+    return out
+
+
+_SPRITE_FILES = {}
+
+
+def sprite_files():
+    """{sprite id: path of its raw 2bpp graphic in the repository} for every overworld sprite whose
+    graphic is a plain file (sprites built from Pokemon data have none and are not checked)."""
+    if _SPRITE_FILES:
+        return _SPRITE_FILES
+    import os
+    import re
+    from qa.gb.emu import ROOT
+    gfx = {}
+    for m in re.finditer(r'^(\w+SpriteGFX)::\s*INCBIN\s+"([^"]+)"', open(os.path.join(ROOT, 'gfx/sprites.asm')).read(), re.M):
+        gfx[m.group(1)] = m.group(2).replace('.lzp', '').replace('.lz', '')
+    ids = [m.group(1) for m in re.finditer(r'^\s*overworld_sprite\s+(\w+),', open(os.path.join(ROOT, 'data/sprites/sprites.asm')).read(), re.M)]
+    for i, label in enumerate(ids, 1):
+        path = os.path.join(ROOT, gfx.get(label, ''))
+        if os.path.isfile(path):
+            _SPRITE_FILES[i] = path
+    return _SPRITE_FILES
+
+
+def blank_standing_sprites():
+    """{sprite id: path} of sprites whose first frame (four 8x8 tiles) is entirely blank in the repository's own
+    graphics: invisible trigger objects, drawn on purpose. Derived from the data, not listed by hand."""
+    return {i: p for i, p in sprite_files().items() if not any(open(p, 'rb').read(64))}
+
+
+def _slot(o):
+    """(vram bank, first tile) of the 12 tiles an object's sprite occupies (tile bit 7 set: bank 0)."""
+    return (0 if o['tile'] & 0x80 else 1), o['tile'] & 0x7f
+
+
+def sprite_findings(g):
+    """Sprite findings for the current screen, each judged against the one object that owns the OAM entry
+    (by the VRAM tile slot the object's sprite was loaded into). Nothing is exempted by map.
+
+    * sprite-tile-mismatch: a drawn OAM entry's tile data in VRAM differs from the repository graphic of
+      the owning object's sprite (a failed, truncated or overwritten load); a blank tile is fine only when
+      the repository graphic is blank there too (transparent corners, invisible trigger objects)
+    * object-not-drawn: an object well inside the screen that is not hidden by the engine or a script has no
+      OAM entry at all
+    Returns [dict(kind, msg, expected, why)]."""
+    from pathlib import Path
+    out = []
+    base = g.sym['wShadowOAM'][1]
+    sh = [g.read(base + k) for k in range(160)]
+    entries = [(i, sh[i * 4], sh[i * 4 + 1], sh[i * 4 + 2], sh[i * 4 + 3]) for i in range(40)
+               if 0 < sh[i * 4] < 160 and 0 < sh[i * 4 + 1] < 168]
+    v = (g.vram(0), g.vram(1))
+    tall = g.read(0xff40) & 4
+    files = sprite_files()
+    objs = objects(g)
+    drawn = set()
+    for i, y, x, t, a in entries:
+        bank = (a >> 3) & 1
+        o = next((ob for ob in objs if _slot(ob)[0] == bank and _slot(ob)[1] <= t < _slot(ob)[1] + 12), None)
+        if o is None:
+            continue
+        drawn.add(o['index'])
+        path = files.get(o['sprite'])
+        if not path:
+            continue
+        k = t - _slot(o)[1]
+        raw = Path(path).read_bytes()
+        if (k + 1) * 16 > len(raw):
+            continue
+        want, have = raw[k * 16:(k + 1) * 16], bytes(v[bank][t * 16:(t + 1) * 16])
+        if want != have:
+            out.append(dict(kind='sprite-tile-mismatch', expected=False, why='',
+                            msg='OAM[%d] tile %d (bank %d) of object %d sprite %d differs from its graphic %s tile %d%s' % (
+                                i, t, bank, o['index'], o['sprite'], os_basename(path), k, ' (blank in VRAM)' if not any(have) else '')))
+    blank_ok = blank_standing_sprites()
+    for o in objs:
+        if o['facing'] == 0xff or o['invisible'] or o['off_screen'] or o['sprite'] in blank_ok:
+            continue
+        if 16 <= o['x'] <= 128 and 16 <= o['y'] <= 112 and o['index'] not in drawn:
+            out.append(dict(kind='object-not-drawn', expected=False, why='',
+                            msg='object %d (sprite %d) at (%d,%d) has no OAM entry' % (o['index'], o['sprite'], o['x'], o['y'])))
+    return out
+
+
+def os_basename(p):
+    import os
+    return os.path.basename(p)

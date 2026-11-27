@@ -42,17 +42,26 @@ def _make_music(i, n):
     def shard(ctx):
         g = _quiet_room_game(ctx)
         songs = _shard(music.song_ids().items(), i, n)
-        kinds = {}
+        kinds, fp = {}, []
+        errors = []
         for name, sid in songs:
-            r = music.validate_song(g, sid, max_frames=int(os.environ.get('QA_MUSIC_MAX_FRAMES', '10800')))
+            try:
+                r = music.validate_song(g, sid, max_frames=int(os.environ.get('QA_MUSIC_MAX_FRAMES', '10800')))
+            except Exception as e:                     # one bad song must not hide the rest
+                errors.append(name)
+                ctx.expect(False, f'{name}: {e}')
+                continue
             kinds.setdefault(r['kind'], []).append(name)
-            if r['kind'] == 'desync':
-                ctx.expect(False, f'{name}: channels loop but not together: {r.get("channel_frames")}')
-                ctx.av.append(dict(kind='MUSIC_DESYNC', detail=f'{name}: channels repeat with different periods', where=name,
-                                   sig=f'md-{name}', count=1, artifacts={}, context=r, frame=0))
+            fp.append((name, sid, r['kind'], r.get('period_frames'), r.get('channel_frames')))
+            if r['kind'] == 'independent':
+                ctx.av.append(dict(kind='MUSIC_INDEPENDENT_LOOPS', detail=f'{name}: channel loop lengths {r.get("channel_frames")} frames', where=name,
+                                   sig=f'mi-{name}', count=1, artifacts={}, context=r, frame=0))
             elif r['kind'] == 'unbounded':
                 ctx.av.append(dict(kind='MUSIC_NO_LOOP', detail=f'{name}: neither ended nor looped in {r["frames"] / 60:.0f} s',
                                    where=name, sig=f'mn-{name}', count=1, artifacts={}, context=r, frame=0))
+        if errors:
+            kinds['error'] = errors
+        ctx.json('music_loops.json', fp)
         ctx.note(f'{len(songs)} songs: ' + ', '.join(f'{k} {len(v)}' for k, v in kinds.items()))
         if kinds.get('unbounded'):
             ctx.note('undecided within the trace (longer than the limit or never loops): ' + ', '.join(kinds['unbounded'][:12]))
@@ -117,6 +126,45 @@ for _i in range(4):
     _make_sfx(_i, 4)
 for _i in range(4):
     _make_music(_i, 4)
+
+
+def _make_apu(i, n):
+    @qa_test(suites=('av', 'hardware', 'full'), covers=('av.apu_channels', 'av.music_pitch'), backends=('sameboy',), models=('CGB-E', 'AGB'), provenance=PROVENANCE,
+             timeout=7200, name=f'test_av_audio.apu_channels_{i}of{n}')
+    def shard(ctx):
+        """Every song for 10 s with the APU channel monitor: a channel the engine voices must make sound on the
+        hardware, and the frequency the engine computes must be the one its note and octave give (checked
+        against an independent reimplementation of the frequency lookup)."""
+        from qa.av import apu
+        g = _quiet_room_game(ctx)
+        songs = _shard(music.song_ids().items(), i, n)
+        frames = int(os.environ.get('QA_APU_FRAMES', '600'))
+        bad = {}
+        checked = 0
+        for name, sid in songs:
+            try:
+                music.play(g, sid)
+            except RuntimeError as e:
+                ctx.expect(False, f'{name}: {e}')
+                continue
+            g.tick(20)
+            m = apu.ApuMonitor(g)
+            g.tick(frames)
+            m.detach()
+            if sum(m.voiced) >= 45:
+                checked += 1
+            for kind, ch, detail in m.findings():
+                bad.setdefault(kind, []).append(f'{name} ch{ch}: {detail}')
+                ctx.av.append(dict(kind=kind, detail=f'{name}: {detail}', where=name, sig=f'{kind}-{name}-{ch}', count=1, artifacts={}, context=m.summary(), frame=0))
+        ctx.note(f'{checked} of {len(songs)} songs voiced a channel for 45+ frames and were checked')
+        for kind, items in bad.items():
+            ctx.expect(False, f'{kind}: {len(items)} cases, e.g. {items[0]}')
+        ctx.expect(checked > 0, 'no song was checked: the monitor saw no voiced channel (vacuous run)')
+    return shard
+
+
+for _i in range(4):
+    _make_apu(_i, 4)
 
 
 @qa_test(suites=('av', 'hardware', 'full'), covers=('av.audio_cross', 'av.models'), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),

@@ -80,22 +80,26 @@ def build(stage_name, rom=None, rebuild=False):
     stage = BY_NAME[stage_name]
     d = cache_dir(rom)
     path = os.path.join(d, stage_name + '.state')
-    if os.path.exists(path) and not rebuild:
+    meta = path[:-6] + '.json'
+    if os.path.exists(path) and os.path.exists(meta) and not rebuild:
         return path
-    g = Game(rom=rom, workdir=os.path.join(d, 'build-' + stage_name))
-    F.new_game_to_bedroom(g)
-    done = apply_stage(g, stage)
-    gr, nr = map_ids(stage[4])
-    from qa.tests.test_map_smoke import pick_tile        # a walkable tile from the map's own collision data
-    F.teleport(g, gr, nr, 2, 2, settle=60)
-    tile = pick_tile(g) or (2, 2)
-    F.teleport(g, gr, nr, tile[0], tile[1], settle=90)
-    g.tick(60)
-    g.dump_state(path)
-    json.dump({'stage': stage_name, 'where': F.where(g), 'provenance': 'assisted',
-               'real': 'New Game to the bedroom by button input', 'injected': done + [f'warp to {stage[4]}'],
-               'rom_sha1': sha1(rom or default_rom())}, open(path[:-6] + '.json', 'w'), indent=1)
-    g.close()
+    with saves.build_lock(path):
+        if os.path.exists(path) and os.path.exists(meta) and not rebuild:
+            return path
+        g = Game(rom=rom, workdir=os.path.join(d, 'build-' + stage_name))
+        F.new_game_to_bedroom(g)
+        done = apply_stage(g, stage)
+        gr, nr = map_ids(stage[4])
+        from qa.tests.test_map_smoke import pick_tile        # a walkable tile from the map's own collision data
+        F.teleport(g, gr, nr, 2, 2, settle=60)
+        tile = pick_tile(g) or (2, 2)
+        F.teleport(g, gr, nr, tile[0], tile[1], settle=90)
+        g.tick(60)
+        g.dump_state(path)
+        json.dump({'stage': stage_name, 'where': F.where(g), 'provenance': 'assisted',
+                   'real': 'New Game to the bedroom by button input', 'injected': done + [f'warp to {stage[4]}'],
+                   'rom_sha1': sha1(rom or default_rom())}, open(meta, 'w'), indent=1)
+        g.close()
     return path
 
 

@@ -128,9 +128,11 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None):
     from .nav import Softlock
     g = nav.g
     rng = rng or random.Random(0)
+    from .oracles import EnemyPicWatch
     ev = _events(nav)
-    start = g.frame
+    pic = EnemyPicWatch(g)
     nav.battles += 1
+    start = g.frame
     first = True
     next_check = g.frame + 30
     while g.in_battle():
@@ -162,6 +164,10 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None):
                 nav.press('b', 4, 18)
         elif ev['battle_menu']:
             ev['battle_menu'] = 0
+            g.tick(6)
+            prob = pic.at_menu()
+            if prob:
+                raise AssertionError(prob)
             used = False
             if first:
                 first = False

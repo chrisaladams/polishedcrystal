@@ -70,3 +70,51 @@ def battle_problems(g):
 
 def all_problems(g):
     return party_problems(g) + battle_problems(g)
+
+
+class EnemyPicWatch:
+    """Generic graphics-integrity oracle for battles: the enemy's front-pic tiles (vTiles2 $00-$30)
+    must not change between two visits to the main battle menu while the same enemy is out.
+
+    It knows nothing about which screen or routine might overwrite them (the Rising Cup defect was
+    the party menu loading status icons over them); anything that does so between menus is caught.
+    The baseline is taken at the first main menu after the enemy appears and again whenever its
+    species, personality or form changes. Substitute/Transform-style effects can change the tiles
+    legitimately and are skipped (see `volatile`)."""
+
+    def __init__(self, g):
+        self.g = g
+        self.key = None
+        self.base = None
+        self.checks = 0
+
+    def _hash(self):
+        import hashlib
+        g = self.g
+        base = g.sym['vTiles2'][1] - 0x8000
+        return hashlib.sha1(bytes(g.vram(0)[base:base + 0x31 * 16])).hexdigest()
+
+    def volatile(self):
+        g = self.g
+        # enemy Transform / Substitute / Minimize-style states redraw the pic on purpose
+        from .consts import C
+        sub2, sub4 = g.rd('wEnemySubStatus2'), g.rd('wEnemySubStatus4')
+        return bool(sub2 >> C['SUBSTATUS_TRANSFORMED'] & 1) or bool(sub4 >> C['SUBSTATUS_SUBSTITUTE'] & 1)
+
+    def at_menu(self):
+        """Call when the main battle menu is up. Returns a problem string or None."""
+        g = self.g
+        key = (g.rd('wEnemyMonSpecies'), g.rd('wEnemyMonPersonality'),
+               g.rd('wEnemyMonPersonality', 1), g.rd('wEnemyMonForm') if 'wEnemyMonForm' in g.sym else 0)
+        h = self._hash()
+        if key != self.key:
+            self.key, self.base = key, h
+            return None
+        if self.volatile():
+            self.base = h
+            return None
+        self.checks += 1
+        if h != self.base:
+            self.base = h
+            return 'enemy pic tiles changed between battle menus (species %d)' % key[0]
+        return None

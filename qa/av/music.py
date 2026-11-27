@@ -55,9 +55,10 @@ def play(g, song):
     g.tick(12)
     g.call('PlayMusic', de=song)
     g.tick(2)
-    loaded = g.rd('wChannel1MusicID') | g.rd('wChannel1MusicID', 1) << 8
-    if loaded != song:
-        raise RuntimeError(f'asked for song {song}, the engine loaded {loaded}')
+    # a song need not use channel 1: any channel carrying its id proves it was loaded
+    ids = [g.rd(f'wChannel{ch}MusicID') | g.rd(f'wChannel{ch}MusicID', 1) << 8 for ch in CHANNELS]
+    if song not in ids:
+        raise RuntimeError(f'asked for song {song}, the engine loaded {ids}')
 
 
 def trace(g, frames):
@@ -128,7 +129,11 @@ def analyse(states, min_cycles=2):
         ratio = hi / lo
         compatible = ratio < 1.02 or all(abs(round(f / lo) * lo - f) <= 0.02 * f for f in live)
         if not compatible:
-            return dict(kind='desync', period_frames=None, frames=n, channel_frames=frames_per)
+            # Every channel is periodic on its own but the lengths do not divide each other. Authored
+            # songs do this on purpose (e.g. a short drum loop under a long melody); a defect would
+            # instead change a length between builds, which the cross-build fingerprint catches.
+            return dict(kind='independent', period_frames=hi, frames=n, channel_frames=frames_per,
+                        note='channels loop on their own periods (authored unless a build comparison says otherwise)')
         return dict(kind='loops', period_frames=hi, frames=n, channel_frames=frames_per,
                     note='channels loop individually with compatible lengths')
     return dict(kind='unbounded', period_frames=None, frames=n, channel_frames=frames_per)
@@ -151,11 +156,10 @@ def validate_song(g, song, chunk=1800, max_frames=21600):
             if confirmed and abs(confirmed['period_frames'] - r['period_frames']) <= max(2, 0.02 * r['period_frames']):
                 return r
             confirmed = r
-        elif r['kind'] == 'desync':
-            if confirmed is not None:
-                confirmed = None
-        if r['kind'] == 'desync' and len(states) >= max_frames // 2:
-            return r
+        elif r['kind'] == 'independent':
+            if confirmed and confirmed.get('channel_frames') == r['channel_frames']:
+                return r
+            confirmed = r
     r = analyse(states)
     r['note'] = 'no loop or end within %d frames (%.0f s)' % (len(states), len(states) / 60)
     return r

@@ -5,6 +5,7 @@ Every test that finds something suspicious adds a record to ctx.av; `python3 -m 
 turns those into a classified review report. References are never approved by tests."""
 import json
 import os
+import re
 import zlib
 
 import numpy as np
@@ -121,13 +122,14 @@ def reference_frames(ctx):
         ctx.skip('no approved reference for: ' + ', '.join(missing))
 
 
-def _blank_by_design(const):
-    """True if the map places SPRITE_BLANK_FRUIT objects: their standing frame is four blank tiles in the
-    ROM graphic (gfx/sprites/blank_fruit.2bpp tiles 0-3), used as invisible door triggers, so a blank
-    visible OAM entry on such a map is not a defect."""
-    from qa.gb import mapdata
-    path = mapdata.parse_map(mapdata.attributes()[const]['label'])['path']
-    return bool(path) and 'SPRITE_BLANK_FRUIT' in open(path, encoding='utf-8').read()
+# (map, finding kind) -> why it is expected. Each entry names one map and one kind of finding, with the evidence;
+# nothing here exempts a map from the other checks.
+STATE_QUIRKS = {
+    ('CINNABAR_LAB', 'object-not-drawn'): 'four optional avatar objects (Chris/Kris/Crys/Beta) stacked at (15,8) are unhidden because the test warp '
+                                          'skips the story that hides them; with all 13 object structs live the sprites need more than the 40 OAM '
+                                          'entries and the engine drops the last drawn, including the player. With the four event flags set every '
+                                          'object is drawn (checked). Not reachable in normal play: see docs/issue-ledger.md L33.',
+}
 
 
 @qa_test(suites=('av', 'hardware', 'full'), covers=('av.oam', 'av.vram'), backends=('pyboy',), provenance='injected warp into each map; the player stands still',
@@ -140,7 +142,7 @@ def oam_vram_integrity_maps(ctx):
     from qa.tests.test_map_smoke import build, pick_tile
     g = ctx.boot('smoke_base', build)
     g.save_point()
-    problems = {}
+    problems, expected = {}, {}
     n = 0
     consts = sorted(mapdata.attributes())
     if os.environ.get('QA_MAP_LIMIT'):
@@ -156,20 +158,29 @@ def oam_vram_integrity_maps(ctx):
             F.teleport(g, sg, sn, t[0], t[1], settle=90)
             g.tick(40)
             n += 1
-            for msg in vram.oam_problems(g) + vram.tilemap_problems(g):
-                key = msg.split(' visible')[0].split(':')[0] if 'blank' not in msg else 'visible sprite using a blank tile'
-                if 'blank' in msg and _blank_by_design(const):
-                    key = 'visible sprite using a blank tile (SPRITE_BLANK_FRUIT: intentionally blank door-trigger object)'
+            for f in vram.sprite_findings(g):
+                quirk = STATE_QUIRKS.get((const, f['kind']))
+                if f['expected'] or quirk:
+                    expected.setdefault(f['why'] or quirk, []).append(const)
+                else:
+                    problems.setdefault(f['kind'] + ': ' + re.sub(r'\d+', 'N', f['msg']), []).append(const)
+            for msg in vram.tilemap_problems(g):
                 if 'unused bit 4' in msg:
-                    key = 'BG attribute bit 4 set (unused on the CGB, ignored by the hardware)'
-                problems.setdefault(key, []).append(const)
+                    expected.setdefault('BG attribute bit 4 set (unused on the CGB, ignored by the hardware)', []).append(const)
+                else:
+                    problems.setdefault(msg.split(':')[0] + ': ' + msg.split(': ', 1)[-1].split(' ')[-1], []).append(const)
         except Exception as e:
             problems.setdefault('harness error', []).append(f'{const}: {e}')
     ctx.note(f'{n} maps checked')
+    for k, maps in expected.items():
+        ctx.note(f'expected, on {len(maps)} maps: {k}')
+        ctx.av.append(dict(kind='SPRITE_EXPECTED', detail=f'{k} on {len(maps)} maps', where=','.join(maps[:3]), sig='oamx-%08x' % zlib.crc32(k.encode()),
+                           count=len(maps), artifacts={}, context={'maps': maps[:20]}, frame=0))
     for k, maps in problems.items():
         ctx.note(f'{k}: {len(maps)} maps, first {maps[:5]}')
         ctx.av.append(dict(kind='SPRITE_INTEGRITY', detail=f'{k} on {len(maps)} maps', where=','.join(maps[:3]), sig='oamv-%08x' % zlib.crc32(k.encode()),
                            count=len(maps), artifacts={}, context={'maps': maps[:20]}, frame=0))
+    ctx.expect(not problems, 'sprite / tilemap integrity: ' + '; '.join(f'{k} ({len(m)} maps, e.g. {m[0]})' for k, m in problems.items()))
 
 
 @qa_test(suites=('av', 'hardware', 'full'), covers=('hw.vram_access', 'av.ppu_timing', 'av.models'), backends=('sameboy',), models=('CGB-0', 'CGB-E', 'AGB'),

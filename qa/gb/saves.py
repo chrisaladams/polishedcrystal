@@ -61,21 +61,40 @@ def fixture_meta(path):
     return json.load(open(path[:-4] + '.json'))
 
 
+import contextlib
+
+
+@contextlib.contextmanager
+def build_lock(path):
+    """Exclusive lock while a cached fixture is built, so parallel workers do not build it at once
+    (they would share the work directory and corrupt each other's runs)."""
+    import fcntl
+    with open(path + '.lock', 'w') as lf:
+        fcntl.flock(lf, fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lf, fcntl.LOCK_UN)
+
+
 def fixture(name, builder, rom=None, rebuild=False):
     """Path to the cached save `name`; builder(game) -> None builds it on a Game
     that has just finished a New Game (button input) and stands in the bedroom."""
     path = os.path.join(cache_dir(rom), name + '.sav')
-    if os.path.exists(path) and not rebuild:
+    if os.path.exists(path) and os.path.exists(path[:-4] + '.json') and not rebuild:
         return path
-    g = Game(rom=rom, workdir=os.path.join(cache_dir(rom), 'build-' + name))
-    F.new_game_to_bedroom(g)
-    builder(g)
-    sram = save_game(g)
-    with open(path, 'wb') as f:
-        f.write(sram)
-    import json
-    with open(path[:-4] + '.json', 'w') as f:
-        json.dump({'where': F.where(g), 'rom_sha1': sha1(rom or default_rom()),
-                   'provenance': 'new game by button input, then injected: ' + (builder.__doc__ or builder.__name__)}, f)
-    g.close()
+    with build_lock(path):
+        if os.path.exists(path) and os.path.exists(path[:-4] + '.json') and not rebuild:
+            return path                                  # another worker built it while we waited
+        g = Game(rom=rom, workdir=os.path.join(cache_dir(rom), 'build-' + name))
+        F.new_game_to_bedroom(g)
+        builder(g)
+        sram = save_game(g)
+        import json
+        with open(path, 'wb') as f:
+            f.write(sram)
+        with open(path[:-4] + '.json', 'w') as f:      # written last: its presence marks a complete fixture
+            json.dump({'where': F.where(g), 'rom_sha1': sha1(rom or default_rom()),
+                       'provenance': 'new game by button input, then injected: ' + (builder.__doc__ or builder.__name__)}, f)
+        g.close()
     return path
