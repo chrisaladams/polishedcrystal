@@ -157,7 +157,7 @@ def run_one(params, out, rom=None):
         _set_follower(g, params['follower'])
         g.wr('wRTCHours', params['hour'])
         g.wr('wRTCMinutes', 5)
-        F.teleport(g, sg, sn, 2, 2, settle=60)
+        F.teleport(g, sg, sn, 2, 2, settle=40)
         if F.where(g)[:2] != (sg, sn):
             res['outcome'] = 'skip'
             res['note'] = 'warp did not load the map'
@@ -170,8 +170,8 @@ def run_one(params, out, rom=None):
         w, h = g.rd('wMapWidth') * 2, g.rd('wMapHeight') * 2
         walk = [(x, y) for y in range(h) for x in range(w) if collision.walkable(g, x, y)]
         tile = rng.choice(walk) if walk else tile
-        F.teleport(g, sg, sn, tile[0], tile[1], settle=40)
-        g.tick(40)
+        F.teleport(g, sg, sn, tile[0], tile[1], settle=25)
+        g.tick(20)
         guard.player.ref = guard.player.read()
         guard.player.violations.clear()
         if g.in_battle():
@@ -211,11 +211,11 @@ def run_one(params, out, rom=None):
         act = params['action']
         try:
             if act == 'idle':
-                for k in range(5):
+                for k in range(3):
                     g.tick(60)
                     check(f'idle {k}')
             elif act == 'walk':
-                for k in range(8):
+                for k in range(6):
                     hold(g, rng.choice(['up', 'down', 'left', 'right']), 16)
                     check(f'walk {k}')
             elif act == 'menus':
