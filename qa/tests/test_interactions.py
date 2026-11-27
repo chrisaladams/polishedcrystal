@@ -29,6 +29,13 @@ def run(ctx, state, shard, shards):
     unt = s['untested']
     if unt:
         ctx.note('untested (%d): ' % len(unt) + '; '.join('%s %s: %s' % (m, t, why) for m, t, why in unt[:12]))
+    exp = s.get('expected', [])
+    if exp:
+        by_map = {}
+        for m, t, why in exp:
+            by_map.setdefault(m, [0, why])[0] += 1
+        ctx.note('expected stalls, not failures (%d in %d maps): ' % (len(exp), len(by_map)) +
+                 '; '.join('%s x%d: %s' % (m, n, w[:70]) for m, (n, w) in sorted(by_map.items())[:8]))
     for sig, e in sorted(s['signatures'].items(), key=lambda kv: -kv[1]['count']):
         d = os.path.join(ctx.out, 'failures', sig)
         if os.path.isdir(d):

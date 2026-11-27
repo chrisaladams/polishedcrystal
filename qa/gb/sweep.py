@@ -21,11 +21,11 @@ import os
 import re
 import sys
 
-from . import collision, fixtures as F, mapdata
+from . import collision, fixtures as F, mapdata, world
 from .consts import C, map_ids
 from .emu import ROOT
 from .guards import OverworldGuard, PlayerStructGuard
-from .nav import DIRS, Navigator
+from .nav import DIRS, Navigator, Softlock
 
 FACE = {'down': 0, 'up': 4, 'left': 8, 'right': 12}
 N_FLAG_BYTES = 288
@@ -197,7 +197,10 @@ def advance(nav, budget=ADVANCE_BUDGET, answer='a'):
         if g.frame - start > budget:
             return 'long' if g.frame - changed_at < 300 else 'softlock'
         if g.in_battle():
-            nav.play_battle()
+            try:
+                nav.play_battle()
+            except Softlock:
+                return 'battle-stall'
             changed_at = g.frame
             last, same = None, 0
             continue
@@ -231,6 +234,7 @@ class Result:
         self.outcomes = {'ok': 0, 'long': 0, 'softlock': 0, 'entry': 0}
         self.problems = []              # (signature, kind, routine, detail, map, target)
         self.untested = []              # (map, target key, why)
+        self.expected = []              # (map, target key, reason): stalls that need link/challenge state
 
 
 def signature(kind, routine, const):
@@ -238,8 +242,19 @@ def signature(kind, routine, const):
     return hashlib.sha1(f'{kind}|{routine}|{const}'.encode()).hexdigest()[:12]
 
 
+def expected_stall(const):
+    """Maps whose scripts legitimately wait on state a sweep cannot provide. Documented, never hidden:
+    the sweep lists every one of these in its results as 'expected' with the reason."""
+    if const in ('TRADE_CENTER', 'COLOSSEUM', 'TIME_CAPSULE', 'MOBILE_TRADE_ROOM', 'MOBILE_BATTLE_ROOM'):
+        return 'needs a link partner: the room\'s script calls the link routines (Special_TradeCenter etc.) and waits for a cable'
+    if const.startswith(('BATTLE_TOWER', 'BATTLE_FACTORY')):
+        return 'needs an active Battle Tower/Factory challenge (the ROM has a dedicated crash code, ERR_BT_STATE, for an invalid state)'
+    return None
+
+
 class Sweeper:
     def __init__(self, g, out, backend, model, state, seed=1):
+        out = os.path.abspath(out)
         self.g, self.out, self.backend, self.model, self.state, self.seed = g, out, backend, model, state, seed
         self.nav = Navigator(g, seed=seed)
         self.oracles = Oracles(g, backend)
@@ -250,6 +265,89 @@ class Sweeper:
     def prepare(self):
         apply_state(self.g, self.state)
         self.base = self.g.snap()
+
+    def inside_tile(self):
+        g = self.g
+        w, h = g.rd('wMapWidth') * 2, g.rd('wMapHeight') * 2
+        best, tile = 1e9, None
+        for y in range(h):
+            for x in range(w):
+                if collision.walkable(g, x, y):
+                    d = abs(x - w // 2) + abs(y - h // 2)
+                    if d < best:
+                        best, tile = d, (x, y)
+        return tile
+
+    def real_arrival(self, const):
+        """Walk into `const` for real (controller input through a door or across a connection) from
+        a neighbouring map. A teleport enters a map by a different path than a door does, so entry
+        scenes can behave differently (a callback that shows text while the LCD is still off hangs only
+        under the injected entry). Returns (outcome, snapshot): outcome is ok/long/softlock/battle-stall,
+        'ejected' (the entry scene sends the player away) or 'none' (no way in on foot)."""
+        g, nav = self.g, self.nav
+        target = map_ids(const)
+        for src, edge in world.incoming(const)[:4]:
+            try:
+                s2 = map_ids(src)
+            except KeyError:
+                continue
+            g.unsnap(self.base)
+            self.oracles.start()
+            F.teleport(g, s2[0], s2[1], 2, 2, settle=60)
+            if F.where(g)[:2] != s2 or advance(nav, 3600) != 'ok' or F.where(g)[:2] != s2:
+                continue
+            tile = self.inside_tile()
+            if tile is None:
+                continue
+            F.teleport(g, s2[0], s2[1], tile[0], tile[1], settle=60)
+            if advance(nav, 3600) != 'ok' or F.where(g)[:2] != s2:
+                continue
+            nav.blocked_edges.clear()
+            try:
+                got = nav.take_edge(edge)
+            except Exception:
+                got = None
+            if got != const:
+                continue
+            out = advance(nav, 3600)
+            if F.where(g)[:2] != target:
+                return 'ejected', None
+            return out, (g.snap() if out in ('ok', 'long') else None)
+        warps = world.warps(const)
+        if warps:                               # no way in on foot: arrive on the map's own warp tile (weaker evidence)
+            g.unsnap(self.base)
+            self.oracles.start()
+            F.teleport(g, target[0], target[1], warps[0][0], warps[0][1], settle=60)
+            out = advance(nav, 3600)
+            if F.where(g)[:2] != target:
+                return 'ejected', None
+            if out in ('ok', 'long'):
+                return out, g.snap()
+        return 'none', None
+
+    def confirm_entry(self, res, const, tile, entry):
+        """The entry scene failed with the player injected at `tile`. Repeat it the way the game does
+        (a real walk in). Returns (verdict, snapshot): 'artifact' (real entry works; snapshot is the
+        state after it), 'real' (fails for real: record it), or 'other' (already filed as untested or expected)."""
+        why = expected_stall(const)
+        out, snap = self.real_arrival(const)
+        key = 'entry@%d,%d' % tile
+        if out in ('ok', 'long'):
+            res.untested.append((const, key, 'entry scene fails only with the injected entry (%s at %s); walking in through a door '
+                                 'works: injected-entry artifact, explored from the real arrival instead' % (entry, tile)))
+            return 'artifact', snap
+        if out == 'ejected':
+            res.untested.append((const, key, 'the entry scene sends the player away in this flag state (arriving for real)'))
+            return 'other', None
+        if why:
+            res.expected.append((const, key, why))
+            return 'other', None
+        if out == 'none':
+            res.untested.append((const, key, 'entry scene fails when injected (%s) and the map has no door or connection to walk in by: '
+                                 'unconfirmed' % entry))
+            return 'other', None
+        res.untested.append((const, key, 'entry scene failed (%s) for real too (%s)' % (entry, out)))
+        return 'real', None
 
     # one map
     def sweep_map(self, const, max_targets=60):
@@ -266,25 +364,48 @@ class Sweeper:
         if F.where(g)[:2] != (sg, sn):
             res.untested.append((const, '-', 'warp did not load the map'))
             return res
-        if advance(nav, 2400) != 'ok':
+        e1 = advance(nav, 3600)
+        self.mode = 'teleport'
+        if e1 != "ok":
             res.outcomes['entry'] += 1
-        # a walkable tile to be "inside" the map, then the map-level snapshot
-        w, h = g.rd('wMapWidth') * 2, g.rd('wMapHeight') * 2
-        inside, best = None, 1e9
-        for y in range(h):
-            for x in range(w):
-                if collision.walkable(g, x, y):
-                    d = abs(x - w // 2) + abs(y - h // 2)
-                    if d < best:
-                        best, inside = d, (x, y)
-        if inside is None:
-            res.untested.append((const, '-', 'no walkable tile'))
+        if F.where(g)[:2] != (sg, sn) or e1 in ('softlock', 'battle-stall'):
+            # the injected entry went wrong (stalled, or a scene such as a gym's "away" warp used an unset
+            # warp destination and left us on no map): judge the map by a real walk in instead
+            verdict, snap = self.confirm_entry(res, const, (2, 2), e1 if e1 != 'ok' else 'ejected')
+            if verdict == 'real':
+                self.record(res, const, Target('entry', 2, 2), e1, 'entry',
+                            'entry at (2, 2): %s, and again when walking in through a door; map %s' % (e1, F.where(g)), None)
+            if verdict != 'artifact':
+                return res
+            g.unsnap(snap)
+            self.mode = 'walk'
+            inside = F.where(g)[2:]
+            e0 = 'ok'
+        else:
+            # a walkable tile to be "inside" the map, then the map-level snapshot
+            inside = self.inside_tile()
+            if inside is None:
+                res.untested.append((const, '-', 'no walkable tile'))
+                return res
+            F.teleport(g, sg, sn, inside[0], inside[1], settle=60)
+            e0 = advance(nav, 3600)
+            if e0 != "ok":
+                res.outcomes['entry'] += 1
+            if e0 in ('softlock', 'battle-stall') or F.where(g)[:2] != (sg, sn):
+                verdict, snap = self.confirm_entry(res, const, inside, e0 if e0 != 'ok' else 'ejected')
+                if verdict == 'real':
+                    self.record(res, const, Target('entry', inside[0], inside[1]), e0, 'entry',
+                                'entry at %s: %s, and again when walking in through a door; map %s' % (inside, e0, F.where(g)), None)
+                if verdict != 'artifact':
+                    return res
+                g.unsnap(snap)                # continue from the real arrival: targets are reached by walking
+                self.mode = 'walk'
+        if F.where(g)[:2] != (sg, sn):
+            res.untested.append((const, '-', 'the entry scene ejects the player to %s (the map cannot be explored in this flag state)' % (F.where(g)[:2],)))
             return res
-        F.teleport(g, sg, sn, inside[0], inside[1], settle=60)
-        if advance(nav, 2400) != 'ok':
-            res.outcomes['entry'] += 1
-        for kind, routine, detail in self.oracles.check():
-            self.record(res, const, Target('entry', inside[0], inside[1]), kind, routine, detail, None)
+        if self.mode == 'teleport':
+            for kind, routine, detail in self.oracles.check():
+                self.record(res, const, Target('entry', inside[0], inside[1]), kind, routine, detail, None)
         mapsnap = g.snap()
         targets = read_targets(g, const)[:max_targets]
         for t in targets:
@@ -298,6 +419,8 @@ class Sweeper:
         if not stands:
             res.untested.append((const, t.key(), 'no walkable adjacent tile'))
             return
+        if self.mode == 'walk':
+            return self.interact_walking(res, const, mapsnap, t, stands)
         tried = False
         for tile, d in stands[:2]:
             g.unsnap(mapsnap)
@@ -305,40 +428,81 @@ class Sweeper:
             F.teleport(g, sg, sn, tile[0], tile[1], settle=40)
             if F.where(g)[:2] != (sg, sn) or F.where(g)[2:] != tile:
                 continue
-            if advance(nav, 1200) != 'ok':
-                res.untested.append((const, t.key(), 'map-entry scene did not hand back control'))
+            entry = advance(nav, 3600)
+            if entry == 'ok' and F.where(g)[:2] != (sg, sn):
+                res.untested.append((const, t.key(), 'the entry scene ejects the player to %s' % (F.where(g)[:2],)))
                 return
-            pre = g.snap()
-            pre_frame = g.frame
-            log0 = len(nav.log)
-            self.oracles.start()
-            if t.kind == 'coord':
-                nav.hold(d, 16)
-                g.tick(4)
-            else:
-                if not collision.walkable(g, t.x, t.y):
-                    nav.face(d)
-                else:
-                    set_facing(g, d)
-                nav.press('a', 4, 20)
-            res.interactions += 1
-            res.by_kind[t.kind] = res.by_kind.get(t.kind, 0) + 1
-            outcome = advance(nav)
-            res.outcomes[outcome] = res.outcomes.get(outcome, 0) + 1
-            g.tick(30)
-            problems = self.oracles.check()
-            if outcome == 'softlock':
-                bank, pos = g.read(0xff89), g.read(0xff8a) | g.read(0xff8b) << 8
-                routine = sym_near(g, bank & 0x7f, pos)
-                problems.append(('softlock', routine, 'no control after %d frames, static screen; script %02x:%04x (%s), map %s' % (
-                    ADVANCE_BUDGET, bank & 0x7f, pos, routine, F.where(g))))
-            art = (pre, pre_frame, nav.log[log0:], g.frame - pre_frame, d, tile)
-            for kind, routine, detail in problems:
-                self.record(res, const, t, kind, routine, detail, art)
+            if entry != 'ok':
+                res.untested.append((const, t.key(), 'map-entry scene did not hand back control (%s)' % entry))
+                if entry in ('battle-stall', 'softlock'):
+                    verdict, _snap = self.confirm_entry(res, const, tile, entry)
+                    if verdict == 'real':
+                        self.record(res, const, Target('entry', tile[0], tile[1]), entry, 'entry',
+                                    'standing at %s: %s after entering the map, and again when walking in; map %s' % (
+                                        tile, entry, F.where(g)), None)
+                return
+            self.run_interaction(res, const, t, d, tile)
             tried = True
             break
         if not tried:
             res.untested.append((const, t.key(), 'could not place the player next to it'))
+
+    def interact_walking(self, res, const, mapsnap, t, stands):
+        """Reach the target by walking (real input) from the real arrival state."""
+        g, nav = self.g, self.nav
+        for tile, d in stands[:2]:
+            g.unsnap(mapsnap)
+            self.oracles.start()
+            try:
+                ok = nav.goto_tile({tile})
+            except Exception:
+                ok = False
+            if not ok or F.where(g)[2:] != tile or F.where(g)[:2] != map_ids(const):
+                continue
+            if not nav.ready() and advance(nav, 1200) != 'ok':
+                continue
+            self.run_interaction(res, const, t, d, tile)
+            return
+        res.untested.append((const, t.key(), 'could not walk next to it'))
+
+    def run_interaction(self, res, const, t, d, tile):
+        """The player stands at `tile` with control: face the target, press A (or step onto a trigger
+        tile), advance whatever follows, and judge the result."""
+        g, nav = self.g, self.nav
+        pre = g.snap()
+        pre_frame = g.frame
+        log0 = len(nav.log)
+        self.oracles.start()
+        if t.kind == 'coord':
+            nav.hold(d, 16)
+            g.tick(4)
+        else:
+            if not collision.walkable(g, t.x, t.y):
+                nav.face(d)
+            else:
+                set_facing(g, d)
+            nav.press('a', 4, 20)
+        res.interactions += 1
+        res.by_kind[t.kind] = res.by_kind.get(t.kind, 0) + 1
+        outcome = advance(nav)
+        g.tick(30)
+        problems = self.oracles.check()
+        why = expected_stall(const)
+        if why and (outcome in ('softlock', 'battle-stall') or problems):
+            res.expected.append((const, t.key(), why))
+            problems, outcome = [], 'expected'
+        res.outcomes[outcome] = res.outcomes.get(outcome, 0) + 1
+        if outcome == 'battle-stall':
+            problems.append(('battle-stall', 'battle', 'the battle did not end in 36000 frames of autoplay (the policy '
+                             'only fights; a stalemate or a stuck menu): map %s, %s' % (const, F.where(g))))
+        if outcome == 'softlock':
+            bank, pos = g.read(0xff89), g.read(0xff8a) | g.read(0xff8b) << 8
+            routine = sym_near(g, bank & 0x7f, pos)
+            problems.append(('softlock', routine, 'no control after %d frames, static screen; script %02x:%04x (%s), map %s' % (
+                ADVANCE_BUDGET, bank & 0x7f, pos, routine, F.where(g))))
+        art = (pre, pre_frame, nav.log[log0:], g.frame - pre_frame, d, tile)
+        for kind, routine, detail in problems:
+            self.record(res, const, t, kind, routine, detail, art)
 
     def record(self, res, const, t, kind, routine, detail, art):
         sig = signature(kind, routine, const)
@@ -390,7 +554,7 @@ def run_shard(g, out, backend, model, state, shard, shards, seed=1, limit=None, 
             r = sw.sweep_map(const)
             rec = dict(map=const, interactions=r.interactions, by_kind=r.by_kind, outcomes=r.outcomes,
                        problems=[dict(sig=p[0], kind=p[1], routine=p[2], detail=p[3][:400], target=p[5]) for p in r.problems],
-                       untested=[list(u) for u in r.untested])
+                       untested=[list(u) for u in r.untested], expected=[list(u) for u in r.expected])
             f.write(json.dumps(rec) + '\n')
             f.flush()
             done[const] = rec
@@ -398,7 +562,7 @@ def run_shard(g, out, backend, model, state, shard, shards, seed=1, limit=None, 
 
 
 def summarize(recs, maps):
-    s = dict(maps_total=len(maps), maps_done=len(recs), interactions=0, by_kind={}, outcomes={}, signatures={}, untested=[])
+    s = dict(maps_total=len(maps), maps_done=len(recs), interactions=0, by_kind={}, outcomes={}, signatures={}, untested=[], expected=[])
     for r in recs:
         s['interactions'] += r['interactions']
         for k, v in r['by_kind'].items():
@@ -411,6 +575,7 @@ def summarize(recs, maps):
             if len(e['targets']) < 5:
                 e['targets'].append('%s %s' % (r['map'], p['target']))
         s['untested'] += [(r['map'],) + tuple(u[1:]) for u in r['untested']]
+        s['expected'] += [(r['map'],) + tuple(u[1:]) for u in r.get('expected', [])]
     return s
 
 

@@ -134,19 +134,29 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None, on_first_m
     nav.battles += 1
     start = g.frame
     first = True
+    after_move, rot, escalated = False, 0, False
     next_check = g.frame + 30
     while g.in_battle():
         if g.frame - start > max_frames:
             raise Softlock('battle did not end in %d frames at %s' % (max_frames, nav.here()))
+        if policy == 'fight' and not escalated and g.frame - start > 4000:
+            # a battle that cannot be won by fighting (a ghost that cannot be hit, "too scared to move"):
+            # take the way out a player would, RUN, at the next battle menu
+            escalated, policy, first = True, 'run', True
         if check and g.frame >= next_check:
             check()
             next_check = g.frame + 30
         if ev['move_screen']:
             ev['move_screen'] = 0
+            rot = rot + 1 if after_move else 0     # the game gave the menu back: that move was refused (Disable, Taunt...)
+            after_move = True
             idx = best_move(g)
+            ok = [i for i in range(4) if g.rd('wBattleMonMoves', i) and g.rd('wBattleMonPP', i) & 0x3f]
             if policy == 'random':
-                ok = [i for i in range(4) if g.rd('wBattleMonMoves', i) and g.rd('wBattleMonPP', i) & 0x3f]
                 idx = rng.choice(ok) if ok else idx
+            elif rot and ok:
+                ranked = sorted(ok, key=lambda i: -_move_power(g, g.rd('wBattleMonMoves', i)))
+                idx = ranked[rot % len(ranked)]
             _cursor_to(nav, idx)
             nav.press('a', 4, 20)
         elif ev['forced_switch']:
@@ -168,6 +178,7 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None, on_first_m
             prob = pic.at_menu()
             if prob:
                 raise AssertionError(prob)
+            after_move = False
             used = False
             if first:
                 first = False

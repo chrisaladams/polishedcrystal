@@ -50,6 +50,17 @@ def edges(const):
     return out
 
 
+def incoming(const):
+    """[(source map, edge)] for every warp or connection that leads into `const`."""
+    if 'incoming' not in _cache:
+        table = {}
+        for src in _consts():
+            for e in edges(src):
+                table.setdefault(e[2], []).append((src, e))
+        _cache['incoming'] = table
+    return _cache['incoming'].get(const, [])
+
+
 def route(src, dst, blocked=frozenset()):
     """Shortest list of edges from map src to map dst, avoiding blocked (src, edge-index)."""
     if src == dst:
