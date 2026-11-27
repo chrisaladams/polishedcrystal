@@ -68,7 +68,12 @@ def _inject_wild(g, p):
     g.wr('wWildMonForm', 0)
     g.wr('wCurPartyLevel', p['level'])
     bank, addr = g.sym['WildBattleScript']
-    g.call('CallScript', a=bank, hl=addr)
+    # what LoadMemScript does, written directly (no routine call: the call mechanism is the part PyBoy
+    # occasionally wedges on): the overworld's PlayerEvents runs the queued script on its next pass
+    g.wr('wMapReentryScriptQueueFlag', 1)
+    g.wr('wMapReentryScriptBank', bank)
+    g.wr('wMapReentryScriptAddress', addr & 0xff)
+    g.wr('wMapReentryScriptAddress', addr >> 8, 1)
     for _ in range(900):
         g.tick(1)
         if g.in_battle():
@@ -185,8 +190,6 @@ def run_one(params, out, rom=None, model='CGB-E'):
                 if rep:
                     nav.settle()
                     _prepare_lead(g, dict(params, status=0, lead_hp=1.0))
-                    if sb:
-                        raise Softlock('repeat battles need routine calls, unavailable under the SameBoy execution guard')
                     if not _inject_wild(g, dict(params, species=1 + (params['species'] + rep * 37) % 251)):
                         res['outcome'] = 'no-battle'
                         break

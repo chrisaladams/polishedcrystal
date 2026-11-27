@@ -61,6 +61,8 @@ def battle_problems(g):
         if lvl > C['MAX_LEVEL']:
             out.append(f'{who} mon level {lvl}')
     for who in ('Player', 'Enemy'):
+        if not any(g.rd(f'w{who}StatLevels', k) for k in range(8)):
+            continue                      # all zero: the battle's stat stages are not initialised yet (battle intro)
         for k in range(8):
             v = g.rd(f'w{who}StatLevels', k)
             if not 1 <= v <= 13:
