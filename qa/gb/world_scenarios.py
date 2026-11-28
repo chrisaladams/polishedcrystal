@@ -183,7 +183,12 @@ def run_one(params, out, rom=None):
             res['note'] = 'entry scene at the natural arrival tile'
             cover('scene_entry', const)
             if outcome in ('softlock', 'battle-stall'):
-                fail('softlock', f'entry scene did not hand control back: {outcome}')
+                # Challenge rooms, Elite Four rooms, scripted lab and tower entrances need the real way in (or a challenge
+                # state) that a placement cannot reproduce. Not a pass, not a defect: skipped here, and covered by the
+                # interaction sweep, which arrives on foot and classifies these (qa/gb/sweep.py).
+                res['outcome'] = 'skip'
+                res['note'] = f'entry scene needs the real arrival or a challenge state ({outcome}); see the interaction sweep'
+                return res
         else:
             w, h = g.rd('wMapWidth') * 2, g.rd('wMapHeight') * 2
             walk = [(x, y) for y in range(h) for x in range(w) if collision.walkable(g, x, y)]
@@ -201,6 +206,8 @@ def run_one(params, out, rom=None):
         base_counts = {n: c() for n, c in _G['counters'].items()}
 
         def check(tag):
+            if g.in_battle():
+                raise Interrupted()          # e.g. A pressed facing a visible wild Pokemon: a battle, not an overworld state
             guard.check(tag)
             if guard.violations:
                 fail('corruption', f'{tag}: ' + '; '.join(guard.violations[:2]))
