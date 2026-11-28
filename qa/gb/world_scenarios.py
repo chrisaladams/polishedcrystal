@@ -129,7 +129,7 @@ def run_one(params, out, rom=None):
     from qa.tests.test_map_smoke import STATE_DEPENDENT, pick_tile
     from qa.tests.test_av import STATE_QUIRKS
     res = dict(params=params, outcome='ok', failures=[], covered={}, frames=0)
-    g = None
+    g = nav = None
     t0 = time.time()
 
     def fail(kind, detail):
@@ -167,10 +167,28 @@ def run_one(params, out, rom=None):
             res['outcome'] = 'skip'
             res['note'] = 'no walkable tile'
             return res
-        w, h = g.rd('wMapWidth') * 2, g.rd('wMapHeight') * 2
-        walk = [(x, y) for y in range(h) for x in range(w) if collision.walkable(g, x, y)]
-        tile = rng.choice(walk) if walk else tile
-        F.teleport(g, sg, sn, tile[0], tile[1], settle=25)
+        from qa.gb.nav import Navigator
+        from qa.tests.test_boundaries import inbound_arrivals
+        nav = Navigator(g, seed=params['rng_seed'])
+        scripted = bool(g.rd('wScriptMode') or g.rd('wScriptRunning'))
+        if scripted:
+            # An entry scene is running. Scenes assume the player came through a door (e.g. `warpcheck` expects a warp
+            # tile under the player), so an arbitrary tile would test the harness, not the game: stand where a warp puts
+            # the player, as a real arrival does, and let the scene play out with real input.
+            arr = sorted(inbound_arrivals(const))
+            if arr:
+                tile = arr[rng.randrange(len(arr))]
+                F.teleport(g, sg, sn, tile[0], tile[1], settle=25)
+            outcome = sweep.advance(nav, 2400)
+            res['note'] = 'entry scene at the natural arrival tile'
+            cover('scene_entry', const)
+            if outcome in ('softlock', 'battle-stall'):
+                fail('softlock', f'entry scene did not hand control back: {outcome}')
+        else:
+            w, h = g.rd('wMapWidth') * 2, g.rd('wMapHeight') * 2
+            walk = [(x, y) for y in range(h) for x in range(w) if collision.walkable(g, x, y)]
+            tile = rng.choice(walk) if walk else tile
+            F.teleport(g, sg, sn, tile[0], tile[1], settle=25)
         g.tick(20)
         guard.player.ref = guard.player.read()
         guard.player.violations.clear()
@@ -279,8 +297,12 @@ def run_one(params, out, rom=None):
             res['outcome'] = 'interrupted' if res['outcome'] == 'ok' else res['outcome']
         # idle in a clean state after the action: the script engine must have returned control
         g.tick(30)
-        if g.rd('wScriptMode') not in (0,) and not g.in_battle() and act in ('idle', 'walk'):
-            fail('stuck', f'script mode {g.rd("wScriptMode")} after a plain {act}')
+        if g.rd('wScriptMode') != 0 and not g.in_battle():
+            # a scene or trainer dialogue may legitimately be running: advance it with real input; only a script that
+            # never hands control back is a softlock
+            outcome = sweep.advance(nav, 2400)
+            if outcome in ('softlock', 'battle-stall'):
+                fail('softlock', f'a script was running after the {act} and never returned control: {outcome}')
         res['frames'] = g.frame
     except Exception as e:
         import traceback
@@ -336,6 +358,7 @@ def main(argv=None):
     ap.add_argument('--out', required=True)
     ap.add_argument('--rom', default=None)
     ap.add_argument('--timeout', type=int, default=240)
+    ap.add_argument('--indices', default=None, help='file with one scenario index per line (replay a chosen set)')
     a = ap.parse_args(argv)
     os.makedirs(a.out, exist_ok=True)
     log_path = os.path.join(a.out, 'results.jsonl')
@@ -346,7 +369,8 @@ def main(argv=None):
                 done.add(json.loads(line)['params']['index'])
             except Exception:
                 pass
-    jobs = [(make_params(a.seed, i), os.path.join(a.out, 'art'), a.rom) for i in range(a.start, a.start + a.count) if i not in done]
+    idx = [int(x) for x in open(a.indices).read().split()] if a.indices else range(a.start, a.start + a.count)
+    jobs = [(make_params(a.seed, i), os.path.join(a.out, 'art'), a.rom) for i in idx if i not in done]
     print('%d scenarios to run (%d already in the log)' % (len(jobs), len(done)), flush=True)
     t0 = time.time()
     n = 0
