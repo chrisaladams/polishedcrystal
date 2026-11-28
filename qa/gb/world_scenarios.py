@@ -154,6 +154,12 @@ def run_one(params, out, rom=None):
         const = params['map']
         sg, sn = map_ids(const)
         sweep.apply_state(g, params['flags'])
+        # warps written `..., MAP, -1` return to the map the player came from; a real player always has one (INJECTED:
+        # Olivine Port). Without it such a warp loads map (0,0) and the game crashes (elevators, the Fast Ship).
+        bg, bn = map_ids('OLIVINE_PORT')
+        g.wr('wBackupMapGroup', bg)
+        g.wr('wBackupMapNumber', bn)
+        g.wr('wBackupWarpNumber', 1)
         _set_follower(g, params['follower'])
         g.wr('wRTCHours', params['hour'])
         g.wr('wRTCMinutes', 5)
@@ -219,6 +225,8 @@ def run_one(params, out, rom=None):
                 return
             if 'menu' in tag and 'open' in tag:
                 return                     # an open menu hides the field objects on purpose
+            if g.rd('wScriptMode') or g.rd('wScriptRunning'):
+                return                     # a script is running (battle or warp transition): the field is not on screen
             first = {f['msg'] for f in vram.sprite_findings(g) if not f['expected'] and (const, f['kind']) not in STATE_QUIRKS}
             if first:
                 g.tick(2)                      # a finding must persist: a struct caught mid-update is not a defect
