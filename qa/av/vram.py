@@ -100,21 +100,22 @@ def palette_problems(g):
 def objects(g):
     """Live object structs: dicts with index, sprite, tile, palette, screen x/y (pixels, top-left of the 16x16)."""
     from qa.gb.consts import C
+    # the object structs are in WRAM bank 1: name the bank, or whichever bank is mapped at that instant is read
     base = g.sym['wPlayerStruct'][1]
     stride = C['OBJECT_LENGTH']
     out = []
     for i in range(C['NUM_OBJECT_STRUCTS']):
         a = base + i * stride
-        sprite = g.read(a + C['OBJECT_SPRITE'])
+        sprite = g.read(a + C['OBJECT_SPRITE'], 1)
         if not sprite:
             continue
         # where InitSprite draws it: the cell's pixel position plus the step offset and the BG scroll offset
-        out.append(dict(index=i, sprite=sprite, tile=g.read(a + C['OBJECT_SPRITE_TILE']),
-                        x=(g.read(a + C['OBJECT_SPRITE_X']) + g.read(a + C['OBJECT_SPRITE_X_OFFSET']) + g.rd('wPlayerBGMapOffsetX')) & 0xff,
-                        y=(g.read(a + C['OBJECT_SPRITE_Y']) + g.read(a + C['OBJECT_SPRITE_Y_OFFSET']) + g.rd('wPlayerBGMapOffsetY')) & 0xff,
-                        pal=g.read(a + C['OBJECT_PALETTE']) & 7, facing=g.read(a + C['OBJECT_FACING']),
-                        invisible=bool(g.read(a + C['OBJECT_FLAGS1']) >> C['INVISIBLE_F'] & 1),
-                        off_screen=bool(g.read(a + C['OBJECT_FLAGS2']) >> C['OFF_SCREEN_F'] & 1)))
+        out.append(dict(index=i, sprite=sprite, tile=g.read(a + C['OBJECT_SPRITE_TILE'], 1),
+                        x=(g.read(a + C['OBJECT_SPRITE_X'], 1) + g.read(a + C['OBJECT_SPRITE_X_OFFSET'], 1) + g.rd('wPlayerBGMapOffsetX')) & 0xff,
+                        y=(g.read(a + C['OBJECT_SPRITE_Y'], 1) + g.read(a + C['OBJECT_SPRITE_Y_OFFSET'], 1) + g.rd('wPlayerBGMapOffsetY')) & 0xff,
+                        pal=g.read(a + C['OBJECT_PALETTE'], 1) & 7, facing=g.read(a + C['OBJECT_FACING'], 1),
+                        invisible=bool(g.read(a + C['OBJECT_FLAGS1'], 1) >> C['INVISIBLE_F'] & 1),
+                        off_screen=bool(g.read(a + C['OBJECT_FLAGS2'], 1) >> C['OFF_SCREEN_F'] & 1)))
     return out
 
 
