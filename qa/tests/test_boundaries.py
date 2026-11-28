@@ -29,8 +29,9 @@ def outside_collision(g, x, y):
     d, e = x + 4, y + 4
     if not (0 <= d < 2 * (w + 6) and 0 <= e < 2 * (h + 6)):
         return None
-    addr = g.sym['wOverworldMapBlocks'][1] + 1 + (w + 6) * (1 + (e >> 1)) + (d >> 1)
-    block = g.read(addr)
+    mb, mbase = g.sym['wOverworldMapBlocks']
+    addr = mbase + 1 + (w + 6) * (1 + (e >> 1)) + (d >> 1)
+    block = g.read(addr, mb)
     bank, base = g.sym['wDecompressedCollisions']
     return g.read(base + block * 4 + (d & 1) + 2 * (e & 1), bank)
 

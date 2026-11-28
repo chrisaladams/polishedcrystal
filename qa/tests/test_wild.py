@@ -43,7 +43,7 @@ def parse_tables():
             if m:
                 tod = m.group(1)
                 continue
-            m = re.match(r'\s*wildmon\s+\d+,\s*(\w+)', line)
+            m = re.match(r'\s*wildmon\s+[^,]+,\s*(\w+)', line)
             if m and cur in attrs:
                 out[(cur, terrain)].setdefault(tod or 'all', []).append(m.group(1))
     return out

@@ -11,8 +11,9 @@ def tile_collision(g, x, y):
     if not (0 <= x < 2 * w and 0 <= y < 2 * h):
         return None
     d, e = x + 4, y + 4
-    addr = g.sym['wOverworldMapBlocks'][1] + 1 + (w + 6) * (1 + (e >> 1)) + (d >> 1)
-    block = g.read(addr)
+    mb, mbase = g.sym['wOverworldMapBlocks']
+    addr = mbase + 1 + (w + 6) * (1 + (e >> 1)) + (d >> 1)
+    block = g.read(addr, mb)           # name the bank: without it SameBoy reads whichever WRAM bank is mapped
     bank, base = g.sym['wDecompressedCollisions']
     return g.read(base + block * 4 + (d & 1) + 2 * (e & 1), bank)
 
