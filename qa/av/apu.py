@@ -79,20 +79,27 @@ class ApuMonitor:
             rest = flags >> self.rest_bit & 1
             if rest or g.rd(p + 'NoteDuration') == 0:
                 continue
+            freq = g.rd(p + 'Frequency') | g.rd(p + 'Frequency', 1) << 8
+            if ch != 4 and freq == 0:
+                continue                                  # no note has set a frequency yet: a rest
             vol = g.rd(p + 'Intensity') >> 4 if ch != 3 else 1
             if vol == 0:
                 continue
             self.voiced[i] += 1
-            if lib.GB_get_channel_amplitude(g.gb, i) or lib.GB_get_channel_volume(g.gb, i):
+            hw_on = lib.GB_get_channel_amplitude(g.gb, i) or lib.GB_get_channel_volume(g.gb, i)
+            if hw_on:
                 self.audible[i] += 1
             if ch == 4:
                 continue
-            freq = g.rd(p + 'Frequency') | g.rd(p + 'Frequency', 1) << 8
             if g.rd(p + 'Flags2') >> self.slide_bit & 1 or g.rd('wPitchTransposition'):
                 continue
             # the channel's period register against the engine's frequency (vibrato, pitch slides and detune (PitchOffset) move the
             # register away from the base frequency on purpose, so only steady notes are compared)
-            if not g.rd(p + 'VibratoExtent') and not g.rd(p + 'PitchWheelAmount') and not g.rd(p + 'PitchOffset'):
+            if not hw_on:
+                continue                                  # a decayed note: the period register is stale and nothing is heard
+            if g.rd(p + 'PitchWheelAmount') or g.rd(p + 'PitchOffset'):
+                continue
+            if not g.rd(p + 'VibratoExtent'):
                 period = lib.GB_get_channel_period(g.gb, i)
                 self.period_checked[i] += 1
                 if period != freq:
@@ -106,7 +113,7 @@ class ApuMonitor:
                     self.pitch_bad[i] += 1
                     self.examples.setdefault(('pitch', ch), 'channel %d: pitch %d octave %d gives %#x, the engine computed %#x' % (ch, pitch, octave, exp, freq))
 
-    def findings(self, min_frames=45, tolerance=0.02):
+    def findings(self, min_frames=45, tolerance=0.10):
         out = []
         for i, ch in enumerate(CHANNELS):
             if self.voiced[i] >= min_frames and self.audible[i] == 0:

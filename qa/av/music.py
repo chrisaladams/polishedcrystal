@@ -21,8 +21,11 @@ def song_ids():
         m = re.match(r'\s*const\s+(MUSIC_\w+)', line)
         if m:
             names.append(m.group(1))
-    v = values(names)
-    return {n: v[n] for n in names if n in v and n != 'MUSIC_NONE'}
+    v = values(names + ['NUM_MUSIC_SONGS'])
+    n_songs = v['NUM_MUSIC_SONGS']
+    # ids at or above NUM_MUSIC_SONGS ($fd-$ff: MUSIC_RADIO_TOWER, MUSIC_MAHOGANY_MART, MUSIC_LAVENDER) are not songs: GetMapMusic
+    # resolves them to a real song by an event flag (audio/alternate_music.asm). Played directly they make the engine read code as music.
+    return {n: v[n] for n in names if n in v and n != 'MUSIC_NONE' and 0 < v[n] < n_songs}
 
 
 def sfx_ids():
