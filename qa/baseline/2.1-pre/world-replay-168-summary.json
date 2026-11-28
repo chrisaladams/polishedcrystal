@@ -1,0 +1,71 @@
+{
+ "attempted": 168,
+ "outcomes": {
+  "skip": 87,
+  "ok": 72,
+  "interrupted": 7,
+  "fail": 2
+ },
+ "completed": 74,
+ "unique_combinations_completed": 74,
+ "repeated_combinations": 0,
+ "by_action": {
+  "idle": 11,
+  "menus": 12,
+  "save": 3,
+  "transition": 7,
+  "walk": 41
+ },
+ "by_flags": {
+  "default": 38,
+  "allflags": 25,
+  "noflags": 11
+ },
+ "by_tod": {
+  "morn": 22,
+  "day": 22,
+  "nite": 30
+ },
+ "seconds": 122,
+ "failures": [
+  {
+   "kind": "sprite",
+   "detail": "walk 5: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "4db3cc6974d0",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1072,
+    "map": "CELADON_HOME_DECOR_STORE_4F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "WOBBUFFET",
+    "key": "CELADON_HOME_DECOR_STORE_4F|day|default|walk|WOBBUFFET",
+    "rng_seed": 738031867,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (21, 4, 14, 108) (at (21, 5, 14, 0))",
+   "sig": "f33bcc94341c",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1787,
+    "map": "ROUTE_17_SOUTH",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "ROUTE_17_SOUTH|nite|default|save|TOTODILE",
+    "rng_seed": 716114793,
+    "kind": "save"
+   }
+  }
+ ],
+ "replay": "python3 -m qa.gb.world_scenarios --seed SEED --start INDEX --count 1 --jobs 1 --out DIR"
+}
