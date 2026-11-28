@@ -36,7 +36,7 @@ So Johto is already large; the question is depth and presence, not map count.
 |---|---|---|
 | **Event flags** | 2,304 bits in total, save size locked, **16 free** (ledger L42) | A story expansion needs more flags than exist. This needs an architecture decision (consolidate per-trainer beat flags, or an extension array in free SRAM with a versioned save record) before large content is built. |
 | ROM0 (home bank) | 146 bytes free | New engine code must live in ROMX; only tiny hooks fit in the home bank. |
-| ROMX | about 2.1 MB free (128 empty banks) | Plenty for text, maps, scripts and graphics. |
+| ROM | **2,782 bytes free in the 2 MiB image** (the 128 empty banks belong to the reserved 4 MiB layout, not to 2 MiB) | Any real expansion needs a 4 MiB decision; see `johto-technical-investigation.md`. |
 | SRAM | 923 bytes free, largest gap 393 | Any new persistent state must fit there or replace something. |
 | WRAM0 / HRAM | 9 / 5 bytes free | No room for new fixed state; use WRAMX banks with gaps. |
 | Sprites | 13 object structs, 40 OAM entries; the engine drops the last drawn (ledger L36) | Crowded scenes need care; this is also the design input for the living-world work. |
