@@ -185,12 +185,14 @@ def _make_cries(i, n):
         names = _shard([(s, s) for s in inv['cry']], i, n)
         g.call('PlayMusic', de=0)
         g.tick(30)
-        bad, heard = {}, 0
+        bad, heard, missing = {}, 0, []
         for name, _ in names:
-            if name not in C:
+            sid = C.get(name)
+            if not sid:
+                missing.append(name)
                 continue
             g.audio_pcm(reset=True)
-            g.call('PlayCry', de=C[name])
+            g.call('PlayCry', de=sid)
             g.tick(90)
             pcm = audio.mono(g.audio_pcm(reset=True))
             st = audio.stats(pcm)
@@ -208,7 +210,7 @@ def _make_cries(i, n):
                 ctx.av.append(dict(kind='CRY_ANOMALY', detail=f'{name}: ' + '; '.join(problems), where=name, sig=f'cry-{name}', count=1, artifacts={}, context=st, frame=0))
             else:
                 heard += 1
-        ctx.note(f'{heard} of {len(names)} cries audible and plausible')
+        ctx.note(f'{heard} of {len(names)} cries audible and plausible; no species id for: {missing[:10]}')
         for name, p_ in bad.items():
             ctx.expect(False, f'{name}: ' + '; '.join(p_))
         ctx.expect(heard > 0, 'no cry was heard at all (vacuous run)')
