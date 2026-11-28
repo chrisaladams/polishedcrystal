@@ -1,0 +1,2770 @@
+{
+ "attempted": 4000,
+ "outcomes": {
+  "ok": 3823,
+  "skip": 7,
+  "fail": 139,
+  "hang": 29,
+  "interrupted": 2
+ },
+ "completed": 3962,
+ "unique_combinations_completed": 3962,
+ "repeated_combinations": 0,
+ "by_action": {
+  "idle": 664,
+  "menus": 654,
+  "save": 663,
+  "transition": 659,
+  "walk": 1322
+ },
+ "by_flags": {
+  "default": 1823,
+  "allflags": 1822,
+  "noflags": 317
+ },
+ "by_tod": {
+  "morn": 1126,
+  "day": 1421,
+  "nite": 1415
+ },
+ "seconds": 28148,
+ "failures": [
+  {
+   "kind": "sprite",
+   "detail": "walk 3: OAM[32] tile 27 (bank 0) of object 2 sprite 136 differs from its graphic schoolgirl.2bpp tile 10",
+   "sig": "3882eb6be640",
+   "count": 7,
+   "first": {
+    "seed": 1,
+    "index": 148,
+    "map": "ROUTE_25",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "NINETALES",
+    "key": "ROUTE_25|day|default|walk|NINETALES",
+    "rng_seed": 374677808,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 0 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "0e311816f448",
+   "count": 6,
+   "first": {
+    "seed": 1,
+    "index": 962,
+    "map": "UNION_CAVE_B1F_SOUTH",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "UNION_CAVE_B1F_SOUTH|day|default|menus|TOTODILE",
+    "rng_seed": 1011599984,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 0 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "b24aa3465636",
+   "count": 6,
+   "first": {
+    "seed": 1,
+    "index": 986,
+    "map": "ICE_PATH_B1F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "ICE_PATH_B1F|day|default|menus|TOTODILE",
+    "rng_seed": 1005996090,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "walk 3: OAM[28] tile 47 (bank 0) of object 0 sprite 153 differs from its graphic receptionist.2bpp tile 3",
+   "sig": "094dd70f1dbf",
+   "count": 4,
+   "first": {
+    "seed": 1,
+    "index": 148,
+    "map": "ROUTE_25",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "NINETALES",
+    "key": "ROUTE_25|day|default|walk|NINETALES",
+    "rng_seed": 374677808,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 0 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "46bfe0b0ceb2",
+   "count": 4,
+   "first": {
+    "seed": 1,
+    "index": 1664,
+    "map": "AZALEA_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "HAPPINY",
+    "key": "AZALEA_GYM|nite|default|menus|HAPPINY",
+    "rng_seed": 797067169,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "4a9de77391da",
+   "count": 3,
+   "first": {
+    "seed": 1,
+    "index": 103,
+    "map": "SHAMOUTI_HOTEL_RESTAURANT",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "SHAMOUTI_HOTEL_RESTAURANT|day|default|walk|TOTODILE",
+    "rng_seed": 387082770,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "83894d127e2a",
+   "count": 3,
+   "first": {
+    "seed": 1,
+    "index": 109,
+    "map": "BATTLE_TOWER_ELEVATOR",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "BATTLE_TOWER_ELEVATOR|day|default|walk|TOTODILE",
+    "rng_seed": 998050578,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "9533a3cb4570",
+   "count": 3,
+   "first": {
+    "seed": 1,
+    "index": 229,
+    "map": "ELMS_LAB",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ELMS_LAB|day|default|walk|TOTODILE",
+    "rng_seed": 165299421,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 0 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "78a2c376b8b4",
+   "count": 3,
+   "first": {
+    "seed": 1,
+    "index": 1124,
+    "map": "ROUTE_1",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "menus",
+    "follower": "FARIGIRAF",
+    "key": "ROUTE_1|day|default|menus|FARIGIRAF",
+    "rng_seed": 226618244,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "after warp walk 0: object 10 (sprite 117) at (73,39) has no OAM entry",
+   "sig": "1139137731ba",
+   "count": 3,
+   "first": {
+    "seed": 1,
+    "index": 1761,
+    "map": "ECRUTEAK_SHRINE_OUTSIDE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "ECRUTEAK_SHRINE_OUTSIDE|nite|default|transition|TOTODILE",
+    "rng_seed": 350653085,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "1a8a577cc1fd",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 126,
+    "map": "KARENS_ROOM",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "KARENS_ROOM|morn|default|idle|TOTODILE",
+    "rng_seed": 578275257,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "70243b954396",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 144,
+    "map": "VIOLET_GYM",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "default",
+    "action": "idle",
+    "follower": "MANKEY",
+    "key": "VIOLET_GYM|morn|default|idle|MANKEY",
+    "rng_seed": 237648449,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "d06b99ea848a",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 175,
+    "map": "ROUTE_31",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_31|day|default|walk|TOTODILE",
+    "rng_seed": 695287954,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (16, 10, 5, 12) (at (16, 10, 5, 8))",
+   "sig": "693444c4f3b3",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 305,
+    "map": "BRUNOS_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "BRUNOS_ROOM|nite|default|save|TOTODILE",
+    "rng_seed": 1044526200,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 2 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "b0ddb5a4d134",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 278,
+    "map": "UNION_CAVE_1F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "UNION_CAVE_1F|nite|default|menus|TOTODILE",
+    "rng_seed": 120235039,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "652559cf9291",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 352,
+    "map": "KOGAS_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "MILTANK",
+    "key": "KOGAS_ROOM|day|default|walk|MILTANK",
+    "rng_seed": 147204872,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "c8a8123cfb4e",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 379,
+    "map": "LANCES_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "LANCES_ROOM|day|default|walk|TOTODILE",
+    "rng_seed": 142546265,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "b22f3f609fb0",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 394,
+    "map": "BATTLE_FACTORY_BATTLE_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "BATTLE_FACTORY_BATTLE_ROOM|day|default|walk|TOTODILE",
+    "rng_seed": 1000385424,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 2 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "c41e3b3b4636",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 326,
+    "map": "ROUTE_12_NORTH",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "ROUTE_12_NORTH|nite|default|menus|TOTODILE",
+    "rng_seed": 186972188,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "185737e340c9",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 508,
+    "map": "TEAM_ROCKET_BASE_B3F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "GROWLITHE",
+    "key": "TEAM_ROCKET_BASE_B3F|day|default|walk|GROWLITHE",
+    "rng_seed": 869307175,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "6a119c76719a",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 646,
+    "map": "MR_POKEMONS_HOUSE",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "MR_POKEMONS_HOUSE|day|default|walk|TOTODILE",
+    "rng_seed": 57729464,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "c95538e66166",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 688,
+    "map": "WILLS_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "POLIWRATH",
+    "key": "WILLS_ROOM|day|default|walk|POLIWRATH",
+    "rng_seed": 105212149,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "cc340987ad4e",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 739,
+    "map": "KARENS_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "KARENS_ROOM|day|default|walk|TOTODILE",
+    "rng_seed": 945831317,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "c94fc17afe75",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 757,
+    "map": "VIOLET_GYM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "VIOLET_GYM|day|default|walk|TOTODILE",
+    "rng_seed": 949628089,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "1b1aece5d33f",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 826,
+    "map": "DAYCARE",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "DAYCARE|day|default|walk|TOTODILE",
+    "rng_seed": 711113304,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "25b497a271f8",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1027,
+    "map": "BATTLE_FACTORY_HALLWAY",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "BATTLE_FACTORY_HALLWAY|day|default|walk|TOTODILE",
+    "rng_seed": 548425459,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "menu 2 closed: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "d6570b303848",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 932,
+    "map": "ROUTE_32_COAST",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "menus",
+    "follower": "NIDORINA",
+    "key": "ROUTE_32_COAST|day|default|menus|NIDORINA",
+    "rng_seed": 471662777,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "aa2d90d255f6",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1144,
+    "map": "TIN_TOWER_1F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "RAPIDASH",
+    "key": "TIN_TOWER_1F|day|default|walk|RAPIDASH",
+    "rng_seed": 283507341,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "8eb0eea3586e",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1180,
+    "map": "BATTLE_TOWER_HALLWAY",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "NINETALES",
+    "key": "BATTLE_TOWER_HALLWAY|day|default|walk|NINETALES",
+    "rng_seed": 846591298,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "b88eb98b5e9e",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1321,
+    "map": "MOUNT_MOON_1F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "MOUNT_MOON_1F|nite|default|walk|TOTODILE",
+    "rng_seed": 652422226,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "2989b9f13c51",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1414,
+    "map": "HALL_OF_FAME",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "HALL_OF_FAME|nite|default|walk|TOTODILE",
+    "rng_seed": 250316672,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "c12747663eba",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1417,
+    "map": "VERMILION_CITY",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "VERMILION_CITY|nite|default|walk|TOTODILE",
+    "rng_seed": 350499156,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "983ec54a7a79",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1420,
+    "map": "BATTLE_TOWER_BATTLE_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "KINGLER",
+    "key": "BATTLE_TOWER_BATTLE_ROOM|nite|default|walk|KINGLER",
+    "rng_seed": 907562518,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "corruption",
+   "detail": "menu 1 closed: menu 1 closed: follower queue length 29 overruns its 5 bytes",
+   "sig": "181968286d8a",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1370,
+    "map": "VIOLET_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "VIOLET_GYM|nite|default|menus|TOTODILE",
+    "rng_seed": 175171275,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "ca6ceacee61f",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1531,
+    "map": "BRUNOS_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "BRUNOS_ROOM|nite|default|walk|TOTODILE",
+    "rng_seed": 355647112,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "2309b31bc968",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1582,
+    "map": "BURNED_TOWER_1F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "BURNED_TOWER_1F|nite|default|walk|TOTODILE",
+    "rng_seed": 177963955,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "daafeb18a961",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1600,
+    "map": "ROUTE_43_GATE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "SENTRET",
+    "key": "ROUTE_43_GATE|nite|default|walk|SENTRET",
+    "rng_seed": 818240954,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "5a54631a893a",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1684,
+    "map": "ECRUTEAK_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "SMEARGLE",
+    "key": "ECRUTEAK_GYM|nite|default|walk|SMEARGLE",
+    "rng_seed": 243769551,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "d5f405a22ce0",
+   "count": 2,
+   "first": {
+    "seed": 1,
+    "index": 1717,
+    "map": "ROUTE_22_PAST",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_22_PAST|nite|default|walk|TOTODILE",
+    "rng_seed": 595566445,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "walk 3: OAM[39] tile 16 (bank 0) of object 11 sprite 135 differs from its graphic schoolboy.2bpp tile 1",
+   "sig": "8ca26d69aa0b",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 148,
+    "map": "ROUTE_25",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "NINETALES",
+    "key": "ROUTE_25|day|default|walk|NINETALES",
+    "rng_seed": 374677808,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "walk 3: object 12 (sprite 191) at (96,60) has no OAM entry",
+   "sig": "d9b3b0e45b8a",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 148,
+    "map": "ROUTE_25",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "NINETALES",
+    "key": "ROUTE_25|day|default|walk|NINETALES",
+    "rng_seed": 374677808,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "45dde480699d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 148,
+    "map": "ROUTE_25",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "NINETALES",
+    "key": "ROUTE_25|day|default|walk|NINETALES",
+    "rng_seed": 374677808,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "67d6145390e1",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 92,
+    "map": "VERMILION_PORT",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "FARIGIRAF",
+    "key": "VERMILION_PORT|nite|default|menus|FARIGIRAF",
+    "rng_seed": 6372235,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "90f568a148fa",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 238,
+    "map": "ROUTE_16_WEST",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_16_WEST|day|default|walk|TOTODILE",
+    "rng_seed": 1016480238,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "c77e56fe3e48",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 110,
+    "map": "ROUTE_41",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "ROUTE_41|nite|default|menus|TOTODILE",
+    "rng_seed": 912688275,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "38a214256e06",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 373,
+    "map": "ICE_PATH_B1F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ICE_PATH_B1F|day|default|walk|TOTODILE",
+    "rng_seed": 172095661,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "a14827928647",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 225,
+    "map": "VERMILION_POLLUTION_SPEECH_HOUSE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "default",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "VERMILION_POLLUTION_SPEECH_HOUSE|morn|default|transition|TOTODILE",
+    "rng_seed": 112579038,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "3d06a5d9c150",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 414,
+    "map": "BATTLE_FACTORY_HALLWAY",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "BATTLE_FACTORY_HALLWAY|morn|default|idle|TOTODILE",
+    "rng_seed": 360112577,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "055db852caa6",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 544,
+    "map": "SAFARI_ZONE_NORTH_REST_HOUSE",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "DROWZEE",
+    "key": "SAFARI_ZONE_NORTH_REST_HOUSE|day|default|walk|DROWZEE",
+    "rng_seed": 193354,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "3cdb632149e5",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 435,
+    "map": "CELADON_CAFE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "default",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "CELADON_CAFE|morn|default|transition|TOTODILE",
+    "rng_seed": 741454617,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "f03fbc807070",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 440,
+    "map": "CINNABAR_LAB",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "POLITOED",
+    "key": "CINNABAR_LAB|nite|default|menus|POLITOED",
+    "rng_seed": 557739804,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "7aadf6fb30d1",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 708,
+    "map": "MOUNT_MOON_1F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "idle",
+    "follower": "DITTO",
+    "key": "MOUNT_MOON_1F|day|default|idle|DITTO",
+    "rng_seed": 741302389,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "08c15f670712",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 596,
+    "map": "EUSINES_HOUSE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "LICKILICKY",
+    "key": "EUSINES_HOUSE|nite|default|menus|LICKILICKY",
+    "rng_seed": 354681784,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "9860151c95d7",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 602,
+    "map": "PALLET_TOWN",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "PALLET_TOWN|nite|default|menus|TOTODILE",
+    "rng_seed": 499546977,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "593232567727",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 804,
+    "map": "VERMILION_CITY",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "idle",
+    "follower": "MAGNETON",
+    "key": "VERMILION_CITY|day|default|idle|MAGNETON",
+    "rng_seed": 821632384,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "e38f0544d371",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 918,
+    "map": "BRUNOS_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "BRUNOS_ROOM|day|default|idle|TOTODILE",
+    "rng_seed": 480338620,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "59058974c626",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 949,
+    "map": "MAHOGANY_GYM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "MAHOGANY_GYM|day|default|walk|TOTODILE",
+    "rng_seed": 3483824,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (16, 9, 8, 5) (at (16, 9, 8, 1))",
+   "sig": "aeb7f80c31c7",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 965,
+    "map": "KOGAS_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "KOGAS_ROOM|day|default|save|TOTODILE",
+    "rng_seed": 84543688,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (12, 19, 9, 9) (at (12, 19, 9, 5))",
+   "sig": "ea145770e59d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1007,
+    "map": "BATTLE_FACTORY_BATTLE_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "BATTLE_FACTORY_BATTLE_ROOM|day|default|save|TOTODILE",
+    "rng_seed": 629588514,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "sprite",
+   "detail": "walk 5: object 0 (sprite 4) at (64,64) has no OAM entry",
+   "sig": "4db3cc6974d0",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1072,
+    "map": "CELADON_HOME_DECOR_STORE_4F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "WOBBUFFET",
+    "key": "CELADON_HOME_DECOR_STORE_4F|day|default|walk|WOBBUFFET",
+    "rng_seed": 738031867,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "63e9ab1f58dd",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1104,
+    "map": "ROUTE_22_PAST",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "idle",
+    "follower": "SCIZOR",
+    "key": "ROUTE_22_PAST|day|default|idle|SCIZOR",
+    "rng_seed": 1004471337,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "9501009325a5",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1051,
+    "map": "AZALEA_GYM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "AZALEA_GYM|day|default|walk|TOTODILE",
+    "rng_seed": 476051243,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "3880bcd09b98",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1168,
+    "map": "VIOLET_OUTSKIRTS_HOUSE",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "GRANBULL",
+    "key": "VIOLET_OUTSKIRTS_HOUSE|day|default|walk|GRANBULL",
+    "rng_seed": 525139084,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "68b750ae8644",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1210,
+    "map": "ROUTE_37",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_37|day|default|walk|TOTODILE",
+    "rng_seed": 943449593,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "6a997a9e5808",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1135,
+    "map": "URAGA_CHANNEL_EAST",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "URAGA_CHANNEL_EAST|day|default|walk|TOTODILE",
+    "rng_seed": 614829323,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "b6220ebefa73",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1237,
+    "map": "ROUTE_34",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_34|nite|default|walk|TOTODILE",
+    "rng_seed": 803215475,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "2bee95da0202",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1260,
+    "map": "ROUTE_38",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "MILTANK",
+    "key": "ROUTE_38|nite|default|idle|MILTANK",
+    "rng_seed": 872165480,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "1a77cdc0e452",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1278,
+    "map": "GOLDENROD_UNDERGROUND",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "GOLDENROD_UNDERGROUND|nite|default|idle|TOTODILE",
+    "rng_seed": 722584949,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "3da3e5107d8c",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1174,
+    "map": "ROUTE_17_SOUTH",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_17_SOUTH|day|default|walk|TOTODILE",
+    "rng_seed": 372427689,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (16, 8, 2, 7) (at (16, 8, 2, 3))",
+   "sig": "9460026e1080",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1301,
+    "map": "WILLS_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "WILLS_ROOM|nite|default|save|TOTODILE",
+    "rng_seed": 280485798,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "7c67de5c7dda",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1186,
+    "map": "SAFFRON_GYM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "SAFFRON_GYM|day|default|walk|TOTODILE",
+    "rng_seed": 374360001,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "f2e136b1c9b2",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1354,
+    "map": "QUIET_CAVE_B1F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "QUIET_CAVE_B1F|nite|default|walk|TOTODILE",
+    "rng_seed": 223832768,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "016310962ca6",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1268,
+    "map": "PLAYERS_NEIGHBORS_HOUSE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "RATTATA",
+    "key": "PLAYERS_NEIGHBORS_HOUSE|nite|default|menus|RATTATA",
+    "rng_seed": 656876292,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "corruption",
+   "detail": "menu 1 open: menu 1 open: player struct [Sprite,MapObjectIndex,SpriteTile] (4, 0, 128) -> (254, 249, 247); menu 1 open: follower queue length 29 overruns its 5 bytes",
+   "sig": "146d248a2d81",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1370,
+    "map": "VIOLET_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "VIOLET_GYM|nite|default|menus|TOTODILE",
+    "rng_seed": 175171275,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "crash",
+   "detail": "menu 1 open: crash handler ran",
+   "sig": "e7f47219577d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1370,
+    "map": "VIOLET_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "VIOLET_GYM|nite|default|menus|TOTODILE",
+    "rng_seed": 175171275,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "corruption",
+   "detail": "menu 2 open: menu 2 open: follower queue length 29 overruns its 5 bytes",
+   "sig": "4bb60aef2e05",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1370,
+    "map": "VIOLET_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "VIOLET_GYM|nite|default|menus|TOTODILE",
+    "rng_seed": 175171275,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "9cc4f88ed319",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1309,
+    "map": "CIANWOOD_POKECENTER_1F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "CIANWOOD_POKECENTER_1F|nite|default|walk|TOTODILE",
+    "rng_seed": 913412681,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "8a5824989f46",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1453,
+    "map": "ROUTE_15",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_15|nite|default|walk|TOTODILE",
+    "rng_seed": 186879087,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "9557899cfd65",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1578,
+    "map": "KOGAS_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "KOGAS_ROOM|nite|default|idle|TOTODILE",
+    "rng_seed": 889186329,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "ef033a88c935",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1597,
+    "map": "ROUTE_35",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_35|nite|default|walk|TOTODILE",
+    "rng_seed": 614300483,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "0741bfdc8a2b",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1620,
+    "map": "BATTLE_FACTORY_BATTLE_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "FORRETRESS",
+    "key": "BATTLE_FACTORY_BATTLE_ROOM|nite|default|idle|FORRETRESS",
+    "rng_seed": 285533838,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "0b02cd70ab8d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1515,
+    "map": "SPROUT_TOWER_3F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "SPROUT_TOWER_3F|nite|default|transition|TOTODILE",
+    "rng_seed": 350195134,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "4bcf168f1591",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1550,
+    "map": "SINJOH_RUINS_HOUSE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "SINJOH_RUINS_HOUSE|nite|default|menus|TOTODILE",
+    "rng_seed": 830778131,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "9ffe25d336ea",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1734,
+    "map": "TEAM_ROCKET_BASE_B3F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "TEAM_ROCKET_BASE_B3F|nite|default|idle|TOTODILE",
+    "rng_seed": 970932461,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "24f0e0351dcb",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1768,
+    "map": "CELADON_GYM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "walk",
+    "follower": "STARMIE",
+    "key": "CELADON_GYM|nite|default|walk|STARMIE",
+    "rng_seed": 67445742,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "f8ec1807d6c8",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1770,
+    "map": "SAFARI_ZONE_NORTH_REST_HOUSE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "SAFARI_ZONE_NORTH_REST_HOUSE|nite|default|idle|TOTODILE",
+    "rng_seed": 565556555,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "d107819adc88",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1806,
+    "map": "ROUTE_27",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "ROUTE_27|nite|default|idle|TOTODILE",
+    "rng_seed": 905756451,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (3, 4, 2, 7) (at (3, 4, 2, 4))",
+   "sig": "4d960f25ba38",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1757,
+    "map": "TIN_TOWER_1F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "TIN_TOWER_1F|nite|default|save|TOTODILE",
+    "rng_seed": 277663879,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "3af76002b451",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1872,
+    "map": "MR_POKEMONS_HOUSE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "HO_OH",
+    "key": "MR_POKEMONS_HOUSE|morn|allflags|idle|HO_OH",
+    "rng_seed": 320439593,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "c47f87408f10",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1908,
+    "map": "RUINS_OF_ALPH_KABUTO_CHAMBER",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "FARFETCH_D",
+    "key": "RUINS_OF_ALPH_KABUTO_CHAMBER|morn|allflags|idle|FARFETCH_D",
+    "rng_seed": 304194256,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "8005e8828fa6",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1914,
+    "map": "WILLS_ROOM",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "WILLS_ROOM|morn|allflags|idle|TOTODILE",
+    "rng_seed": 486390414,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "f0adae847d83",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1945,
+    "map": "RUINS_OF_ALPH_HO_OH_CHAMBER",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "RUINS_OF_ALPH_HO_OH_CHAMBER|morn|allflags|walk|TOTODILE",
+    "rng_seed": 931430400,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "f49e1a76a3df",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 1787,
+    "map": "ROUTE_17_SOUTH",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "default",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "ROUTE_17_SOUTH|nite|default|save|TOTODILE",
+    "rng_seed": 716114793,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (9, 3, 1, 7) (at (9, 3, 1, 3))",
+   "sig": "99f5076d824a",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2033,
+    "map": "BATTLE_TOWER_BATTLE_ROOM",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "BATTLE_TOWER_BATTLE_ROOM|morn|allflags|save|TOTODILE",
+    "rng_seed": 587817580,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "908bcef819e4",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2052,
+    "map": "DAYCARE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "RAPIDASH",
+    "key": "DAYCARE|morn|allflags|idle|RAPIDASH",
+    "rng_seed": 521937581,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "b8d42a5eb8f1",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2124,
+    "map": "RUINS_OF_ALPH_OMANYTE_CHAMBER",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "MAGBY",
+    "key": "RUINS_OF_ALPH_OMANYTE_CHAMBER|morn|allflags|idle|MAGBY",
+    "rng_seed": 100021820,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (2, 11, 9, 1) (at (2, 11, 9, 2))",
+   "sig": "dcf6dbddda7a",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2213,
+    "map": "ROUTE_43_GATE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "ROUTE_43_GATE|morn|allflags|save|TOTODILE",
+    "rng_seed": 572968556,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "4ded688b7aa9",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2032,
+    "map": "STORMY_BEACH",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "FARIGIRAF",
+    "key": "STORMY_BEACH|morn|allflags|walk|FARIGIRAF",
+    "rng_seed": 631139705,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "98d62a1e0faf",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2031,
+    "map": "SEAGALLOP_FERRY_VERMILION_GATE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "SEAGALLOP_FERRY_VERMILION_GATE|morn|allflags|transition|TOTODILE",
+    "rng_seed": 960348538,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "b015e306401c",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2097,
+    "map": "FUCHSIA_AQUARIUM_1F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "FUCHSIA_AQUARIUM_1F|morn|allflags|transition|TOTODILE",
+    "rng_seed": 171422309,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (4, 9, 5, 19) (at (255, 255, 255, 255))",
+   "sig": "de1c4c0be05d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2297,
+    "map": "ECRUTEAK_GYM",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "ECRUTEAK_GYM|morn|allflags|save|TOTODILE",
+    "rng_seed": 910634966,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "05dbb966bcc8",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2161,
+    "map": "YELLOW_FOREST_GATE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "YELLOW_FOREST_GATE|morn|allflags|walk|TOTODILE",
+    "rng_seed": 873975282,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "91346f833f37",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2370,
+    "map": "TIN_TOWER_1F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "TIN_TOWER_1F|morn|allflags|idle|TOTODILE",
+    "rng_seed": 102877932,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "9205138a4788",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2406,
+    "map": "BATTLE_TOWER_HALLWAY",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "BATTLE_TOWER_HALLWAY|morn|allflags|idle|TOTODILE",
+    "rng_seed": 513478764,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "b58755d36360",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2318,
+    "map": "CELADON_HOTEL_2F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "allflags",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "CELADON_HOTEL_2F|morn|allflags|menus|TOTODILE",
+    "rng_seed": 314880064,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "d62991209ccf",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2521,
+    "map": "RUINS_OF_ALPH_KABUTO_CHAMBER",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "RUINS_OF_ALPH_KABUTO_CHAMBER|day|allflags|walk|TOTODILE",
+    "rng_seed": 728097381,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (31, 16, 0, 1) (at (31, 9, 14, 1))",
+   "sig": "cedf8a7827b4",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2555,
+    "map": "SHAMOUTI_HOTEL_RESTAURANT",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "SHAMOUTI_HOTEL_RESTAURANT|day|allflags|save|TOTODILE",
+    "rng_seed": 609643856,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (9, 4, 0, 1) (at (9, 3, 3, 3))",
+   "sig": "f05df46b6c03",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2561,
+    "map": "BATTLE_TOWER_ELEVATOR",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "BATTLE_TOWER_ELEVATOR|day|allflags|save|TOTODILE",
+    "rng_seed": 812276482,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "0100adf9e305",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2646,
+    "map": "BATTLE_TOWER_BATTLE_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "BATTLE_TOWER_BATTLE_ROOM|day|allflags|idle|TOTODILE",
+    "rng_seed": 482094640,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (24, 3, 1, 10) (at (24, 3, 1, 3))",
+   "sig": "1b1599e34a4d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2681,
+    "map": "ELMS_LAB",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "ELMS_LAB|day|allflags|save|TOTODILE",
+    "rng_seed": 10638602,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "e78b78b1fd5a",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2640,
+    "map": "HALL_OF_FAME",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "WEEPINBELL",
+    "key": "HALL_OF_FAME|day|allflags|idle|WEEPINBELL",
+    "rng_seed": 770400095,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "c6a6a29df852",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2737,
+    "map": "RUINS_OF_ALPH_OMANYTE_CHAMBER",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "RUINS_OF_ALPH_OMANYTE_CHAMBER|day|allflags|walk|TOTODILE",
+    "rng_seed": 1052345247,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "75285e57aaa1",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2605,
+    "map": "CELADON_DEPT_STORE_ELEVATOR",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "CELADON_DEPT_STORE_ELEVATOR|day|allflags|walk|TOTODILE",
+    "rng_seed": 836287104,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "0657c1cd83b7",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2755,
+    "map": "OLIVINE_LIGHTHOUSE_4F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "OLIVINE_LIGHTHOUSE_4F|day|allflags|walk|TOTODILE",
+    "rng_seed": 44753691,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "25b5c0385c41",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2643,
+    "map": "VERMILION_CITY",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "VERMILION_CITY|day|allflags|transition|TOTODILE",
+    "rng_seed": 96948972,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "08da9e68b0cb",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2808,
+    "map": "BURNED_TOWER_1F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "ARCANINE",
+    "key": "BURNED_TOWER_1F|day|allflags|idle|ARCANINE",
+    "rng_seed": 723437034,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "d7ce12da79e3",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2826,
+    "map": "ROUTE_43_GATE",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "ROUTE_43_GATE|day|allflags|idle|TOTODILE",
+    "rng_seed": 470235030,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (16, 12, 8, 13) (at (16, 12, 8, 9))",
+   "sig": "2568dd5ec5f4",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2831,
+    "map": "LANCES_ROOM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "LANCES_ROOM|day|allflags|save|TOTODILE",
+    "rng_seed": 1037263487,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "c28457ed6fdb",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2910,
+    "map": "ECRUTEAK_GYM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "ECRUTEAK_GYM|day|allflags|idle|TOTODILE",
+    "rng_seed": 328502523,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "d2a6c3a0872b",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2738,
+    "map": "LYRAS_HOUSE_1F",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "LYRAS_HOUSE_1F|day|allflags|menus|TOTODILE",
+    "rng_seed": 406544855,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "260b531e0629",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2880,
+    "map": "CIANWOOD_GYM",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "SIRFETCH_D",
+    "key": "CIANWOOD_GYM|day|allflags|idle|SIRFETCH_D",
+    "rng_seed": 633678513,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "3d20b175b700",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 2924,
+    "map": "VIRIDIAN_FOREST_VIRIDIAN_GATE",
+    "tod": "day",
+    "hour": 13,
+    "flags": "allflags",
+    "action": "menus",
+    "follower": "STEELIX",
+    "key": "VIRIDIAN_FOREST_VIRIDIAN_GATE|day|allflags|menus|STEELIX",
+    "rng_seed": 626427124,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "fe3d7124a320",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3157,
+    "map": "VERMILION_PORT",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "VERMILION_PORT|nite|allflags|walk|TOTODILE",
+    "rng_seed": 538028932,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "e17512aba36d",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3168,
+    "map": "SHAMOUTI_HOTEL_RESTAURANT",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "SEADRA",
+    "key": "SHAMOUTI_HOTEL_RESTAURANT|nite|allflags|idle|SEADRA",
+    "rng_seed": 820006934,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "5dfa13a589e1",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3174,
+    "map": "BATTLE_TOWER_ELEVATOR",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "BATTLE_TOWER_ELEVATOR|nite|allflags|idle|TOTODILE",
+    "rng_seed": 793083829,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "save-cycle",
+   "detail": "Continue unavailable after a save: Continue never reached (16, 11, 2, 3) (at (16, 11, 2, 255))",
+   "sig": "f7c1c1cd1eb9",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3191,
+    "map": "KARENS_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "KARENS_ROOM|nite|allflags|save|TOTODILE",
+    "rng_seed": 259435652,
+    "kind": "save"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "009d3806c2f6",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3277,
+    "map": "OLIVINE_LIGHTHOUSE_6F",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "OLIVINE_LIGHTHOUSE_6F|nite|allflags|walk|TOTODILE",
+    "rng_seed": 129933264,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "639b08389c80",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3294,
+    "map": "ELMS_LAB",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "ELMS_LAB|nite|allflags|idle|TOTODILE",
+    "rng_seed": 1069384618,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain idle",
+   "sig": "be8ad48ec882",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3444,
+    "map": "LANCES_ROOM",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "idle",
+    "follower": "LICKILICKY",
+    "key": "LANCES_ROOM|nite|allflags|idle|LICKILICKY",
+    "rng_seed": 757060919,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "4420c0428f51",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3502,
+    "map": "RUINS_OF_ALPH_OUTSIDE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "RUINS_OF_ALPH_OUTSIDE|nite|allflags|walk|TOTODILE",
+    "rng_seed": 423328943,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "83a2f6ce2560",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3337,
+    "map": "ROUTE_3_CABLE_CAR_GATE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_3_CABLE_CAR_GATE|nite|allflags|walk|TOTODILE",
+    "rng_seed": 644308707,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 2 after a plain walk",
+   "sig": "b3ed03fff6a1",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3550,
+    "map": "RUINS_OF_ALPH_AERODACTYL_CHAMBER",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "RUINS_OF_ALPH_AERODACTYL_CHAMBER|nite|allflags|walk|TOTODILE",
+    "rng_seed": 182525210,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "e97df3482ac8",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3364,
+    "map": "ROUTE_35_GOLDENROD_GATE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "walk",
+    "follower": "MAREEP",
+    "key": "ROUTE_35_GOLDENROD_GATE|nite|allflags|walk|MAREEP",
+    "rng_seed": 789266522,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "95f446bb38ba",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3694,
+    "map": "ROUTE_39_RUGGED_ROAD_GATE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_39_RUGGED_ROAD_GATE|morn|noflags|walk|TOTODILE",
+    "rng_seed": 275552996,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "d97da360ca31",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3730,
+    "map": "GOLDENROD_UNDERGROUND",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "GOLDENROD_UNDERGROUND|morn|noflags|walk|TOTODILE",
+    "rng_seed": 314475889,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "b2049d5b969a",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3608,
+    "map": "ECRUTEAK_LUGIA_SPEECH_HOUSE",
+    "tod": "nite",
+    "hour": 22,
+    "flags": "allflags",
+    "action": "menus",
+    "follower": "KOFFING",
+    "key": "ECRUTEAK_LUGIA_SPEECH_HOUSE|nite|allflags|menus|KOFFING",
+    "rng_seed": 716723593,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "e274bdf8906c",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3865,
+    "map": "SAFARI_ZONE_HUB_REST_HOUSE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "SAFARI_ZONE_HUB_REST_HOUSE|morn|noflags|walk|TOTODILE",
+    "rng_seed": 478530184,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "9d2fe2ecdb90",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3708,
+    "map": "VIOLET_NICKNAME_SPEECH_HOUSE",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "idle",
+    "follower": "STARYU",
+    "key": "VIOLET_NICKNAME_SPEECH_HOUSE|morn|noflags|idle|STARYU",
+    "rng_seed": 462092734,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain idle",
+   "sig": "8b035f546ba6",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3918,
+    "map": "ROUTE_18_EAST",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "idle",
+    "follower": "TOTODILE",
+    "key": "ROUTE_18_EAST|morn|noflags|idle|TOTODILE",
+    "rng_seed": 495682078,
+    "kind": "idle"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "41e1b74fc21b",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3985,
+    "map": "RADIO_TOWER_2F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "RADIO_TOWER_2F|morn|noflags|walk|TOTODILE",
+    "rng_seed": 179269091,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "stuck",
+   "detail": "script mode 1 after a plain walk",
+   "sig": "fca01d7013ff",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3997,
+    "map": "ROUTE_32_COAST",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "walk",
+    "follower": "TOTODILE",
+    "key": "ROUTE_32_COAST|morn|noflags|walk|TOTODILE",
+    "rng_seed": 211315351,
+    "kind": "walk"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "6bcd5a81988a",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3926,
+    "map": "BLUES_HOUSE_1F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "menus",
+    "follower": "TOTODILE",
+    "key": "BLUES_HOUSE_1F|morn|noflags|menus|TOTODILE",
+    "rng_seed": 514352358,
+    "kind": "menus"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "0fddba6950b4",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3927,
+    "map": "CELADON_UNIVERSITY_LIBRARY_1F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "transition",
+    "follower": "TOTODILE",
+    "key": "CELADON_UNIVERSITY_LIBRARY_1F|morn|noflags|transition|TOTODILE",
+    "rng_seed": 910147457,
+    "kind": "transition"
+   }
+  },
+  {
+   "kind": "hang",
+   "detail": "no progress for 240s (hung)",
+   "sig": "6c553ca4b29f",
+   "count": 1,
+   "first": {
+    "seed": 1,
+    "index": 3953,
+    "map": "VIOLET_POKECENTER_1F",
+    "tod": "morn",
+    "hour": 7,
+    "flags": "noflags",
+    "action": "save",
+    "follower": "TOTODILE",
+    "key": "VIOLET_POKECENTER_1F|morn|noflags|save|TOTODILE",
+    "rng_seed": 18464333,
+    "kind": "save"
+   }
+  }
+ ],
+ "replay": "python3 -m qa.gb.world_scenarios --seed SEED --start INDEX --count 1 --jobs 1 --out DIR"
+}

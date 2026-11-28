@@ -1,0 +1,123 @@
+{
+ "meta": {
+  "time_utc": "2026-11-28T00:43:06Z",
+  "rom": {
+   "path": "polishedcrystal-3.2.3.gbc",
+   "sha1": "53dc05aafe9a2e325f13044d6c4bfe2bcc7d6aeb",
+   "header": {
+    "title": "PKPCRYSTAL\u0000PKPC",
+    "cgb_flag": 128,
+    "cartridge_type": 27,
+    "cartridge": "MBC5+RAM+BATTERY",
+    "rom_size_code": 6,
+    "rom_bytes": 2097152,
+    "ram_size_code": 3,
+    "header_checksum": 62,
+    "global_checksum": 63770
+   }
+  },
+  "git": {
+   "commit": "b28702997ac5fd6a1192dce88cad81b218005ed3",
+   "branch": "claude/sleepy-ramanujan-kc278b",
+   "dirty": false
+  },
+  "tools": {
+   "python": "3.13.18",
+   "pyboy": "2.9.0",
+   "sameboy": "unavailable",
+   "gearboy": "unavailable",
+   "rgbds": "rgbasm v1.0.4"
+  },
+  "host": {
+   "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+   "cpus": 10
+  },
+  "seed": 1,
+  "hardware_configuration": "emulated only: no physical console results are included",
+  "suite": "map",
+  "backend_option": "default",
+  "models": "per-test default"
+ },
+ "results": [
+  {
+   "name": "test_boundaries.map_edges_3of4",
+   "backend": "pyboy",
+   "model": null,
+   "status": "pass",
+   "seconds": 30.1,
+   "failures": [],
+   "error": null,
+   "notes": [
+    "shard 3/4: 153 maps, 77 open edges tried with input, 0 let the player out (0 reachable, 0 latent)"
+   ],
+   "artifacts": [],
+   "provenance": "walking outward at each map edge: gameplay input; map, party and the starting tile: injected",
+   "covers": [
+    "map.collision"
+   ],
+   "partial": {},
+   "av": [],
+   "seed": 1
+  },
+  {
+   "name": "test_boundaries.map_edges_0of4",
+   "backend": "pyboy",
+   "model": null,
+   "status": "pass",
+   "seconds": 31.4,
+   "failures": [],
+   "error": null,
+   "notes": [
+    "shard 0/4: 154 maps, 88 open edges tried with input, 0 let the player out (0 reachable, 0 latent)"
+   ],
+   "artifacts": [],
+   "provenance": "walking outward at each map edge: gameplay input; map, party and the starting tile: injected",
+   "covers": [
+    "map.collision"
+   ],
+   "partial": {},
+   "av": [],
+   "seed": 1
+  },
+  {
+   "name": "test_boundaries.map_edges_2of4",
+   "backend": "pyboy",
+   "model": null,
+   "status": "pass",
+   "seconds": 31.3,
+   "failures": [],
+   "error": null,
+   "notes": [
+    "shard 2/4: 153 maps, 90 open edges tried with input, 0 let the player out (0 reachable, 0 latent)"
+   ],
+   "artifacts": [],
+   "provenance": "walking outward at each map edge: gameplay input; map, party and the starting tile: injected",
+   "covers": [
+    "map.collision"
+   ],
+   "partial": {},
+   "av": [],
+   "seed": 1
+  },
+  {
+   "name": "test_boundaries.map_edges_1of4",
+   "backend": "pyboy",
+   "model": null,
+   "status": "pass",
+   "seconds": 31.7,
+   "failures": [],
+   "error": null,
+   "notes": [
+    "shard 1/4: 153 maps, 92 open edges tried with input, 0 let the player out (0 reachable, 0 latent)"
+   ],
+   "artifacts": [],
+   "provenance": "walking outward at each map edge: gameplay input; map, party and the starting tile: injected",
+   "covers": [
+    "map.collision"
+   ],
+   "partial": {},
+   "av": [],
+   "seed": 1
+  }
+ ]
+}
