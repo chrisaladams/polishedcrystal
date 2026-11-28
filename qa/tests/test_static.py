@@ -135,3 +135,17 @@ def map_callbacks_end_with_endcallback(ctx):
         for kind, label, line in probs:
             ctx.expect(False, f'maps/{fname}:{line}: {kind} callback {label} reaches `end`, not `endcallback`')
     ctx.note('callbacks scanned in %d map files' % len(__import__('glob').glob(os.path.join(ROOT, 'maps', '*.asm'))))
+
+
+@qa_test(suites=('general', 'regression', 'hardware', 'full'), covers=('data.maps',), backends=('pyboy',),
+         provenance='static: maps/*.asm (checkout, not the ROM)')
+def map_callbacks_do_not_wait(ctx):
+    """No map callback (objects, new map, tiles) may reach a command that waits for frames, input or text.
+    For a script-made warp (Fly, `warp`) the objects are loaded before the LCD is on, and waiting for a frame
+    with the LCD off never ends: the game freezes on a white screen (VioletOutskirtsHouse, ledger L33).
+    Such commands belong in a scene script."""
+    from qa.gb import scriptlint
+    res = scriptlint.lint_all_waiting()
+    ctx.note('%d maps have a callback; offenders: %s' % (len(list(__import__('glob').glob(__import__('os').path.join(scriptlint.ROOT, 'maps', '*.asm')))), sorted(res)))
+    bad = ['%s %s:%d %s' % (f, lab, ln, cmd) for f, v in res.items() for (kind, lab, ln, cmd) in v]
+    ctx.expect(not bad, 'map callbacks that wait: ' + '; '.join(bad[:8]))

@@ -111,6 +111,7 @@ MapScenes::
 	scene_var VERMILION_PORT,                    wVermilionPortSceneID
 	scene_var VICTORY_ROAD_2F,                   wVictoryRoad2FSceneID
 	scene_var VIOLET_GYM,                        wVioletGymSceneID
+	scene_var VIOLET_OUTSKIRTS_HOUSE,            wAlways0SceneID
 	scene_var WILLS_ROOM,                        wWillsRoomSceneID
 	scene_var WISE_TRIOS_ROOM,                   wWiseTriosRoomSceneID
 	scene_var YELLOW_FOREST,                     wYellowForestSceneID

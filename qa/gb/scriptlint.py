@@ -92,3 +92,59 @@ def lint_all():
         if p:
             out[os.path.basename(path)] = p
     return out
+
+
+# Commands that wait for frames, input or text. A map callback runs while a map is being set up, and for a warp
+# made by a script (`warp`, Fly) the objects are loaded before the LCD is switched on; waiting for a frame with the
+# LCD off never ends (no VBlank interrupt), so the game freezes. Such commands belong in a scene script.
+WAITING = {'showtext', 'opentext', 'writetext', 'waitbutton', 'closetext', 'pause', 'applymovement', 'applyonemovement', 'applymovementlasttalked',
+           'cry', 'waitsfx', 'playsound', 'showemote', 'jumptext', 'jumptextfaceplayer', 'verbosegiveitem', 'giveitem', 'yesorno', 'loadmenu',
+           'startbattle', 'reloadmap', 'warp', 'warpfacing', 'follow', 'stopfollow', 'special', 'refreshscreen', 'fadeout'}
+WAITING_SPECIALS = ('Fade', 'Wait', 'Delay', 'Cinematic', 'Pause')
+
+
+def lint_waiting(path):
+    """[(callback kind, label, line, command)] where a callback reaches a command that waits for frames or input."""
+    labels, order = parse_file(path)
+    out, seen_all = [], set()
+    for kind, target, lineno in callbacks(path):
+        if kind == 'MAPCALLBACK_CMDQUEUE':
+            continue
+        seen, stack = set(), [target]
+        while stack:
+            lab = stack.pop()
+            if lab in seen or lab not in labels:
+                continue
+            seen.add(lab)
+            falls = True
+            for ln, text in labels[lab]:
+                s = text.split(';')[0].strip()
+                if not s:
+                    continue
+                m = BRANCH.match(text)
+                if m and not s.startswith('sdefer'):
+                    t = m.group(2)
+                    stack.append(_owner(lab) + t if t.startswith('.') else t)
+                tok = s.split()[0]
+                if tok == 'special' and not any(w in s for w in WAITING_SPECIALS):
+                    continue
+                if tok in WAITING and (kind, lab, ln) not in seen_all:
+                    seen_all.add((kind, lab, ln))
+                    out.append((kind, lab, ln, s))
+                if tok in ('end', 'endcallback', 'sjump', 'jumptext') or tok.startswith('jump'):
+                    falls = False
+                    break
+            if falls and lab in order:
+                i = order.index(lab)
+                if i + 1 < len(order):
+                    stack.append(order[i + 1])
+    return out
+
+
+def lint_all_waiting():
+    res = {}
+    for path in sorted(glob.glob(os.path.join(ROOT, 'maps', '*.asm'))):
+        p = lint_waiting(path)
+        if p:
+            res[os.path.basename(path)] = p
+    return res

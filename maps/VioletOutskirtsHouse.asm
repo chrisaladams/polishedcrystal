@@ -1,5 +1,6 @@
 VioletOutskirtsHouse_MapScriptHeader:
 	def_scene_scripts
+	scene_script VioletOutskirtsHouseNotAloneScene
 
 	def_callbacks
 	callback MAPCALLBACK_OBJECTS, VioletOutskirtsHouseCaretaker
@@ -27,14 +28,25 @@ VioletOutskirtsHouseCaretaker:
 	checkevent EVENT_CAUGHT_HISUIAN_TYPHLOSION
 	iftruefwd .endcallback
 	disappear VIOLETOUTSKIRTSHOUSE_CARETAKER
-	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
-	iftruefwd .endcallback
-	special LoadMapPalettes
-	special FadeInPalettes_EnableDynNoApply
-	showtext VioletOutskirtsHouseNotAloneText
-	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
 .endcallback
 	endcallback
+
+VioletOutskirtsHouseNotAloneScene:
+; The text must not be shown from the objects callback: MapSetupScript_Warp (a `warp`
+; command, Fly) runs LoadMapObjects before EnableLCD, and waiting for a frame with the
+; LCD off never ends (no VBlank interrupt, so DelayFrameHalt halts forever).
+	checkevent EVENT_CAUGHT_HISUIAN_TYPHLOSION
+	iftruefwd .done
+	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	iftruefwd .done
+	sdefer .Script
+.done
+	end
+
+.Script:
+	setevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_3
+	showtext VioletOutskirtsHouseNotAloneText
+	end
 
 VioletOutskirtsGhostBattleScript:
 	checkevent EVENT_TEMPORARY_UNTIL_MAP_RELOAD_1
