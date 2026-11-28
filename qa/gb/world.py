@@ -113,6 +113,17 @@ def script_warps(const):
     return _cache[key]
 
 
+def incoming_script_warps(const):
+    """[(source map, x, y)] for every `warp` script command (story warp, ferry, cutscene) that lands in `const`."""
+    if 'in_swarps' not in _cache:
+        table = {}
+        for src in _consts():
+            for dest, x, y in script_warps(src):
+                table.setdefault(dest, []).append((src, x, y))
+        _cache['in_swarps'] = table
+    return _cache['in_swarps'].get(const, [])
+
+
 def reachable_with_scripts(src, blocked=frozenset()):
     """Maps reachable by walking edges or by any script warp (an over-approximation)."""
     seen, q = {src}, deque([src])

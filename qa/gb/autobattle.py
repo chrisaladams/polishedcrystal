@@ -70,7 +70,7 @@ def first_healthy(g, skip):
         if i == skip:
             continue
         if g.rd('wPartyMon1HP', i * stride) or g.rd('wPartyMon1HP', i * stride + 1):
-            if not (g.rd('wPartyMon1Form', i * stride) & 0x20 if 'wPartyMon1Form' in g.sym else 0):   # not an egg
+            if not g.rd('wPartyMon1IsEgg', i * stride) & 0x40:    # IS_EGG_MASK (0x20 is EXTSPECIES_MASK: species above 255)
                 return i
     return None
 
@@ -135,6 +135,7 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None, on_first_m
     start = g.frame
     first = True
     after_move, rot, escalated = False, 0, False
+    idle, last_hash = 0, None
     next_check = g.frame + 30
     while g.in_battle():
         if g.frame - start > max_frames:
@@ -189,5 +190,11 @@ def play(nav, max_frames=36000, policy='fight', rng=None, check=None, on_first_m
                 _home(nav)
                 nav.press('a', 4, 20)       # FIGHT
         else:
+            h = nav.screen_hash()
+            idle = idle + 1 if h == last_hash else 0
+            last_hash = h
+            if idle >= 12:                  # the game keeps refusing the same choice (a fainted Pokemon, a
+                idle = 0                    # disabled move...): move the cursor on instead of repeating it
+                nav.press(rng.choice(('down', 'up')), 4, 10)
             nav.press('a', 4, 14)
     g.tick(90)

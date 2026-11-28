@@ -19,6 +19,8 @@ def run(ctx, state, shard, shards):
     g = ctx.boot(name, builder)
     model = ctx.model or ''
     tag = '%s-%s-%s-%dof%d-seed%d' % (ctx.backend, model or 'x', state, shard, shards, ctx.seed)
+    if os.environ.get('QA_SWEEP_TAG'):
+        tag += '-' + os.environ['QA_SWEEP_TAG']
     results = os.path.join(saves.CACHE, 'sweep', sha1(ctx.rom)[:12], tag)
     limit = int(os.environ.get('QA_SWEEP_LIMIT', '0')) or None
     resume = os.environ.get('QA_SWEEP_RESUME', '1') != '0'

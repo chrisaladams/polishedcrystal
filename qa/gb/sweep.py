@@ -13,6 +13,7 @@ signature get a screenshot, the pre-interaction machine state, the input log and
 command. Results are appended per map to a JSONL file, so an interrupted sweep resumes.
 
     python3 -m qa.gb.sweep replay DIR/failures/<signature>      # reproduce one failure
+    python3 -m qa.gb.sweep coverage OUT.json RESULTS.jsonl...    # union coverage sets
 """
 import bisect
 import hashlib
@@ -29,6 +30,7 @@ from .nav import DIRS, Navigator, Softlock
 
 FACE = {'down': 0, 'up': 4, 'left': 8, 'right': 12}
 N_FLAG_BYTES = 288
+STUCK_FRAMES = 900            # a script waiting at one position this long, with the screen still animating, is reported
 ADVANCE_BUDGET = 3600          # frames of dialogue/scene before a static screen is called a softlock
 MAX_EXAMPLES = 3               # artifact sets kept per signature
 STATES = ('default', 'allflags', 'noflags', 'party')
@@ -36,8 +38,9 @@ STATES = ('default', 'allflags', 'noflags', 'party')
 
 # ---- flag states --------------------------------------------------------------------------
 def build_base(g):
-    """a Totodile (so there is a follower)"""
-    F.give_mon(g, C['TOTODILE'], 10)
+    """a level 100 Tyranitar (INJECTED): strong enough that line-of-sight trainers and story battles end in
+    a win instead of a whiteout that would send the player home and hide the rest of the map. Flags are untouched."""
+    F.give_mon(g, C['TYRANITAR'], 100)
 
 
 def build_party(g):
@@ -51,11 +54,14 @@ def build_party(g):
 
 
 def fixture_for(state):
-    return ('sweep_party', build_party) if state == 'party' else ('sweep_base', build_base)
+    return ('sweep_party', build_party) if state == 'party' else ('sweep_base_t100', build_base)
 
 
 def apply_state(g, state):
-    """Mutate the booted game for the flag state (INJECTED)."""
+    """Mutate the booted game for the flag state (INJECTED). Wild encounters are switched off in every
+    state (wStatusFlags bit 5, what the wildoff script command does): the sweep must not start random
+    battles while it walks; trainer/story battles an interaction triggers are still fought."""
+    g.wr('wStatusFlags', g.rd('wStatusFlags') | 0x20)
     base = g.sym['wEventFlags'][1]
     if state == 'allflags':
         for i in range(N_FLAG_BYTES):
@@ -135,8 +141,8 @@ class Oracles:
 
 # ---- targets ------------------------------------------------------------------------------
 class Target:
-    def __init__(self, kind, x, y, need=None, label=''):
-        self.kind, self.x, self.y, self.need, self.label = kind, x, y, need, label
+    def __init__(self, kind, x, y, need=None, label='', index=None):
+        self.kind, self.x, self.y, self.need, self.label, self.index = kind, x, y, need, label, index
 
     def key(self):
         return '%s@%d,%d' % (self.kind, self.x, self.y)
@@ -157,31 +163,48 @@ def read_targets(g, const):
         flag = g.read(a + 12, 1) | g.read(a + 13, 1) << 8
         if flag != 0xffff and flag < 2304 and g.read(flags + (flag >> 3), 1) >> (flag & 7) & 1:
             continue                                  # hidden by an event flag
-        out.append(Target('npc', x - 4, y - 4, label='object %d' % i))
+        out.append(Target('npc', x - 4, y - 4, label='object %d' % i, index=i - 1))
     attrs = mapdata.attributes()
     if const in attrs:
         info = mapdata.parse_map(attrs[const]['label'])
         need = {'BGEVENT_UP': 'up', 'BGEVENT_DOWN': 'down', 'BGEVENT_RIGHT': 'right', 'BGEVENT_LEFT': 'left'}
-        for x, y, kind in info['bg']:
-            out.append(Target('bg', x, y, need=need.get(kind), label=kind))
-        for x, y, scene in info['coord']:
-            out.append(Target('coord', x, y, label=scene))
+        for n, (x, y, kind) in enumerate(info['bg']):
+            out.append(Target('bg', x, y, need=need.get(kind), label=kind, index=n))
+        for n, (x, y, scene) in enumerate(info['coord']):
+            out.append(Target('coord', x, y, label=scene, index=n))
     return out
 
 
+GLOW_FLOOR = {0x03, 0x04, 0x05, 0x06, 0x08}   # campfire/aquarium/lantern/lava/shrine-lamp glow: LAND_TILE decoration
+COLL_WATER, COLL_COUNTER = 0x29, 0x90
+
+
+def _land(g, x, y):
+    c = collision.tile_collision(g, x, y)
+    return c in collision.PASSABLE or c in GLOW_FLOOR
+
+
 def stand_tiles(g, t, occupied):
-    """[(tile, direction to face)] next to the target."""
-    res = []
+    """[(tile, direction to face, mode)] from which the target can be interacted with. mode is 'land'
+    (walk there) or 'surf' (water: the player is injected in the surfing state). Land tiles come first;
+    for an NPC behind a counter the player stands two tiles away (the game doubles the facing distance
+    across COLL_COUNTER, see CheckFacingObject)."""
+    res, water = [], []
     for d, (dx, dy) in DIRS.items():
         s = (t.x - dx, t.y - dy)               # we stand at s and face direction d toward the target
-        if s in occupied:
-            continue
-        if not collision.walkable(g, s[0], s[1]):
-            continue
         if t.need and d != t.need:             # a bg event that must be faced from one side only
             continue
-        res.append((s, d))
-    return res
+        if s in occupied:
+            continue
+        if _land(g, *s):
+            res.append((s, d, 'land'))
+        elif collision.tile_collision(g, *s) == COLL_WATER:
+            water.append((s, d, 'surf'))
+        elif t.kind == 'npc' and collision.tile_collision(g, *s) == COLL_COUNTER:
+            s2 = (t.x - 2 * dx, t.y - 2 * dy)
+            if s2 not in occupied and _land(g, *s2):
+                res.append((s2, d, 'land'))
+    return res + water
 
 
 # ---- the interaction ----------------------------------------------------------------------
@@ -193,8 +216,16 @@ def advance(nav, budget=ADVANCE_BUDGET, answer='a'):
     last, same, k = None, 0, 0
     order = [answer, 'b', 'down', 'a', 'up', 'a', 'start']
     changed_at = g.frame
+    bank_a, pos_a = g.sym['hScriptBank'][1], g.sym['hScriptPos'][1]
+    spos, moved_at = None, g.frame
+    nav.stuck_script = None
     while not nav.ready():
+        p = (g.read(bank_a) & 0x7f, g.read(pos_a) | g.read(pos_a + 1) << 8)
+        if p != spos:
+            spos, moved_at = p, g.frame
         if g.frame - start > budget:
+            if g.frame - moved_at >= STUCK_FRAMES and g.rd('wScriptRunning'):
+                nav.stuck_script = p          # one script position for 15+ seconds of pressing buttons
             return 'long' if g.frame - changed_at < 300 else 'softlock'
         if g.in_battle():
             try:
@@ -235,6 +266,9 @@ class Result:
         self.problems = []              # (signature, kind, routine, detail, map, target)
         self.untested = []              # (map, target key, why)
         self.expected = []              # (map, target key, reason): stalls that need link/challenge state
+        self.entered = False            # the map was entered and its targets could be tried
+        self.stuck = []                 # (map, target key, script label): animated screen but the script never advanced
+        self.cov = dict(objects=set(), bg_events=set(), coord_events=set(), scripts=set())
 
 
 def signature(kind, routine, const):
@@ -260,7 +294,24 @@ class Sweeper:
         self.oracles = Oracles(g, backend)
         self.base = None
         self.examples = {}
+        self.script_hits = set()
+        self._install_script_hook()
         os.makedirs(os.path.join(out, 'failures'), exist_ok=True)
+
+    def _install_script_hook(self):
+        """Record every script position the script engine executes (bank, address); symbolised per map."""
+        g = self.g
+        bank_a, pos_a = g.sym['hScriptBank'][1], g.sym['hScriptPos'][1]
+
+        def hit(_=None):
+            self.script_hits.add((g.read(bank_a) & 0x7f, g.read(pos_a) | g.read(pos_a + 1) << 8))
+        if self.backend == 'pyboy':          # SameBoy's per-instruction callback is too slow for this
+            g.hook('RunScriptCommand', hit)
+
+    def script_labels(self):
+        out = {sym_near(self.g, b, a) for b, a in self.script_hits if a < 0x8000}
+        self.script_hits.clear()
+        return out
 
     def prepare(self):
         apply_state(self.g, self.state)
@@ -309,6 +360,16 @@ class Sweeper:
                 got = None
             if got != const:
                 continue
+            out = advance(nav, 3600)
+            if F.where(g)[:2] != target:
+                return 'ejected', None
+            return out, (g.snap() if out in ('ok', 'long') else None)
+        for src, x, y in world.incoming_script_warps(const)[:2]:
+            # a story warp: `warp MAP, x, y` is newloadmap MAPSETUP_WARP, which is exactly what the injected
+            # teleport does, so teleporting to the scripted arrival tile reproduces the game's own entry
+            g.unsnap(self.base)
+            self.oracles.start()
+            F.teleport(g, target[0], target[1], x, y, settle=60)
             out = advance(nav, 3600)
             if F.where(g)[:2] != target:
                 return 'ejected', None
@@ -407,9 +468,12 @@ class Sweeper:
             for kind, routine, detail in self.oracles.check():
                 self.record(res, const, Target('entry', inside[0], inside[1]), kind, routine, detail, None)
         mapsnap = g.snap()
+        res.entered = True
         targets = read_targets(g, const)[:max_targets]
+        self.script_hits.clear()
         for t in targets:
             self.interact(res, const, sg, sn, mapsnap, t)
+        res.cov['scripts'] |= self.script_labels()
         return res
 
     def interact(self, res, const, sg, sn, mapsnap, t):
@@ -422,9 +486,10 @@ class Sweeper:
         if self.mode == 'walk':
             return self.interact_walking(res, const, mapsnap, t, stands)
         tried = False
-        for tile, d in stands[:2]:
+        for tile, d, mode in stands[:2]:
             g.unsnap(mapsnap)
             self.oracles.start()
+            g.wr('wPlayerState', 4 if mode == 'surf' else 0)         # INJECTED: PLAYER_SURF to stand on water
             F.teleport(g, sg, sn, tile[0], tile[1], settle=40)
             if F.where(g)[:2] != (sg, sn) or F.where(g)[2:] != tile:
                 continue
@@ -450,7 +515,9 @@ class Sweeper:
     def interact_walking(self, res, const, mapsnap, t, stands):
         """Reach the target by walking (real input) from the real arrival state."""
         g, nav = self.g, self.nav
-        for tile, d in stands[:2]:
+        for tile, d, mode in stands[:2]:
+            if mode != 'land':
+                continue
             g.unsnap(mapsnap)
             self.oracles.start()
             try:
@@ -484,7 +551,13 @@ class Sweeper:
             nav.press('a', 4, 20)
         res.interactions += 1
         res.by_kind[t.kind] = res.by_kind.get(t.kind, 0) + 1
+        label = mapdata.attributes()[const]['label']
+        if t.index is not None:
+            res.cov[{'npc': 'objects', 'bg': 'bg_events', 'coord': 'coord_events'}[t.kind]].add('%s:%d' % (label, t.index))
         outcome = advance(nav)
+        if getattr(nav, 'stuck_script', None):
+            b, a = nav.stuck_script
+            res.stuck.append((const, t.key(), sym_near(g, b, a)))
         g.tick(30)
         problems = self.oracles.check()
         why = expected_stall(const)
@@ -527,7 +600,13 @@ class Sweeper:
 
 # ---- shards, resume, aggregation ------------------------------------------------------------
 def map_list(shard, shards):
-    return sorted(mapdata.attributes())[shard::shards]
+    """This shard's maps. QA_SWEEP_MAPS=<file with one map constant per line> restricts the sweep to those maps."""
+    allm = sorted(mapdata.attributes())
+    only = os.environ.get('QA_SWEEP_MAPS')
+    if only:
+        keep = {l.strip() for l in open(only) if l.strip()}
+        allm = [m for m in allm if m in keep]
+    return allm[shard::shards]
 
 
 def run_shard(g, out, backend, model, state, shard, shards, seed=1, limit=None, resume=True, results_dir=None):
@@ -554,7 +633,8 @@ def run_shard(g, out, backend, model, state, shard, shards, seed=1, limit=None, 
             r = sw.sweep_map(const)
             rec = dict(map=const, interactions=r.interactions, by_kind=r.by_kind, outcomes=r.outcomes,
                        problems=[dict(sig=p[0], kind=p[1], routine=p[2], detail=p[3][:400], target=p[5]) for p in r.problems],
-                       untested=[list(u) for u in r.untested], expected=[list(u) for u in r.expected])
+                       untested=[list(u) for u in r.untested], expected=[list(u) for u in r.expected],
+                       entered=r.entered, stuck=[list(x) for x in r.stuck], covered={k: sorted(v) for k, v in r.cov.items()})
             f.write(json.dumps(rec) + '\n')
             f.flush()
             done[const] = rec
@@ -577,6 +657,33 @@ def summarize(recs, maps):
         s['untested'] += [(r['map'],) + tuple(u[1:]) for u in r['untested']]
         s['expected'] += [(r['map'],) + tuple(u[1:]) for u in r.get('expected', [])]
     return s
+
+
+# ---- coverage sets ----------------------------------------------------------------------------
+def coverage(results_files, out_path):
+    """Union the per-map results of any number of sweeps into the inventory-coverage JSON:
+    {"maps": [...], "objects": ["Label:index", ...], "bg_events": [...], "coord_events": [...], "scripts": [...]}.
+    `Label` is the map's label (maps/<Label>.asm); an index is the 0-based position of the
+    object_event / bg_event / coord_event line in that file. A map counts as swept when it was entered
+    and its targets could be tried. An object/bg/coord event counts when an interaction was executed on it."""
+    attrs = mapdata.attributes()
+    cov = dict(maps=set(), objects=set(), bg_events=set(), coord_events=set(), scripts=set())
+    runs = []
+    for path in results_files:
+        n = 0
+        for line in open(path):
+            r = json.loads(line)
+            n += 1
+            if r.get('entered'):
+                cov['maps'].add(attrs[r['map']]['label'] if r['map'] in attrs else r['map'])
+            for k, v in r.get('covered', {}).items():
+                cov[k] |= set(v)
+        runs.append('%s (%d maps)' % (path, n))
+    doc = {k: sorted(v) for k, v in cov.items()}
+    doc['sources'] = runs
+    os.makedirs(os.path.dirname(out_path) or '.', exist_ok=True)
+    json.dump(doc, open(out_path, 'w'), indent=1)
+    return {k: len(v) for k, v in cov.items()}
 
 
 # ---- replay ----------------------------------------------------------------------------------
@@ -610,3 +717,5 @@ def replay(d, model=None):
 if __name__ == '__main__':
     if len(sys.argv) >= 3 and sys.argv[1] == 'replay':
         replay(sys.argv[2])
+    elif len(sys.argv) >= 4 and sys.argv[1] == 'coverage':
+        print(coverage(sys.argv[3:], sys.argv[2]))
